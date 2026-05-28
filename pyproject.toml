@@ -1,7 +1,7 @@
 [project]
 name = "gradextool"
 version = "0.1.0"
-description = "Add your description here"
+description = "A comprehensive Discord bot for the Revomon gaming community, providing game data lookup, competitive analysis tools, leaderboards, and real-time price tracking."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
