@@ -112,23 +112,15 @@ class Podium2(commands.Cog):
         font_header = ImageFont.truetype(font_path, 20)
 
         # Create a new image
-        new_image = Image.new(
-            "RGB", (image_width, image_height), background_color
-        )
+        new_image = Image.new("RGB", (image_width, image_height), background_color)
         draw = ImageDraw.Draw(new_image)
 
         # Draw the header text
-        header_text = (
-            "In-Game Podium" if podium_type == "current" else "Weekly Podium"
-        )
-        header_width, header_height = self.get_text_size(
-            draw, header_text, font_header
-        )
+        header_text = "In-Game Podium" if podium_type == "current" else "Weekly Podium"
+        header_width, header_height = self.get_text_size(draw, header_text, font_header)
         header_x = (image_width - header_width) // 16
         header_y = 5  # Padding from the top
-        draw.text(
-            (header_x, header_y), header_text, font=font_header, fill="#ffffff"
-        )
+        draw.text((header_x, header_y), header_text, font=font_header, fill="#ffffff")
 
         # Draw a line below the header text
         line_y = header_y + header_height + 20
@@ -149,9 +141,7 @@ class Podium2(commands.Cog):
 
             # Draw the rank number inside the circle
             rank_text = podium_ranks[i]
-            rank_width, rank_height = self.get_text_size(
-                draw, rank_text, font_large
-            )
+            rank_width, rank_height = self.get_text_size(draw, rank_text, font_large)
             rank_x = pos[0] - rank_width // 2
             rank_y = pos[1] - rank_height // 2 + line_y
             draw.text(
@@ -177,14 +167,10 @@ class Podium2(commands.Cog):
 
             if podium_type == "weekly":
                 # Draw additional text below the username
-                time_width, time_height = self.get_text_size(
-                    draw, times[i], font_small
-                )
+                time_width, time_height = self.get_text_size(draw, times[i], font_small)
                 time_x = pos[0] - time_width // 2
                 time_y = username_y + username_height + 5
-                draw.text(
-                    (time_x, time_y), times[i], font=font_small, fill="#cccccc"
-                )
+                draw.text((time_x, time_y), times[i], font=font_small, fill="#cccccc")
 
         if podium_type == "weekly":
             # Convert the PIL Image object to a BytesIO object
@@ -229,9 +215,7 @@ class Podium2(commands.Cog):
         print("Revomon Mod(Podium Leaderboard Command) is ready!")
         print("---------------------------")
 
-    @app_commands.command(
-        name="podium", description="Display the Podium leaderboards."
-    )
+    @app_commands.command(name="podium", description="Display the Podium leaderboards.")
     @app_commands.allowed_installs(guilds=True, users=True)
     async def podium(self, interaction: Interaction):
         await interaction.response.defer(thinking=True, ephemeral=True)

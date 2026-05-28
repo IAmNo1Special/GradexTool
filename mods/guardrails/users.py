@@ -52,9 +52,7 @@ class UsersGuardrail(commands.Cog):
         Args:
             member: The member that joined.
         """
-        logger.info(
-            f"User {member.name} joined the {member.guild.name} server!"
-        )
+        logger.info(f"User {member.name} joined the {member.guild.name} server!")
         logger.info("-" * 50)
         if GRA_GUILD_ID is None:
             logger.error("GRA_GUILD_ID not found in configuration!")
@@ -82,9 +80,7 @@ class UsersGuardrail(commands.Cog):
             f"Command {command.name} was executed by {interaction.user.name} in {interaction.guild.name} (ID: {interaction.guild.id})"
         )
         try:
-            await user_check(
-                gradex_tool=interaction.client, user=interaction.user
-            )
+            await user_check(gradex_tool=interaction.client, user=interaction.user)
         except Exception as e:
             logger.error(
                 f"An error occurred during {self.cog_name}(on_app_command_completion): {e}"

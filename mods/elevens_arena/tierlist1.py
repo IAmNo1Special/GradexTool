@@ -55,9 +55,7 @@ class GsTierPoll(commands.Cog):
         mon_name = final_poll.question
         max_votes = max(votes.values())
         winning_tiers = [
-            tier
-            for tier, vote_count in votes.items()
-            if vote_count == max_votes
+            tier for tier, vote_count in votes.items() if vote_count == max_votes
         ]
         # await ended_poll.message.delete()
 
@@ -70,9 +68,7 @@ class GsTierPoll(commands.Cog):
         cdex_category = discord.utils.get(server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
 
         # Check if Tier List Forum already exists, if not create them
-        tier_vote_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-polls"
-        )
+        tier_vote_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         while tier_vote_forum is None:
             tier_vote_forum = await cdex_category.create_forum(
                 name="tierlist-polls", topic="Tier List"
@@ -134,9 +130,7 @@ class GsTierPoll(commands.Cog):
             self.reset()
             print("self.gs_polls list initialized")
 
-            _, gs_vote_thread, _, _ = await self.create_tier_channels(
-                server=gra_server
-            )
+            _, gs_vote_thread, _, _ = await self.create_tier_channels(server=gra_server)
             print("gs tier list channels created")
 
             # Define poll duration (31 days)
@@ -173,12 +167,8 @@ class GsTierPoll(commands.Cog):
         gra_server = discord.utils.get(
             self.gradex_tool.guilds, name="Global Revomon Association"
         )
-        cdex_category = discord.utils.get(
-            gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱"
-        )
-        voting_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-polls"
-        )
+        cdex_category = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
+        voting_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         if voting_forum is None:
             print("Creating new gs tier list voting")
             await self.create_polls()
@@ -204,18 +194,14 @@ class GsTierPoll(commands.Cog):
             1800, 900, img_paths, font_size=40, row_gap=20
         )
         print(f"{full_format} Tier list image created")
-        tierlist_img_name = (
-            f"gs_tierlist({datetime.now().strftime('%m-%d-%Y')}).png"
-        )
+        tierlist_img_name = f"gs_tierlist({datetime.now().strftime('%m-%d-%Y')}).png"
         # tierlist_fp = f"./data/Images/Tierlists/{tierlist_img_name}"
         img_bytes = BytesIO()
         tier_list_image.save(img_bytes, format="PNG")
         img_bytes.seek(0)
         img_for_discord = img_bytes
         print(f"{full_format} Tier list image saved")
-        _, _, _, gs_results_thread = await self.create_tier_channels(
-            server=gra_server
-        )
+        _, _, _, gs_results_thread = await self.create_tier_channels(server=gra_server)
         print(f"{full_format} Tier list channels found")
         await gs_results_thread.send(
             file=discord.File(img_for_discord, filename=tierlist_img_name)
@@ -240,9 +226,7 @@ class GsTierPoll(commands.Cog):
         """Update GS tier list based on new month."""
         if self.is_new_month():
             for poll in self.gs_polls:
-                mon_name, gs_winning_tiers = await self.get_winning_tiers(
-                    poll=poll
-                )
+                mon_name, gs_winning_tiers = await self.get_winning_tiers(poll=poll)
 
                 if len(gs_winning_tiers) == 1:
                     new_tier = str(gs_winning_tiers[0])
@@ -260,9 +244,7 @@ class GsTierPoll(commands.Cog):
                 poll=self.gs_polls[0], format="gs", img_paths=self.gs_img_paths
             )
 
-            forum: discord.ForumChannel = self.gs_polls[
-                0
-            ].message.channel.parent
+            forum: discord.ForumChannel = self.gs_polls[0].message.channel.parent
             bc_vote_thread: discord.Thread = discord.utils.get(
                 forum.threads, name="Baby-Cup-format"
             )

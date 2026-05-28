@@ -55,9 +55,7 @@ def create_base_tier_list(
         rows_needed = (
             num_images + max_images_per_row - 1
         ) // max_images_per_row  # Calculate rows needed
-        tier_height = (
-            rows_needed * (image_size + 10) + row_gap
-        )  # Calculate tier height
+        tier_height = rows_needed * (image_size + 10) + row_gap  # Calculate tier height
         tier_heights.append(tier_height)
         total_height += tier_height
 
@@ -168,9 +166,7 @@ def create_tier_list_with_images(
     # Draw the images in their reective tiers
     for tier, paths in image_paths.items():
         num_images = len(paths)
-        rows_needed = (
-            num_images + max_images_per_row - 1
-        ) // max_images_per_row
+        rows_needed = (num_images + max_images_per_row - 1) // max_images_per_row
         tier_height = rows_needed * (image_size + 10) + row_gap
         tier_positions[tier] = (
             0,
@@ -179,7 +175,9 @@ def create_tier_list_with_images(
             y_offset + tier_height - row_gap,
         )
 
-        x_offset = 110  # Start placing images to the right of the colored tier label boxes
+        x_offset = (
+            110  # Start placing images to the right of the colored tier label boxes
+        )
         y_start = tier_positions[tier][1]
         # y_end = tier_positions[tier][3]
         # y_start_row = y_start

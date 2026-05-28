@@ -36,9 +36,7 @@ def get_attributes(revomon_name: str):
         )
     )
     ev_rewards = [
-        f"+ {boost} {stat_name}"
-        for stat_name, boost in ev_rewards.items()
-        if boost > 0
+        f"+ {boost} {stat_name}" for stat_name, boost in ev_rewards.items() if boost > 0
     ]
     attributes = {
         "name": mon_info[2],
@@ -87,27 +85,19 @@ def get_attributes(revomon_name: str):
                 mon_dex_id=mon_info[0]
             )
         ],
-        "cdex_tier": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][4],
+        "cdex_tier": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][4],
         "cdex_description": CounterdexTable().get_info(
             revomon_name=mon_info[2].lower()
         )[0][3],
-        "weakness": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][9],
-        "meta_build": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][6],
-        "meta_moves": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][5],
-        "tips": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][
-            7
+        "weakness": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][9],
+        "meta_build": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][
+            6
         ],
-        "counters": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][8],
+        "meta_moves": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][
+            5
+        ],
+        "tips": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][7],
+        "counters": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][8],
     }
     return attributes
 
@@ -123,9 +113,7 @@ def save_mon_imgs():
 
         try:
             # Check if the Profile image is already saved to data.Images
-            with open(
-                f"./data/Images/Revomon/{mon_name.title()}.png", "rb"
-            ) as file:
+            with open(f"./data/Images/Revomon/{mon_name.title()}.png", "rb") as file:
                 print(f"{mon_name} Profile image already exists")
         except FileNotFoundError:
             print(f"Getting profile image for {mon_name}...")
@@ -242,17 +230,11 @@ def get_nature_mods(nature: str):
     ):
         nature_mods["atk"] = 1.1
     elif (
-        nature == "Bold"
-        or nature == "Impish"
-        or nature == "Lax"
-        or nature == "Relaxed"
+        nature == "Bold" or nature == "Impish" or nature == "Lax" or nature == "Relaxed"
     ):
         nature_mods["def"] = 1.1
     elif (
-        nature == "Modest"
-        or nature == "Mild"
-        or nature == "Quiet"
-        or nature == "Rash"
+        nature == "Modest" or nature == "Mild" or nature == "Quiet" or nature == "Rash"
     ):
         nature_mods["spa"] = 1.1
     elif (
@@ -263,18 +245,10 @@ def get_nature_mods(nature: str):
     ):
         nature_mods["spd"] = 1.1
     elif (
-        nature == "Hasty"
-        or nature == "Jolly"
-        or nature == "Naive"
-        or nature == "Timid"
+        nature == "Hasty" or nature == "Jolly" or nature == "Naive" or nature == "Timid"
     ):
         nature_mods["spe"] = 1.1
-    if (
-        nature == "Bold"
-        or nature == "Modest"
-        or nature == "Calm"
-        or nature == "Timid"
-    ):
+    if nature == "Bold" or nature == "Modest" or nature == "Calm" or nature == "Timid":
         nature_mods["atk"] = 0.9
     elif (
         nature == "Lonely"
@@ -291,10 +265,7 @@ def get_nature_mods(nature: str):
     ):
         nature_mods["spa"] = 0.9
     elif (
-        nature == "Naughty"
-        or nature == "Lax"
-        or nature == "Rash"
-        or nature == "Naive"
+        nature == "Naughty" or nature == "Lax" or nature == "Rash" or nature == "Naive"
     ):
         nature_mods["spd"] = 0.9
     elif (
@@ -328,18 +299,12 @@ def get_evo_trees():
     if response.status_code == 200:
         data = response.json()
 
-        for revomon in sorted(
-            data["data"]["revomons"], key=lambda x: x["idRevodex"]
-        ):
+        for revomon in sorted(data["data"]["revomons"], key=lambda x: x["idRevodex"]):
             evolution = (
-                revomon["evolution"].lower()
-                if revomon["evolution"] != ""
-                else None
+                revomon["evolution"].lower() if revomon["evolution"] != "" else None
             )
             evo_lvl = (
-                revomon["levelEvolution"]
-                if revomon["levelEvolution"] != 0
-                else None
+                revomon["levelEvolution"] if revomon["levelEvolution"] != 0 else None
             )
             if evolution is not None:
                 if evo_tree == "":
@@ -476,9 +441,7 @@ def get_stat_weights(base_stats: dict, mon_name: str = ""):
     elif b["spe"] <= 50:
         # Potential Trick Room Role
         role = f"Slow {role}"
-        weights["spe"] = (
-            0.5  # Spe matters less or we want 0 (handled in appraise)
-        )
+        weights["spe"] = 0.5  # Spe matters less or we want 0 (handled in appraise)
 
     # Defensive Bias
     if b["def"] > 100 or b["spd"] > 100 or b["hp"] > 110:
@@ -585,18 +548,14 @@ def appraise_revomon(mon_stats: dict):
         return appraise_result
 
     except Exception as e:
-        print(
-            f"An error occurred while running the 'appraise_revomon' function: {e}"
-        )
+        print(f"An error occurred while running the 'appraise_revomon' function: {e}")
         import traceback
 
         traceback.print_exc()
         return None
 
 
-def create_graded_mon_img(
-    curr_stats: dict, score_percentage=None, image_dir=None
-):
+def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=None):
     # Directory containing the images
     image_dir = "./data/Images/Revomon"
     iv_stats = {
@@ -642,14 +601,10 @@ def create_graded_mon_img(
         name_text_bbox[3] - name_text_bbox[1],
     )
     name_text_offset = (margin_left, margin_top)
-    draw.text(
-        name_text_offset, name_text, font=name_font, fill=(255, 255, 255, 255)
-    )
+    draw.text(name_text_offset, name_text, font=name_font, fill=(255, 255, 255, 255))
 
     # Add nature and ability text
-    nature_ability_text = (
-        f"{curr_stats['mon_nature']} - {curr_stats['mon_ability']}"
-    )
+    nature_ability_text = f"{curr_stats['mon_nature']} - {curr_stats['mon_ability']}"
 
     nature_ability_text_bbox = draw.textbbox(
         (0, 0), nature_ability_text, font=small_font
@@ -690,13 +645,9 @@ def create_graded_mon_img(
             + nature_ability_text_size[1]
             + text_spacing,  # Position below text
         )
-        graded_image.paste(
-            mon_image, mon_image_offset, mon_image.convert("RGBA")
-        )
+        graded_image.paste(mon_image, mon_image_offset, mon_image.convert("RGBA"))
     except OSError:
-        print(
-            f"Image for {curr_stats['mon_name']} not found at {mon_image_path}"
-        )
+        print(f"Image for {curr_stats['mon_name']} not found at {mon_image_path}")
 
     # Create stats bar chart and add it to the image
     stats_values = list(iv_stats.values())[::-1]
@@ -759,8 +710,7 @@ def create_graded_mon_img(
     mon_image_bottom = mon_image_offset[1] + mon_image.height
     stat_bar_position = (
         int((width - stat_bar_chart_image.width) // 2),  # Center horizontally
-        mon_image_bottom
-        + chart_spacing,  # Position below mon image with spacing
+        mon_image_bottom + chart_spacing,  # Position below mon image with spacing
     )
     graded_image.paste(
         stat_bar_chart_image,
@@ -877,9 +827,7 @@ def create_graded_mon_img(
             underline_color = "red"  # White underline
         underline_thickness = 4
 
-        underline_length = name_text_size[
-            0
-        ]  # Underline slightly longer than text
+        underline_length = name_text_size[0]  # Underline slightly longer than text
 
         name_text_underline_image = Image.new(
             "RGBA", (underline_length, underline_thickness), (0, 0, 0, 0)
@@ -907,9 +855,7 @@ def create_graded_mon_img(
         # Add catch id text to bottom right corner
         catch_id_text = f"{curr_stats['catch_id']}"
         catch_id_font = ImageFont.truetype("data/fonts/Cabal.ttf", 20)
-        catch_id_text_bbox = draw.textbbox(
-            (0, 0), catch_id_text, font=catch_id_font
-        )
+        catch_id_text_bbox = draw.textbbox((0, 0), catch_id_text, font=catch_id_font)
         catch_id_text_size = (
             catch_id_text_bbox[2] - catch_id_text_bbox[0],
             catch_id_text_bbox[3] - catch_id_text_bbox[1],

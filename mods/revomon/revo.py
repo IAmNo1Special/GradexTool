@@ -6,9 +6,7 @@ class PriceTracker(commands.Cog):
     def __init__(self, gradex: commands.Bot):
         self.gradex = gradex
         self.revo_url = "https://api.coingecko.com/api/v3/coins/revomon-2?localization=false&tickers=false&market_data=true&community_data=false&sparkline=false&developer_data=false"
-        self.price_channel_id = (
-            1254142506178838558  # Replace with your channel ID
-        )
+        self.price_channel_id = 1254142506178838558  # Replace with your channel ID
         self.update_price.start()
 
     def get_revo_price(self):

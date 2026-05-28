@@ -6,8 +6,9 @@ from io import BytesIO
 import discord
 import requests
 from discord.ext import commands
-from utils.helpers import respond
 from PIL import Image, ImageDraw, ImageFont
+
+from utils.helpers import respond
 
 
 class PvpLeaderboard(commands.Cog):
@@ -149,9 +150,7 @@ class PvpLeaderboard(commands.Cog):
     async def update_rankings(self):
         try:
             pvp_channel = await self.gradex.get_channel(1251368616662929529)
-            old_leaderboards = [
-                message for message in pvp_channel.history(limit=2)
-            ]
+            old_leaderboards = [message for message in pvp_channel.history(limit=2)]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
             current_leaderboard = await pvp_channel.send(content="Loading...")
@@ -159,15 +158,11 @@ class PvpLeaderboard(commands.Cog):
                 try:
                     self.get_current_pvp_data()
                 except Exception as e:
-                    print(
-                        f"Error during update_rankings(get_current_pvp_data): {e}"
-                    )
+                    print(f"Error during update_rankings(get_current_pvp_data): {e}")
                 try:
                     self.update_pvp_image(self.rankings)
                 except Exception as e:
-                    print(
-                        f"Error during update_rankings(update_pvp_image): {e}"
-                    )
+                    print(f"Error during update_rankings(update_pvp_image): {e}")
                 try:
                     await current_leaderboard.edit(
                         content=None,
@@ -207,13 +202,9 @@ class PvpLeaderboard(commands.Cog):
                 self.get_current_pvp_data()
                 self.update_pvp_image(self.rankings)
                 embed = self.current_pvp_embed()
-                await respond(
-                    self.gradex, message=message, embed=embed, buttons=None
-                )
+                await respond(self.gradex, message=message, embed=embed, buttons=None)
         except Exception as e:
-            print(
-                f"An error occurred during PvP Rankings Keyword on_message: {e}"
-            )
+            print(f"An error occurred during PvP Rankings Keyword on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

@@ -40,9 +40,7 @@ class Buttons(commands.Cog):
     async def mon_button(self, name: str, row):
         print("Mon button is being created...")
         mon_info = RevomonTable().get_info(name)[0]
-        mon_emoji = f"<:{name}:{mon_info[-10]}>".replace(" ", "_").replace(
-            "-", "_"
-        )
+        mon_emoji = f"<:{name}:{mon_info[-10]}>".replace(" ", "_").replace("-", "_")
         dex_num = mon_info[0]
         mon_button = Button(
             label=f"{dex_num}. {name.title()}",
@@ -75,9 +73,7 @@ class Buttons(commands.Cog):
 
     async def stats_button(self):
         print("Stats button(Intro_buttons) is being created...")
-        stats_button = Button(
-            label="Stats", style=ButtonStyle.green, custom_id="stats"
-        )
+        stats_button = Button(label="Stats", style=ButtonStyle.green, custom_id="stats")
         stats_button.callback = self.on_button_click
         print("Stats button(Intro_buttons) has been created!")
         return stats_button
@@ -115,9 +111,7 @@ class Buttons(commands.Cog):
 
     async def moves_button(self):
         print("Moves button(Intro_buttons) is being created...")
-        moves_button = Button(
-            label="Moves", style=ButtonStyle.green, custom_id="moves"
-        )
+        moves_button = Button(label="Moves", style=ButtonStyle.green, custom_id="moves")
         moves_button.callback = self.on_button_click
         print("Moves button(Intro_buttons) has been created!")
         return moves_button
@@ -135,9 +129,7 @@ class Buttons(commands.Cog):
 
     async def types_button(self):
         print("Types button(Intro_buttons) is being created...")
-        types_button = Button(
-            label="Types", style=ButtonStyle.green, custom_id="types"
-        )
+        types_button = Button(label="Types", style=ButtonStyle.green, custom_id="types")
         types_button.callback = self.on_button_click
         print("Types button(Intro_buttons) has been created!")
         return types_button
@@ -362,10 +354,7 @@ class Buttons(commands.Cog):
         for token_id in curr_page_content:
             button = await self.land_button(token_id=token_id, row=row)
             view.add_item(button)
-            if (
-                len(view.children) % 3 == 0
-                or token_id == self.book_of_land_ids[-1][-1]
-            ):
+            if len(view.children) % 3 == 0 or token_id == self.book_of_land_ids[-1][-1]:
                 row += 1
             if row == 4 or token_id == self.book_of_land_ids[-1][-1]:
                 first_page_button = self.first_page_button_land(row=row)
@@ -430,9 +419,7 @@ class Buttons(commands.Cog):
                 self.attributes = get_attributes(revomon_name=custom_id.lower())
                 view = await self.intro_view(attributes=self.attributes)
                 embed = intro(self.attributes)
-                await interaction.followup.send(
-                    embed=embed, view=view, ephemeral=True
-                )
+                await interaction.followup.send(embed=embed, view=view, ephemeral=True)
                 print("Intro embed sent!")
 
             if "land " in custom_id.lower():
@@ -504,9 +491,7 @@ class Buttons(commands.Cog):
             if custom_id == "last_page_land":
                 await interaction.response.defer()
                 user_id = interaction.user.id
-                self.book_of_land_current_page[user_id] = len(
-                    self.book_of_land_ids
-                )
+                self.book_of_land_current_page[user_id] = len(self.book_of_land_ids)
                 if self.book_of_land_current_page[user_id] < 1:
                     self.book_of_land_current_page[user_id] = 1
                 view = await self.land_view(user_id=user_id)

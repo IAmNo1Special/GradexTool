@@ -55,9 +55,7 @@ class BcTierPoll(commands.Cog):
         mon_name = final_poll.question
         max_votes = max(votes.values())
         winning_tiers = [
-            tier
-            for tier, vote_count in votes.items()
-            if vote_count == max_votes
+            tier for tier, vote_count in votes.items() if vote_count == max_votes
         ]
         # await ended_poll.message.delete()
 
@@ -69,9 +67,7 @@ class BcTierPoll(commands.Cog):
         cdex_category = discord.utils.get(server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
 
         # Check if Tier List Forum already exists, if not create them
-        tier_vote_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-polls"
-        )
+        tier_vote_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         while tier_vote_forum is None:
             tier_vote_forum = discord.utils.get(
                 cdex_category.forums, name="tierlist-polls"
@@ -122,9 +118,7 @@ class BcTierPoll(commands.Cog):
         try:
             self.reset()
 
-            _, bc_vote_thread, _, _ = await self.create_tier_channels(
-                server=gra_server
-            )
+            _, bc_vote_thread, _, _ = await self.create_tier_channels(server=gra_server)
 
             # Define poll duration (31 days)
             dur = timedelta(hours=768)
@@ -166,12 +160,8 @@ class BcTierPoll(commands.Cog):
         gra_server = discord.utils.get(
             self.gradex.guilds, name="Global Revomon Association"
         )
-        cdex_category = discord.utils.get(
-            gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱"
-        )
-        voting_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-polls"
-        )
+        cdex_category = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
+        voting_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         if voting_forum is None:
             print("Creating new tier list voting forum")
             await self.create_polls(server=gra_server)
@@ -194,18 +184,14 @@ class BcTierPoll(commands.Cog):
             1800, 900, img_paths, font_size=40, row_gap=20
         )
         print(f"{full_format} Tier list image created")
-        tierlist_img_name = (
-            f"bc_tierlist({datetime.now().strftime('%m-%d-%Y')}).png"
-        )
+        tierlist_img_name = f"bc_tierlist({datetime.now().strftime('%m-%d-%Y')}).png"
         # tierlist_fp = f"./data/Images/Tierlists/{tierlist_img_name}"
         img_bytes = BytesIO()
         tier_list_image.save(img_bytes, format="PNG")
         img_bytes.seek(0)
         img_for_discord = img_bytes
         print(f"{full_format} Tier list image saved")
-        _, _, _, bc_results_thread = await self.create_tier_channels(
-            server=gra_server
-        )
+        _, _, _, bc_results_thread = await self.create_tier_channels(server=gra_server)
         print(f"{full_format} Tier list channels found")
         await bc_results_thread.send(
             file=discord.File(img_for_discord, filename=tierlist_img_name)
@@ -231,9 +217,7 @@ class BcTierPoll(commands.Cog):
         """Update the Baby Cup tier list based on poll results."""
         if self.is_new_month():
             for poll in self.bc_polls:
-                mon_name, bc_winning_tiers = await self.get_winning_tiers(
-                    poll=poll
-                )
+                mon_name, bc_winning_tiers = await self.get_winning_tiers(poll=poll)
 
                 if len(bc_winning_tiers) == 1:
                     new_tier = str(bc_winning_tiers[0])
@@ -251,9 +235,7 @@ class BcTierPoll(commands.Cog):
                 poll=self.bc_polls[0], img_paths=self.bc_img_paths, format="bc"
             )
 
-            forum: discord.ForumChannel = self.bc_polls[
-                0
-            ].message.channel.parent
+            forum: discord.ForumChannel = self.bc_polls[0].message.channel.parent
             bc_vote_thread: discord.Thread = discord.utils.get(
                 forum.threads, name="Baby-Cup-format"
             )

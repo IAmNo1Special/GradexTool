@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -67,18 +68,14 @@ Yululu Fruity""",
             color=discord.Color.red(),
         )
         # embed.add_field(name="__Fruity__", value="Barka\nCassius\nChamo\nChoda\nCozi\nDabip\nDefo\nDerlu\nEbla\nErtha\nFrin\nFrizy\nGlandu\nGlobop\nGolmon\nGolu\nGunko\nGupon\nInchu\nIota\nIssou\nJadwa\nJuiti\nKanda\nKankoo\nKaroto\nLee\nLiech\nMiopi\nMitsi\nNonomi\nOsef\nPaia\nPapille\nPapou\nPeachu\nPritcha\nPsiro\nRuka\nTavaa\nTerter\nTibli\nTipli\nToktok\nTrars\nTrigo\nTruduku\nVilvi\nVrio\nWilso\nWiltu\nYannoi\nYululu")
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class allfruitys_buttons(discord.ui.View):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

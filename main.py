@@ -24,6 +24,7 @@ gradex_tool: commands.Bot = commands.Bot(command_prefix="/", intents=intents)
 
 gradex_tool.remove_command("help")
 
+
 async def entrypoint(rebase: bool = False):
     logger.info(f"Starting Gradex Tool...\n{'-' * 50}")
     if rebase:
@@ -56,4 +57,5 @@ async def on_ready():
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(entrypoint(rebase=True))

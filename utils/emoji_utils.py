@@ -85,9 +85,7 @@ async def list_application_emojis():
             if response.status == 200:
                 emojis = await response.json()
                 for emoji in emojis["items"]:
-                    app_emojis.append(
-                        {"name": emoji["name"], "id": emoji["id"]}
-                    )
+                    app_emojis.append({"name": emoji["name"], "id": emoji["id"]})
             else:
                 print(
                     f"Failed to fetch emojis: {response.status} - {await response.text()}"
@@ -121,9 +119,7 @@ async def modify_application_emoji(emoji_id, new_name):
     payload = {"name": new_name}
 
     async with aiohttp.ClientSession() as session:
-        async with session.patch(
-            url, headers=headers, json=payload
-        ) as response:
+        async with session.patch(url, headers=headers, json=payload) as response:
             if response.status == 200:
                 emoji = await response.json()
                 print(f"Emoji modified: {emoji['name']} (ID: {emoji['id']})")
@@ -149,9 +145,7 @@ async def delete_application_emoji(emoji_id):
 
 async def create_emoji_from_url(img_url: str, emoji_name: str):
     image_data = await img_url_to_emoji_size(img_url)
-    emoji_obj = await create_application_emoji(
-        image_data, emoji_name=emoji_name
-    )
+    emoji_obj = await create_application_emoji(image_data, emoji_name=emoji_name)
     return emoji_obj
 
 
@@ -172,9 +166,7 @@ async def create_revomon_emojis():
                     mon_img_url, emoji_name=emoji_mon_name
                 )
                 emoji_list.append(emoji_obj)
-            if f"{emoji_mon_name}_shiny" in [
-                emoji["name"] for emoji in emoji_list
-            ]:
+            if f"{emoji_mon_name}_shiny" in [emoji["name"] for emoji in emoji_list]:
                 continue
             else:
                 attributes = get_attributes(mon_name)
@@ -202,9 +194,7 @@ async def create_land_emojis():
             continue
         else:
             land_img_url = land_info[7]
-            emoji_obj = await create_emoji_from_url(
-                land_img_url, emoji_name=emoji_name
-            )
+            emoji_obj = await create_emoji_from_url(land_img_url, emoji_name=emoji_name)
             emoji_list.append(emoji_obj)
             print(land_img_url)
     return emoji_list

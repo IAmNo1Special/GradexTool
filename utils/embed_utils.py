@@ -11,9 +11,7 @@ def intro(attributes: dict) -> Embed:
     embed.add_field(
         name="__Tier__", value=attributes["cdex_tier"].upper(), inline=False
     )
-    embed.add_field(
-        name="__Rarity__", value=attributes["rarity"].title(), inline=False
-    )
+    embed.add_field(name="__Rarity__", value=attributes["rarity"].title(), inline=False)
     if attributes["type2"] is None:
         embed.add_field(
             name="__Type__", value=attributes["type1"].title(), inline=False
@@ -42,9 +40,7 @@ def intro(attributes: dict) -> Embed:
             inline=False,
         )
     if attributes["evolution"] is None:
-        embed.add_field(
-            name="__Evolution__", value="Final Evolution", inline=False
-        )
+        embed.add_field(name="__Evolution__", value="Final Evolution", inline=False)
     else:
         embed.add_field(
             name="__Evolution__",
@@ -79,28 +75,20 @@ def land_intro(attributes: dict) -> Embed:
         color=Color.red(),
         url=f"https://tokentrove.com/collection/RevomonNovusLands/zkEVM-{attributes['token_id']}",
     )
-    embed.add_field(
-        name="__For Sale__", value=attributes["for_sale"], inline=False
-    )
+    embed.add_field(name="__For Sale__", value=attributes["for_sale"], inline=False)
     embed.add_field(
         name="__Price__",
         value=f"{round(attributes['for_sale_token'], 4)} {attributes['token_symbol']} · (${attributes['for_sale_usd']})",
         inline=False,
     ) if attributes["for_sale"] else None
-    embed.add_field(
-        name="__Token ID__", value=attributes["token_id"], inline=False
-    )
+    embed.add_field(name="__Token ID__", value=attributes["token_id"], inline=False)
     embed.add_field(
         name="__Land Owner__",
         value=f"{attributes['owners_address']}",
         inline=False,
     )
-    embed.add_field(
-        name="__Rarity__", value=attributes["rarity"].title(), inline=False
-    )
-    embed.add_field(
-        name="__Size__", value=attributes["size"].title(), inline=False
-    )
+    embed.add_field(name="__Rarity__", value=attributes["rarity"].title(), inline=False)
+    embed.add_field(name="__Size__", value=attributes["size"].title(), inline=False)
     embed.set_thumbnail(url=attributes["img_url"])
     embed.set_footer(text="The Elder's Library · Global Revomon Association")
     return embed
@@ -157,26 +145,19 @@ def compare_intros(attributes: dict, attributes2: dict) -> Embed:
             value=f"- {attributes['emoji']} | Final Evolution\n- {attributes2['emoji']} | Final Evolution",
             inline=False,
         )
-    elif (
-        attributes["evolution"] is not None and attributes2["evolution"] is None
-    ):
+    elif attributes["evolution"] is not None and attributes2["evolution"] is None:
         embed.add_field(
             name="__Evolution__",
             value=f"- {attributes['emoji']} | {attributes['evolution'].title()} -> {attributes['evolution_lvl']}\n- {attributes2['emoji']} | Final Evolution",
             inline=False,
         )
-    elif (
-        attributes["evolution"] is None and attributes2["evolution"] is not None
-    ):
+    elif attributes["evolution"] is None and attributes2["evolution"] is not None:
         embed.add_field(
             name="__Evolution__",
             value=f"- {attributes['emoji']} | Final Evolution\n- {attributes2['emoji']} | {attributes2['evolution'].title()} -> {attributes2['evolution_lvl']}",
             inline=False,
         )
-    elif (
-        attributes["evolution"] is not None
-        and attributes2["evolution"] is not None
-    ):
+    elif attributes["evolution"] is not None and attributes2["evolution"] is not None:
         embed.add_field(
             name="__Evolution__",
             value=f"- {attributes['emoji']} | {attributes['evolution'].title()} -> {attributes['evolution_lvl']}\n- {attributes2['emoji']} | {attributes2['evolution'].title()} -> {attributes2['evolution_lvl']}",
@@ -187,26 +168,19 @@ def compare_intros(attributes: dict, attributes2: dict) -> Embed:
         value=f"- {attributes['emoji']} | {attributes['evolution_tree']}\n- {attributes2['emoji']} | {attributes2['evolution_tree']}",
         inline=False,
     )
-    if (
-        attributes["ev_gains2"] is not None
-        and attributes2["ev_gains2"] is not None
-    ):
+    if attributes["ev_gains2"] is not None and attributes2["ev_gains2"] is not None:
         embed.add_field(
             name="__EV Gains From Battle__",
             value=f"- {attributes['emoji']} | {attributes['ev_gains1']} • {attributes['ev_gains2']}\n- {attributes2['emoji']} | {attributes2['ev_gains1']} • {attributes2['ev_gains2']}",
             inline=False,
         )
-    elif (
-        attributes["ev_gains2"] is None and attributes2["ev_gains2"] is not None
-    ):
+    elif attributes["ev_gains2"] is None and attributes2["ev_gains2"] is not None:
         embed.add_field(
             name="__EV Gains From Battle__",
             value=f"- {attributes['emoji']} | {attributes['ev_gains1']}\n- {attributes2['emoji']} | {attributes2['ev_gains1']} • {attributes2['ev_gains2']}",
             inline=False,
         )
-    elif (
-        attributes["ev_gains2"] is not None and attributes2["ev_gains2"] is None
-    ):
+    elif attributes["ev_gains2"] is not None and attributes2["ev_gains2"] is None:
         embed.add_field(
             name="__EV Gains From Battle__",
             value=f"- {attributes['emoji']} | {attributes['ev_gains1']} • {attributes['ev_gains2']}\n- {attributes2['emoji']} | {attributes2['ev_gains1']}",
@@ -233,32 +207,18 @@ def stats(attributes: dict):
         color=Color.red(),
         url=f"https://revomon.online/revodex/revomon/{attributes['name']}/",
     )
-    stats_embed.add_field(
-        name="__HP__", value=attributes["base_hp"], inline=True
-    )
-    stats_embed.add_field(
-        name="__Atk__", value=attributes["base_atk"], inline=True
-    )
-    stats_embed.add_field(
-        name="__Def__", value=attributes["base_def"], inline=True
-    )
-    stats_embed.add_field(
-        name="__SpA__", value=attributes["base_spa"], inline=True
-    )
-    stats_embed.add_field(
-        name="__SpD__", value=attributes["base_spd"], inline=True
-    )
-    stats_embed.add_field(
-        name="__Spe__", value=attributes["base_spe"], inline=True
-    )
+    stats_embed.add_field(name="__HP__", value=attributes["base_hp"], inline=True)
+    stats_embed.add_field(name="__Atk__", value=attributes["base_atk"], inline=True)
+    stats_embed.add_field(name="__Def__", value=attributes["base_def"], inline=True)
+    stats_embed.add_field(name="__SpA__", value=attributes["base_spa"], inline=True)
+    stats_embed.add_field(name="__SpD__", value=attributes["base_spd"], inline=True)
+    stats_embed.add_field(name="__Spe__", value=attributes["base_spe"], inline=True)
     stats_embed.add_field(name="", value="", inline=True)
     stats_embed.add_field(
         name="__Total__", value=attributes["total_stats"], inline=True
     )
     stats_embed.add_field(name="", value="", inline=True)
-    stats_embed.set_footer(
-        text="The Elder's Library · Global Revomon Association"
-    )
+    stats_embed.set_footer(text="The Elder's Library · Global Revomon Association")
     print("Stats embed has been created!")
     return stats_embed
 
@@ -329,9 +289,7 @@ def spawns(attributes: dict):
         name="__Rarity__",
         value=f"- {attributes['emoji']} | {attributes['rarity'].title()} ({attributes['spawn_rate']})",
     )
-    spawns_embed.set_footer(
-        text="The Elder's Library · Global Revomon Association"
-    )
+    spawns_embed.set_footer(text="The Elder's Library · Global Revomon Association")
     return spawns_embed
 
 
@@ -361,9 +319,7 @@ def moves(attributes: dict):
         description=f"__**Move List**__\n\n{move_list_str}",
         color=Color.red(),
     )
-    moves_embed.set_footer(
-        text="The Elder's Library · Global Revomon Association"
-    )
+    moves_embed.set_footer(text="The Elder's Library · Global Revomon Association")
     return moves_embed
 
 
@@ -388,9 +344,7 @@ def types(attributes: dict):
         url=f"https://revomon.online/revodex/revomon/{attributes['name']}/",
     )
     types_embed.set_image(url=attributes["type_chart_img"])
-    types_embed.set_footer(
-        text="The Elder's Library · Global Revomon Association"
-    )
+    types_embed.set_footer(text="The Elder's Library · Global Revomon Association")
     return types_embed
 
 
@@ -483,7 +437,5 @@ def compare_counterdexs(attributes: dict, attributes2: dict):
     )
     counterdex_logo = "https://s3.amazonaws.com/appforest_uf/f1674460627684x148979553672345730/Counterdexlogo.edit.png"
     compare_counterdex_embed.set_thumbnail(url=counterdex_logo)
-    compare_counterdex_embed.set_footer(
-        text="Counterdex · Global Revomon Association"
-    )
+    compare_counterdex_embed.set_footer(text="Counterdex · Global Revomon Association")
     return compare_counterdex_embed

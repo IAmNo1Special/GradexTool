@@ -11,6 +11,7 @@ from discord import (
     ui,
 )
 from discord.ext import commands
+
 from utils.revomon_utils import appraise_revomon, create_graded_mon_img
 
 # Define the URL for the Revomon API
@@ -51,9 +52,7 @@ class GradeCommand(commands.Cog):
         embed = Embed(
             title=f"Grade: {mon['grade_letter']} ({mon['grade_percent']}%)",
             description=f"**Role:** {mon['role']}\n**Nature Quality:** {mon['nature_quality']}",
-            color=Color.green()
-            if mon["grade_percent"] >= 80
-            else Color.orange(),
+            color=Color.green() if mon["grade_percent"] >= 80 else Color.orange(),
             url=f"https://revomon.online/revodex/revomon/{mon['mon_name']}/",
         )
 
@@ -70,9 +69,7 @@ class GradeCommand(commands.Cog):
 
         embed.add_field(name="Stat Focus", value=weight_desc, inline=False)
         embed.set_image(url="attachment://image.png")
-        embed.set_footer(
-            text="Competitive Grade v2.0 · Global Revomon Association"
-        )
+        embed.set_footer(text="Competitive Grade v2.0 · Global Revomon Association")
         return embed
 
     def grade_breakdown_embed(self, user_id):
@@ -118,13 +115,9 @@ class GradeCommand(commands.Cog):
                 else:
                     val_str = f"{iv_val} (Penalized)"
 
-            breakdown_text += (
-                f"**{s_name}**: {val_str} — Weight: {importance}\n"
-            )
+            breakdown_text += f"**{s_name}**: {val_str} — Weight: {importance}\n"
 
-        embed.add_field(
-            name="Stat Calculations", value=breakdown_text, inline=False
-        )
+        embed.add_field(name="Stat Calculations", value=breakdown_text, inline=False)
 
         # Nature impact
         nature_text = f"Nature: **{mon['mon_nature'].title()}**\nQuality: **{mon['nature_quality']}**"
@@ -135,9 +128,7 @@ class GradeCommand(commands.Cog):
         elif mon["nature_quality"] == "Poor":
             nature_text += "\n*-5% Penalty applied (Negative boost)*"
 
-        embed.add_field(
-            name="Nature Assessment", value=nature_text, inline=False
-        )
+        embed.add_field(name="Nature Assessment", value=nature_text, inline=False)
 
         embed.add_field(
             name="Formula",
@@ -150,12 +141,8 @@ class GradeCommand(commands.Cog):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @ui.button(
-            label="Grade", style=ButtonStyle.green, custom_id="grade_button"
-        )
-        async def grade_button(
-            self, interaction: Interaction, Button: ui.Button
-        ):
+        @ui.button(label="Grade", style=ButtonStyle.green, custom_id="grade_button")
+        async def grade_button(self, interaction: Interaction, Button: ui.Button):
             try:
                 user_id = interaction.user.id
                 message_id = interaction.message.id
@@ -167,9 +154,7 @@ class GradeCommand(commands.Cog):
                     attachments=[],
                     view=None,
                 )
-                appr = appraise_revomon(
-                    GradeCommand.mon_manager.mon_info[user_id]
-                )
+                appr = appraise_revomon(GradeCommand.mon_manager.mon_info[user_id])
                 if appr:
                     GradeCommand.mon_manager.mon_info[user_id].update(appr)
 
@@ -179,9 +164,7 @@ class GradeCommand(commands.Cog):
                     content=None,
                     attachments=[
                         File(
-                            GradeCommand.mon_manager.mon_info[user_id][
-                                "image_bytes"
-                            ],
+                            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"],
                             filename="image.png",
                         )
                     ],
@@ -246,9 +229,7 @@ class GradeCommand(commands.Cog):
                     f"An error occurred trying to click the 'MonInfoButtons6[Save]' Button from the grade_command script: {e}"
                 )
 
-        @ui.button(
-            label="Flex this Revomon", style=ButtonStyle.green, custom_id="Flex"
-        )
+        @ui.button(label="Flex this Revomon", style=ButtonStyle.green, custom_id="Flex")
         async def flex(self, interaction: Interaction, Button: ui.Button):
             try:
                 user_id = interaction.user.id
@@ -257,9 +238,7 @@ class GradeCommand(commands.Cog):
                 await interaction.followup.send(
                     files=[
                         File(
-                            GradeCommand.mon_manager.mon_info[user_id][
-                                "image_bytes"
-                            ],
+                            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"],
                             filename="image.png",
                         )
                     ],
@@ -280,18 +259,12 @@ class GradeCommand(commands.Cog):
             style=ButtonStyle.blurple,
             custom_id="why_this_grade",
         )
-        async def why_this_grade(
-            self, interaction: Interaction, Button: ui.Button
-        ):
+        async def why_this_grade(self, interaction: Interaction, Button: ui.Button):
             try:
                 user_id = interaction.user.id
-                embed = GradeCommand.grade_breakdown_embed(
-                    self, user_id=user_id
-                )
+                embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)
                 # Respond with a new ephemeral message instead of editing
-                await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:
                 print(
                     f"An error occurred trying to click the 'MonInfoButtons6[Why this grade?]' Button: {e}"
@@ -341,24 +314,12 @@ class GradeCommand(commands.Cog):
                             response["data"]["catchedRevomon"]["ability"]
                         ).lower(),
                         "shiny": response["data"]["catchedRevomon"]["shiny"],
-                        "hp_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivhp"])
-                        ),
-                        "atk_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivatk"])
-                        ),
-                        "def_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivdef"])
-                        ),
-                        "spa_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivspa"])
-                        ),
-                        "spd_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivspd"])
-                        ),
-                        "spe_iv": int(
-                            str(response["data"]["catchedRevomon"]["ivspe"])
-                        ),
+                        "hp_iv": int(str(response["data"]["catchedRevomon"]["ivhp"])),
+                        "atk_iv": int(str(response["data"]["catchedRevomon"]["ivatk"])),
+                        "def_iv": int(str(response["data"]["catchedRevomon"]["ivdef"])),
+                        "spa_iv": int(str(response["data"]["catchedRevomon"]["ivspa"])),
+                        "spd_iv": int(str(response["data"]["catchedRevomon"]["ivspd"])),
+                        "spe_iv": int(str(response["data"]["catchedRevomon"]["ivspe"])),
                         "hp_ev": 0,
                         "atk_ev": 0,
                         "def_ev": 0,
@@ -375,9 +336,7 @@ class GradeCommand(commands.Cog):
             image_bytes = BytesIO()
             grade_image.save(image_bytes, format="PNG")
             image_bytes.seek(0)
-            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"] = (
-                image_bytes
-            )
+            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"] = image_bytes
 
             await interaction.followup.send(
                 files=[File(image_bytes, filename="image.png")],

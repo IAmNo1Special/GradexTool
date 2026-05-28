@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -84,9 +85,7 @@ class evolutions(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class evolutions_buttons(discord.ui.View):
@@ -211,9 +210,7 @@ Azuroon	(Final Evolution)""",
             await interaction.response.defer()
             await interaction.followup.send(embed=page3_embed, ephemeral=True)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

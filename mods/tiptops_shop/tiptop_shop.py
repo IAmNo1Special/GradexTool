@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -42,13 +43,9 @@ class tiptop_shop(commands.Cog):
             embed.set_footer(text="Global Revomon Association")
             buttons = tiptop_shop.tiptop_shop_nft_items_buttons()
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=embed, view=buttons, ephemeral=True
-            )
+            await interaction.followup.send(embed=embed, view=buttons, ephemeral=True)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):
@@ -101,9 +98,7 @@ class tiptop_shop(commands.Cog):
             embed.set_footer(text="Global Revomon Association")
             buttons = tiptop_shop.igc_6000_nft_buttons()
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=embed, view=buttons, ephemeral=True
-            )
+            await interaction.followup.send(embed=embed, view=buttons, ephemeral=True)
 
         @discord.ui.button(
             label="60,000 IGC NFT",
@@ -125,9 +120,7 @@ class tiptop_shop(commands.Cog):
             embed.set_footer(text="Global Revomon Association")
             buttons = tiptop_shop.igc_60000_nft_buttons()
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=embed, view=buttons, ephemeral=True
-            )
+            await interaction.followup.send(embed=embed, view=buttons, ephemeral=True)
 
         @discord.ui.button(
             label="120,000 IGC NFT",
@@ -149,9 +142,7 @@ class tiptop_shop(commands.Cog):
             embed.set_footer(text="Global Revomon Association")
             buttons = tiptop_shop.igc_120000_nft_buttons()
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=embed, view=buttons, ephemeral=True
-            )
+            await interaction.followup.send(embed=embed, view=buttons, ephemeral=True)
 
     class igc_6000_nft_buttons(discord.ui.View):
         def __init__(self):

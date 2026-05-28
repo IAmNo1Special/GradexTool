@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -16,9 +17,7 @@ class help_keyword(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class gdex_help_buttons(discord.ui.View):
@@ -45,9 +44,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=mon_search_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=mon_search_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="2 | Move search",
@@ -213,9 +210,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=tier_list_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=tier_list_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="9 | EV Training Chart",
@@ -237,9 +232,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=ev_chart_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=ev_chart_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="10 | Spawn Locations",
@@ -261,9 +254,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=spawn_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=spawn_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="11 | Pokemon Counterparts",
@@ -284,9 +275,7 @@ class help_keyword(commands.Cog):
             pmon_help_embed.set_footer(
                 text="The Elder's Library · Global Revomon Association"
             )
-            await interaction.followup.send(
-                embed=pmon_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=pmon_help_embed, ephemeral=True)
 
     class help_buttons(discord.ui.View):
         def __init__(self):
@@ -352,9 +341,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=tts_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=tts_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="3 | Eazy's EV Daycare",
@@ -379,9 +366,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=eed_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=eed_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="4 | Eleven's Arena",
@@ -426,9 +411,7 @@ class help_keyword(commands.Cog):
                 text="The Elder's Library · Global Revomon Association"
             )
             await interaction.response.defer()
-            await interaction.followup.send(
-                embed=titles_help_embed, ephemeral=True
-            )
+            await interaction.followup.send(embed=titles_help_embed, ephemeral=True)
 
         @discord.ui.button(
             label="6 | GRA Online Presence",
@@ -461,9 +444,7 @@ TheGlobalRevomonAssociation@Gmail.com""",
             await interaction.response.defer()
             await interaction.followup.send(embed=op_help_embed, ephemeral=True)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -24,18 +25,14 @@ class allnatures(commands.Cog):
         embed.set_image(
             url="https://s3.amazonaws.com/appforest_uf/f1674293258259x900123748435524000/NATURE%20TABLE.jpg"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class nature_buttons(discord.ui.View):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

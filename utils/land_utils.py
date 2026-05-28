@@ -3,9 +3,7 @@ import aiohttp
 
 async def get_land_info_for_ids(token_ids: list) -> list:
     if len(token_ids) > 30:
-        token_ids_list = [
-            token_ids[i : i + 30] for i in range(0, len(token_ids), 30)
-        ]
+        token_ids_list = [token_ids[i : i + 30] for i in range(0, len(token_ids), 30)]
     else:
         token_ids_list = [token_ids]
 
@@ -103,19 +101,15 @@ async def get_land_owners_and_ids() -> list:
     owners = []
     for result in raw_data:
         if (
-            result["account_address"]
-            == "0xbc56eb15427dc7ec6e46cb42715c8b3f28c57c8d"
-            or result["account_address"]
-            == "0x0000000000000000000000000000000000000000"
+            result["account_address"] == "0xbc56eb15427dc7ec6e46cb42715c8b3f28c57c8d"
+            or result["account_address"] == "0x0000000000000000000000000000000000000000"
         ):
             continue
         owners_address = result["account_address"]
         if owners_address not in owners:
             owners.append(owners_address)
         token_id = result["token_id"]
-        clean_data.append(
-            {"owners_address": owners_address, "token_id": token_id}
-        )
+        clean_data.append({"owners_address": owners_address, "token_id": token_id})
     print("Raw land owner with land ids data cleaned")
 
     print("Finalizing land owner with land ids data...")
@@ -123,14 +117,9 @@ async def get_land_owners_and_ids() -> list:
     for owner in owners:
         owned_tokens = []
         for item in clean_data:
-            if (
-                item["owners_address"] == owner
-                and item["token_id"] not in owned_tokens
-            ):
+            if item["owners_address"] == owner and item["token_id"] not in owned_tokens:
                 owned_tokens.append(item["token_id"])
-        final_data.append(
-            {"owners_address": owner, "owned_tokens": owned_tokens}
-        )
+        final_data.append({"owners_address": owner, "owned_tokens": owned_tokens})
     print("Land owner with land ids data finalized")
 
     return final_data

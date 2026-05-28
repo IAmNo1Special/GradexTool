@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from data.gradexDB import AbilitiesTable, RevomonTable
 from utils.helpers import respond
 
@@ -15,9 +16,7 @@ class ability_search(commands.Cog):
             description=f"*{ability_info[1].capitalize()}*",
             color=discord.Color.red(),
         )
-        can_learn = RevomonTable().has_ability(
-            ability_name=ability_name.lower()
-        )
+        can_learn = RevomonTable().has_ability(ability_name=ability_name.lower())
         learned_by = ""
         for revomon in can_learn:
             learned_by += f"- *{revomon}*\n"
@@ -37,9 +36,7 @@ class ability_search(commands.Cog):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from data.gradexDB import FruitysTable
 from utils.helpers import respond
 
@@ -16,9 +17,7 @@ class fruity_search(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
         def fruity_search_embed(fruity_name):
-            fruity_info = FruitysTable().get_info(
-                fruity_name=fruity_name.lower()
-            )[0]
+            fruity_info = FruitysTable().get_info(fruity_name=fruity_name.lower())[0]
             embed = discord.Embed(
                 title=fruity_info[0].title(),
                 description=f"*{fruity_info[1].capitalize()}*",
@@ -32,9 +31,7 @@ class fruity_search(commands.Cog):
             embed.set_thumbnail(
                 url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
             )
-            embed.set_footer(
-                text="The Elder's Library · Global Revomon Association"
-            )
+            embed.set_footer(text="The Elder's Library · Global Revomon Association")
             return embed
 
         class fruity_search_buttons(discord.ui.View):

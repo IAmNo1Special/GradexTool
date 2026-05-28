@@ -3,12 +3,14 @@
 This module is responsible for discovering and loading all Gradex Tool Mods
 from the './mods' directory and its subdirectories.
 """
+
 import logging
 from pathlib import Path
 
 from discord.ext import commands
 
 logger = logging.getLogger(__name__)
+
 
 async def load_mods(gradex_tool: commands.Bot):
     """Discover and load all Gradex Tool Mods from the './mods' directory."""

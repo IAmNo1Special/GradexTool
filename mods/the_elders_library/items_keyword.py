@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -194,18 +195,14 @@ Yannoi Fruity
 Yululu Fruity""",
             color=discord.Color.red(),
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class allitems_buttons(discord.ui.View):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

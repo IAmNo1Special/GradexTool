@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -8,9 +9,7 @@ class allabilities(commands.Cog):
         self.gradex = gradex
 
     def allabilities_embed(self):
-        embed = discord.Embed(
-            title="Full Ability List", color=discord.Color.red()
-        )
+        embed = discord.Embed(title="Full Ability List", color=discord.Color.red())
         embed.add_field(
             name="__Ability__",
             value="Adaptability\nAftermath\nAnger Point\nBad Dreams\nBattery\nBattle Armor\nBig Pecks\nBlaze\nChlorophyll\nClear Body\nCloud Nine\nCompetitive\nCursed Body\nCute Charm\nDamp\nDark Aura\nDefiant\nDrizzle\nFlame Body\nFlare Boost\nFlash Fire\nFriend Guard\nGluttony\nGuts\nHarvest\nHealer\nHoney Gather\nHustle\nHyper Cutter\nInfiltrator\nInner Focus\nInsomnia\nIntimidate\nIron Fist\nKeen Eye\nKlutz\nLeaf Guard\nLevitate\nLight Metal\nLightning Rod\nMagic Bounce\nMarvel Scale\nMultiscale\nNatural Cure\nNo Guard\nOblivious\nOvercoat\nOvergrow\nPickup\nPlus\nToxic Point\nPrankster\nPressure\nQuick Feet\nRain Dish\nReckless\nRefrigerate\nRegenerator\nRivalry\nStone Head\nRun Away\nSand Force\nSand Rush\nSand Stream\nSand Veil\nScrappy\nSerene Grace\nShadow Tag\nShed Skin\nSheer Force\nShield Dust\nSniper\nSnow Warning\nSolar Power\nSoundproof\nSpeed Boost\nStatic\nSteadfast\nStorm Drain\nSturdy\nSuper Luck\nSwarm\nSwift Swim\nSynchronize\nTangled Feet\nTechnician\nTelepathy\nTorrent\nTough Claws\nUnburden\nUnnerve\nVital Spirit\nWater Absorb\nWeak Armor",
@@ -27,9 +26,7 @@ class allabilities(commands.Cog):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):
@@ -51,9 +48,7 @@ class allabilities(commands.Cog):
             if prompt == "all abilities" or prompt == "abilities":
                 embed = self.allabilities_embed()
                 buttons = self.allabilities_buttons()
-                await respond(
-                    self.gradex, message, embed=embed, view=buttons
-                )
+                await respond(self.gradex, message, embed=embed, view=buttons)
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 

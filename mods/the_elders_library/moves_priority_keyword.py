@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from utils.helpers import respond
 
 
@@ -15,18 +16,14 @@ class allprioritymoves(commands.Cog):
             name="__Priority Moves__",
             value="Helping Hand\nProtect\nDetect\nEndure\nMagic Coat\nSnatch\nKings Shield\nSpiky Shield\nBaneful Bunker\nFake Out\nWide Guard\nQuick Guard\nCrafty Shield\nSpotlight\nExtreme Speed\nFollow Me\nFeint\nRage Powder\nAlly Switch\nFirst Impression\nQuick Attack\nBide\nMach Punch\nSucker Punch\nVacuum Wave\nBullet Punch\nIce Shard\nShadow Sneak\nAqua Jet\nIon Deluge\nWater Shuriken\nPowder\nBaby Doll Eyes\nAcceleStone\nVital Throw\nFocus Punch\nBeak Blast\nShell Trap\nRevenge\nAvalanche\nCounter\nMirror Coat\nWhirlwind\nRoar\nCircle Throw\nDraconic Tail\nTrick Room\n",
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class allprioritymoves_buttons(discord.ui.View):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

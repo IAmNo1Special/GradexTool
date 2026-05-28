@@ -17,9 +17,7 @@ class SapDaddy2(commands.Cog):
             url="https://yt3.googleusercontent.com/lvlTdwCX8VHLYfI5i1mgVC704xzb_VlYT_XNVPEaqkY8EeMaRIJfmwnb-gZ6E1D-2wKzmRPS=s88-c-k-c0x00ffffff-no-rj"
         )
         embed.set_author(name="Sap Daddy")
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class sapdaddy_buttons(ui.View):

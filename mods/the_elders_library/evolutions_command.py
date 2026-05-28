@@ -1,5 +1,6 @@
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
+
 from utils.revomon_utils import get_evo_trees
 
 
@@ -18,9 +19,7 @@ class Evolutions2(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     @commands.Cog.listener()

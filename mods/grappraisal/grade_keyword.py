@@ -4,6 +4,7 @@ import aiohttp
 import discord
 from discord import ui
 from discord.ext import commands
+
 from utils.helpers import respond
 from utils.revomon_utils import appraise_revomon, create_graded_mon_img
 
@@ -78,9 +79,7 @@ class Grade(commands.Cog):
 
         embed.add_field(name="Stat Focus", value=weight_desc, inline=False)
         embed.set_image(url="attachment://image.png")
-        embed.set_footer(
-            text="Competitive Grade v2.0 · Global Revomon Association"
-        )
+        embed.set_footer(text="Competitive Grade v2.0 · Global Revomon Association")
         return embed
 
     def grade_breakdown_embed(self, user_id):
@@ -126,19 +125,13 @@ class Grade(commands.Cog):
                 else:
                     val_str = f"{iv_val} (Penalized)"
 
-            breakdown_text += (
-                f"**{s_name}**: {val_str} — Weight: {importance}\n"
-            )
+            breakdown_text += f"**{s_name}**: {val_str} — Weight: {importance}\n"
 
-        embed.add_field(
-            name="Stat Calculations", value=breakdown_text, inline=False
-        )
+        embed.add_field(name="Stat Calculations", value=breakdown_text, inline=False)
 
         # Nature impact
         nq = mon.get("nature_quality", "Neutral")
-        nature_text = (
-            f"Nature: **{mon['mon_nature'].title()}**\nQuality: **{nq}**"
-        )
+        nature_text = f"Nature: **{mon['mon_nature'].title()}**\nQuality: **{nq}**"
         if nq == "Perfect":
             nature_text += "\n*+5% Bonus applied (Optimal boost/drop)*"
         elif nq == "Good":
@@ -146,9 +139,7 @@ class Grade(commands.Cog):
         elif nq == "Poor":
             nature_text += "\n*-5% Penalty applied (Negative boost)*"
 
-        embed.add_field(
-            name="Nature Assessment", value=nature_text, inline=False
-        )
+        embed.add_field(name="Nature Assessment", value=nature_text, inline=False)
 
         embed.add_field(
             name="Formula",
@@ -176,9 +167,7 @@ class Grade(commands.Cog):
                     f"An error occurred trying to submit the 'GradeButton[Grade My Revomon]' Button from the Grade Keyword script: {e}"
                 )
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, button: discord.ui.Button
         ):
@@ -237,9 +226,7 @@ class Grade(commands.Cog):
                     await interaction.user.send(
                         files=[
                             discord.File(
-                                Grade.mon_manager.mon_info[user_id][
-                                    "image_bytes"
-                                ],
+                                Grade.mon_manager.mon_info[user_id]["image_bytes"],
                                 filename="image.png",
                             )
                         ],
@@ -250,9 +237,7 @@ class Grade(commands.Cog):
                     await interaction.response.send_message(
                         files=[
                             discord.File(
-                                Grade.mon_manager.mon_info[user_id][
-                                    "image_bytes"
-                                ],
+                                Grade.mon_manager.mon_info[user_id]["image_bytes"],
                                 filename="image.png",
                             )
                         ],
@@ -269,9 +254,7 @@ class Grade(commands.Cog):
             style=discord.ButtonStyle.green,
             custom_id="Flex",
         )
-        async def flex(
-            self, interaction: discord.Interaction, Button: ui.Button
-        ):
+        async def flex(self, interaction: discord.Interaction, Button: ui.Button):
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -306,9 +289,7 @@ class Grade(commands.Cog):
             try:
                 user_id = interaction.user.id
                 embed = Grade.grade_breakdown_embed(self, user_id=user_id)
-                await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:
                 print(
                     f"An error occurred trying to click the 'MonInfoButtons6[Why this grade?]' Button: {e}"
@@ -318,9 +299,7 @@ class Grade(commands.Cog):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):
@@ -350,9 +329,7 @@ class Grade(commands.Cog):
                 user_id = interaction.user.id
                 Grade.mon_manager.mon_info[user_id] = {
                     "catch_id": int(self.mon_catch_id),
-                    "mon_name": str(
-                        response["data"]["catchedRevomon"]["name"]
-                    ).lower(),
+                    "mon_name": str(response["data"]["catchedRevomon"]["name"]).lower(),
                     "mon_nature": str(
                         response["data"]["catchedRevomon"]["nature"]
                     ).lower(),
@@ -360,24 +337,12 @@ class Grade(commands.Cog):
                         response["data"]["catchedRevomon"]["ability"]
                     ).lower(),
                     "shiny": response["data"]["catchedRevomon"]["shiny"],
-                    "hp_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivhp"])
-                    ),
-                    "atk_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivatk"])
-                    ),
-                    "def_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivdef"])
-                    ),
-                    "spa_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivspa"])
-                    ),
-                    "spd_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivspd"])
-                    ),
-                    "spe_iv": int(
-                        str(response["data"]["catchedRevomon"]["ivspe"])
-                    ),
+                    "hp_iv": int(str(response["data"]["catchedRevomon"]["ivhp"])),
+                    "atk_iv": int(str(response["data"]["catchedRevomon"]["ivatk"])),
+                    "def_iv": int(str(response["data"]["catchedRevomon"]["ivdef"])),
+                    "spa_iv": int(str(response["data"]["catchedRevomon"]["ivspa"])),
+                    "spd_iv": int(str(response["data"]["catchedRevomon"]["ivspd"])),
+                    "spe_iv": int(str(response["data"]["catchedRevomon"]["ivspe"])),
                     "hp_ev": 0,
                     "atk_ev": 0,
                     "def_ev": 0,

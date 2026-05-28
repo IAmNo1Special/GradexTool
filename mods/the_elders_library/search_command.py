@@ -1,5 +1,6 @@
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
+
 from data.gradexDB import (
     AbilitiesTable,
     FruitysTable,
@@ -40,9 +41,7 @@ class SearchCommand(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def allabilities_embed(self):
@@ -57,9 +56,7 @@ class SearchCommand(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def fruity_search_embed(self, fruity_name):
@@ -69,13 +66,9 @@ class SearchCommand(commands.Cog):
             description=f"*{fruity_info[1].capitalize()}*",
             color=Color.red(),
         )
-        embed.add_field(
-            name="__**Type**__", value=fruity_info[2].title(), inline=True
-        )
+        embed.add_field(name="__**Type**__", value=fruity_info[2].title(), inline=True)
         # embed.set_thumbnail(url="") PLACEHOLDER FOR FRUITY IMAGE
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def allfruitys_embed(self):
@@ -88,9 +81,7 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         embed.add_field(name="__Name__", value=fruitys_str)
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def item_search_embed(self, item_name):
@@ -114,9 +105,7 @@ class SearchCommand(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def allitems_embed(self):
@@ -131,9 +120,7 @@ class SearchCommand(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
 
         return embed
 
@@ -160,9 +147,7 @@ class SearchCommand(commands.Cog):
             embed.add_field(
                 name="__**Accuracy**__", value=f"*{move_info[6]}*", inline=False
             )
-        embed.add_field(
-            name="__**PP**__", value=f"*{move_info[8]}*", inline=False
-        )
+        embed.add_field(name="__**PP**__", value=f"*{move_info[8]}*", inline=False)
         embed.add_field(name="__**Priority**__", value=f"*{move_info[9]}*")
         if move_info[1] is not None:
             embed.add_field(
@@ -175,27 +160,19 @@ class SearchCommand(commands.Cog):
             RevomonMovesTable().get_mons_for_move(move_name=move_info[2])
         ):
             learned_by += f"- *{revomon.title()}*\n"
-        embed.add_field(
-            name="__**Learned By**__", value=learned_by, inline=False
-        )
+        embed.add_field(name="__**Learned By**__", value=learned_by, inline=False)
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
 
         return embed
 
     def nature_search_embed(self, nature_name):
         nature_info = NaturesTable().get_info(nature_name.lower())[0]
-        embed = Embed(
-            title=f"{nature_info[0].title()} Nature", color=Color.red()
-        )
+        embed = Embed(title=f"{nature_info[0].title()} Nature", color=Color.red())
         if nature_info[1] is None:
-            embed.add_field(
-                name="__**Stat Boosted**__", value="*None*", inline=False
-            )
+            embed.add_field(name="__**Stat Boosted**__", value="*None*", inline=False)
         else:
             embed.add_field(
                 name="__**Stat Boosted**__",
@@ -203,9 +180,7 @@ class SearchCommand(commands.Cog):
                 inline=False,
             )
         if nature_info[2] is None:
-            embed.add_field(
-                name="__**Stat Reduced**__", value="*None*", inline=False
-            )
+            embed.add_field(name="__**Stat Reduced**__", value="*None*", inline=False)
         else:
             embed.add_field(
                 name="__**Stat Reduced**__",
@@ -227,9 +202,7 @@ class SearchCommand(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     def allnatures_embed(self):
@@ -249,9 +222,7 @@ class SearchCommand(commands.Cog):
         embed.set_image(
             url="https://s3.amazonaws.com/appforest_uf/f1674293258259x900123748435524000/NATURE%20TABLE.jpg"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     allowed_installs = app_commands.AppInstallationType(guild=True, user=True)
@@ -272,9 +243,7 @@ class SearchCommand(commands.Cog):
         try:
             if not name:
                 embed = self.allabilities_embed()
-                await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
             embed = self.ability_search_embed(ability_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -291,9 +260,7 @@ class SearchCommand(commands.Cog):
         try:
             if not name:
                 embed = self.allfruitys_embed()
-                await interaction.response.send_message(
-                    embed=embed, ephemeral=True
-                )
+                await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
             embed = self.fruity_search_embed(fruity_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -328,9 +295,7 @@ class SearchCommand(commands.Cog):
     @search_group.command(
         name="natures", description="Search for info about any Revomon nature."
     )
-    @app_commands.describe(
-        name="The name of the nature you'd like more info on."
-    )
+    @app_commands.describe(name="The name of the nature you'd like more info on.")
     async def natures(self, interaction: Interaction, name: str = None):
         if not name:
             embed = self.allnatures_embed()
@@ -342,16 +307,12 @@ class SearchCommand(commands.Cog):
     @search_group.command(
         name="revomon", description="Search for info about any Revomon."
     )
-    @app_commands.describe(
-        name="The name of the revomon you'd like more info on."
-    )
+    @app_commands.describe(name="The name of the revomon you'd like more info on.")
     async def revomon(self, interaction: Interaction, name: str = None):
         try:
             buttons = Buttons(self.gradex)
             if not name:
-                mon_main_view = await buttons.mon_view(
-                    user_id=interaction.user.id
-                )
+                mon_main_view = await buttons.mon_view(user_id=interaction.user.id)
                 await interaction.response.send_message(
                     view=mon_main_view, ephemeral=True
                 )
@@ -384,9 +345,7 @@ class SearchCommand(commands.Cog):
                     embed=embed, view=buttons, ephemeral=True
                 )
         except Exception as e:
-            print(
-                f"An error occurred during search_command(revomon subcommand): {e}"
-            )
+            print(f"An error occurred during search_command(revomon subcommand): {e}")
 
     # create a subcommand in the search_group comands with the name of "Lands". the subcommand has an option called "type" which is a choice of "gym", "clinic"
     """@search_group.command(name="land-nfts", description="Search for info about any Revomon Novus land. Leave all options blank to view all lands.")

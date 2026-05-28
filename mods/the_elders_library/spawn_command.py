@@ -8,15 +8,9 @@ class Spawn2(commands.Cog):
 
     def spawn_embed(self):
         embed = Embed(title="Spawn Chart", color=Color.red())
-        embed.add_field(
-            name="__Morning time__", value="(4:00 to 9:59)", inline=False
-        )
-        embed.add_field(
-            name="__Day Time__", value="(10:00 to 19:59)", inline=False
-        )
-        embed.add_field(
-            name="__Night Time__", value="(20:00 to 3:59)", inline=False
-        )
+        embed.add_field(name="__Morning time__", value="(4:00 to 9:59)", inline=False)
+        embed.add_field(name="__Day Time__", value="(10:00 to 19:59)", inline=False)
+        embed.add_field(name="__Night Time__", value="(20:00 to 3:59)", inline=False)
         embed.set_image(
             url="https://s3.amazonaws.com/appforest_uf/f1674461101975x224187182516942140/Counterdexspawnchart.png"
         )

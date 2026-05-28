@@ -26,9 +26,7 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member):
     if current_user:
         if current_user[4] != is_pro_status:
             # update existing user's membership status
-            users_data.update_user(
-                user_id=current_user[0], is_pro=is_pro_status
-            )
+            users_data.update_user(user_id=current_user[0], is_pro=is_pro_status)
             print("Existing User Updated!")
             return
     else:
@@ -49,14 +47,21 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member):
         )
         print("New User Added!")
 
-async def respond(gradex_tool:commands.Bot, message:discord.Message = None, embed:discord.Embed = None, buttons:discord.ui.View = None, file=None):
-        if not message.guild:
-            if is_pro_tamer(gradex_tool=gradex_tool, user=message.author):
-                await message.author.send(embed=embed, view=buttons, file=file)
-            else:
-                reply_message = f"{message.author.mention}\nYou must be a Pro or Pro+ Tamer to use your Gradex Tool from your DMs"
-                reply_message = await message.author.send(content=reply_message)
-                await reply_message.delete(delay=10)
-        elif message.guild:
-            await message.delete()
+
+async def respond(
+    gradex_tool: commands.Bot,
+    message: discord.Message = None,
+    embed: discord.Embed = None,
+    buttons: discord.ui.View = None,
+    file=None,
+):
+    if not message.guild:
+        if is_pro_tamer(gradex_tool=gradex_tool, user=message.author):
             await message.author.send(embed=embed, view=buttons, file=file)
+        else:
+            reply_message = f"{message.author.mention}\nYou must be a Pro or Pro+ Tamer to use your Gradex Tool from your DMs"
+            reply_message = await message.author.send(content=reply_message)
+            await reply_message.delete(delay=10)
+    elif message.guild:
+        await message.delete()
+        await message.author.send(embed=embed, view=buttons, file=file)

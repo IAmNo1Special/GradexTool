@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from data.gradexDB import NaturesTable
 from utils.helpers import respond
 
@@ -9,16 +10,12 @@ class nature_search(commands.Cog):
         self.gradex = gradex
 
     def nature_search_embed(self, nature_name):
-        nature_info = NaturesTable().get_info(nature_name=nature_name.lower())[
-            0
-        ]
+        nature_info = NaturesTable().get_info(nature_name=nature_name.lower())[0]
         embed = discord.Embed(
             title=f"{nature_info[0].title()} Nature", color=discord.Color.red()
         )
         if nature_info[1] is None:
-            embed.add_field(
-                name="__**Stat Boosted**__", value="*None*", inline=False
-            )
+            embed.add_field(name="__**Stat Boosted**__", value="*None*", inline=False)
         else:
             embed.add_field(
                 name="__**Stat Boosted**__",
@@ -26,9 +23,7 @@ class nature_search(commands.Cog):
                 inline=False,
             )
         if nature_info[2] is None:
-            embed.add_field(
-                name="__**Stat Reduced**__", value="*None*", inline=False
-            )
+            embed.add_field(name="__**Stat Reduced**__", value="*None*", inline=False)
         else:
             embed.add_field(
                 name="__**Stat Reduced**__",
@@ -49,18 +44,14 @@ class nature_search(commands.Cog):
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
-        embed.set_footer(
-            text="The Elder's Library · Global Revomon Association"
-        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
     class nature_search_buttons(discord.ui.View):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

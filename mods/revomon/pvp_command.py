@@ -152,9 +152,7 @@ class PvpLeaderboard2(commands.Cog):
         print("Revomon Mod(PvP Leaderboard Command) is ready!")
         print("---------------------------")
 
-    @app_commands.command(
-        name="pvp", description="Display the Podium leaderboards."
-    )
+    @app_commands.command(name="pvp", description="Display the Podium leaderboards.")
     @app_commands.allowed_installs(guilds=True, users=True)
     async def pvp(self, interaction: Interaction):
         await interaction.response.defer(ephemeral=True, thinking=True)
@@ -171,12 +169,8 @@ class PvpLeaderboard2(commands.Cog):
         except Exception as e:
             print(f"Error during pvp_command(current_pvp_embed): {e}")
 
-        file = File(
-            self.pvp_img["image_bytes"], filename="current_pvp_image.png"
-        )
-        await interaction.followup.send(
-            embed=curr_pvp_embed, file=file, ephemeral=True
-        )
+        file = File(self.pvp_img["image_bytes"], filename="current_pvp_image.png")
+        await interaction.followup.send(embed=curr_pvp_embed, file=file, ephemeral=True)
 
         # Close the BytesIO object after sending
         self.pvp_img["image_bytes"].close()

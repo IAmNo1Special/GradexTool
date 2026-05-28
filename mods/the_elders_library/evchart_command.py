@@ -26,9 +26,7 @@ class EvChart2(commands.Cog):
         print("The Elder's Library(EV Chart Command) is ready!")
         print("---------------------------")
 
-    @app_commands.command(
-        name="evchart", description="Displays the EV Training Chart."
-    )
+    @app_commands.command(name="evchart", description="Displays the EV Training Chart.")
     @app_commands.allowed_installs(guilds=True, users=True)
     async def evchart(self, interaction: Interaction):
         embed = self.evchart_embed()

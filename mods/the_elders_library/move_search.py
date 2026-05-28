@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+
 from data.gradexDB import MovesTable, RevomonMovesTable
 from utils.helpers import respond
 
@@ -12,13 +13,9 @@ class move_search(commands.Cog):
         move = MovesTable().get_info(move_name.lower())[0]
         embed = discord.Embed(title=move[2].title(), color=discord.Color.red())
         embed.add_field(name="__**Type**__", value=f"*{move[4]}*", inline=False)
-        embed.add_field(
-            name="__**Category**__", value=f"*{move[3]}*", inline=False
-        )
+        embed.add_field(name="__**Category**__", value=f"*{move[3]}*", inline=False)
         if move[-3] != 0:
-            embed.add_field(
-                name="__**Damage**__", value=f"*{move[-3]}*", inline=False
-            )
+            embed.add_field(name="__**Damage**__", value=f"*{move[-3]}*", inline=False)
         if move[-4] != 0.0:
             embed.add_field(
                 name="__**Accuracy**__",
@@ -33,9 +30,7 @@ class move_search(commands.Cog):
         for revomon in RevomonMovesTable().get_mons_for_move(move_name=move[2]):
             learned_by += f"- *{revomon}*\n"
         if learned_by:
-            embed.add_field(
-                name="__**Learned By**__", value=learned_by, inline=False
-            )
+            embed.add_field(name="__**Learned By**__", value=learned_by, inline=False)
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
@@ -47,9 +42,7 @@ class move_search(commands.Cog):
         def __init__(self):
             super().__init__(timeout=None)
 
-        @discord.ui.button(
-            label="❌", style=discord.ButtonStyle.red, custom_id="exit"
-        )
+        @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
             self, interaction: discord.Interaction, Button: discord.ui.Button
         ):

@@ -1,9 +1,10 @@
 from discord import Client, Message
 from discord.ext import commands
+
 from data.gradexDB import RevomonTable
-from utils.helpers import respond
 from utils.button_utils import Buttons
 from utils.embed_utils import compare_intros, intro
+from utils.helpers import respond
 from utils.revomon_utils import get_attributes
 
 
