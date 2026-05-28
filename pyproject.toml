@@ -1,0 +1,33 @@
+[project]
+name = "gradextool"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "discord-py>=2.7.1",
+    "httpx>=0.28.1",
+    "pillow>=12.2.0",
+    "plotly>=6.7.0",
+    "python-dotenv>=1.2.2",
+    "pytz>=2026.2",
+    "pyyaml>=6.0.1",
+    "requests>=2.34.2",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+line-length = 80
+indent-width = 4
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "D", "UP", "N"]
+ignore = ["D100", "D104", "E501", "D107", "D103"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
