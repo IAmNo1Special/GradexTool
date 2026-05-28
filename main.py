@@ -2,7 +2,6 @@
 
 import sys
 from os import getenv
-from pathlib import Path
 
 import discord
 from discord.ext import commands
