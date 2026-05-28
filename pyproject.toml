@@ -21,13 +21,21 @@ dev = [
 ]
 
 [tool.ruff]
-line-length = 80
+line-length = 88
 indent-width = 4
 target-version = "py313"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "D", "UP", "N"]
+select = ["E", "W", "F", "I", "B", "D", "C90", "UP", "N"]
 ignore = ["D100", "D104", "E501", "D107", "D103"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
