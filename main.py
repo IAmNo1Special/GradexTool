@@ -29,7 +29,6 @@ async def entrypoint(rebase: bool = False):
     if rebase:
         logger.info(f"Rebasing Gradex DB...\n{'-' * 50}")
         await update_gradex_db()
-    
 
     await load_mods()
 
