@@ -2,11 +2,12 @@
 
 import logging
 import sys
+from datetime import datetime
 from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 
-def setup_logging(name: str = "gradex_tool") -> logging.Logger:
+def setup_logging(name: str = "GradexTool") -> logging.Logger:
     """Configure logging to file and stdout.
 
     Args:
@@ -30,7 +31,8 @@ def setup_logging(name: str = "gradex_tool") -> logging.Logger:
         root_logger.addHandler(console_handler)
 
         # File handler
-        log_path = Path("logs", "gradex_tool.log")
+        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        log_path = Path("logs", f"GradexTool_{datetime_str}.log")
         log_path.parent.mkdir(parents=True, exist_ok=True)
         file_handler = RotatingFileHandler(
             log_path,
