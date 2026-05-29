@@ -2,6 +2,8 @@ from pathlib import Path
 
 import yaml
 
+PROJECT_ROOT = Path(__file__).parent.parent
+
 
 def get_config():
     """Load configuration from configs/config.yaml."""
