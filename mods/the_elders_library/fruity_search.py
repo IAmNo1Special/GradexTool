@@ -1,7 +1,7 @@
 import discord
+from data.gradexDB import FruitysTable
 from discord.ext import commands
 
-from data.gradexDB import FruitysTable
 from utils.helpers import respond
 
 
