@@ -1,7 +1,7 @@
 import discord
+from data.gradexDB import MovesTable, RevomonMovesTable
 from discord.ext import commands
 
-from data.gradexDB import MovesTable, RevomonMovesTable
 from utils.helpers import respond
 
 

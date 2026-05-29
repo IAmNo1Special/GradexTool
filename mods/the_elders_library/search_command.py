@@ -1,6 +1,3 @@
-from discord import Color, Embed, Interaction, app_commands
-from discord.ext import commands
-
 from data.gradexDB import (
     AbilitiesTable,
     FruitysTable,
@@ -10,6 +7,9 @@ from data.gradexDB import (
     RevomonMovesTable,
     RevomonTable,
 )
+from discord import Color, Embed, Interaction, app_commands
+from discord.ext import commands
+
 from utils.button_utils import Buttons
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes

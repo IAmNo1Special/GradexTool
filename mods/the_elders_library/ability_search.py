@@ -1,7 +1,7 @@
 import discord
+from data.gradexDB import AbilitiesTable, RevomonTable
 from discord.ext import commands
 
-from data.gradexDB import AbilitiesTable, RevomonTable
 from utils.helpers import respond
 
 
