@@ -10,7 +10,11 @@ wheels/
 # Environment variables
 .env
 # Data files
-data/
+old_data/
+data/assets/revomon/
+data/assets/base_types/
+data/assets/type_charts/
+data/*.json
 # Logs
 logs/
 # Test files
