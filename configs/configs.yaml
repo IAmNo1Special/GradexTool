@@ -1,0 +1,39 @@
+GRA_GUILD_ID: 975120830193369088
+PRO_TAMER_ROLE_IDS:
+  - 1075670121097469965
+  - 997404663525683263
+  - 975592186177531914
+  - 975592348744556555
+  - 990783815771385896
+REVOMON_REVODEX_ENDPOINT: "https://api.revomon.io/revomon/revodex"
+REVOMON_RAW_IMAGE_ENDPOINT: "https://nft.revomon.io/image/raw/revomon"
+REVOMON_NFT_IMAGE_ENDPOINT: "https://nft.revomon.io/image/revomon"
+REVOMON_BASE_TYPES_IMAGE_ENDPOINT: "https://app-v2.revomon.io/static/images/types"
+REVOMON_MOVES_ENDPOINT: "https://api.revomon.io/revomon/moves"
+POKEAPI_NATURES_ENDPOINT: "https://pokeapi.co/api/v2/nature?limit=25"
+POKEAPI_NATURE_ENDPOINT: "https://pokeapi.co/api/v2/nature"
+POKEAPI_MEDICINE_CATEGORY_ENDPOINT: "https://pokeapi.co/api/v2/item-category/26"
+POKEAPI_ITEM_ENDPOINT: "https://pokeapi.co/api/v2/item"
+REVOMON_FILE: "data/revomon.json"
+EVOLUTIONS_FILE: "data/evolutions.json"
+ABILITIES_FILE: "data/abilities.json"
+UNKNOWN_ABILITIES_FILE: "data/unknown_abilities.json"
+BASE_TYPES_FILE: "data/base_types.json"
+MOVEPOOLS_FILE: "data/movepools.json"
+MOVES_FILE: "data/moves.json"
+TYPE_CHARTS_FILE: "data/type_charts.json"
+MISSING_TYPE_CHARTS_FILE: "data/missing_type_charts.json"
+NATURES_FILE: "data/natures.json"
+MEDICINES_FILE: "data/medicines.json"
+ITEMS_FILE: "data/items.json"
+FRUITYS_FILE: "data/fruitys.json"
+CAUGHT_REVOMON_FILE: "data/caught_revomon.json"
+CAUGHT_REVOMON_SCAN_STATE_FILE: "data/caught_revomon_scan_state.json"
+CAPSULES_FILE: "data/capsules.json"
+TYPE_CHART_IMAGES_DIR: "data/assets/type_charts"
+BASE_TYPES_IMAGES_DIR: "data/assets/base_types"
+REVOMON_RAW_IMAGES_DIR: "data/assets/revomon/raw"
+REVOMON_NFT_IMAGES_DIR: "data/assets/revomon/nft"
+REVOMON_IMAGES_DOWNLOAD_MANIFEST: "data/assets/revomon/download_results.json"
+USER_AGENT: "Mozilla/5.0 (compatible; Global Revomon Association)"
+GRADEX_DB_PATH: "data/gradex.db"
