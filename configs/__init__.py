@@ -12,6 +12,8 @@ def _get_configs():
         return yaml.safe_load(f)
 
 
-CONFIG = get_config()
-GRA_GUILD_ID = CONFIG.get("gra_guild_id")
-PRO_TAMER_ROLE_IDS = CONFIG.get("pro_tamer_role_ids", [])
+_configs = _get_configs()
+GRA_GUILD_ID = _configs.get("GRA_GUILD_ID")
+PRO_TAMER_ROLE_IDS = _configs.get("PRO_TAMER_ROLE_IDS", [])
+
+__all__ = ["PROJECT_ROOT", "GRA_GUILD_ID", "PRO_TAMER_ROLE_IDS"]
