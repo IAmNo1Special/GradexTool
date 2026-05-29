@@ -5,10 +5,10 @@ import yaml
 PROJECT_ROOT = Path(__file__).parent.parent
 
 
-def get_config():
-    """Load configuration from configs/config.yaml."""
-    config_path = Path(__file__).parent / "config.yaml"
-    with open(config_path) as f:
+def _get_configs():
+    """Load configuration from configs/configs.yaml."""
+    configs_path = Path(PROJECT_ROOT, "configs", "configs.yaml")
+    with open(configs_path) as f:
         return yaml.safe_load(f)
 
 
