@@ -1,7 +1,7 @@
 import discord
+from data.gradexDB import NaturesTable
 from discord.ext import commands
 
-from data.gradexDB import NaturesTable
 from utils.helpers import respond
 
 

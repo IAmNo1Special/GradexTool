@@ -1,8 +1,8 @@
+from data.gradexDB import OwnedLandsTable, RevomonTable
 from discord import ButtonStyle, Interaction
 from discord.ext import commands
 from discord.ui import Button, View
 
-from data.gradexDB import OwnedLandsTable, RevomonTable
 from utils.embed_utils import (
     compare_counterdexs,
     compare_moves,

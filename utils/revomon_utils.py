@@ -2,8 +2,6 @@ import io
 
 import plotly.graph_objects as go
 import requests
-from PIL import Image, ImageDraw, ImageFont
-
 from data.gradexDB import (
     CounterdexTable,
     NaturesTable,
@@ -12,6 +10,7 @@ from data.gradexDB import (
     RevomonTable,
     TypesTable,
 )
+from PIL import Image, ImageDraw, ImageFont
 
 max_iv_total = 186
 max_ev_total = 510

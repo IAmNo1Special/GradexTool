@@ -1,7 +1,7 @@
 import discord
+from data.gradexDB import ItemsTable
 from discord.ext import commands
 
-from data.gradexDB import ItemsTable
 from utils.helpers import respond
 
 
