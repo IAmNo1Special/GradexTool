@@ -1,3 +1,4 @@
+from typing import Any
 """Gradex Tool Guardrails for managing users."""
 
 import logging
@@ -14,7 +15,7 @@ logger = logging.getLogger(__name__)
 class UsersGuardrail(commands.Cog):
     """Users guardrail for managing users."""
 
-    def __init__(self, gradex_tool: commands.Bot):
+    def __init__(self, gradex_tool: commands.Bot) -> None:
         """Initialize the UsersGuardrail.
 
         Args:
@@ -24,13 +25,13 @@ class UsersGuardrail(commands.Cog):
         self.cog_name = "UsersGuardrail"
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         """Called when the bot is ready."""
         logger.info(f"{self.cog_name} is ready!")
         logger.info("-" * 50)
 
     @commands.Cog.listener()
-    async def on_message(self, message: Message):
+    async def on_message(self, message: Message) -> None:
         """Called when a message is sent.
 
         Args:
@@ -41,12 +42,12 @@ class UsersGuardrail(commands.Cog):
             return
         try:
             logger.info(f"Running user check for {message.author}")
-            await user_check(gradex_tool=self.gradex_tool, user=message.author)
+            await user_check(gradex_tool=self.gradex_tool, user=message.author)  # type: ignore[arg-type]
         except Exception as e:
             logger.error(f"An error occurred during main(on_message): {e}")
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: Member):
+    async def on_member_join(self, member: Member) -> None:
         """Called when a member joins a guild.
 
         Args:
@@ -68,8 +69,8 @@ class UsersGuardrail(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_completion(
-        self, interaction: Interaction, command: app_commands.Command
-    ):
+        self, interaction: Interaction, command: app_commands.Command  # type: ignore[type-arg]
+    ) -> None:
         """Called when an app command is completed.
 
         Args:
@@ -77,17 +78,17 @@ class UsersGuardrail(commands.Cog):
             command: The command that was executed.
         """
         logger.info(
-            f"Command {command.name} was executed by {interaction.user.name} in {interaction.guild.name} (ID: {interaction.guild.id})"
+            f"Command '{command.name}' was executed by {interaction.user.name} in {interaction.guild.name} (ID: {interaction.guild.id})"  # type: ignore[union-attr]
         )
         try:
-            await user_check(gradex_tool=interaction.client, user=interaction.user)
+            await user_check(gradex_tool=interaction.client, user=interaction.user)  # type: ignore[arg-type]
         except Exception as e:
             logger.error(
                 f"An error occurred during {self.cog_name}(on_app_command_completion): {e}"
             )
 
 
-async def setup(gradex_tool: commands.Bot):
+async def setup(gradex_tool: commands.Bot) -> None:
     """Set up the UsersGuardrail cog.
 
     Args:

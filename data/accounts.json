@@ -1,0 +1,216 @@
+{
+    "911508160408334366": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": true,
+        "energy": 100,
+        "max_energy": 100,
+        "last_energy_update": 1782140619.850036,
+        "arrival_time": 0.0,
+        "destination_city": "",
+        "destination_location": "",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "159": 100,
+            "4": 97,
+            "31": 93
+        },
+        "caught_revomon": [
+            {
+                "rc_id": 25,
+                "idRevomon": 277,
+                "name": "loftevo",
+                "level": 20,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782136327,
+                "nature": "docile",
+                "ability": "guts",
+                "ivs": {
+                    "hp": 29,
+                    "atk": 28,
+                    "def": 22,
+                    "spa": 7,
+                    "spd": 16,
+                    "spe": 18
+                },
+                "iv_percent": 64.52
+            },
+            {
+                "rc_id": 26,
+                "idRevomon": 707,
+                "name": "kasket",
+                "level": 8,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782138909,
+                "nature": "adamant",
+                "ability": "magician",
+                "ivs": {
+                    "hp": 26,
+                    "atk": 20,
+                    "def": 6,
+                    "spa": 14,
+                    "spd": 15,
+                    "spe": 3
+                },
+                "iv_percent": 45.16
+            },
+            {
+                "rc_id": 27,
+                "idRevomon": 227,
+                "name": "metaflutter",
+                "level": 7,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782140619,
+                "nature": "bashful",
+                "ability": "keen eye",
+                "ivs": {
+                    "hp": 7,
+                    "atk": 26,
+                    "def": 22,
+                    "spa": 0,
+                    "spd": 1,
+                    "spe": 27
+                },
+                "iv_percent": 44.62
+            }
+        ]
+    },
+    "978380891321675806": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": true,
+        "energy": 100,
+        "max_energy": 100,
+        "last_energy_update": 1782153106.6665466,
+        "arrival_time": 0.0,
+        "destination_city": "",
+        "destination_location": "",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "159": 5,
+            "4": 1,
+            "31": 1
+        },
+        "caught_revomon": [
+            {
+                "rc_id": 28,
+                "idRevomon": 824,
+                "name": "locuna",
+                "level": 25,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782153101,
+                "nature": "brave",
+                "ability": "technician",
+                "ivs": {
+                    "hp": 12,
+                    "atk": 20,
+                    "def": 23,
+                    "spa": 19,
+                    "spd": 2,
+                    "spe": 17
+                },
+                "iv_percent": 50.0
+            }
+        ]
+    },
+    "123": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": false,
+        "energy": 100,
+        "max_energy": 100,
+        "last_energy_update": 1782154156.9370859,
+        "arrival_time": 0.0,
+        "destination_city": "",
+        "destination_location": "",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "4": 2,
+            "31": 1
+        },
+        "caught_revomon": [
+            {
+                "rc_id": 29,
+                "idRevomon": 1,
+                "name": "dekute",
+                "level": 8,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782153786,
+                "nature": "hardy",
+                "ability": "unknown",
+                "ivs": {
+                    "hp": 0,
+                    "atk": 0,
+                    "def": 0,
+                    "spa": 0,
+                    "spd": 0,
+                    "spe": 0
+                },
+                "iv_percent": 0.0
+            },
+            {
+                "rc_id": 30,
+                "idRevomon": 1,
+                "name": "dekute",
+                "level": 10,
+                "xp": 0,
+                "is_shiny": false,
+                "captured_at": 1782153787,
+                "nature": "hardy",
+                "ability": "unknown",
+                "ivs": {
+                    "hp": 0,
+                    "atk": 0,
+                    "def": 0,
+                    "spa": 0,
+                    "spd": 0,
+                    "spe": 0
+                },
+                "iv_percent": 0.0
+            }
+        ]
+    },
+    "987654321": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": true,
+        "energy": 100,
+        "max_energy": 100,
+        "last_energy_update": 1782187604.6821806,
+        "arrival_time": 0.0,
+        "destination_city": "",
+        "destination_location": "",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "159": 5,
+            "4": 2,
+            "31": 1
+        },
+        "caught_revomon": []
+    }
+}

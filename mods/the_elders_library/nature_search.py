@@ -1,16 +1,17 @@
+from typing import Any
 import discord
-from data.gradexDB import NaturesTable
 from discord.ext import commands
 
+from data import NaturesTable
 from utils.helpers import respond
 
 
 class nature_search(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def nature_search_embed(self, nature_name):
-        nature_info = NaturesTable().get_info(nature_name=nature_name.lower())[0]
+    async def nature_search_embed(self, nature_name: Any) -> Any:
+        nature_info = await NaturesTable().get_info(nature_name=nature_name.lower())[0]  # type: ignore[index]
         embed = discord.Embed(
             title=f"{nature_info[0].title()} Nature", color=discord.Color.red()
         )
@@ -48,37 +49,39 @@ class nature_search(commands.Cog):
         return embed
 
     class nature_search_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Nature Search) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
 
         try:
             prompt = message.content.lower().strip()
-            if prompt in NaturesTable().get_names():
+            if prompt in await NaturesTable().get_names():
                 embed = self.nature_search_embed(prompt)
                 buttons = self.nature_search_buttons()
                 await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons
+                    self.gradex, message=message, embed=embed, buttons=buttons  # type: ignore[arg-type]
                 )
         except Exception as e:
             print(f"An error occurred during 'nature_search' on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(nature_search(gradex))

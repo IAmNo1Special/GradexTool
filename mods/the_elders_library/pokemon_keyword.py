@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class pokemon_keyword(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def pokemon_embed(self):
+    def pokemon_embed(self) -> Any:
         embed = discord.Embed(
             title="Revomon to Pokemon",
             description="""__**Revomon**__ <---> __**Pokémon**__
@@ -88,22 +89,24 @@ Twinkletree <---> Shiinotic""",
         return embed
 
     class pokemon_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Pokemon Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -120,5 +123,5 @@ Twinkletree <---> Shiinotic""",
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(pokemon_keyword(gradex))

@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class allfruitys(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def allfruitys_embed():
+    def allfruitys_embed() -> Any:  # type: ignore[misc]
         embed = discord.Embed(
             title="Full Fruity List",
             description="""__**Fruity Name**__
@@ -72,22 +73,24 @@ Yululu Fruity""",
         return embed
 
     class allfruitys_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(All Fruitys Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -104,5 +107,5 @@ Yululu Fruity""",
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(allfruitys(gradex))

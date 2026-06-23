@@ -5,30 +5,36 @@ A comprehensive Discord bot for the Revomon gaming community, providing game dat
 ## Features
 
 - **The Elder's Library**: Extensive search commands for Revomon game data
+
   - Ability, item, move, nature, and Revomon lookups
   - Evolution trees and spawn information
   - Type charts and tier lists
 
 - **Grappraisal**: Competitive grading system for Revomon
+
   - IV/EV analysis with role-based stat weights
   - Grade letter and percentage calculations
   - Visual grade breakdowns
 
 - **Leaderboards**: Real-time podium and PvP rankings
+
   - Current podium leaderboard
   - Weekly podium tracking
   - PvP rankings display
 
 - **Price Tracking**: Live REVO token price updates
+
   - Updates Discord channel name every 3 minutes
   - Coingecko API integration
 
 - **Land Integration**: Immutable X land NFT data
+
   - Land owner information
   - Sales data tracking (updated every 10 minutes)
   - Biome and rarity information
 
 - **User Management**: Pro Tamer role verification
+
   - Automatic user tracking
   - Role-based access control
   - DM restrictions for non-Pro users
@@ -99,9 +105,9 @@ python main.py
 The bot will:
 
 1. Rebuild the Gradex database from JSON sources and APIs
-2. Load all mods
-3. Start the Discord bot
-4. Sync slash commands
+1. Load all mods
+1. Start the Discord bot
+1. Sync slash commands
 
 ### Database Rebase
 
@@ -197,9 +203,9 @@ The project uses Ruff for linting with the following configuration:
 ### Adding a New Mod
 
 1. Create a new directory in `mods/` or add a file directly
-2. Create a cog class inheriting from `commands.Cog`
-3. Implement the `setup(gradex_bot)` async function
-4. The mod loader will automatically discover and load it
+1. Create a cog class inheriting from `commands.Cog`
+1. Implement the `setup(gradex_bot)` async function
+1. The mod loader will automatically discover and load it
 
 Example:
 
@@ -221,9 +227,9 @@ async def setup(gradex: commands.Bot):
 ### Adding a Database Table
 
 1. Create a new table class in `data/gradexDB.py`
-2. Implement `create()`, `rebuild()`, `export_to_json()`, `count_entries()`
-3. Add it to the `update_gradex_db()` function
-4. Use the pattern from existing tables
+1. Implement `create()`, `rebuild()`, `export_to_json()`, `count_entries()`
+1. Add it to the `update_gradex_db()` function
+1. Use the pattern from existing tables
 
 ## Known Issues
 

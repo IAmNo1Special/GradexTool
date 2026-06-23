@@ -1,3 +1,4 @@
+from typing import Any
 """Global Standard Tier List cog for managing tier voting and results."""
 
 import asyncio
@@ -8,7 +9,7 @@ import discord
 import pytz
 from discord.ext import commands, tasks
 
-from data.gradexDB import RevomonTable
+from data import RevomonTable
 from utils.revomon_utils import get_attributes
 from utils.tl_img_gen import create_tier_list_with_images
 
@@ -16,7 +17,7 @@ from utils.tl_img_gen import create_tier_list_with_images
 class GsTierPoll(commands.Cog):
     """Global Standard Tier Poll cog for managing tier voting and results."""
 
-    def __init__(self, gradex_tool: commands.Bot):
+    def __init__(self, gradex_tool: commands.Bot) -> None:
         self.gradex_tool = gradex_tool
         self.gs_polls: list[discord.Poll] = list()
         self.gs_img_paths: dict[str, list[str]] = {
@@ -27,30 +28,36 @@ class GsTierPoll(commands.Cog):
             "D": [],
         }
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the tier poll data."""
         self.gs_polls = list()
         self.gs_img_paths = {"S": [], "A": [], "B": [], "C": [], "D": []}
 
-    def is_new_month(self):
+    def is_new_month(self) -> Any:
         """Check if it's a new month."""
         est_tz = pytz.timezone("America/New_York")
         today = datetime.now(tz=est_tz)
         if today.day == 1:
             return True
 
-    async def get_winning_tiers(self, poll: discord.Poll):
+    async def get_winning_tiers(self, poll: discord.Poll) -> Any:
         """Get the winning tiers for a poll."""
         await poll.end()
         poll_msg = poll.message
+        if poll_msg is None:
+            return None, []
         await self.gradex_tool.wait_for(
             "message_edit",
             check=lambda before, after: (
                 before.author == poll_msg.author and before.id == poll_msg.id
             ),
         )
+        if poll_msg.poll is None:
+            return None, []
         print(f"{poll_msg.poll.question}'s poll has ended")
-        final_poll = poll_msg.poll
+        final_poll: Any = poll_msg.poll
+        if final_poll.answers is None:
+            return None, []
         votes = {answer: answer.vote_count for answer in final_poll.answers}
         mon_name = final_poll.question
         max_votes = max(votes.values())
@@ -61,14 +68,18 @@ class GsTierPoll(commands.Cog):
 
         return mon_name, winning_tiers
 
-    async def create_tier_channels(self, server: discord.Guild):
+    async def create_tier_channels(self, server: discord.Guild | None) -> Any:
         """Create tier list channels."""
+        if server is None:
+            return None, None, None, None
         print("attempting to create tier list channels")
         # Get the category with the name "𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱"
-        cdex_category = discord.utils.get(server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
+        cdex_category: Any = discord.utils.get(server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
+        if cdex_category is None:
+            return None, None, None, None
 
         # Check if Tier List Forum already exists, if not create them
-        tier_vote_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
+        tier_vote_forum: Any = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         while tier_vote_forum is None:
             tier_vote_forum = await cdex_category.create_forum(
                 name="tierlist-polls", topic="Tier List"
@@ -120,7 +131,7 @@ class GsTierPoll(commands.Cog):
             gs_results_thread,
         )
 
-    async def create_polls(self):
+    async def create_polls(self) -> None:
         """Create tier list polls."""
         try:
             gra_server = discord.utils.get(
@@ -135,8 +146,8 @@ class GsTierPoll(commands.Cog):
 
             # Define poll duration (31 days)
             dur = timedelta(hours=768)
-            for name in RevomonTable().get_names():
-                attribs = get_attributes(name)
+            for name in await RevomonTable().get_names():
+                attribs = await get_attributes(name)
                 if attribs["evolution"] == "None":
                     # Create the poll and add answer options
                     poll: discord.Poll = discord.Poll(
@@ -162,13 +173,17 @@ class GsTierPoll(commands.Cog):
         except Exception as e:
             print(f"Error during Eleven's Arena(Tier list): {e}")
 
-    async def open_polls(self):
+    async def open_polls(self) -> None:
         """Open tier list polls."""
         gra_server = discord.utils.get(
             self.gradex_tool.guilds, name="Global Revomon Association"
         )
-        cdex_category = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
-        voting_forum = discord.utils.get(cdex_category.forums, name="tierlist-polls")
+        if gra_server is None:
+            return
+        cdex_category: Any = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
+        if cdex_category is None:
+            return
+        voting_forum: Any = discord.utils.get(cdex_category.forums, name="tierlist-polls")
         if voting_forum is None:
             print("Creating new gs tier list voting")
             await self.create_polls()
@@ -185,9 +200,13 @@ class GsTierPoll(commands.Cog):
         poll: discord.Poll,
         img_paths: dict[str, list[str]],
         format: str = "gs",
-    ):
+    ) -> None:
         """Create, save, and send tier list image."""
+        if poll.message is None:
+            return
         gra_server = poll.message.guild
+        if gra_server is None:
+            return
         format = format.casefold()
         full_format = "Global Standard"
         tier_list_image = create_tier_list_with_images(
@@ -208,21 +227,21 @@ class GsTierPoll(commands.Cog):
         )
         print(f"{full_format} Tier list image sent")
 
-    async def begin_new_voting(self):
+    async def begin_new_voting(self) -> None:
         """Begin new voting cycle."""
         await asyncio.sleep(5)
         print("Beginning a new month of gs tier voting...")
         await self.open_polls()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         """Called when the bot is ready."""
         print("Eleven's Arena Mod(GStierlist Mod) is ready!")
         print("---------------------------")
         await self.begin_new_voting()
 
     @tasks.loop(hours=24.0)
-    async def update_gs_tierlist(self):
+    async def update_gs_tierlist(self) -> None:
         """Update GS tier list based on new month."""
         if self.is_new_month():
             for poll in self.gs_polls:
@@ -232,7 +251,8 @@ class GsTierPoll(commands.Cog):
                     new_tier = str(gs_winning_tiers[0])
                     print(f"{mon_name}'s new tier: {new_tier}")
                 else:
-                    new_tier = get_attributes(mon_name)["cdex_tier"]
+                    attr: Any = await get_attributes(mon_name)
+                    new_tier = str(attr["cdex_tier"])
                     print(f"{mon_name}'s tier remains unchanged: {new_tier}")
 
                 img_path = f"./data/Images/Revomon/{mon_name.title()}-nft.png"
@@ -244,16 +264,21 @@ class GsTierPoll(commands.Cog):
                 poll=self.gs_polls[0], format="gs", img_paths=self.gs_img_paths
             )
 
-            forum: discord.ForumChannel = self.gs_polls[0].message.channel.parent
-            bc_vote_thread: discord.Thread = discord.utils.get(
+            if self.gs_polls[0].message is None:
+                return
+            forum: Any = getattr(self.gs_polls[0].message.channel, "parent", None)
+            if forum is None:
+                return
+            bc_vote_thread: Any = discord.utils.get(
                 forum.threads, name="Baby-Cup-format"
             )
-            gs_vote_thread: discord.Thread = discord.utils.get(
+            gs_vote_thread: Any = discord.utils.get(
                 forum.threads, name="Global-Standard-format"
             )
-            await gs_vote_thread.delete(
-                reason=f"Tier Voting For The Global Standard Format Has Ended. {datetime.now().strftime('%m-%d-%Y')}"
-            )
+            if gs_vote_thread:
+                await gs_vote_thread.delete(
+                    reason=f"Tier Voting For The Global Standard Format Has Ended. {datetime.now().strftime('%m-%d-%Y')}"
+                )
             while bc_vote_thread is not None:
                 await asyncio.sleep(5)
                 bc_vote_thread = discord.utils.get(
@@ -263,7 +288,7 @@ class GsTierPoll(commands.Cog):
                 await self.begin_new_voting()
 
 
-async def setup(gradex_tool: commands.Bot):
+async def setup(gradex_tool: commands.Bot) -> None:
     try:
         await gradex_tool.add_cog(GsTierPoll(gradex_tool))
     except Exception:

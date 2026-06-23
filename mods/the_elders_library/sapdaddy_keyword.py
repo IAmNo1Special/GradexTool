@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class sapdaddy(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def sapdaddy_embed(self):
+    def sapdaddy_embed(self) -> Any:
         embed = discord.Embed(
             title="➡Sapdaddy's Official Youtube⬅",
             description="Select a video from below.",
@@ -26,7 +27,7 @@ class sapdaddy(commands.Cog):
         return embed
 
     class sapdaddy_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(
@@ -35,8 +36,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy1",
         )
         async def video1(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://youtu.be/watch?v=YE8zJM_zN98)",
@@ -49,8 +50,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy2",
         )
         async def video2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://youtu.be/watch?v=wewZChz-jlc)",
@@ -63,8 +64,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy3",
         )
         async def video3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=5SEzlyGON0E)",
@@ -77,8 +78,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy4",
         )
         async def video4(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=m9_OPeGfzE4)",
@@ -91,8 +92,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy5",
         )
         async def video5(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=8G3NFKtGWuo)",
@@ -105,8 +106,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy6",
         )
         async def video6(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=xEo4DDZXGOI)",
@@ -119,8 +120,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy7",
         )
         async def video7(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=Z9T03ckC-6c)",
@@ -133,8 +134,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy8",
         )
         async def video8(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=WOfw92OsXbk)\n\n*Spawn rates on all platforms are now the same*",
@@ -147,8 +148,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy9",
         )
         async def video9(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=XzLwvV52wao)",
@@ -161,8 +162,8 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy10",
         )
         async def video10(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=eDbmnfZ4mss)",
@@ -171,17 +172,19 @@ class sapdaddy(commands.Cog):
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Sap Daddy Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -197,5 +200,5 @@ class sapdaddy(commands.Cog):
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(sapdaddy(gradex))

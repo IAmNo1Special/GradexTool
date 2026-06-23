@@ -1,23 +1,16 @@
-# Python-generated files
 __pycache__/
 *.py[oc]
 build/
 dist/
 wheels/
 *.egg-info
-# Virtual environments
 .venv
-# Environment variables
 .env
-# Data files
-old_data/
-data/assets/revomon/
-data/assets/base_types/
-data/assets/type_charts/
-data/*.json
-# Logs
+experimental/
+data/assets/
+data/gradex.db
 logs/
-# Test files
-tests/
-# Ruff cache
 .ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.coverage

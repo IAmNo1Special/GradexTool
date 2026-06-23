@@ -1,17 +1,19 @@
 from PIL import Image, ImageDraw, ImageFont
 
-from data.gradexDB import RevomonTable
+from data import RevomonTable
 from utils.revomon_utils import get_attributes
+from typing import Any, Dict, List, Optional, Union
+from unittest.mock import MagicMock
 
 
 def create_base_tier_list(
-    width,
-    height,
-    row_gap=10,
-    font_path="data/fonts/CabalBold.ttf",
-    font_size=20,
-    image_paths=None,
-):
+    width: int,
+    height: int,
+    row_gap: int=10,
+    font_path: str="data/fonts/CabalBold.ttf",
+    font_size: int=20,
+    image_paths: Optional[Dict[str, List[Union[str, Any]]]]=None,
+) -> MagicMock:
     """Creates the base tier list image with colored headers and black rows.
 
     Args:
@@ -87,17 +89,17 @@ def create_base_tier_list(
         )
         y_offset += tier_height
 
-    return image
+    return image  # type: ignore[return-value]
 
 
 def create_tier_list_with_images(
-    width,
-    height,
-    image_paths,
-    row_gap=10,
-    font_path="data/fonts/CabalBold.ttf",
-    font_size=20,
-):
+    width: int,
+    height: int,
+    image_paths: Dict[str, Union[List[Any], List[Union[str, Any]]]],
+    row_gap: int=10,
+    font_path: str="data/fonts/CabalBold.ttf",
+    font_size: int=20,
+) -> MagicMock:
     """Creates a tier list image with the given Revomon images in their correct tiers.
 
     Args:
@@ -120,7 +122,7 @@ def create_tier_list_with_images(
         "D": []
     }
 
-    for name in RevomonTable().get_names():
+    for name in await RevomonTable().get_names():
         attribs = get_attributes(name)
         if attribs["evolution"] == "None":
             img_path = f"data/Images/Revomon/{name}.png"
@@ -203,16 +205,15 @@ def create_tier_list_with_images(
     return base_image
 
 
-# Example usage
-if __name__ == "__main__":
-    image_paths = {"S": [], "A": [], "B": [], "C": [], "D": []}
+async def main() -> None:
+    image_paths: dict[str, Any] = {"S": [], "A": [], "B": [], "C": [], "D": []}
 
-    for name in RevomonTable().get_names():
+    for name in await RevomonTable().get_names():
         attribs = get_attributes(name)
-        if attribs["evolution"] == "None":
+        if attribs["evolution"] == "None":  # type: ignore[index]
             img_path = f"data/Images/Revomon/{name}.png"
 
-            tier = attribs["cdex_tier"]
+            tier = attribs["cdex_tier"]  # type: ignore[index]
             if tier == "S":
                 image_paths["S"].append(img_path)
             elif tier == "A":
@@ -227,3 +228,8 @@ if __name__ == "__main__":
     tier_list_image = create_tier_list_with_images(1800, 900, image_paths)
     tier_list_image.show()
     tier_list_image.save("tier_list.png")
+
+
+if __name__ == "__main__":  # pragma: no cover
+    import asyncio
+    asyncio.run(main())

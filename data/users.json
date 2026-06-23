@@ -1,0 +1,16 @@
+[
+    {
+        "user_id": 1,
+        "username": "updated",
+        "wallet_connected": 1,
+        "wallet_address": "0x",
+        "is_pro": 0,
+        "is_certified": 0,
+        "experience_points": 100,
+        "battle_points": 50,
+        "victory_points": 10,
+        "wins": 5,
+        "losses": 2,
+        "draws": 1
+    }
+]
