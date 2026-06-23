@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class allabilities(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def allabilities_embed(self):
+    def allabilities_embed(self) -> Any:
         embed = discord.Embed(title="Full Ability List", color=discord.Color.red())
         embed.add_field(
             name="__Ability__",
@@ -23,22 +24,24 @@ class allabilities(commands.Cog):
         return embed
 
     class allabilities_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(All Abilities Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -48,10 +51,10 @@ class allabilities(commands.Cog):
             if prompt == "all abilities" or prompt == "abilities":
                 embed = self.allabilities_embed()
                 buttons = self.allabilities_buttons()
-                await respond(self.gradex, message, embed=embed, view=buttons)
+                await respond(self.gradex, message, embed=embed, view=buttons)  # type: ignore[call-arg]
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(allabilities(gradex))

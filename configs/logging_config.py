@@ -1,3 +1,4 @@
+from typing import Any
 """Centralized logging configuration."""
 
 import logging
@@ -26,6 +27,10 @@ def setup_logging(name: str = "GradexTool") -> logging.Logger:
         )
 
         # Console handler
+        try:
+            sys.stdout.reconfigure(errors="backslashreplace")
+        except Exception:
+            pass
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setFormatter(formatter)
         root_logger.addHandler(console_handler)

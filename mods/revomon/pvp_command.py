@@ -1,3 +1,4 @@
+from typing import Any
 import datetime
 from io import BytesIO
 
@@ -5,15 +6,18 @@ import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
+import discord.embeds
+from discord.ext.commands.bot import Bot
+from typing import Dict, List, Optional, Union
 
 
 class PvpLeaderboard2(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings = {}
-        self.pvp_img = {}
+        self.rankings: Optional[List[Dict[str, Union[str, int]]]] = None
+        self.pvp_img: Dict[str, Any] = {}
 
-    def get_current_pvp_data(self):
+    def get_current_pvp_data(self) -> None:
         ranks = [
             "first",
             "second",
@@ -65,14 +69,14 @@ class PvpLeaderboard2(commands.Cog):
 
         self.rankings = rankings_data
 
-    def update_pvp_image(self, data, output_path=None):
+    def update_pvp_image(self, data: Optional[List[Dict[str, Union[str, int]]]], output_path: None=None) -> None:
         img_width, cell_height = 1050, 50
         header_height = 40
         total_height = header_height + 15 * cell_height
         img = Image.new("RGB", (img_width, total_height), color=(0, 0, 0))
         draw = ImageDraw.Draw(img)
         try:
-            font = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
+            font: Any = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
         except Exception as e:
             print(f"Error loading font during update_pvp_image: {e}")
             font = ImageFont.load_default()
@@ -133,7 +137,7 @@ class PvpLeaderboard2(commands.Cog):
         except Exception as e:
             print(f"Error converting PIL image during update_pvp_image: {e}")
 
-    def current_pvp_embed(self):
+    def current_pvp_embed(self) -> discord.embeds.Embed:
         embed = Embed(
             title=None,
             description=None,
@@ -145,16 +149,16 @@ class PvpLeaderboard2(commands.Cog):
         return embed
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        buttons = []
-        for button in buttons:
-            self.gradex.add_view(button)
+    async def on_ready(self) -> None:
+        # buttons = []
+        # for button in buttons:
+        #     self.gradex.add_view(button)
         print("Revomon Mod(PvP Leaderboard Command) is ready!")
         print("---------------------------")
 
     @app_commands.command(name="pvp", description="Display the Podium leaderboards.")
     @app_commands.allowed_installs(guilds=True, users=True)
-    async def pvp(self, interaction: Interaction):
+    async def pvp(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True, thinking=True)
         try:
             self.get_current_pvp_data()

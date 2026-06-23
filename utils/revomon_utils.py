@@ -2,7 +2,9 @@ import io
 
 import plotly.graph_objects as go
 import requests
-from data.gradexDB import (
+from PIL import Image, ImageDraw, ImageFont
+
+from data import (
     CounterdexTable,
     NaturesTable,
     OwnedLandsTable,
@@ -10,17 +12,18 @@ from data.gradexDB import (
     RevomonTable,
     TypesTable,
 )
-from PIL import Image, ImageDraw, ImageFont
+from typing import Any, Dict, List, Optional, Tuple, Union
+from unittest.mock import MagicMock
 
 max_iv_total = 186
 max_ev_total = 510
 
 
-def get_attributes(revomon_name: str):
+async def get_attributes(revomon_name: str) -> Dict[str, Optional[Union[str, int, List[str]]]]:
     revomon_name = revomon_name.lower()
     revomon_table = RevomonTable()
     elements_table = TypesTable()
-    mon_info = revomon_table.get_info(revomon_name=revomon_name)[0]
+    mon_info = (await revomon_table.get_info(revomon_name=revomon_name))[0]
     ev_rewards = dict(
         zip(
             [
@@ -31,83 +34,82 @@ def get_attributes(revomon_name: str):
                 "Special Defense",
                 "Speed",
             ],
-            mon_info[23:29],
+            [
+                mon_info[23],
+                mon_info[24],
+                mon_info[25],
+                mon_info[26],
+                mon_info[27],
+                mon_info[28],
+            ],
         )
     )
-    ev_rewards = [
+    ev_rewards_list = [
         f"+ {boost} {stat_name}" for stat_name, boost in ev_rewards.items() if boost > 0
     ]
     attributes = {
         "name": mon_info[2],
         "num": mon_info[0],
-        "profile_img": mon_info[29],
-        "shiny_profile_img": mon_info[30],
-        "nft_img": mon_info[31],
-        "shiny_nft_img": mon_info[32],
-        "shiny_emoji": mon_info[34],
-        "emoji": mon_info[33],
+        "profile_img": None,
+        "shiny_profile_img": None,
+        "nft_img": None,
+        "shiny_nft_img": None,
+        "shiny_emoji": None,
+        "emoji": None,
         "main_description": mon_info[3],
-        "type1": mon_info[11],
-        "type1_img": mon_info[12],
-        "type2": mon_info[13],
-        "type2_img": mon_info[14],
-        "type_chart_img": elements_table.get_info(
-            type1=mon_info[11], type2=mon_info[13]
-        )[0][1],
-        "rarity": mon_info[4],
-        "ability1": mon_info[5],
-        "ability2": mon_info[6],
-        "abilityh": mon_info[7],
-        "evolution": mon_info[8],
-        "evolution_lvl": mon_info[9],
-        "evolution_tree": mon_info[10],
-        "ev_gains1": ev_rewards[0],
-        "ev_gains2": ev_rewards[1] if len(ev_rewards) > 1 else None,
-        "base_hp": mon_info[16],
-        "base_atk": mon_info[17],
-        "base_def": mon_info[18],
-        "base_spa": mon_info[19],
-        "base_spd": mon_info[20],
-        "base_spe": mon_info[21],
-        "total_stats": mon_info[22],
-        "spawn_loc1": mon_info[35],
-        "spawn_time1": mon_info[36],
-        "spawn_loc2": mon_info[37],
-        "spawn_time2": mon_info[38],
-        "spawn_loc3": mon_info[39],
-        "spawn_time3": mon_info[40],
-        "spawn_rate": mon_info[41],
-        "spawn_table": mon_info[42],
+        "type1": mon_info[4],
+        "type1_img": None,
+        "type2": mon_info[5],
+        "type2_img": None,
+        "type_chart_img": None,
+        "rarity": mon_info[17],
+        "ability1": mon_info[6],
+        "ability2": mon_info[7],
+        "abilityh": mon_info[8],
+        "evolution": mon_info[15],
+        "evolution_lvl": mon_info[16],
+        "evolution_tree": None,
+        "ev_gains1": ev_rewards_list[0] if len(ev_rewards_list) > 0 else None,
+        "ev_gains2": ev_rewards_list[1] if len(ev_rewards_list) > 1 else None,
+        "base_hp": mon_info[9],
+        "base_atk": mon_info[10],
+        "base_def": mon_info[11],
+        "base_spa": mon_info[12],
+        "base_spd": mon_info[13],
+        "base_spe": mon_info[14],
+        "total_stats": sum(filter(None, [mon_info[9], mon_info[10], mon_info[11], mon_info[12], mon_info[13], mon_info[14]])),
+        "spawn_loc1": None,
+        "spawn_time1": None,
+        "spawn_loc2": None,
+        "spawn_time2": None,
+        "spawn_loc3": None,
+        "spawn_time3": None,
+        "spawn_rate": None,
+        "spawn_table": None,
         "move_list": [
             move_info[0]
-            for move_info in RevomonMovesTable().get_moves_for_revomon(
+            for move_info in await RevomonMovesTable().get_moves_for_revomon(
                 mon_dex_id=mon_info[0]
             )
         ],
-        "cdex_tier": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][4],
-        "cdex_description": CounterdexTable().get_info(
-            revomon_name=mon_info[2].lower()
-        )[0][3],
-        "weakness": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][9],
-        "meta_build": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][
-            6
-        ],
-        "meta_moves": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][
-            5
-        ],
-        "tips": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][7],
-        "counters": CounterdexTable().get_info(revomon_name=mon_info[2].lower())[0][8],
+        "cdex_tier": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][4],
+        "cdex_description": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][3],
+        "weakness": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][9],
+        "meta_build": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][6],
+        "meta_moves": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][5],
+        "tips": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][7],
+        "counters": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][8],
     }
     return attributes
 
 
-def save_mon_imgs():
+async def save_mon_imgs() -> None:
     print("Getting names of all Revomon...")
-    all_mons_names = RevomonTable().get_names()
+    all_mons_names = await RevomonTable().get_names()
     print("Got names of all Revomon")
     for mon_name in all_mons_names:
         print(f"Getting attribs for {mon_name}...")
-        mon_attr = get_attributes(mon_name)
+        mon_attr = await get_attributes(mon_name)
         print(f"Got attribs for {mon_name}")
 
         try:
@@ -116,7 +118,7 @@ def save_mon_imgs():
                 print(f"{mon_name} Profile image already exists")
         except FileNotFoundError:
             print(f"Getting profile image for {mon_name}...")
-            mon_img_url = mon_attr["profile_img"]
+            mon_img_url = str(mon_attr["profile_img"])
             mon_img = requests.get(mon_img_url)
             # Check if the request was successful
             if mon_img.status_code == 200:
@@ -135,7 +137,7 @@ def save_mon_imgs():
                 print(f"{mon_name} Shiny Profile image already exists")
         except FileNotFoundError:
             print(f"Getting shiny profile image for {mon_name}...")
-            mon_shiny_img_url = mon_attr["shiny_profile_img"]
+            mon_shiny_img_url = str(mon_attr["shiny_profile_img"])
             mon_shiny_img = requests.get(mon_shiny_img_url)
             # Check if the request was successful
             if mon_shiny_img.status_code == 200:
@@ -154,7 +156,7 @@ def save_mon_imgs():
                 print(f"{mon_name} NFT image already exists")
         except FileNotFoundError:
             print(f"Getting nft image for {mon_name}...")
-            mon_nft_img_url = mon_attr["nft_img"]
+            mon_nft_img_url = str(mon_attr["nft_img"])
             mon_nft_img = requests.get(mon_nft_img_url)
             # Check if the request was successful
             if mon_nft_img.status_code == 200:
@@ -173,7 +175,7 @@ def save_mon_imgs():
                 print(f"{mon_name} Shiny Profile image already exists")
         except FileNotFoundError:
             print(f"Getting shiny nft image for {mon_name}...")
-            mon_shiny_nft_img_url = mon_attr["shiny_nft_img"]
+            mon_shiny_nft_img_url = str(mon_attr["shiny_nft_img"])
             mon_shiny_nft_img = requests.get(mon_shiny_nft_img_url)
             # Check if the request was successful
             if mon_shiny_nft_img.status_code == 200:
@@ -188,9 +190,9 @@ def save_mon_imgs():
     print("All Revomon images saved")
 
 
-def save_type_imgs():
+async def save_type_imgs() -> None:
     print("Getting names of all Types...")
-    elements: list = TypesTable().get_mono_types()
+    elements: List[str] = await TypesTable().get_mono_types()
     print("Got names of all Types")
     for element in elements:
         element = element.lower()
@@ -213,13 +215,13 @@ def save_type_imgs():
     print("All Type images saved")
 
 
-def get_natures():
-    natures = NaturesTable().get_names()
+async def get_natures() -> Any:
+    natures = await NaturesTable().get_names()
     return natures
 
 
-def get_nature_mods(nature: str):
-    nature_mods = {"hp": 1, "atk": 1, "def": 1, "spa": 1, "spd": 1, "spe": 1}
+def get_nature_mods(nature: str) -> Dict[str, Union[int, float]]:
+    nature_mods: Dict[str, Union[int, float]] = {"hp": 1, "atk": 1, "def": 1, "spa": 1, "spd": 1, "spe": 1}
     nature = nature.title()
     if (
         nature == "Adamant"
@@ -277,22 +279,23 @@ def get_nature_mods(nature: str):
     return nature_mods
 
 
-def get_perferred_natures(revomon_name):
+async def get_perferred_natures(revomon_name: str) -> List[str]:
     perferred_natures = []
-    mon_attr = get_attributes(revomon_name)
-    natures = get_natures()
+    mon_attr = await get_attributes(revomon_name)
+    natures = await get_natures()
+    meta_build = mon_attr["meta_build"]
     for nature in natures:
-        if mon_attr["meta_build"].contains(nature):
+        if meta_build and nature in meta_build:  # type: ignore
             perferred_natures.append(nature)
     return perferred_natures
 
 
-def get_evo_trees():
+def get_evo_trees() -> List[Union[Any, str]]:
     evo_trees = []
     evo_tree = ""
     # Fetch data from the Revomon API
     url = "https://api.revomon.io/revomon/revodex"
-    payload = {"idsCatchedRevomon": []}
+    payload: Dict[str, Any] = {"idsCatchedRevomon": []}
     response = requests.post(url, json=payload)
 
     if response.status_code == 200:
@@ -328,11 +331,11 @@ def get_evo_trees():
     return evo_trees
 
 
-def get_book_of_mon_names():
+async def get_book_of_mon_names() -> List[List[str]]:
     row = 0
     book = []
     pages = []
-    names = RevomonTable().get_names()
+    names = await RevomonTable().get_names()
     for name in names:
         if name == "wyverdant":
             continue
@@ -342,22 +345,23 @@ def get_book_of_mon_names():
         if name == names[-1]:
             book.append(pages)
             return book
-        if RevomonTable().get_info(name)[0][8] is None:
+        if (await RevomonTable().get_info(name))[0][8] is None:
             row += 1
             if row == 4:
                 book.append(pages)
                 pages = []
                 row = 0
             continue
+    return book
 
 
-def get_book_of_land_ids(token_ids: list = None):
+async def get_book_of_land_ids(token_ids: Optional[List[Any]] = None) -> List[List[int]]:
     row = 0
     book = []
     pages = []
     count = 0
     if token_ids is None:
-        token_ids = OwnedLandsTable().get_ids()
+        token_ids = await OwnedLandsTable().get_ids()
     for id in token_ids:
         pages.append(id)
         count += 1
@@ -373,9 +377,10 @@ def get_book_of_land_ids(token_ids: list = None):
                 row = 0
 
             continue
+    return book
 
 
-def get_grade(grade_percent: float):
+def get_grade(grade_percent: float) -> str:
     grade_letter = ""
     if grade_percent >= 90.9:
         grade_letter = "A+"
@@ -394,7 +399,7 @@ def get_grade(grade_percent: float):
     return grade_letter
 
 
-def get_stat_weights(base_stats: dict, mon_name: str = ""):
+def get_stat_weights(base_stats: Dict[str, Any], mon_name: str = "") -> Tuple[Dict[str, float], str]:
     """Determine stat weights based on base stats and competitive roles."""
     weights = {
         "hp": 1.0,
@@ -456,7 +461,7 @@ def get_stat_weights(base_stats: dict, mon_name: str = ""):
     return weights, role
 
 
-def evaluate_stat_iv(stat_name: str, iv: int, weight: float, role: str):
+def evaluate_stat_iv(stat_name: str, iv: int, weight: float, role: str) -> int:
     """Evaluate an IV based on its role and importance."""
     # Special Case: 0 Atk for Special Attackers
     if stat_name == "atk" and "Special Attacker" in role:
@@ -474,10 +479,10 @@ def evaluate_stat_iv(stat_name: str, iv: int, weight: float, role: str):
     return iv
 
 
-def appraise_revomon(mon_stats: dict):
+async def appraise_revomon(mon_stats: Dict[str, Any]) -> Optional[Dict[str, Union[str, int, float, Dict[str, float]]]]:
     try:
         mon_stats["lvl"] = 100
-        mon_attrib = get_attributes(mon_stats["mon_name"])
+        mon_attrib = await get_attributes(mon_stats["mon_name"])
 
         # 1. Standard Ivy Totals
         iv_raw = {
@@ -494,8 +499,8 @@ def appraise_revomon(mon_stats: dict):
         weights, role = get_stat_weights(mon_attrib, mon_stats["mon_name"])
 
         # 3. Calculate Weighted Score
-        weighted_iv_sum = 0
-        max_weighted_iv_sum = 0
+        weighted_iv_sum: float = 0.0
+        max_weighted_iv_sum: float = 0.0
 
         for stat, iv in iv_raw.items():
             w = weights[stat]
@@ -554,7 +559,7 @@ def appraise_revomon(mon_stats: dict):
         return None
 
 
-def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=None):
+def create_graded_mon_img(curr_stats: Dict[str, Any], score_percentage: Optional[float]=None, image_dir: Optional[str]=None) -> Any:
     # Directory containing the images
     image_dir = "./data/Images/Revomon"
     iv_stats = {
@@ -585,6 +590,8 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
     draw = ImageDraw.Draw(graded_image)
 
     # Define fonts
+    name_font: Any
+    small_font: Any
     try:
         name_font = ImageFont.truetype("data/fonts/CabalBold.ttf", 60)
         small_font = ImageFont.truetype("data/fonts/Cabal.ttf", 25)
@@ -631,6 +638,13 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
     else:
         filename = f"{curr_stats['mon_name'].title()}.png"
     mon_image_path = f"{image_dir}/{filename}"
+    # Calculate centered offset for mon image (default values if missing)
+    mon_image_offset = (
+        int((width - 400) / 2),
+        int(nature_ability_text_offset[1] + nature_ability_text_size[1] + text_spacing),
+    )
+    mon_image_height = 400
+
     try:
         mon_image = Image.open(mon_image_path).convert("RGBA")
 
@@ -640,11 +654,12 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
         # Calculate centered offset for mon image
         mon_image_offset = (
             int((width - mon_image.width) / 2),  # Center horizontally
-            nature_ability_text_offset[1]
+            int(nature_ability_text_offset[1]
             + nature_ability_text_size[1]
-            + text_spacing,  # Position below text
+            + text_spacing),  # Position below text
         )
         graded_image.paste(mon_image, mon_image_offset, mon_image.convert("RGBA"))
+        mon_image_height = mon_image.height
     except OSError:
         print(f"Image for {curr_stats['mon_name']} not found at {mon_image_path}")
 
@@ -706,10 +721,10 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
     stat_bar_chart_image = Image.open(stats_buffer)
 
     # Position the stat bar chart below the mon image, centered on the x-axis
-    mon_image_bottom = mon_image_offset[1] + mon_image.height
+    mon_image_bottom = int(mon_image_offset[1] + mon_image_height)
     stat_bar_position = (
         int((width - stat_bar_chart_image.width) // 2),  # Center horizontally
-        mon_image_bottom + chart_spacing,  # Position below mon image with spacing
+        int(mon_image_bottom + chart_spacing),  # Position below mon image with spacing
     )
     graded_image.paste(
         stat_bar_chart_image,
@@ -826,7 +841,7 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
             underline_color = "red"  # White underline
         underline_thickness = 4
 
-        underline_length = name_text_size[0]  # Underline slightly longer than text
+        underline_length = int(name_text_size[0])  # Underline slightly longer than text
 
         name_text_underline_image = Image.new(
             "RGBA", (underline_length, underline_thickness), (0, 0, 0, 0)
@@ -842,8 +857,8 @@ def create_graded_mon_img(curr_stats: dict, score_percentage=None, image_dir=Non
         )
 
         name_text_underline_offset = (
-            name_text_offset[0],
-            name_text_offset[1] + name_text_size[1] + 20,
+            int(name_text_offset[0]),
+            int(name_text_offset[1] + name_text_size[1] + 20),
         )  # Adjust y-offset based on preference
         graded_image.paste(
             name_text_underline_image,

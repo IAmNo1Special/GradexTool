@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class allmoves(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def allmoves_embed(self):
+    def allmoves_embed(self) -> Any:
         embed = discord.Embed(
             title="Full Move List (Page 1)",
             description="""__**Move**__
@@ -209,7 +210,7 @@ Heal Bell""",
         return embed
 
     class allmoves_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(
@@ -218,8 +219,8 @@ Heal Bell""",
             custom_id="All Moves 2",
         )
         async def allmoves_page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             allmoves2_embed = discord.Embed(
                 title="Full Move List (Page 2)",
                 description="""__**Move Name**__
@@ -431,8 +432,8 @@ Spikes""",
             custom_id="All Moves 3",
         )
         async def allmoves_page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
             allmoves3_embed = discord.Embed(
                 title="Full Move List (Page 3)",
                 description="""__**Move Name**__
@@ -549,17 +550,19 @@ Zen Headbutt""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(All Moves Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -576,5 +579,5 @@ Zen Headbutt""",
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(allmoves(gradex))

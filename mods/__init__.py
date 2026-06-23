@@ -1,3 +1,4 @@
+from typing import Any
 """Gradex Tool Mods Loader.
 
 This module is responsible for discovering and loading all Gradex Tool Mods
@@ -12,11 +13,11 @@ from discord.ext import commands
 logger = logging.getLogger(__name__)
 
 
-async def load_mods(gradex_tool: commands.Bot):
+async def load_mods(gradex_tool: commands.Bot) -> None:
     """Discover and load all Gradex Tool Mods from the './mods' directory."""
     logger.info(f"Loading Gradex Tool Mods...\n{'-' * 50}")
-    mods_dir = Path(__file__).parent / "mods"
-    _skip_cogs = {"base_cog"}
+    mods_dir = Path(__file__).parent
+    _skip_cogs = {"base_cog", "shared", "broadcaster", "tv"}
     _skip_mods = {"example_mod", "elevens_arena"}
     # Load cogs saved directly in ./mods/ directory
 

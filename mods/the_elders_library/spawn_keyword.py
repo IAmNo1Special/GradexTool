@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -7,10 +8,10 @@ from utils.helpers import respond
 class Spawn(commands.Cog):
     """Spawn keyword cog for The Elder's Library."""
 
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def spawn_embed(self):
+    def spawn_embed(self) -> Any:
         """Create and return the spawn chart embed."""
         embed = discord.Embed(title="Spawn Chart", color=discord.Color.red())
         embed.add_field(name="__Morning time__", value="(4:00 to 9:59)", inline=False)
@@ -28,24 +29,26 @@ class Spawn(commands.Cog):
     class SpawnButtons(discord.ui.View):
         """View for spawn chart buttons."""
 
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, button: discord.ui.Button
-        ):
+            self, interaction: discord.Interaction, button: discord.ui.Button[Any]
+        ) -> None:
             """Handle the exit button click."""
-            await interaction.message.delete()
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         """Called when the cog is ready."""
         print("The Elder's Library(Spawn Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         """Called when a message is received."""
         # Ignore messages from bots (including self)
         if message.author.bot:
@@ -63,5 +66,5 @@ class Spawn(commands.Cog):
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(Spawn(gradex))

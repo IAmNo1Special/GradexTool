@@ -1,3 +1,4 @@
+from typing import Any
 import discord
 from discord.ext import commands
 
@@ -5,10 +6,10 @@ from utils.helpers import respond
 
 
 class evchart(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evchart_embed():
+    def evchart_embed() -> Any:  # type: ignore[misc]
         embed = discord.Embed(
             title="EV Training Chart",
             description="Effort Values",
@@ -24,22 +25,24 @@ class evchart(commands.Cog):
         return embed
 
     class evchart_buttons(discord.ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Ev Chart Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -47,7 +50,7 @@ class evchart(commands.Cog):
         try:
             prompt = message.content.lower().strip()
             if prompt == "ev chart" or prompt == "evs":
-                embed = self.evchart_embed()
+                embed = self.evchart_embed()  # type: ignore[misc]
                 buttons = self.evchart_buttons()
                 await respond(
                     self.gradex, message=message, embed=embed, buttons=buttons
@@ -56,5 +59,5 @@ class evchart(commands.Cog):
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(evchart(gradex))

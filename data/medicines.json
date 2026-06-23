@@ -1,0 +1,704 @@
+{
+  "1": {
+    "name": "ability-urge",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Selects another friendly Revomon at random. If that Revomon's ability is normally activated by some condition—i.e., is not continuous and passive—its effect is forcibly activated. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Forcibly activates a friendly Revomon's ability.",
+    "flavor_text": "When used, it activates the Ability of an ally Revomon.",
+    "idPotion": 1
+  },
+  "2": {
+    "name": "antidote",
+    "category": "status-cures",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Cures poison.",
+    "short_effect": "Cures poison.",
+    "flavor_text": "A spray-type medicine for treating poisoning. It can be used to lift the effects of being poisoned from a single Revomon.",
+    "idPotion": 2
+  },
+  "3": {
+    "name": "awakening",
+    "category": "status-cures",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Cures sleep.",
+    "short_effect": "Cures sleep.",
+    "flavor_text": "A spray-type medicine to wake the sleeping. It can be used to rouse a single Revomon from the clutches of sleep.",
+    "idPotion": 3
+  },
+  "4": {
+    "name": "berry-juice",
+    "category": "healing",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Restores 20 HP.",
+    "short_effect": "Restores 20 HP.",
+    "flavor_text": "A 100 percent pure juice made of Berries. It can be used to restore 20 HP to a single Revomon.",
+    "idPotion": 4
+  },
+  "5": {
+    "name": "big-malasada",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Cures major status ailments and confusion.",
+    "short_effect": "Cures major status ailments and confusion.",
+    "flavor_text": "The Alola region's local specialty—fried bread. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 5
+  },
+  "6": {
+    "name": "bug-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Bug-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Bug-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an insect-like essence. When held, it strengthens the power of a Bug-type move one time.",
+    "idPotion": 6
+  },
+  "7": {
+    "name": "burn-heal",
+    "category": "status-cures",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Cures a burn.",
+    "short_effect": "Cures a burn.",
+    "flavor_text": "A spray-type medicine for treating burns. It can be used to heal a single Revomon suffering from a burn.",
+    "idPotion": 7
+  },
+  "8": {
+    "name": "casteliacone",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Used on a party Revomon : Cures any status ailment and confusion.",
+    "short_effect": "Cures any status ailment and confusion.",
+    "flavor_text": "Castelia City's specialty, soft-serve ice cream. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 8
+  },
+  "9": {
+    "name": "dark-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Dark-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Dark-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of darkness. When held, it strengthens the power of a Dark-type move one time.",
+    "idPotion": 9
+  },
+  "10": {
+    "name": "dire-hit-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's critical hit rate by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises critical hit rate by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It can be used many times to raise the critical-hit ratio of one Revomon. It wears off if the Revomon is withdrawn.",
+    "idPotion": 10
+  },
+  "11": {
+    "name": "dire-hit-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's critical hit rate by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises critical hit rate by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It can be used many times to greatly raise a Revomon's critical-hit ratio. It wears off if the Revomon is withdrawn.",
+    "idPotion": 11
+  },
+  "12": {
+    "name": "dragon-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Dragon-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Dragon-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with a draconic essence. When held, it strengthens the power of a Dragon-type move one time.",
+    "idPotion": 12
+  },
+  "13": {
+    "name": "electric-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Electric-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Electric-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of electricity. When held, it strengthens the power of an Electric-type move one time.",
+    "idPotion": 13
+  },
+  "14": {
+    "name": "elixir",
+    "category": "pp-recovery",
+    "cost": 3000,
+    "effect": "Used on a party Revomon : Restores 10 PP for each move.",
+    "short_effect": "Restores 10 PP for each move.",
+    "flavor_text": "This medicine can be used to restore 10 PP to each of the moves that have been learned by a Revomon.",
+    "idPotion": 14
+  },
+  "15": {
+    "name": "energy-powder",
+    "category": "healing",
+    "cost": 500,
+    "effect": "Used on a party Revomon : Restores 50 HP. Decreases happiness by 5/5/10.",
+    "short_effect": "Restores 50 HP, but lowers happiness.",
+    "flavor_text": "A very bitter medicinal powder. It can be used to restore 60 HP to a single Revomon.",
+    "idPotion": 15
+  },
+  "16": {
+    "name": "energy-root",
+    "category": "healing",
+    "cost": 1200,
+    "effect": "Used on a party Revomon : Restores 200 HP. Decreases happiness by 10/10/15.",
+    "short_effect": "Restores 200 HP, but lowers happiness.",
+    "flavor_text": "An extremely bitter medicinal root. It can be used to restore 120 HP to a single Revomon.",
+    "idPotion": 16
+  },
+  "17": {
+    "name": "ether",
+    "category": "pp-recovery",
+    "cost": 1200,
+    "effect": "Used on a party Revomon : Restores 10 PP for a selected move.",
+    "short_effect": "Restores 10 PP for one move.",
+    "flavor_text": "This medicine can be used to restore 10 PP to a single selected move that has been learned by a Revomon.",
+    "idPotion": 17
+  },
+  "18": {
+    "name": "fairy-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held: When the holder uses a damaging Fairy move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Fairy move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of the fey. When held, it strengthens the power of a Fairy-type move one time.",
+    "idPotion": 18
+  },
+  "19": {
+    "name": "fighting-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Fighting-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Fighting-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of combat. When held, it strengthens the power of a Fighting-type move one time.",
+    "idPotion": 19
+  },
+  "20": {
+    "name": "fire-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Fire-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Fire-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of fire. When held, it strengthens the power of a Fire-type move one time.",
+    "idPotion": 20
+  },
+  "21": {
+    "name": "flying-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Flying-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Flying-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of air. When held, it strengthens the power of a Flying-type move one time.",
+    "idPotion": 21
+  },
+  "22": {
+    "name": "fresh-water",
+    "category": "healing",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Restores 50 HP.",
+    "short_effect": "Restores 50 HP.",
+    "flavor_text": "Water with high mineral content. It can be used to restore 30 HP to a single Revomon.",
+    "idPotion": 22
+  },
+  "23": {
+    "name": "full-heal",
+    "category": "status-cures",
+    "cost": 400,
+    "effect": "Used on a party Revomon : Cures any status ailment and confusion.",
+    "short_effect": "Cures any status ailment and confusion.",
+    "flavor_text": "A spray-type medicine that is broadly effective. It can be used to heal all the status conditions of a single Revomon.",
+    "idPotion": 23
+  },
+  "24": {
+    "name": "full-restore",
+    "category": "healing",
+    "cost": 3000,
+    "effect": "Used on a party Revomon : Restores HP to full and cures any status ailment and confusion.",
+    "short_effect": "Restores HP to full and cures any status ailment and confusion.",
+    "flavor_text": "A medicine that can be used to fully restore the HP of a single Revomon and heal any status conditions it has.",
+    "idPotion": 24
+  },
+  "25": {
+    "name": "ghost-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Ghost-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Ghost-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with a spectral essence. When held, it strengthens the power of a Ghost-type move one time.",
+    "idPotion": 25
+  },
+  "26": {
+    "name": "grass-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Grass-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Grass-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of nature. When held, it strengthens the power of a Grass-type move one time.",
+    "idPotion": 26
+  },
+  "27": {
+    "name": "ground-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Ground-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Ground-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of land. When held, it strengthens the power of a Ground-type move one time.",
+    "idPotion": 27
+  },
+  "28": {
+    "name": "heal-powder",
+    "category": "status-cures",
+    "cost": 300,
+    "effect": "Used on a party Revomon : Cures any status ailment. Decreases happiness by 5/5/10.",
+    "short_effect": "Cures any status ailment, but lowers happiness.",
+    "flavor_text": "A very bitter medicinal powder. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 28
+  },
+  "29": {
+    "name": "hyper-potion",
+    "category": "healing",
+    "cost": 1500,
+    "effect": "Used on a party Revomon : Restores 200 HP.",
+    "short_effect": "Restores 200 HP.",
+    "flavor_text": "A spray-type medicine for treating wounds. It can be used to restore 120 HP to a single Revomon.",
+    "idPotion": 29
+  },
+  "30": {
+    "name": "ice-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Ice-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Ice-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of ice. When held, it strengthens the power of an Ice-type move one time.",
+    "idPotion": 30
+  },
+  "31": {
+    "name": "ice-heal",
+    "category": "status-cures",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Cures freezing.",
+    "short_effect": "Cures freezing.",
+    "flavor_text": "A spray-type medicine for treating freezing. It can be used to thaw out a single Revomon that has been frozen solid.",
+    "idPotion": 31
+  },
+  "32": {
+    "name": "item-drop",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Selects another friendly Revomon at random. If that Revomon is holding an item, that item is removed for the duration of the battle. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Forces a friendly Revomon to drop its held item.",
+    "flavor_text": "When used, it causes an ally Revomon to drop a held item.",
+    "idPotion": 32
+  },
+  "33": {
+    "name": "item-urge",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Selects another friendly Revomon at random. If that Revomon is holding an item normally activated by some condition—i.e., not continuous and passive—its effect is forcibly activated. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Forcibly activates a friendly Revomon's held item.",
+    "flavor_text": "When used, it causes an ally Revomon to use its held item.",
+    "idPotion": 33
+  },
+  "34": {
+    "name": "lava-cookie",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Used on a party Revomon : Cures any status ailment and confusion.",
+    "short_effect": "Cures any status ailment and confusion.",
+    "flavor_text": "Lavaridge Town's local specialty. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 34
+  },
+  "35": {
+    "name": "lemonade",
+    "category": "healing",
+    "cost": 400,
+    "effect": "Used on a party Revomon : Restores 80 HP.",
+    "short_effect": "Restores 80 HP.",
+    "flavor_text": "A very sweet and refreshing drink. It can be used to restore 70 HP to a single Revomon.",
+    "idPotion": 35
+  },
+  "36": {
+    "name": "lumiose-galette",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Cures all major status ailments and confusion.",
+    "short_effect": "Cures all major status ailments and confusion.",
+    "flavor_text": "A popular treat in Lumiose City. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 36
+  },
+  "37": {
+    "name": "max-elixir",
+    "category": "pp-recovery",
+    "cost": 4500,
+    "effect": "Used on a party Revomon : Restores PP to full for each move.",
+    "short_effect": "Restores PP to full for each move.",
+    "flavor_text": "This medicine can be used to fully restore the PP of all of the moves that have been learned by a Revomon.",
+    "idPotion": 37
+  },
+  "38": {
+    "name": "max-ether",
+    "category": "pp-recovery",
+    "cost": 2000,
+    "effect": "Used on a party Revomon : Restores PP to full for a selected move.",
+    "short_effect": "Restores PP to full for one move.",
+    "flavor_text": "This medicine can be used to fully restore the PP of a single selected move that has been learned by a Revomon.",
+    "idPotion": 38
+  },
+  "39": {
+    "name": "max-honey",
+    "category": "revival",
+    "cost": 4000,
+    "effect": "",
+    "short_effect": "",
+    "flavor_text": "Honey that Dynamax Vespiquen produces. Adding this honey to Max Soup makes the taste very smooth. It also has the same effect as a Max Revive.",
+    "idPotion": 39
+  },
+  "40": {
+    "name": "max-potion",
+    "category": "healing",
+    "cost": 2500,
+    "effect": "Used on a party Revomon : Restores HP to full.",
+    "short_effect": "Restores HP to full.",
+    "flavor_text": "A spray-type medicine for treating wounds. It can be used to completely restore the max HP of a single Revomon.",
+    "idPotion": 40
+  },
+  "41": {
+    "name": "max-revive",
+    "category": "revival",
+    "cost": 4000,
+    "effect": "Used on a party Revomon : Revives the Revomon and restores its HP to full.",
+    "short_effect": "Revives with full HP.",
+    "flavor_text": "A medicine that can be used to revive a single Revomon that has fainted. It also fully restores the Revomon's max HP.",
+    "idPotion": 41
+  },
+  "42": {
+    "name": "moomoo-milk",
+    "category": "healing",
+    "cost": 600,
+    "effect": "Used on a party Revomon : Restores 100 HP.",
+    "short_effect": "Restores 100 HP.",
+    "flavor_text": "A bottle of highly nutritious milk. It can be used to restore 100 HP to a single Revomon.",
+    "idPotion": 42
+  },
+  "43": {
+    "name": "normal-gem",
+    "category": "jewels",
+    "cost": 4000,
+    "effect": "Held : When the holder uses a damaging Normal-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Normal-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an ordinary essence. When held, it strengthens the power of a Normal-type move one time.",
+    "idPotion": 43
+  },
+  "44": {
+    "name": "old-gateau",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Used on a party Revomon : Cures any status ailment and confusion.",
+    "short_effect": "Cures any status ailment and confusion.",
+    "flavor_text": "The Old Chateau's hidden specialty. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 44
+  },
+  "45": {
+    "name": "paralyze-heal",
+    "category": "status-cures",
+    "cost": 200,
+    "effect": "Used on a party Revomon : Cures paralysis.",
+    "short_effect": "Cures paralysis.",
+    "flavor_text": "A spray-type medicine for treating paralysis. It can be used to free a single Revomon that has been paralyzed.",
+    "idPotion": 45
+  },
+  "46": {
+    "name": "pewter-crunchies",
+    "category": "status-cures",
+    "cost": 250,
+    "effect": "",
+    "short_effect": "",
+    "flavor_text": "Pewter City's famous crunchy snack. They can be used to heal all status conditions of a single Revomon.",
+    "idPotion": 46
+  },
+  "47": {
+    "name": "poison-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Poison-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Poison-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of poison. When held, it strengthens the power of a Poison-type move one time.",
+    "idPotion": 47
+  },
+  "48": {
+    "name": "potion",
+    "category": "healing",
+    "cost": 200,
+    "effect": "Used on a friendly Revomon : Restores 20 HP.",
+    "short_effect": "Restores 20 HP.",
+    "flavor_text": "A spray-type medicine for treating wounds. It can be used to restore 20 HP to a single Revomon.",
+    "idPotion": 48
+  },
+  "49": {
+    "name": "psychic-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Psychic-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Psychic-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of the mind. When held, it strengthens the power of a Psychic-type move one time.",
+    "idPotion": 49
+  },
+  "50": {
+    "name": "reset-urge",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Selects another friendly Revomon at random. Removes all of that Revomon's stat changes. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Resets a friendly Revomon's stat changes.",
+    "flavor_text": "When used, it restores any stat changes of an ally Revomon.",
+    "idPotion": 50
+  },
+  "51": {
+    "name": "revival-herb",
+    "category": "revival",
+    "cost": 2800,
+    "effect": "Used on a party Revomon : Revives a fainted Revomon and restores its HP to full. Decreases happiness by 10/10/15.",
+    "short_effect": "Revives with full HP, but lowers happiness.",
+    "flavor_text": "A terribly bitter medicinal herb. It revives a fainted Revomon and fully restores its max HP.",
+    "idPotion": 51
+  },
+  "52": {
+    "name": "revive",
+    "category": "revival",
+    "cost": 2000,
+    "effect": "Used on a party Revomon : Revives the Revomon and restores half its HP.",
+    "short_effect": "Revives with half HP.",
+    "flavor_text": "A medicine that can be used to revive a single Revomon that has fainted. It also restores half of the Revomon's max HP.",
+    "idPotion": 52
+  },
+  "53": {
+    "name": "rock-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Rock-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Rock-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of rock. When held, it strengthens the power of a Rock-type move one time.",
+    "idPotion": 53
+  },
+  "54": {
+    "name": "sacred-ash",
+    "category": "revival",
+    "cost": 50000,
+    "effect": "Used : Revives all fainted Revomon in the party and restores their HP to full.",
+    "short_effect": "Revives all fainted Revomon with full HP.",
+    "flavor_text": "This rare ash can revive all fainted Revomon in a party. In doing so, it also fully restores their max HP.",
+    "idPotion": 54
+  },
+  "55": {
+    "name": "shalour-sable",
+    "category": "status-cures",
+    "cost": 350,
+    "effect": "Cures any major status ailment and confusion.",
+    "short_effect": "Cures any major status ailment and confusion.",
+    "flavor_text": "Shalour City's famous shortbread. It can be used once to heal all the status conditions of a Revomon.",
+    "idPotion": 55
+  },
+  "56": {
+    "name": "soda-pop",
+    "category": "healing",
+    "cost": 300,
+    "effect": "Used on a party Revomon : Restores 60 HP.",
+    "short_effect": "Restores 60 HP.",
+    "flavor_text": "A highly carbonated soda drink. It can be used to restore 50 HP to a single Revomon.",
+    "idPotion": 56
+  },
+  "57": {
+    "name": "steel-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Steel-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Steel-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of steel. When held, it strengthens the power of a Steel-type move one time.",
+    "idPotion": 57
+  },
+  "58": {
+    "name": "super-potion",
+    "category": "healing",
+    "cost": 700,
+    "effect": "Used on a party Revomon : Restores 50 HP.",
+    "short_effect": "Restores 50 HP.",
+    "flavor_text": "A spray-type medicine for treating wounds. It can be used to restore 60 HP to a single Revomon.",
+    "idPotion": 58
+  },
+  "59": {
+    "name": "sweet-heart",
+    "category": "healing",
+    "cost": 3000,
+    "effect": "Used on a friendly Revomon : Restores 20 HP.",
+    "short_effect": "Restores 20 HP.",
+    "flavor_text": "A piece of cloyingly sweet chocolate. It can be used to restore 20 HP to a single Revomon.",
+    "idPotion": 59
+  },
+  "60": {
+    "name": "water-gem",
+    "category": "jewels",
+    "cost": 200,
+    "effect": "Held : When the holder uses a damaging Water-type move, the move has 1.5× power and this item is consumed.",
+    "short_effect": "Held: When the holder uses a damaging Water-type move, the move has 1.5× power and this item is consumed.",
+    "flavor_text": "A gem with an essence of water. When held, it strengthens the power of a Water-type move one time.",
+    "idPotion": 60
+  },
+  "61": {
+    "name": "x-accuracy-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's accuracy by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises accuracy by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the accuracy of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 61
+  },
+  "62": {
+    "name": "x-accuracy-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's accuracy by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises accuracy by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the accuracy of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 62
+  },
+  "63": {
+    "name": "x-accuracy-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's accuracy by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises accuracy by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the accuracy of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 63
+  },
+  "64": {
+    "name": "x-attack-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Attack by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Attack by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the Attack stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 64
+  },
+  "65": {
+    "name": "x-attack-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Attack by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Attack by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the Attack stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 65
+  },
+  "66": {
+    "name": "x-attack-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Attack by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Attack by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the Attack stat of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 66
+  },
+  "67": {
+    "name": "x-defense-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Defense by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Defense by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the Defense stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 67
+  },
+  "68": {
+    "name": "x-defense-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Defense by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Defense by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the Defense stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 68
+  },
+  "69": {
+    "name": "x-defense-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Defense by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Defense by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the Defense stat of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 69
+  },
+  "70": {
+    "name": "x-sp-atk-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Attack by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Attack by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the Sp. Atk stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 70
+  },
+  "71": {
+    "name": "x-sp-atk-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Attack by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Attack by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the Sp. Atk stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 71
+  },
+  "72": {
+    "name": "x-sp-atk-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Attack by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Attack by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the Sp. Atk stat of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 72
+  },
+  "73": {
+    "name": "x-sp-def-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Defense by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Defense by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the Sp. Def stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 73
+  },
+  "74": {
+    "name": "x-sp-def-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Defense by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Defense by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the Sp. Def stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 74
+  },
+  "75": {
+    "name": "x-sp-def-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Special Defense by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Special Defense by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the Sp. Def stat of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 75
+  },
+  "76": {
+    "name": "x-speed-2",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Speed by two stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Speed by two stages in battle. Wonder Launcher only.",
+    "flavor_text": "It sharply raises the Speed stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 76
+  },
+  "77": {
+    "name": "x-speed-3",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Speed by three stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Speed by three stages in battle. Wonder Launcher only.",
+    "flavor_text": "It drastically raises the Speed stat of a Revomon in battle. It wears off if the Revomon is withdrawn.",
+    "idPotion": 77
+  },
+  "78": {
+    "name": "x-speed-6",
+    "category": "miracle-shooter",
+    "cost": 0,
+    "effect": "Used on a party Revomon in battle : Raises the target's Speed by six stages. This item can only be obtained or used via the Wonder Launcher.",
+    "short_effect": "Raises Speed by six stages in battle. Wonder Launcher only.",
+    "flavor_text": "It raises the Speed stat of a Revomon in battle immensely. It wears off if the Revomon is withdrawn.",
+    "idPotion": 78
+  }
+}

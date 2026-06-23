@@ -1,23 +1,24 @@
+from typing import Any
 import discord
-from data.gradexDB import FruitysTable
 from discord.ext import commands
 
+from data import FruitysTable
 from utils.helpers import respond
 
 
 class fruity_search(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Fruity Search) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
-        def fruity_search_embed(fruity_name):
-            fruity_info = FruitysTable().get_info(fruity_name=fruity_name.lower())[0]
+    async def on_message(self, message: discord.Message) -> Any:
+        async def fruity_search_embed(fruity_name: Any) -> Any:
+            fruity_info = await FruitysTable().get_info(fruity_name=fruity_name.lower())[0]  # type: ignore[attr-defined]
             embed = discord.Embed(
                 title=fruity_info[0].title(),
                 description=f"*{fruity_info[1].capitalize()}*",
@@ -35,7 +36,7 @@ class fruity_search(commands.Cog):
             return embed
 
         class fruity_search_buttons(discord.ui.View):
-            def __init__(self):
+            def __init__(self) -> None:
                 super().__init__(timeout=None)
 
             @discord.ui.button(
@@ -44,9 +45,11 @@ class fruity_search(commands.Cog):
             async def exit_embed(
                 self,
                 interaction: discord.Interaction,
-                Button: discord.ui.Button,
-            ):
-                await interaction.message.delete()
+                Button: discord.ui.Button[Any],
+            ) -> None:
+                if interaction.message:
+
+                    await interaction.message.delete()
 
         # Ignore messages from bots (including self)
         if message.author.bot:
@@ -54,15 +57,15 @@ class fruity_search(commands.Cog):
 
         try:
             prompt = message.content.lower().strip()
-            if prompt in FruitysTable().get_names():
+            if prompt in await FruitysTable().get_names():  # type: ignore[attr-defined]
                 embed = fruity_search_embed(prompt)
                 buttons = fruity_search_buttons()
                 await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons
+                    self.gradex, message=message, embed=embed, buttons=buttons  # type: ignore[arg-type]
                 )
         except Exception as e:
             print(f"An error occurred during 'fruity_search' on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(fruity_search(gradex))
