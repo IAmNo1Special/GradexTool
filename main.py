@@ -65,7 +65,11 @@ async def on_ready() -> None:
 )
 async def sync_commands(ctx: commands.Context[commands.Bot]) -> None:
     """Manually sync application commands. Owner only."""
-    is_owner = str(ctx.author.id) == str(BOT_OWNER_ID) if BOT_OWNER_ID else await gradex_tool.is_owner(ctx.author)
+    is_owner = (
+        str(ctx.author.id) == str(BOT_OWNER_ID)
+        if BOT_OWNER_ID
+        else await gradex_tool.is_owner(ctx.author)
+    )
     if not is_owner:
         await ctx.send("You do not have permission to use this command.")
         return
