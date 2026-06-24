@@ -91,6 +91,12 @@ async def test_abilities_table(mock_db: Any, mock_json_files: Any) -> None:
     table = AbilitiesTable()
     await table.build()
     assert await table.count_entries() == 2
+    names = await table.get_names()
+    assert "overgrow" in names
+    assert "blaze" in names
+    info = await table.get_info("overgrow")
+    assert len(info) == 1
+    assert info[0][1] == "overgrow"
 
 @pytest.mark.gradexDB
 @pytest.mark.asyncio
@@ -105,6 +111,11 @@ async def test_fruitys_table(mock_db: Any, mock_json_files: Any) -> None:
     table = FruitysTable()
     await table.build()
     assert await table.count_entries() == 1
+    names = await table.get_names()
+    assert "apple" in names
+    info = await table.get_info("apple")
+    assert len(info) == 1
+    assert info[0][1] == "apple"
 
 @pytest.mark.gradexDB
 @pytest.mark.asyncio
@@ -230,6 +241,12 @@ async def test_revomon_table(mock_db: Any, mock_json_files: Any) -> None:
     assert 1 in mon_ids
     assert await table.get_id_by_id(1) == 1
     assert await table.get_name_by_id(1) == "testmon"
+    names = await table.get_names()
+    assert "testmon" in names
+    assert await table.has_ability("blaze", "testmon") is True
+    assert await table.has_ability("overgrow", "testmon") is False
+    assert await table.has_ability("blaze") == ["testmon"]
+    assert await table.has_ability("overgrow") == []
 
 @pytest.mark.gradexDB
 @pytest.mark.asyncio

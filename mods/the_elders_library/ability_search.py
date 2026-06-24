@@ -12,13 +12,13 @@ class ability_search(commands.Cog):  # noqa: N801
         self.gradex = gradex
 
     async def ability_search_embed(self, ability_name: Any) -> Any:
-        ability_info = await AbilitiesTable().get_info(ability_name.lower())[0]  # type: ignore[attr-defined]
+        ability_info = (await AbilitiesTable().get_info(ability_name.lower()))[0]
         embed = discord.Embed(
             title=ability_name,
             description=f"*{ability_info[1].capitalize()}*",
             color=discord.Color.red(),
         )
-        can_learn = await RevomonTable().has_ability(ability_name=ability_name.lower())  # type: ignore[attr-defined]
+        can_learn = await RevomonTable().has_ability(ability_name=ability_name.lower())
         learned_by = ""
         for revomon in can_learn:
             learned_by += f"- *{revomon}*\n"
@@ -59,7 +59,7 @@ class ability_search(commands.Cog):  # noqa: N801
 
         try:
             prompt = message.content.lower().strip()
-            if prompt in await AbilitiesTable().get_names():  # type: ignore[attr-defined]
+            if prompt in await AbilitiesTable().get_names():
                 embed = self.ability_search_embed(prompt)
                 buttons = self.ability_search_buttons()
                 await respond(

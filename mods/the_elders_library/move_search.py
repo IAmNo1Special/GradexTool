@@ -12,7 +12,7 @@ class move_search(commands.Cog):  # noqa: N801
         self.gradex = gradex
 
     async def move_search_embed(self, move_name: Any) -> Any:
-        move = await MovesTable().get_info(move_name.lower())[0]  # type: ignore[index]
+        move = (await MovesTable().get_info(move_name.lower()))[0]
         embed = discord.Embed(title=move[2].title(), color=discord.Color.red())
         embed.add_field(name="__**Type**__", value=f"*{move[4]}*", inline=False)
         embed.add_field(name="__**Category**__", value=f"*{move[3]}*", inline=False)
@@ -29,7 +29,7 @@ class move_search(commands.Cog):  # noqa: N801
         if move[1] is not None:
             embed.add_field(name="__**Capsule #**__", value=f"*{move[1]}*\n")
         learned_by = ""
-        for revomon in RevomonMovesTable().get_mons_for_move(move_name=move[2]):  # type: ignore[attr-defined]
+        for revomon in await RevomonMovesTable().get_mons_for_move(move_name=move[2]):
             learned_by += f"- *{revomon}*\n"
         if learned_by:
             embed.add_field(name="__**Learned By**__", value=learned_by, inline=False)

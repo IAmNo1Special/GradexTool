@@ -783,32 +783,37 @@ class HuntingCog(commands.Cog):
 
     @tasks.loop(minutes=5)
     async def cleanup_encounters(self) -> None:
-        """Periodically scan for expired wild encounter messages."""
+        """Periodically scan for expired wild encounter messages in #wilds."""
         for guild in self.bot.guilds:
-            for channel in guild.text_channels:
-                try:
-                    # Only check the last few messages to avoid excessive API calls
-                    async for msg in channel.history(limit=20):
-                        if msg.components:
-                            for component in msg.components:
-                                children = getattr(component, "children", getattr(component, "items", []))
-                                for item in children:
-                                    custom_id = getattr(item, "custom_id", None)
-                                    if isinstance(custom_id, str) and custom_id.startswith(
-                                        "spawn_"
-                                    ):
-                                        parts = custom_id.split(":")
-                                        if len(parts) >= 5:
-                                            timestamp = int(parts[4])
-                                            if time.time() - timestamp > 300:
+            channel = discord.utils.get(guild.text_channels, name="wilds")
+            if not channel:
+                continue
+            try:
+                # Only check the last few messages to avoid excessive API calls
+                async for msg in channel.history(limit=20):
+                    if msg.components:
+                        for component in msg.components:
+                            children = getattr(component, "children", getattr(component, "items", []))
+                            for item in children:
+                                custom_id = getattr(item, "custom_id", None)
+                                if isinstance(custom_id, str) and custom_id.startswith(
+                                    "spawn_"
+                                ):
+                                    parts = custom_id.split(":")
+                                    if len(parts) >= 5:
+                                        timestamp = int(parts[4])
+                                        if time.time() - timestamp > 300:
+                                            try:
                                                 await msg.delete()
-                                                break
-                except Exception as e:
-                    logger.error(
-                        "Error during encounter cleanup in channel %s: %s",
-                        channel,
-                        e,
-                    )
+                                            except discord.NotFound:
+                                                pass
+                                            break
+            except Exception as e:
+                logger.error(
+                    "Error during encounter cleanup in channel %s: %s",
+                    channel,
+                    e,
+                )
 
 async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:
     """Trigger the initial wild spawns after setup."""
