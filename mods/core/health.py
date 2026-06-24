@@ -75,7 +75,8 @@ class HealthCog(commands.Cog):
             uptime_secs = int(time.monotonic() - self._start_time)
             hours, remainder = divmod(uptime_secs, 3600)
             minutes, seconds = divmod(remainder, 60)
-            latency = round(self.bot.latency * 1000)
+            raw_latency = self.bot.latency
+            latency = round(raw_latency * 1000) if raw_latency is not None and raw_latency == raw_latency else 0
 
             logger.info(
                 "Heartbeat: uptime=%dh%dm%ds, guilds=%d, latency=%dms",
