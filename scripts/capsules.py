@@ -1,10 +1,10 @@
-from typing import Any
 import json
 import logging
 import os
 import sqlite3
 from contextlib import closing
 from pathlib import Path
+from typing import Any
 
 import requests
 from revomon import RevomonTable

@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\core\test_enforcement.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Remove the previously appended test block if it exists
@@ -16,7 +15,7 @@ test = '''
         mock_channel.name = "RevoCord"
         mock_channel.guild.id = 123
         mock_channel.guild.channels = []
-        
+
         await cog.on_guild_channel_delete(mock_channel)
         mock_delete.assert_called_once_with(123)
 
@@ -28,7 +27,7 @@ test = '''
         mock_channel.name = "RevoCord"
         mock_channel.guild.id = 123
         mock_channel.guild.channels = []
-        
+
         await cog.on_guild_channel_delete(mock_channel)
         mock_delete.assert_called_once_with(123)
 
@@ -38,7 +37,7 @@ test = '''
         cog = EnforcementCog(mock_bot)
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123
-        
+
         await cog.on_guild_remove(mock_guild)
         mock_delete.assert_called_once_with(123)
 
@@ -48,7 +47,7 @@ test = '''
         cog = EnforcementCog(mock_bot)
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123
-        
+
         await cog.on_guild_remove(mock_guild)
         mock_delete.assert_called_once_with(123)'''
 

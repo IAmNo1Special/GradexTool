@@ -1,5 +1,5 @@
-from typing import Any
 from io import BytesIO
+from typing import Any
 
 import aiohttp
 from discord import (
@@ -143,7 +143,7 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Grade", style=ButtonStyle.green, custom_id="grade_button")
-        async def grade_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def grade_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             try:
                 user_id = interaction.user.id
                 message_id = interaction.message.id  # type: ignore[union-attr]
@@ -182,7 +182,7 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="❌", style=ButtonStyle.red, custom_id="exit")
-        async def exit_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def exit_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             if interaction.message:
 
                 await interaction.message.delete()
@@ -192,7 +192,7 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Save", style=ButtonStyle.green, custom_id="Save")
-        async def save_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def save_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -233,7 +233,7 @@ class GradeCommand(commands.Cog):
                 )
 
         @ui.button(label="Flex this Revomon", style=ButtonStyle.green, custom_id="Flex")
-        async def flex(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def flex(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -262,7 +262,7 @@ class GradeCommand(commands.Cog):
             style=ButtonStyle.blurple,
             custom_id="why_this_grade",
         )
-        async def why_this_grade(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def why_this_grade(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             try:
                 user_id = interaction.user.id
                 embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)  # type: ignore[arg-type]

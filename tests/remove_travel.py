@@ -1,12 +1,11 @@
-import re
 
 def delete_blocks(path, blocks):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         text = f.read()
-    
+
     for block in blocks:
         text = text.replace(block, "")
-        
+
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
 
@@ -68,13 +67,13 @@ test_block1 = """    @pytest.mark.asyncio
     async def test_travel_button(self, mock_get_account: Any, mock_interaction: Any) -> None:
         mock_get_account.return_value = {"current_city": "test city"}
         view = TravelButtonView()
-        
+
         button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_travel_button"][0]
-        
+
         with patch("mods.revocord.travel.TravelSelectView") as mock_travel_view:
             mock_travel_view.return_value = MagicMock()
             await button.callback(mock_interaction)
-            
+
             mock_interaction.response.send_message.assert_called_once()
             args, kwargs = mock_interaction.response.send_message.call_args
             assert "test city" in args[0].lower()
@@ -85,13 +84,13 @@ test_block2 = """    @pytest.mark.asyncio
     async def test_travel_button(self, mock_get_account: Any, mock_interaction: Any) -> None:
         view = RouteAITrainerView()
         mock_get_account.return_value = {"current_city": "route 1"}
-        
+
         button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_route_travel_button"][0]
-        
+
         with patch("mods.revocord.travel.TravelSelectView") as mock_travel_view:
             mock_travel_view.return_value = MagicMock()
             await button.callback(mock_interaction)
-            
+
             mock_interaction.response.send_message.assert_called_once()
             args, kwargs = mock_interaction.response.send_message.call_args
             assert "route 1" in args[0].lower()"""

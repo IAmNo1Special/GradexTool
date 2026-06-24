@@ -1,4 +1,5 @@
 import io
+from typing import Any
 
 import plotly.graph_objects as go
 import requests
@@ -12,17 +13,15 @@ from data import (
     RevomonTable,
     TypesTable,
 )
-from typing import Any, Dict, List, Optional, Tuple, Union
-from unittest.mock import MagicMock
 
 max_iv_total = 186
 max_ev_total = 510
 
 
-async def get_attributes(revomon_name: str) -> Dict[str, Optional[Union[str, int, List[str]]]]:
+async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] | None]:
     revomon_name = revomon_name.lower()
     revomon_table = RevomonTable()
-    elements_table = TypesTable()
+    TypesTable()
     mon_info = (await revomon_table.get_info(revomon_name=revomon_name))[0]
     ev_rewards = dict(
         zip(
@@ -192,7 +191,7 @@ async def save_mon_imgs() -> None:
 
 async def save_type_imgs() -> None:
     print("Getting names of all Types...")
-    elements: List[str] = await TypesTable().get_mono_types()
+    elements: list[str] = await TypesTable().get_mono_types()
     print("Got names of all Types")
     for element in elements:
         element = element.lower()
@@ -220,8 +219,8 @@ async def get_natures() -> Any:
     return natures
 
 
-def get_nature_mods(nature: str) -> Dict[str, Union[int, float]]:
-    nature_mods: Dict[str, Union[int, float]] = {"hp": 1, "atk": 1, "def": 1, "spa": 1, "spd": 1, "spe": 1}
+def get_nature_mods(nature: str) -> dict[str, int | float]:
+    nature_mods: dict[str, int | float] = {"hp": 1, "atk": 1, "def": 1, "spa": 1, "spd": 1, "spe": 1}
     nature = nature.title()
     if (
         nature == "Adamant"
@@ -279,7 +278,7 @@ def get_nature_mods(nature: str) -> Dict[str, Union[int, float]]:
     return nature_mods
 
 
-async def get_perferred_natures(revomon_name: str) -> List[str]:
+async def get_perferred_natures(revomon_name: str) -> list[str]:
     perferred_natures = []
     mon_attr = await get_attributes(revomon_name)
     natures = await get_natures()
@@ -290,12 +289,12 @@ async def get_perferred_natures(revomon_name: str) -> List[str]:
     return perferred_natures
 
 
-def get_evo_trees() -> List[Union[Any, str]]:
+def get_evo_trees() -> list[Any | str]:
     evo_trees = []
     evo_tree = ""
     # Fetch data from the Revomon API
     url = "https://api.revomon.io/revomon/revodex"
-    payload: Dict[str, Any] = {"idsCatchedRevomon": []}
+    payload: dict[str, Any] = {"idsCatchedRevomon": []}
     response = requests.post(url, json=payload)
 
     if response.status_code == 200:
@@ -331,7 +330,7 @@ def get_evo_trees() -> List[Union[Any, str]]:
     return evo_trees
 
 
-async def get_book_of_mon_names() -> List[List[str]]:
+async def get_book_of_mon_names() -> list[list[str]]:
     row = 0
     book = []
     pages = []
@@ -355,7 +354,7 @@ async def get_book_of_mon_names() -> List[List[str]]:
     return book
 
 
-async def get_book_of_land_ids(token_ids: Optional[List[Any]] = None) -> List[List[int]]:
+async def get_book_of_land_ids(token_ids: list[Any] | None = None) -> list[list[int]]:
     row = 0
     book = []
     pages = []
@@ -399,7 +398,7 @@ def get_grade(grade_percent: float) -> str:
     return grade_letter
 
 
-def get_stat_weights(base_stats: Dict[str, Any], mon_name: str = "") -> Tuple[Dict[str, float], str]:
+def get_stat_weights(base_stats: dict[str, Any], mon_name: str = "") -> tuple[dict[str, float], str]:
     """Determine stat weights based on base stats and competitive roles."""
     weights = {
         "hp": 1.0,
@@ -479,7 +478,7 @@ def evaluate_stat_iv(stat_name: str, iv: int, weight: float, role: str) -> int:
     return iv
 
 
-async def appraise_revomon(mon_stats: Dict[str, Any]) -> Optional[Dict[str, Union[str, int, float, Dict[str, float]]]]:
+async def appraise_revomon(mon_stats: dict[str, Any]) -> dict[str, str | int | float | dict[str, float]] | None:
     try:
         mon_stats["lvl"] = 100
         mon_attrib = await get_attributes(mon_stats["mon_name"])
@@ -559,7 +558,7 @@ async def appraise_revomon(mon_stats: Dict[str, Any]) -> Optional[Dict[str, Unio
         return None
 
 
-def create_graded_mon_img(curr_stats: Dict[str, Any], score_percentage: Optional[float]=None, image_dir: Optional[str]=None) -> Any:
+def create_graded_mon_img(curr_stats: dict[str, Any], score_percentage: float | None=None, image_dir: str | None=None) -> Any:
     # Directory containing the images
     image_dir = "./data/Images/Revomon"
     iv_stats = {

@@ -1,4 +1,3 @@
-from typing import Any
 import asyncio
 import json
 import logging
@@ -7,6 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from pathlib import Path
+from typing import Any
 
 import httpx
 from helpers import to_sentence_case

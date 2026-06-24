@@ -1,4 +1,3 @@
-from typing import Any
 """Gradex Tool Main Entry Point."""
 
 import sys

@@ -1,7 +1,10 @@
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+
 from mods.revomon.podium_command import Podium2, setup
+
 
 @pytest.fixture
 def mock_bot() -> Any:
@@ -73,7 +76,7 @@ class TestPodium2:
         mock_draw_instance = MagicMock()
         mock_draw_instance.textbbox.return_value = (0, 0, 100, 20)
         mock_draw.return_value = mock_draw_instance
-        
+
         with patch.object(cog, 'get_weekly_podium_data', return_value={
             "first": {"user": "u1", "time": "01:00:00"},
             "second": {"user": "u2", "time": "01:00:01"},
@@ -93,7 +96,7 @@ class TestPodium2:
         mock_draw_instance = MagicMock()
         mock_draw_instance.textbbox.return_value = (0, 0, 100, 20)
         mock_draw.return_value = mock_draw_instance
-        
+
         with patch.object(cog, 'get_current_podium_data', return_value={
             "first": {"user": "u1"},
             "second": {"user": "u2"},
@@ -127,11 +130,11 @@ class TestPodium2:
         mock_weekly_bytes = MagicMock()
         cog.current_podium_img = {"image_bytes": mock_current_bytes}
         cog.weekly_podium_img = {"image_bytes": mock_weekly_bytes}
-    
+
         with patch.object(cog, 'current_podium_embed', return_value=MagicMock()), \
              patch.object(cog, 'weekly_podium_embed', return_value=MagicMock()), \
              patch('mods.revomon.podium_command.File'):
-    
+
             await cog.podium.callback(cog, mock_interaction) # type: ignore
             mock_interaction.response.defer.assert_called_once_with(thinking=True, ephemeral=True)
             assert mock_interaction.followup.send.call_count == 2

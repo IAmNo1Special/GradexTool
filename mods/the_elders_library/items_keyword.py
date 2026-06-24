@@ -1,11 +1,12 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class allitems(commands.Cog):
+class allitems(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -199,13 +200,13 @@ Yululu Fruity""",
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class allitems_buttons(discord.ui.View):
+    class allitems_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

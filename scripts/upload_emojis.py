@@ -45,7 +45,7 @@ class EmojiUploaderClient(discord.Client):
             logger.error(f"Database not found at {json_path}")
             return
 
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             revomon_db = json.load(f)
 
         # Build mapping: dex_id -> safe_name
@@ -72,14 +72,14 @@ class EmojiUploaderClient(discord.Client):
             # Parse the filename (e.g., '1.png' or '1_shiny.png')
             base_name = filename[:-4]
             is_shiny = "_shiny" in base_name
-            
+
             # Extract just the ID number
             dex_id_str = base_name.replace("_shiny", "")
-            
+
             if dex_id_str not in dex_map:
                 logger.warning(f"Unrecognized dex ID '{dex_id_str}' in file '{filename}'. Skipping.")
                 continue
-                
+
             revomon_name = dex_map[dex_id_str]
             emoji_name = f"{revomon_name}_shiny" if is_shiny else revomon_name
 
@@ -93,11 +93,11 @@ class EmojiUploaderClient(discord.Client):
                 img = Image.open(filepath)
                 # Resize down to 128x128 for Discord emojis (<= 256kb)
                 img.thumbnail((128, 128))
-                
+
                 b = BytesIO()
                 img.save(b, format="PNG")
                 image_bytes = b.getvalue()
-                
+
                 # Double check size just in case, though 128x128 PNG is practically guaranteed to be < 256kb
                 if len(image_bytes) > 256 * 1024:
                     logger.warning(f"Image {filename} is still too large after resize ({len(image_bytes)} bytes)! Skipping.")
@@ -107,7 +107,7 @@ class EmojiUploaderClient(discord.Client):
                 logger.info(f"Uploading emoji: {emoji_name} (from {filename})...")
                 await self.create_application_emoji(name=emoji_name, image=image_bytes)
                 upload_count += 1
-                
+
                 # Add to set so we don't accidentally upload duplicates if the folder has duplicates
                 existing_names.add(emoji_name)
 

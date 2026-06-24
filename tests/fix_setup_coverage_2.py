@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix position updates for text channels and forum channel
@@ -14,7 +13,7 @@ if 'mock_support =' not in text:
         mock_support.name = "support"
         mock_support.position = 999
         mock_support.edit = AsyncMock()
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds, mock_support])
 '''
     text = text.replace('        mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds])', support_mock)
@@ -27,12 +26,12 @@ error_test_fix = '''    @pytest.mark.asyncio
         cog = SetupCog(bot)
         mock_interaction = AsyncMock()
         mock_interaction.response.is_done.return_value = True
-        
+
         error = app_commands.AppCommandError("Command failed")
         error.original = Exception("Original error")
-        
+
         await cog.setup_command.error(mock_interaction, error)
-        
+
         mock_logger.error.assert_called_once()
         assert "Original error" in mock_logger.error.call_args[0][0]
 '''
@@ -44,16 +43,16 @@ error_test_correct = '''    @pytest.mark.asyncio
         cog = SetupCog(bot)
         mock_interaction = AsyncMock()
         mock_interaction.response.is_done.return_value = True
-        
+
         error = app_commands.AppCommandError("Command failed")
         error.original = Exception("Original error")
-        
+
         # Call the bound error handler (which is on the command itself usually, but we can call cog.setup_command.error by fetching the un-decorated function?)
         # Actually it's simpler:
         await cog.setup_command._has_any_error_handlers() # Just to touch it maybe
         # Let's call the raw callback
         await cog.setup_command_error(mock_interaction, error)
-        
+
         mock_logger.error.assert_called_once()
         assert "Original error" in mock_logger.error.call_args[0][0]
 '''
@@ -66,9 +65,9 @@ setup_exception_test = '''    @pytest.mark.asyncio
         from mods.revocord.setup import setup
         bot = MagicMock()
         bot.add_cog = AsyncMock(side_effect=Exception("Failed to add cog"))
-        
+
         await setup(bot)
-        
+
         mock_logger.error.assert_called_once()
         assert "Failed to add cog" in mock_logger.error.call_args[0][0]
 

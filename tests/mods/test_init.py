@@ -1,9 +1,9 @@
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-import discord
-from pathlib import Path
 
 from mods import load_mods
+
 
 class TestModsLoader:
     @pytest.mark.asyncio
@@ -21,20 +21,20 @@ class TestModsLoader:
         mock_file1.suffix = '.py'
         mock_file1.name = 'test_mod.py'
         mock_file1.stem = 'test_mod'
-        
+
         # Subdir in mods/
         mock_subdir = MagicMock()
         mock_subdir.is_dir.return_value = True
         mock_subdir.is_file.return_value = False
         mock_subdir.name = 'test_pkg'
-        
+
         # File in subdir
         mock_file2 = MagicMock()
         mock_file2.suffix = '.py'
         mock_file2.name = 'test_cog.py'
         mock_file2.stem = 'test_cog'
         mock_subdir.iterdir.return_value = [mock_file2]
-        
+
         mock_mods_dir.iterdir.return_value = [mock_file1, mock_subdir]
 
         await load_mods(mock_bot)
@@ -57,18 +57,18 @@ class TestModsLoader:
         mock_file1.suffix = '.py'
         mock_file1.name = 'test_mod.py'
         mock_file1.stem = 'test_mod'
-        
+
         mock_subdir = MagicMock()
         mock_subdir.is_dir.return_value = True
         mock_subdir.is_file.return_value = False
         mock_subdir.name = 'test_pkg'
-        
+
         mock_file2 = MagicMock()
         mock_file2.suffix = '.py'
         mock_file2.name = 'test_cog.py'
         mock_file2.stem = 'test_cog'
         mock_subdir.iterdir.return_value = [mock_file2]
-        
+
         mock_mods_dir.iterdir.return_value = [mock_file1, mock_subdir]
 
         await load_mods(mock_bot)

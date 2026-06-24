@@ -1,23 +1,22 @@
 import json
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-from pathlib import Path
-import discord
-from discord.ext import commands
 
 from mods.revocord.wilds_loop import WildsLoopCog, setup
+
 
 class TestWildsLoopDataLoading:
     @patch("pathlib.Path.exists")
     @patch("builtins.open", new_callable=mock_open)
     def test_load_data_success(self, mock_file, mock_exists):
         mock_exists.return_value = True
-        
+
         # We need side_effect to return different data based on what file is opened
         ev_data = json.dumps({"1": {"to": "Raichu"}})
         revomon_data = json.dumps({"revomons": [{"name": "Pikachu", "type1": "neutral"}]})
         natures_data = json.dumps([{"name": "hardy"}])
-        
+
         def mock_open_side_effect(*args, **kwargs):
             filename = str(args[0])
             if "evolutions.json" in filename:
@@ -27,13 +26,13 @@ class TestWildsLoopDataLoading:
             elif "natures.json" in filename:
                 return mock_open(read_data=natures_data).return_value
             return mock_open(read_data="").return_value
-            
+
         mock_file.side_effect = mock_open_side_effect
-        
+
         bot = MagicMock()
         with patch("discord.ext.tasks.Loop.start"):
             cog = WildsLoopCog(bot)
-            
+
         assert "raichu" in cog.evolved_names
         assert len(cog.revomons) == 1
         assert cog.revomons[0]["name"] == "Pikachu"
@@ -44,11 +43,11 @@ class TestWildsLoopDataLoading:
     def test_load_data_exceptions(self, mock_file, mock_exists):
         mock_exists.return_value = True
         mock_file.side_effect = Exception("Read error")
-        
+
         bot = MagicMock()
         with patch("discord.ext.tasks.Loop.start"):
             cog = WildsLoopCog(bot)
-            
+
         assert len(cog.evolved_names) == 0
         assert len(cog.revomons) == 0
         assert len(cog.natures) == 0
@@ -56,11 +55,11 @@ class TestWildsLoopDataLoading:
     @patch("pathlib.Path.exists")
     def test_load_data_no_files(self, mock_exists):
         mock_exists.return_value = False
-        
+
         bot = MagicMock()
         with patch("discord.ext.tasks.Loop.start"):
             cog = WildsLoopCog(bot)
-            
+
         assert len(cog.evolved_names) == 0
         assert len(cog.revomons) == 0
         assert len(cog.natures) == 0
@@ -91,7 +90,7 @@ class TestWildsLoopSpawning:
         guild = MagicMock()
         guild.text_channels = [MagicMock(name="wilds")]
         guild.text_channels[0].name = "wilds"
-        
+
         with patch("mods.revocord.wilds_loop.BIOME_TYPES", {"water": {"water"}}):
             await cog._do_spawn(guild)
         guild.text_channels[0].send.assert_not_called()
@@ -103,27 +102,27 @@ class TestWildsLoopSpawning:
     async def test_do_spawn_success_no_image(self, mock_exists, mock_table, mock_biome, cog):
         mock_biome.return_value = "unknown" # defaults to {"neutral"} allowed_types
         mock_exists.return_value = False
-        
+
         guild = MagicMock()
         guild.id = 123
         wilds = MagicMock()
         wilds.name = "wilds"
         guild.text_channels = [wilds]
-        
+
         msg = MagicMock()
         msg.id = 999
         msg.edit = AsyncMock()
         wilds.send = AsyncMock(return_value=msg)
         mock_table.add_spawn = AsyncMock()
-        
+
         await cog._do_spawn(guild)
-        
+
         wilds.send.assert_called_once()
         kwargs = wilds.send.call_args[1]
         assert "embed" in kwargs
         assert "view" in kwargs
         assert kwargs["embed"].description == "*Image sprite not found*"
-        
+
         msg.edit.assert_called_once()
         mock_table.add_spawn.assert_called_once()
 
@@ -137,22 +136,22 @@ class TestWildsLoopSpawning:
         mock_exists.side_effect = [False, True] # Shiny image doesn't exist, fallback does!
         mock_biome.return_value = "unknown" # defaults to {"neutral"} allowed_types
         mock_exists.return_value = True
-        
+
         guild = MagicMock()
         guild.id = 123
         wilds = MagicMock()
         wilds.name = "wilds"
         guild.text_channels = [wilds]
-        
+
         msg = MagicMock()
         msg.id = 999
         msg.edit = AsyncMock()
         wilds.send = AsyncMock(return_value=msg)
         mock_table.add_spawn = AsyncMock()
-        
+
         with patch("discord.File"):
             await cog._do_spawn(guild)
-            
+
         wilds.send.assert_called_once()
         kwargs = wilds.send.call_args[1]
         assert "file" in kwargs
@@ -180,11 +179,11 @@ class TestWildsLoopTasks:
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=6) # Over base limit, but under temp limit!
         cog._do_spawn = AsyncMock()
-        
+
         guild = MagicMock()
         guild.id = 123
         cog.bot.guilds = [guild]
-        
+
         await cog.wilds_spawn_loop()
         cog._do_spawn.assert_called_once()
 
@@ -211,13 +210,13 @@ class TestWildsLoopTasks:
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=0)
         cog._do_spawn = AsyncMock()
-        
+
         guild = MagicMock()
         guild.id = 123
         cog.bot.guilds = [guild]
-        
+
         await cog.wilds_spawn_loop()
-        
+
         cog._do_spawn.assert_called_once_with(guild)
         mock_update.assert_called_once()
 
@@ -233,11 +232,11 @@ class TestWildsLoopTasks:
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=5)
         cog._do_spawn = AsyncMock()
-        
+
         guild = MagicMock()
         guild.id = 123
         cog.bot.guilds = [guild]
-        
+
         await cog.wilds_spawn_loop()
         cog._do_spawn.assert_not_called()
 
@@ -247,7 +246,7 @@ class TestWildsLoopTasks:
         mock_config.side_effect = Exception("DB error")
         guild = MagicMock()
         cog.bot.guilds = [guild]
-        
+
         # Should not raise
         await cog.wilds_spawn_loop()
 

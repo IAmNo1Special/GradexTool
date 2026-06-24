@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Revert execute_setup back to setup_command.callback for tests that should test the command
@@ -17,14 +16,14 @@ portal_fail_test_old = '''    @pytest.mark.asyncio
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
-        
+
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_guild.create_category = AsyncMock(return_value=mock_category)
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[])
         mock_guild.text_channels = []
-        
+
         # Override create_text_channel to return None specifically for portal
         async def mock_create_text_channel(**kwargs):
             if kwargs.get("name") == "portal":
@@ -32,11 +31,11 @@ portal_fail_test_old = '''    @pytest.mark.asyncio
             channel = MagicMock(spec=discord.TextChannel)
             channel.name = kwargs.get("name")
             return channel
-            
+
         mock_guild.create_text_channel = AsyncMock(side_effect=mock_create_text_channel)
-        
+
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         # We expect it to catch the exception and send a followup
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
@@ -48,14 +47,14 @@ portal_fail_test_new = '''    @pytest.mark.asyncio
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
-        
+
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_guild.create_category = AsyncMock(return_value=mock_category)
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[])
         mock_guild.text_channels = []
-        
+
         # Override create_text_channel to return None specifically for portal
         def mock_create_text_channel(**kwargs):
             if kwargs.get("name") == "portal":
@@ -63,11 +62,11 @@ portal_fail_test_new = '''    @pytest.mark.asyncio
             channel = MagicMock(spec=discord.TextChannel)
             channel.name = kwargs.get("name")
             return channel
-            
+
         mock_guild.create_text_channel = AsyncMock(side_effect=mock_create_text_channel)
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         # We expect it to catch the exception and send a followup
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]

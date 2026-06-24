@@ -1,13 +1,15 @@
-from typing import Any, Coroutine, Callable
+from collections.abc import Callable, Coroutine
+from typing import Any
+
 """Health cog: periodic heartbeat logging and bot uptime tracking."""
 
-import asyncio
-import time
-import logging
+import asyncio  # noqa: E402
+import logging  # noqa: E402
+import time  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-from discord.ext import commands
+from discord.ext import commands  # noqa: E402
 
 # Heartbeat interval in seconds
 _HEARTBEAT_INTERVAL = 300  # 5 minutes

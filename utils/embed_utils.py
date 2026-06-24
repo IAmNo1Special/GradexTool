@@ -1,8 +1,6 @@
 from typing import Any
+
 from discord import Color, Embed
-import discord.embeds
-from typing import Tuple
-from unittest.mock import MagicMock
 
 
 def intro(attributes: dict[str, Any]) -> Embed:
@@ -352,7 +350,7 @@ def types(attributes: dict[str, Any]) -> Embed:
     return types_embed
 
 
-def compare_types(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Tuple[Embed, Embed]:
+def compare_types(attributes: dict[str, Any], attributes2: dict[str, Any]) -> tuple[Embed, Embed]:
     type_chart_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}",
         description="__**Type Chart**__",

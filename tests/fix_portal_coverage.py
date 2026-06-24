@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_portal.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 test = '''    @pytest.mark.asyncio
@@ -10,10 +10,10 @@ test = '''    @pytest.mark.asyncio
         mock_interaction = MagicMock(spec=discord.Interaction)
         mock_interaction.response.defer = AsyncMock()
         mock_interaction.user = MagicMock(spec=discord.User)  # Not a Member
-        
+
         button = view.children[0]
         await button.callback(mock_interaction)
-        
+
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.followup.send.assert_not_called()'''
 

@@ -1,14 +1,13 @@
-from typing import Any
-import unittest.mock
 import asyncio
 import json
-import logging
+import unittest.mock
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock
 
 import httpx
 import pytest
+
 from scripts import moves
 
 
@@ -97,24 +96,24 @@ def test_retry_after_seconds() -> None:
 
 def test_main_block(monkeypatch: Any) -> None:
     import runpy
-    
+
     mock_run = MagicMock(side_effect=lambda coro: coro.close())
     monkeypatch.setattr("asyncio.run", mock_run)
-    
+
     mock_basic_config = MagicMock()
     monkeypatch.setattr("logging.basicConfig", mock_basic_config)
-    
+
     with unittest.mock.patch.dict('sys.modules'):
 
-    
+
         import sys
 
-    
+
         sys.modules.pop('scripts.moves', None)
 
-    
+
         runpy.run_module('scripts.moves', run_name='__main__')
-    
+
     mock_basic_config.assert_called_once()
     mock_run.assert_called_once()
 

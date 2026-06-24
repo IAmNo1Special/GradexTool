@@ -1,7 +1,5 @@
-from typing import Any, Optional
 import requests
 from discord.ext import commands, tasks
-from discord.ext.commands.bot import Bot
 
 
 class PriceTracker(commands.Cog):
@@ -11,7 +9,7 @@ class PriceTracker(commands.Cog):
         self.price_channel_id = 1254142506178838558  # Replace with your channel ID
         self.update_price.start()
 
-    def get_revo_price(self) -> Optional[float]:
+    def get_revo_price(self) -> float | None:
         response = requests.get(self.revo_url)
         if response.status_code == 200:
             data = response.json()

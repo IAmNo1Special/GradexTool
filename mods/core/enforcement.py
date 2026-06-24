@@ -1,4 +1,3 @@
-from typing import Any
 """Cog for enforcing workspace layouts and preventing channel tampering."""
 
 import logging

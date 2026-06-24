@@ -8,16 +8,14 @@ import functools
 import json
 import logging
 import time
+import typing
 from collections.abc import Callable, Coroutine
 from pathlib import Path
 from typing import Any, TypeVar
+from unittest.mock import MagicMock
 
 import discord
 from discord import app_commands, ui
-import typing
-from asyncio.locks import Lock
-from discord.ui.view import LayoutView
-from unittest.mock import MagicMock
 
 logger = logging.getLogger("discord_bot")
 
@@ -264,7 +262,7 @@ def build_text_view(content: str, *, accent_color: int | None = None) -> ui.Layo
     return view
 
 
-def is_server_owner() -> typing.Union[MagicMock, typing.Callable[..., Any]]:
+def is_server_owner() -> MagicMock | typing.Callable[..., Any]:
     """Check if the command invoker is the absolute server owner."""
 
     async def predicate(interaction: discord.Interaction) -> bool:

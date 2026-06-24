@@ -1,9 +1,10 @@
+from typing import Any
+from unittest.mock import MagicMock
+
 from PIL import Image, ImageDraw, ImageFont
 
 from data import RevomonTable
 from utils.revomon_utils import get_attributes
-from typing import Any, Dict, List, Optional, Union
-from unittest.mock import MagicMock
 
 
 def create_base_tier_list(
@@ -12,7 +13,7 @@ def create_base_tier_list(
     row_gap: int=10,
     font_path: str="data/fonts/CabalBold.ttf",
     font_size: int=20,
-    image_paths: Optional[Dict[str, List[Union[str, Any]]]]=None,
+    image_paths: dict[str, list[str | Any]] | None=None,
 ) -> MagicMock:
     """Creates the base tier list image with colored headers and black rows.
 
@@ -95,7 +96,7 @@ def create_base_tier_list(
 def create_tier_list_with_images(
     width: int,
     height: int,
-    image_paths: Dict[str, Union[List[Any], List[Union[str, Any]]]],
+    image_paths: dict[str, list[Any] | list[str | Any]],
     row_gap: int=10,
     font_path: str="data/fonts/CabalBold.ttf",
     font_size: int=20,

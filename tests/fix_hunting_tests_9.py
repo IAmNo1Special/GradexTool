@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # 1. test_on_timeout_success & test_on_timeout_exception
@@ -38,24 +38,24 @@ cleanup_fix = '''    @pytest.mark.asyncio
         cog = HuntingCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.delete = AsyncMock()
-        
+
         mock_item = MagicMock()
         mock_item.custom_id = f"spawn_fight:123:1:0:{int(time.time() - 400)}"
-        
+
         mock_component = MagicMock()
         mock_component.children = [mock_item]
         mock_msg.components = [mock_component]
-        
+
         mock_channel = MagicMock()
-        
+
         async def mock_history(*args, **kwargs):
             yield mock_msg
-            
+
         mock_channel.history = mock_history
         mock_guild = MagicMock()
         mock_guild.text_channels = [mock_channel]
         mock_bot.guilds = [mock_guild]
-        
+
         await cog.cleanup_encounters()
         mock_msg.delete.assert_called_once()
 '''

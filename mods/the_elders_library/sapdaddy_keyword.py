@@ -1,11 +1,12 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class sapdaddy(commands.Cog):
+class sapdaddy(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -26,7 +27,7 @@ class sapdaddy(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class sapdaddy_buttons(discord.ui.View):
+    class sapdaddy_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -36,7 +37,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy1",
         )
         async def video1(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -50,7 +51,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy2",
         )
         async def video2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -64,7 +65,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy3",
         )
         async def video3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -78,7 +79,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy4",
         )
         async def video4(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -92,7 +93,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy5",
         )
         async def video5(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -106,7 +107,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy6",
         )
         async def video6(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -120,7 +121,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy7",
         )
         async def video7(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -134,7 +135,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy8",
         )
         async def video8(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -148,7 +149,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy9",
         )
         async def video9(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -162,7 +163,7 @@ class sapdaddy(commands.Cog):
             custom_id="sapdaddy10",
         )
         async def video10(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
@@ -172,7 +173,7 @@ class sapdaddy(commands.Cog):
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

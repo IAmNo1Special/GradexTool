@@ -1,4 +1,3 @@
-from typing import Any
 from discord import Client, Message
 from discord.ext import commands
 
@@ -9,7 +8,7 @@ from utils.helpers import respond
 from utils.revomon_utils import get_attributes
 
 
-class revomon_search(commands.Cog):
+class revomon_search(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Client) -> None:
         self.gradex = gradex
         self.selected_mon_message = None

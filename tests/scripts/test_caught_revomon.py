@@ -1,37 +1,34 @@
-from typing import Any
-import unittest.mock
 import asyncio
-import json
 import os
-import runpy
-from datetime import UTC, datetime
 from pathlib import Path
-from unittest.mock import patch, mock_open, MagicMock, AsyncMock
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
 import httpx
 import pytest
-from httpx import Response, Request
+from httpx import Request, Response
 
 from scripts.caught_revomon import (
-    _env_int,
-    _env_float,
+    CAUGHT_REVOMON_SCAN_STATE_FILE,
+    REVODEX_CAUGHT_REVOMON_FILE,
+    CaughtRevomonResult,
     RequestPacer,
-    _retry_after_seconds,
-    get_caught_revomon,
+    _advance_frontier,
+    _build_state_dict,
+    _env_float,
+    _env_int,
+    _found_name,
     _load_results,
     _load_scan_state,
-    _save_json,
-    save_progress,
-    _advance_frontier,
-    _recompute_frontier,
-    _build_state_dict,
-    _found_name,
     _process_batch,
+    _recompute_frontier,
+    _retry_after_seconds,
+    _save_json,
+    get_caught_revomon,
     get_caught_revomon_data,
-    CaughtRevomonResult,
-    REVODEX_CAUGHT_REVOMON_FILE,
-    CAUGHT_REVOMON_SCAN_STATE_FILE,
+    save_progress,
 )
+
 
 def test_env_int() -> None:
     assert _env_int("NON_EXISTENT_VAR", 42) == 42
@@ -102,7 +99,7 @@ async def test_get_caught_revomon_200_valid() -> None:
     resp = Response(200, json={"data": {"catchedRevomon": {"name": "TestMon"}}}, request=req)
     client.get = AsyncMock(return_value=resp)
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "found"
     assert result.data == {"name": "TestMon"}
@@ -115,10 +112,10 @@ async def test_get_caught_revomon_200_invalid_payload() -> None:
     resp = Response(200, json={"error": "some_error", "data": {}}, request=req)
     client.get = AsyncMock(return_value=resp)
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "not_found"
-    
+
     # data is not dict
     resp2 = Response(200, json={"data": []}, request=req)
     client.get = AsyncMock(return_value=resp2)
@@ -131,7 +128,7 @@ async def test_get_caught_revomon_404() -> None:
     req = Request("GET", "http://test")
     client.get = AsyncMock(return_value=Response(404, request=req))
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "not_found"
 
@@ -139,13 +136,13 @@ async def test_get_caught_revomon_404() -> None:
 async def test_get_caught_revomon_429() -> None:
     client = MagicMock(spec=httpx.AsyncClient)
     req = Request("GET", "http://test")
-    
+
     resp_429 = Response(429, headers={"Retry-After": "0.1"}, request=req)
     resp_200 = Response(200, json={"data": {"catchedRevomon": {"name": "TestMon"}}}, request=req)
-    
+
     client.get = AsyncMock(side_effect=[resp_429, resp_200])
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=2)
     assert result.status == "found"
 
@@ -153,13 +150,13 @@ async def test_get_caught_revomon_429() -> None:
 async def test_get_caught_revomon_500() -> None:
     client = MagicMock(spec=httpx.AsyncClient)
     req = Request("GET", "http://test")
-    
+
     resp_500 = Response(500, request=req)
     resp_200 = Response(200, json={"data": {"catchedRevomon": {"name": "TestMon"}}}, request=req)
-    
+
     client.get = AsyncMock(side_effect=[resp_500, resp_200])
     pacer = RequestPacer(0.0)
-    
+
     with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
         result = await get_caught_revomon(client, pacer, 1, max_attempts=2)
         assert result.status == "found"
@@ -171,7 +168,7 @@ async def test_get_caught_revomon_400() -> None:
     req = Request("GET", "http://test")
     client.get = AsyncMock(return_value=Response(400, request=req))
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "not_found"
 
@@ -181,7 +178,7 @@ async def test_get_caught_revomon_other_error() -> None:
     req = Request("GET", "http://test")
     client.get = AsyncMock(return_value=Response(403, request=req))
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "error"
 
@@ -190,8 +187,8 @@ async def test_get_caught_revomon_httperror() -> None:
     client = MagicMock(spec=httpx.AsyncClient)
     client.get = AsyncMock(side_effect=httpx.ReadTimeout("Timeout"))
     pacer = RequestPacer(0.0)
-    
-    with patch("asyncio.sleep", new_callable=AsyncMock) as mock_sleep:
+
+    with patch("asyncio.sleep", new_callable=AsyncMock):
         result = await get_caught_revomon(client, pacer, 1, max_attempts=2)
         assert result.status == "error"
 
@@ -202,7 +199,7 @@ async def test_get_caught_revomon_json_error() -> None:
     resp = Response(200, content=b"invalid json", request=req)
     client.get = AsyncMock(return_value=resp)
     pacer = RequestPacer(0.0)
-    
+
     result = await get_caught_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "error"
 
@@ -274,7 +271,7 @@ def test_save_json() -> None:
 def test_save_progress() -> None:
     results = {2: {"name": "B"}, 1: {"name": "A"}}
     state = {
-        "next_id": 2, 
+        "next_id": 2,
         "statuses": {"1": "found", "2": "not_found", "3": "error"}
     }
     with patch("scripts.caught_revomon._save_json") as mock_save:
@@ -282,7 +279,7 @@ def test_save_progress() -> None:
         assert mock_save.call_count == 2
         args1, _ = mock_save.call_args_list[0]
         args2, _ = mock_save.call_args_list[1]
-        
+
         assert args1[0] == REVODEX_CAUGHT_REVOMON_FILE
         assert list(args1[1].keys()) == ["1", "2"] # sorted
 
@@ -319,10 +316,10 @@ def test_found_name() -> None:
 async def test_process_batch() -> None:
     client = MagicMock()
     pacer = RequestPacer(0.0)
-    
+
     async def mock_get(client: Any, pacer: Any, id_catched: Any, max_attempts: Any=8) -> Any:
         return CaughtRevomonResult(status="found" if id_catched == 1 else "not_found")
-        
+
     with patch("scripts.caught_revomon.get_caught_revomon", side_effect=mock_get):
         res = await _process_batch(client, pacer, [1, 2])
         assert len(res) == 2
@@ -335,7 +332,7 @@ async def test_get_caught_revomon_data_max_id() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 1, "statuses": {}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress") as mock_save:
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         results = await get_caught_revomon_data(max_id=1, empty_tail_limit=10)
         assert results == {}
@@ -346,8 +343,8 @@ async def test_get_caught_revomon_data_empty_tail() -> None:
     with patch("scripts.caught_revomon._load_results", return_value={1: {"name": "A"}}), \
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 2, "statuses": {"1": "found"}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
-         patch("scripts.caught_revomon.save_progress") as mock_save:
-        
+         patch("scripts.caught_revomon.save_progress"):
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         results = await get_caught_revomon_data(max_id=10, empty_tail_limit=1)
         assert results == {1: {"name": "A"}}
@@ -358,7 +355,7 @@ async def test_get_caught_revomon_data_error_pause() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 1, "statuses": {}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("error")] * len(ids)
         results = await get_caught_revomon_data(max_id=1, empty_tail_limit=10)
         assert results == {}
@@ -369,7 +366,7 @@ async def test_get_caught_revomon_data_found() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 1, "statuses": {}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         def mock_side_effect(c: Any, p: Any, ids: Any) -> Any:
             return [CaughtRevomonResult("found", {"name": "Test"}) if i == 1 else CaughtRevomonResult("not_found") for i in ids]
 
@@ -384,7 +381,7 @@ async def test_get_caught_revomon_data_existing_status() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 1, "statuses": {"1": "found", "2": "not_found"}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("found", {"name": "B"}) if i == 3 else CaughtRevomonResult("not_found") for i in ids]
         results = await get_caught_revomon_data(max_id=3, empty_tail_limit=10)
         assert results == {1: {"name": "A"}, 3: {"name": "B"}}
@@ -396,9 +393,9 @@ async def test_get_caught_revomon_data_checkpoint() -> None:
          patch("scripts.caught_revomon.CHECKPOINT_INTERVAL", 1), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress") as mock_save:
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
-        results = await get_caught_revomon_data(max_id=1, empty_tail_limit=10)
+        await get_caught_revomon_data(max_id=1, empty_tail_limit=10)
         assert mock_save.call_count >= 1
 
 @pytest.mark.asyncio
@@ -407,15 +404,15 @@ async def test_get_caught_revomon_data_recompute_frontier() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 3, "statuses": {"1": "found", "2": "not_found"}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         await get_caught_revomon_data(max_id=3, empty_tail_limit=10)
 
 @pytest.mark.asyncio
 async def test_get_caught_revomon_data_recompute_frontier_mismatch() -> None:
     state = {
-        "version": 1, 
-        "next_id": 3, 
+        "version": 1,
+        "next_id": 3,
         "statuses": {"1": "found", "2": "not_found"},
         "last_found_id": 1,
         "consecutive_missing_after_last_found": 1
@@ -424,22 +421,22 @@ async def test_get_caught_revomon_data_recompute_frontier_mismatch() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value=state), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         await get_caught_revomon_data(max_id=3, empty_tail_limit=10)
 
 @pytest.mark.asyncio
 async def test_get_caught_revomon_data_batch_break() -> None:
     state = {
-        "version": 1, 
-        "next_id": 1, 
+        "version": 1,
+        "next_id": 1,
         "statuses": {"2": "found"},
     }
     with patch("scripts.caught_revomon._load_results", return_value={}), \
          patch("scripts.caught_revomon._load_scan_state", return_value=state), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         await get_caught_revomon_data(max_id=2, empty_tail_limit=10)
 
@@ -449,7 +446,7 @@ async def test_get_caught_revomon_data_100() -> None:
          patch("scripts.caught_revomon._load_scan_state", return_value={"version": 1, "next_id": 100, "statuses": {}}), \
          patch("scripts.caught_revomon._process_batch", new_callable=AsyncMock) as mock_batch, \
          patch("scripts.caught_revomon.save_progress"):
-        
+
         mock_batch.side_effect = lambda c, p, ids: [CaughtRevomonResult("not_found")] * len(ids)
         await get_caught_revomon_data(start_id=100, max_id=100, empty_tail_limit=10)
 

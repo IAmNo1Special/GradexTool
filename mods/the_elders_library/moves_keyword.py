@@ -1,11 +1,12 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class allmoves(commands.Cog):
+class allmoves(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -209,7 +210,7 @@ Heal Bell""",
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class allmoves_buttons(discord.ui.View):
+    class allmoves_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -219,7 +220,7 @@ Heal Bell""",
             custom_id="All Moves 2",
         )
         async def allmoves_page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             allmoves2_embed = discord.Embed(
                 title="Full Move List (Page 2)",
@@ -432,7 +433,7 @@ Spikes""",
             custom_id="All Moves 3",
         )
         async def allmoves_page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             allmoves3_embed = discord.Embed(
                 title="Full Move List (Page 3)",
@@ -550,7 +551,7 @@ Zen Headbutt""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

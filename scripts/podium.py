@@ -1,12 +1,11 @@
-from typing import Any
 import json
-import aiosqlite
 from pathlib import Path
 
+import aiosqlite
 import requests
+from aiosqlite.core import Connection
 
 from configs import GRADEX_DB_PATH
-from aiosqlite.core import Connection
 
 db_path: Path = GRADEX_DB_PATH
 

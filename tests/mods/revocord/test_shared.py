@@ -1,42 +1,39 @@
 from typing import Any
+
 """Comprehensive tests for shared.py utilities."""
 
-import asyncio
-import json
-import time
-from pathlib import Path
-from unittest.mock import AsyncMock, MagicMock, patch
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import time  # noqa: E402
+import typing  # noqa: E402
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-import pytest
-import discord
+import discord  # noqa: E402
+import pytest  # noqa: E402
 
-import sys
-import typing
-
-
-from mods.revocord.shared import (
+from mods.revocord.shared import (  # noqa: E402
+    WORLD_MAP,
+    build_text_view,
     get_lock,
-    normalize_channel_name,
-    load_accounts,
-    save_accounts,
     get_or_create_account,
+    is_server_owner,
+    load_accounts,
+    normalize_channel_name,
+    save_accounts,
     update_account,
     with_typing_indicator,
-    build_text_view,
-    is_server_owner,
-    WORLD_MAP,
 )
 
 
 @pytest.fixture
-def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any, None, None]:
+def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any]:
     file_path = tmp_path / "revocord_accounts.json"
     file_path.write_text("{}")
     with patch("mods.revocord.shared.ACCOUNTS_FILE", file_path):
         yield file_path
 
 @pytest.fixture
-def clean_accounts(temp_accounts_file: Any) -> typing.Generator[Any, None, None]:
+def clean_accounts(temp_accounts_file: Any) -> typing.Generator[Any]:
     yield temp_accounts_file
 
 @pytest.fixture
@@ -136,7 +133,7 @@ class TestAccountFileOperations:
         user_id = "123456789"
         with open(temp_accounts_file, 'w') as f:
             json.dump({user_id: sample_account_data}, f)
-        
+
         accounts = load_accounts()
         assert accounts == {user_id: sample_account_data}
 
@@ -144,7 +141,7 @@ class TestAccountFileOperations:
         """Test loading accounts from a file with invalid JSON."""
         with open(temp_accounts_file, 'w') as f:
             f.write("invalid json content")
-        
+
         accounts = load_accounts()
         assert accounts == {}
 
@@ -153,11 +150,11 @@ class TestAccountFileOperations:
         user_id = "123456789"
         accounts = {user_id: sample_account_data}
         save_accounts(accounts)
-        
+
         # Verify file was created and contains correct data
-        with open(temp_accounts_file, 'r') as f:
+        with open(temp_accounts_file) as f:
             loaded_data = json.load(f)
-        
+
         assert loaded_data == accounts
 
 
@@ -168,10 +165,10 @@ class TestGetOrCreateAccount:
     async def test_create_new_account(self, clean_accounts: Any, mock_user: Any) -> None:
         """Test creating a new account for a user."""
         account = await get_or_create_account(mock_user.id)
-        
+
         assert account["current_city"] == "drassius city"
         assert account["current_location"] == "revocenter"
-        assert account["is_logged_in"] == False
+        assert not account["is_logged_in"]
         assert account["energy"] == 100
         assert account["max_energy"] == 100
         assert account["coins"] == 500
@@ -187,9 +184,9 @@ class TestGetOrCreateAccount:
         user_id = str(mock_user.id)
         with open(clean_accounts, 'w') as f:
             json.dump({user_id: sample_account_data}, f)
-        
+
         account = await get_or_create_account(mock_user.id)
-        
+
         assert account["current_city"] == sample_account_data["current_city"]
         assert account["coins"] == sample_account_data["coins"]
 
@@ -217,12 +214,12 @@ class TestGetOrCreateAccount:
             "inventory": {},
             "caught_revomon": [],
         }
-        
+
         with open(clean_accounts, 'w') as f:
             json.dump({user_id: account_data}, f)
-        
+
         account = await get_or_create_account(mock_user.id)
-        
+
         # Should have regenerated 2 energy (1 per minute for 2 minutes)
         assert account["energy"] >= 50
 
@@ -233,12 +230,12 @@ class TestGetOrCreateAccount:
         incomplete_account = {
             "current_city": "drassius city",
         }
-        
+
         with open(clean_accounts, 'w') as f:
             json.dump({user_id: incomplete_account}, f)
-        
+
         account = await get_or_create_account(mock_user.id)
-        
+
         # Should have all default fields now
         assert "energy" in account
         assert "coins" in account
@@ -254,9 +251,9 @@ class TestUpdateAccount:
         user_id = str(mock_user.id)
         with open(clean_accounts, 'w') as f:
             json.dump({user_id: sample_account_data}, f)
-        
+
         updated = await update_account(mock_user.id, coins=1000, energy=75)
-        
+
         assert updated["coins"] == 1000
         assert updated["energy"] == 75
 
@@ -264,7 +261,7 @@ class TestUpdateAccount:
     async def test_update_creates_account_if_not_exists(self, clean_accounts: Any, mock_user: Any) -> None:
         """Test that update creates account if it doesn't exist."""
         updated = await update_account(mock_user.id, coins=1000)
-        
+
         assert updated["coins"] == 1000
         assert updated["current_city"] == "drassius city"
 
@@ -278,7 +275,7 @@ class TestUpdateAccount:
             current_city="marquis island",
             trainer_level=5
         )
-        
+
         assert updated["coins"] == 1000
         assert updated["energy"] == 80
         assert updated["current_city"] == "marquis island"
@@ -288,7 +285,7 @@ class TestUpdateAccount:
     async def test_update_energy_resets_regen_timer(self, clean_accounts: Any, mock_user: Any) -> None:
         """Test that manually updating energy resets regeneration timer."""
         updated = await update_account(mock_user.id, energy=50)
-        
+
         # Last energy update should be recent
         assert updated["last_energy_update"] > time.time() - 10
 
@@ -303,10 +300,10 @@ class TestWithTypingIndicator:
         async def test_func(interaction: Any) -> str:
             await asyncio.sleep(0.01)
             return "success"
-        
+
         mock_interaction.channel = mock_channel
         result = await test_func(mock_interaction)
-        
+
         assert result == "success"
         mock_channel.typing.assert_called_once()
 
@@ -317,10 +314,10 @@ class TestWithTypingIndicator:
         async def test_func(message: Any) -> str:
             await asyncio.sleep(0.01)
             return "success"
-        
+
         mock_message.channel = mock_channel
         result = await test_func(mock_message)
-        
+
         assert result == "success"
         mock_channel.typing.assert_called_once()
 
@@ -330,7 +327,7 @@ class TestWithTypingIndicator:
         @with_typing_indicator
         async def test_func(obj: Any) -> str:
             return "success"
-        
+
         result = await test_func(MagicMock())
         assert result == "success"
 
@@ -340,7 +337,7 @@ class TestWithTypingIndicator:
         @with_typing_indicator
         async def test_func() -> str:
             return "success"
-        
+
         result = await test_func()
         assert result == "success"
 
@@ -351,7 +348,7 @@ class TestBuildTextView:
     def test_build_text_view_basic(self) -> None:
         """Test building a basic text view."""
         view = build_text_view("Test content")
-        
+
         assert view is not None
         # View should be a Discord UI View
         assert hasattr(view, 'children')  # Basic view check
@@ -359,7 +356,7 @@ class TestBuildTextView:
     def test_build_text_view_with_color(self) -> None:
         """Test building a text view with custom color."""
         view = build_text_view("Test content", accent_color=0xFF0000)
-        
+
         assert view is not None
         assert hasattr(view, 'children')  # Basic view check
 
@@ -370,12 +367,12 @@ class TestIsServerOwner:
     def test_is_server_owner_with_owner(self, mock_interaction: Any) -> None:
         """Test decorator when user is server owner."""
         mock_interaction.user.id = 123  # Simulate owner
-        mock_app_command = MagicMock()
-        
+        MagicMock()
+
         @is_server_owner()
         async def test_command(interaction: Any) -> str:
             return "success"
-        
+
         # The decorator should allow execution for owner
         # (Implementation would check interaction.user.id against guild.owner_id)
         assert callable(test_command)
@@ -383,11 +380,11 @@ class TestIsServerOwner:
     def test_is_server_owner_decorator_structure(self) -> None:
         """Test that the decorator is properly structured."""
         assert callable(is_server_owner)
-        
+
         @is_server_owner()
         async def dummy_command(interaction: Any) -> Any:
             return True
-        
+
         assert callable(dummy_command)
 
 
@@ -408,9 +405,9 @@ class TestConstants:
         # Check that routes connect properly
         assert "route1" in WORLD_MAP["drassius city"]
         assert "drassius city" in WORLD_MAP["route1"]
-        
+
         # Check that all destinations in the map also exist as keys
-        for city, destinations in WORLD_MAP.items():
+        for _city, destinations in WORLD_MAP.items():
             for dest in destinations:
                 assert dest in WORLD_MAP, f"{dest} is not in WORLD_MAP as a key"
 
@@ -423,11 +420,11 @@ class TestEdgeCases:
         """Test that concurrent account access is handled correctly."""
         # Create multiple concurrent requests
         tasks = []
-        for i in range(10):
+        for _i in range(10):
             tasks.append(get_or_create_account(mock_user.id))
-        
+
         results = await asyncio.gather(*tasks)
-        
+
         # All should return valid accounts
         for result in results:
             assert isinstance(result, dict)
@@ -456,10 +453,10 @@ class TestEdgeCases:
             "inventory": {},
             "caught_revomon": [],
         }
-        
+
         with open(clean_accounts, 'w', encoding='utf-8') as f:
             json.dump({str(user_id): account_data}, f, ensure_ascii=False)
-        
+
         account = await get_or_create_account(user_id)
         assert account["current_city"] == "drassius city"
 
@@ -475,7 +472,7 @@ class TestEdgeCases:
     async def test_update_account_with_none_values(self, clean_accounts: Any, mock_user: Any) -> None:
         """Test updating account with None values doesn't break."""
         updated = await update_account(mock_user.id, current_city=None)
-        
+
         # Should handle None gracefully
         assert updated is not None
 
@@ -500,7 +497,7 @@ class TestSharedRemainingCoverage:
         # Let's mock time.time so energy regen doesn't interfere
         with patch("mods.revocord.shared.time.time", return_value=1234567890.0):
             updated = await update_account(mock_user.id, coins=20)
-            
+
         assert updated["coins"] == 20
         assert "energy" in updated
         assert updated["current_city"] == "drassius city"
@@ -520,7 +517,7 @@ class TestSharedRemainingCoverage:
 
         with patch("mods.revocord.shared.time.time", return_value=1120.0): # 120 seconds passed = +2 energy
             updated = await update_account(mock_user.id, coins=20)
-        
+
         assert updated["energy"] == 52
         assert updated["last_energy_update"] == 1120.0
 
@@ -534,12 +531,13 @@ class TestSharedRemainingCoverage:
 
         msg = MockMessage()
         # Remove channel from hasattr to trigger isinstance fallback
-        delattr(msg, "channel") 
+        delattr(msg, "channel")
         # But wait, we can't easily bypass hasattr if the property exists on class.
         # Let's mock hasattr to return False for 'channel' just for this test
         original_hasattr = hasattr
         def fake_hasattr(obj: Any, attr: Any) -> Any:
-            if attr == "channel": return False
+            if attr == "channel":
+                return False
             return original_hasattr(obj, attr)
 
         @with_typing_indicator
@@ -580,12 +578,12 @@ class TestSharedRemainingCoverage:
 
         mock_interaction = MagicMock()
         mock_interaction.guild = None
-        assert await predicate(mock_interaction) == False
+        assert not await predicate(mock_interaction)
 
         mock_interaction.guild = MagicMock()
         mock_interaction.guild.owner_id = 123
         mock_interaction.user.id = 456
-        assert await predicate(mock_interaction) == False
+        assert not await predicate(mock_interaction)
 
         mock_interaction.user.id = 123
-        assert await predicate(mock_interaction) == True
+        assert await predicate(mock_interaction)

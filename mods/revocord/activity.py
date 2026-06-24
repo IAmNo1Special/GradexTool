@@ -1,13 +1,14 @@
 from typing import Any
+
 """Cog for managing interactive thread activities and persistent views."""
 
-import logging
+import logging  # noqa: E402
 
-import discord
-from discord import ui
-from discord.ext import commands
+import discord  # noqa: E402
+from discord import ui  # noqa: E402
+from discord.ext import commands  # noqa: E402
 
-from mods.revocord.shared import get_or_create_account, update_account
+from mods.revocord.shared import get_or_create_account, update_account  # noqa: E402
 
 logger = logging.getLogger("discord_bot")
 

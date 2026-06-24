@@ -1,11 +1,8 @@
-from typing import Any
 """Comprehensive tests for configs/logging_config.py."""
 
 import logging
 import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock, mock_open
-from datetime import datetime
 
 import pytest
 
@@ -19,22 +16,22 @@ def cleanup_logging() -> None:  # type: ignore[misc]
     for handler in logging.root.handlers[:]:
         handler.close()
         logging.root.removeHandler(handler)
-    
+
     logger = logging.getLogger("GradexTool")
     for handler in logger.handlers[:]:
         handler.close()
         logger.removeHandler(handler)
-    
+
     logger = logging.getLogger("CustomLogger")
     for handler in logger.handlers[:]:
         handler.close()
         logger.removeHandler(handler)
-    
+
     logger = logging.getLogger("Logger1")
     for handler in logger.handlers[:]:
         handler.close()
         logger.removeHandler(handler)
-        
+
     logger = logging.getLogger("Logger2")
     for handler in logger.handlers[:]:
         handler.close()
@@ -75,7 +72,7 @@ class TestRootLoggerConfiguration:
         logging.root.handlers.clear()
         logging.root.setLevel(logging.WARNING)
 
-        logger = setup_logging()
+        setup_logging()
         assert logging.root.level == logging.INFO
 
     def test_root_logger_has_handlers(self) -> None:
@@ -83,7 +80,7 @@ class TestRootLoggerConfiguration:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         assert len(logging.root.handlers) > 0
 
     def test_root_logger_has_console_handler(self) -> None:
@@ -91,7 +88,7 @@ class TestRootLoggerConfiguration:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         has_stream_handler = any(
             isinstance(handler, logging.StreamHandler) for handler in logging.root.handlers
         )
@@ -102,7 +99,7 @@ class TestRootLoggerConfiguration:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         has_file_handler = any(
             isinstance(handler, logging.handlers.RotatingFileHandler)
             for handler in logging.root.handlers
@@ -118,7 +115,7 @@ class TestConsoleHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         stream_handler = next(
             (
                 handler
@@ -135,7 +132,7 @@ class TestConsoleHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         stream_handler = next(
             (
                 handler
@@ -156,7 +153,7 @@ class TestFileHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -172,7 +169,7 @@ class TestFileHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -189,7 +186,7 @@ class TestFileHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -206,7 +203,7 @@ class TestFileHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -223,7 +220,7 @@ class TestFileHandler:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -244,7 +241,7 @@ class TestFormatter:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         formatter = logging.root.handlers[0].formatter
         expected_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
         assert formatter._fmt == expected_format  # type: ignore[union-attr]
@@ -258,7 +255,7 @@ class TestLogFileCreation:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -280,11 +277,10 @@ class TestMultipleSetupCalls:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        initial_count = 0
-        logger1 = setup_logging()
+        setup_logging()
         after_first_count = len(logging.root.handlers)
 
-        logger2 = setup_logging()
+        setup_logging()
         after_second_count = len(logging.root.handlers)
 
         assert after_second_count == after_first_count
@@ -349,7 +345,7 @@ class TestDateTimeFormatting:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler
@@ -387,7 +383,7 @@ class TestLoggingOutput:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         # Check that there's a StreamHandler that writes to stdout
         has_stdout_handler = any(
             isinstance(handler, logging.StreamHandler)
@@ -401,7 +397,7 @@ class TestLoggingOutput:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         # Check that there's a RotatingFileHandler
         has_file_handler = any(
             isinstance(handler, logging.handlers.RotatingFileHandler)
@@ -418,7 +414,7 @@ class TestHandlerConfiguration:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         stream_handler = next(
             (
                 handler
@@ -436,7 +432,7 @@ class TestHandlerConfiguration:
         # Reset logging to clear any existing handlers
         logging.root.handlers.clear()
 
-        logger = setup_logging()
+        setup_logging()
         file_handler = next(
             (
                 handler

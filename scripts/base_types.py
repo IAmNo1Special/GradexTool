@@ -1,4 +1,3 @@
-from typing import Any
 """Script to process type data from source types.json and save to gradex types.json.
 
 Also downloads type images from the Revomon CDN.

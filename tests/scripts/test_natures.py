@@ -1,19 +1,20 @@
-from typing import Any
 import unittest.mock
+from typing import Any
+
 """Tests for scripts/natures.py"""
 
-import asyncio
-import runpy
-from unittest.mock import AsyncMock, MagicMock, patch
+import asyncio  # noqa: E402
+import runpy  # noqa: E402
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
 
-import httpx
-import pytest
+import httpx  # noqa: E402
+import pytest  # noqa: E402
 
-from scripts.natures import (
-    fetch_nature,
-    process_nature,
-    get_natures,
+from scripts.natures import (  # noqa: E402
     NATURES_FILE,
+    fetch_nature,
+    get_natures,
+    process_nature,
 )
 
 
@@ -218,7 +219,7 @@ async def test_get_natures_list_error(mock_async_client_class: Any) -> None:
 @patch("scripts.natures.logging.basicConfig")
 def test_main_execution(mock_basic_config: Any) -> None:
     with patch("scripts.natures.asyncio.run", side_effect=lambda coro: coro.close()) as mock_asyncio_run, \
-         patch("scripts.natures.get_natures") as mock_get_natures:
+         patch("scripts.natures.get_natures"):
         with unittest.mock.patch.dict('sys.modules'):
 
             import sys

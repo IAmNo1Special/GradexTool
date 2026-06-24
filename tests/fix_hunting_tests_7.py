@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # 1. Remove all global `.start()` patches from the top of the file.
@@ -49,7 +49,7 @@ text = re.sub(
         mock_message.embeds = [embed]
         mock_message.edit = AsyncMock()
         view.message = mock_message
-        
+
         with patch("scripts.gradexDB.active_spawns_table.remove_spawn", new_callable=AsyncMock) as mock_remove:
             await view.on_timeout()
             mock_message.edit.assert_called_once()

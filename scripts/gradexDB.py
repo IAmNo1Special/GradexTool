@@ -1,12 +1,11 @@
-import json
-import aiosqlite
+import json  # noqa: N999
 import time
 from pathlib import Path
+from typing import Any
 
+import aiosqlite
 import requests
 from aiosqlite.core import Connection
-from typing import Any, Dict, List, Optional, Tuple, Union
-from unittest.mock import MagicMock
 
 
 def safe_get(url: str, timeout: int=10, retries: int=5, backoff_factor: float=1.0) -> Any:
@@ -36,7 +35,7 @@ def safe_get(url: str, timeout: int=10, retries: int=5, backoff_factor: float=1.
     return None
 
 
-def safe_post(url: str, json_payload: Dict[str, List[Any]], timeout: int=15, retries: int=3, backoff_factor: float=1.0) -> Any:
+def safe_post(url: str, json_payload: dict[str, list[Any]], timeout: int=15, retries: int=3, backoff_factor: float=1.0) -> Any:
     """Post to a URL with timeout, retries, and exponential backoff."""
     for i in range(retries):
         try:
@@ -53,9 +52,8 @@ def safe_post(url: str, json_payload: Dict[str, List[Any]], timeout: int=15, ret
     return None
 
 
-from configs import GRADEX_DB_PATH
-
-from utils.land_utils import get_lands_for_sale_amount
+from configs import GRADEX_DB_PATH  # noqa: E402
+from utils.land_utils import get_lands_for_sale_amount  # noqa: E402
 
 db_path: Path = GRADEX_DB_PATH
 
@@ -186,7 +184,7 @@ class CounterdexTable:
                     await cursor.execute(
                         """
                         INSERT OR REPLACE INTO counterdex
-                            (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness) 
+                            (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                         """,
                         (
@@ -277,7 +275,7 @@ class CounterdexTable:
             await cursor.execute(
                 """
                 INSERT OR REPLACE INTO counterdex
-                    (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters) 
+                    (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 (
@@ -362,8 +360,8 @@ class AbilitiesTable:
 
             # Define the insert query for the abilities table
             insert_query = """
-                INSERT OR REPLACE INTO abilities 
-                (id, name, description) 
+                INSERT OR REPLACE INTO abilities
+                (id, name, description)
                 VALUES (?, ?, ?);
             """
 
@@ -506,8 +504,8 @@ class CapsulesTable:
 
             # Define the insert query for the capsules table
             insert_query = """
-                INSERT OR REPLACE INTO capsules 
-                (name, description) 
+                INSERT OR REPLACE INTO capsules
+                (name, description)
                 VALUES (?, ?);
             """
 
@@ -630,8 +628,8 @@ class FruitysTable:
 
             # Define the insert query for the fruitys table
             insert_query = """
-                INSERT OR REPLACE INTO fruitys 
-                (id, name, description, type) 
+                INSERT OR REPLACE INTO fruitys
+                (id, name, description, type)
                 VALUES (?, ?, ?, ?);
             """
 
@@ -745,7 +743,7 @@ class ItemsTable:
             print("Creating items table...")
             # Create the items table if it doesn't exist
             create_table_query = """
-            
+
                 CREATE TABLE IF NOT EXISTS "items" (
                     "name" TEXT NOT NULL UNIQUE,
                     "description" TEXT NOT NULL UNIQUE,
@@ -787,8 +785,8 @@ class ItemsTable:
 
             # Define the insert query for the items table
             insert_query = """
-                INSERT OR REPLACE INTO items 
-                (name, description, obtained_from, cost) 
+                INSERT OR REPLACE INTO items
+                (name, description, obtained_from, cost)
                 VALUES (?, ?, ?, ?);
             """
 
@@ -848,8 +846,8 @@ class ItemsTable:
 
             # Define the insert query for the items table
             insert_query = """
-                INSERT INTO items 
-                (name, description, obtained_from, cost) 
+                INSERT INTO items
+                (name, description, obtained_from, cost)
                 VALUES (?, ?, ?, ?);
             """
 
@@ -959,9 +957,9 @@ class MovesTable:
 
             # Define the insert query for the moves table
             insert_query = """
-                INSERT OR IGNORE INTO moves 
+                INSERT OR IGNORE INTO moves
                 (id, cap_num, name, category, type,
-                description, accuracy, power, pp, priority) 
+                description, accuracy, power, pp, priority)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """
 
@@ -1110,9 +1108,9 @@ class MovesTable:
         """
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            insert_query = """INSERT OR REPLACE INTO moves 
+            insert_query = """INSERT OR REPLACE INTO moves
                         (id, cap_num, name, category, type,
-                        description, accuracy, power, pp, priority) 
+                        description, accuracy, power, pp, priority)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
             # Execute the insert query
             await cursor.execute(
@@ -1193,7 +1191,7 @@ class NaturesTable:
             print("Creating natures table...")
             # Create the natures table if it doesn't exist
             create_table_query = """
-            
+
                 CREATE TABLE IF NOT EXISTS "natures" (
                     "name" TEXT NOT NULL UNIQUE,
                     "buffs" TEXT,
@@ -1216,8 +1214,8 @@ class NaturesTable:
 
             # Define the insert query for the natures table
             insert_query = """
-                INSERT OR REPLACE INTO natures 
-                (name, buffs, debuffs, likes, dislikes) 
+                INSERT OR REPLACE INTO natures
+                (name, buffs, debuffs, likes, dislikes)
                 VALUES (?, ?, ?, ?, ?);
             """
 
@@ -1430,8 +1428,8 @@ class OwnedLandsTable:
                     # Execute the insert query
                     await cursor.execute(
                         """
-                        INSERT OR REPLACE INTO ownedLands 
-                            (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token) 
+                        INSERT OR REPLACE INTO ownedLands
+                            (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                         """,
                         (
@@ -1766,7 +1764,7 @@ class RevomonTable:
                 await cursor.execute(
                     """
                     INSERT OR REPLACE INTO revomon
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity) 
+                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                     """,
                     (
@@ -1834,7 +1832,7 @@ class RevomonTable:
         # Return the count
         return count
 
-    async def get_mon_ids(self) -> List[int]:
+    async def get_mon_ids(self) -> list[int]:
         """Get all mon_ids from the revomon table."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
@@ -1952,8 +1950,8 @@ class RevomonMovesTable:
             cursor = await conn.cursor()
 
             insert_query = """
-                INSERT OR IGNORE INTO revomon_moves 
-                    (mon_dex_id, mon_name, move_id, move_name, method, level) 
+                INSERT OR IGNORE INTO revomon_moves
+                    (mon_dex_id, mon_name, move_id, move_name, method, level)
                     VALUES (?, ?, ?, ?, ?, ?);
             """
 
@@ -1970,7 +1968,7 @@ class RevomonMovesTable:
                     )
                     for connection in revomon_moves_data
                 ]
-                
+
                 await conn.execute("BEGIN TRANSACTION;")
                 await cursor.executemany(insert_query, data_to_insert)
                 await conn.commit()
@@ -2469,8 +2467,8 @@ class TypesTable:
             # Execute the insert query
             await cursor.execute(
                 """
-                INSERT INTO types 
-                    (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit) 
+                INSERT INTO types
+                    (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                 """,
                 values,
@@ -2503,7 +2501,7 @@ class TypesTable:
             result = await cursor.fetchall()
             return result
 
-    async def get_mono_types(self) -> List[str]:
+    async def get_mono_types(self) -> list[str]:
         """Retrieves a list of all monotype types from the types table.
 
         Returns:
@@ -2658,7 +2656,7 @@ class UsersTable:
             print(f"User with ID {user_id} added to the users Table.")
             return True
 
-    async def update_user(self, user_id: Optional[int], **kwargs: Any) -> Any:
+    async def update_user(self, user_id: int | None, **kwargs: Any) -> Any:
         """Update a user's information in the users table."""
         if not user_id:
             raise ValueError("user_id is a required argument")
@@ -2947,7 +2945,7 @@ class ActiveSpawnsTable:
             await cursor.execute("SELECT message_id, spawn_data FROM active_spawns WHERE guild_id = ?", (guild_id,))
             rows = await cursor.fetchall()
             return [{"message_id": r[0], "data": json.loads(r[1])} for r in rows]
-            
+
     async def count_guild_spawns(self, guild_id: int) -> int:
         async with self._connect() as conn:
             cursor = await conn.cursor()

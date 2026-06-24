@@ -1,22 +1,23 @@
 from typing import Any
+
 """Script to discover all valid revomon IDs from the API."""
 
-import asyncio
-import json
-import logging
-import os
-import sqlite3
-from contextlib import closing
-from dataclasses import dataclass
-from datetime import UTC, datetime
-from email.utils import parsedate_to_datetime
-from pathlib import Path
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+import sqlite3  # noqa: E402
+from contextlib import closing  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from datetime import UTC, datetime  # noqa: E402
+from email.utils import parsedate_to_datetime  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-import httpx
-import requests
-from helpers import to_sentence_case
+import httpx  # noqa: E402
+import requests  # noqa: E402
+from helpers import to_sentence_case  # noqa: E402
 
-from configs import (
+from configs import (  # noqa: E402
     GRADEX_DB_PATH,
     REVOMON_FILE,
     REVOMON_IMAGES_DOWNLOAD_MANIFEST_FILE,
@@ -559,12 +560,12 @@ class RevomonTable:
     async def rebuild(self) -> None:
         """Fetch data from the Revomon API and insert it into the database."""
         # Import helper function for getting evolution trees
+        from data import TypesTable
         from utils.emoji_utils import (
             create_emoji_from_url,
             list_application_emojis,
         )
         from utils.revomon_utils import get_evo_trees
-        from data import TypesTable
 
         print("Rebuilding revomon table...")
         # Fetch data from the Revomon API

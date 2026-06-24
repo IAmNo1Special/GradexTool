@@ -1,4 +1,3 @@
-import asyncio
 import json
 import logging
 import random
@@ -9,7 +8,11 @@ import discord
 from discord.ext import commands, tasks
 
 from mods.revocord.hunting import BIOME_TYPES, TYPE_COLORS
-from scripts.gradexDB import get_guild_biome, get_guild_spawn_config, active_spawns_table
+from scripts.gradexDB import (
+    active_spawns_table,
+    get_guild_biome,
+    get_guild_spawn_config,
+)
 
 logger = logging.getLogger("discord_bot")
 
@@ -45,7 +48,7 @@ class WildsLoopCog(commands.Cog):
                     self.revomons = data.get("revomons", data) if isinstance(data, dict) else data
             except Exception as e:
                 logger.error("Failed to load revomon data: %s", e)
-                
+
         self.natures = []
         natures_path = Path("data", "natures.json")
         if natures_path.exists():
@@ -91,12 +94,12 @@ class WildsLoopCog(commands.Cog):
 
         title = f"✨ A wild SHINY {name} appeared! ✨" if is_shiny else f"🌿 A wild {name} appeared! 🌿"
         embed = discord.Embed(title=title, color=embed_color)
-        
+
         nature = random.choice(self.natures)["name"].title() if self.natures else "Hardy"
         abilities = [chosen.get(k) for k in ["ability1", "ability2", "ability_hidden"] if chosen.get(k)]
         ability = random.choice(abilities).title() if abilities else "Unknown"
         ivs = {k: random.randint(0, 31) for k in ["hp", "atk", "def", "spa", "spd", "spe"]}
-        
+
         encounter_data = {"nature": nature.lower(), "ability": ability.lower(), "ivs": ivs}
 
         if img_path.exists():
@@ -109,7 +112,7 @@ class WildsLoopCog(commands.Cog):
         timestamp = int(time.time())
         id_revomon = chosen.get("mon_id", chosen.get("idRevomon", 0))
         shiny_int = 1 if is_shiny else 0
-        
+
         view = discord.ui.View(timeout=None)
         battle_btn = discord.ui.Button(
             label="Battle!", style=discord.ButtonStyle.danger, emoji="⚔️",
@@ -121,17 +124,17 @@ class WildsLoopCog(commands.Cog):
             msg = await wilds_channel.send(embed=embed, view=view, file=file)
         else:
             msg = await wilds_channel.send(embed=embed, view=view)
-        
+
         view.children[0].custom_id = f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}:{msg.id}"
         await msg.edit(view=view)
-        
+
         await active_spawns_table.add_spawn(msg.id, guild.id, json.dumps(encounter_data))
 
     @tasks.loop(seconds=15)
     async def wilds_spawn_loop(self) -> None:
         if not self.revomons:
             return
-            
+
         current_time = int(time.time())
         for guild in self.bot.guilds:
             try:
@@ -139,18 +142,18 @@ class WildsLoopCog(commands.Cog):
                 eff_limit = config["max_spawn_limit"]
                 if config["temp_limit_expires"] > current_time:
                     eff_limit += config["temp_spawn_limit"]
-                    
+
                 current_spawns = await active_spawns_table.count_guild_spawns(guild.id)
                 if current_spawns >= eff_limit:
                     continue
-                    
+
                 if current_time >= config["next_spawn_time"]:
                     await self._do_spawn(guild)
-                    
+
                     mult = config["spawn_multiplier"] if config["spawn_multiplier_expires"] > current_time else 1.0
                     delay = random.randint(60, 300)
                     delay = max(10, int(delay / mult))
-                    
+
                     from scripts.gradexDB import update_guild_spawn_config
                     await update_guild_spawn_config(guild.id, next_spawn_time=current_time + delay)
             except Exception as e:

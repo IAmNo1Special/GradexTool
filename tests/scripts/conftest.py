@@ -1,14 +1,14 @@
 from typing import Any
+
 """Pytest configuration and common fixtures for testing scripts."""
 
-import json
-import os
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, AsyncMock, patch
-import pytest
-import sqlite3
-import asyncio
+import json  # noqa: E402
+import sqlite3  # noqa: E402
+import tempfile  # noqa: E402
+from pathlib import Path  # noqa: E402
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
+
+import pytest  # noqa: E402
 
 
 @pytest.fixture
@@ -317,7 +317,7 @@ def sample_json_file(temp_data_dir: Any, scripts_sample_revomon_data: Any) -> No
     """Create a sample JSON file for testing."""
     json_file = temp_data_dir / "revomon.json"
     with open(json_file, 'w') as f:
-        json.dump(sample_revomon_data, f, indent=2)  # type: ignore[name-defined]
+        json.dump(scripts_sample_revomon_data, f, indent=2)  # type: ignore[name-defined]
     yield json_file
 
 

@@ -1,23 +1,20 @@
-from typing import Any
 import datetime
 from io import BytesIO
+from typing import Any
 
+import discord.embeds
 import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
-import discord.embeds
-from discord.ext.commands.bot import Bot
-from typing import Dict, Tuple
-from unittest.mock import MagicMock
 
 
 class Podium2(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings: Dict[str, Dict[str, str]] = {}
-        self.weekly_podium_img: Dict[str, Any] = {}
-        self.current_podium_img: Dict[str, Any] = {}
+        self.rankings: dict[str, dict[str, str]] = {}
+        self.weekly_podium_img: dict[str, Any] = {}
+        self.current_podium_img: dict[str, Any] = {}
 
     def convert_time(self, total_seconds: int) -> str:
         hours, remainder = divmod(total_seconds, 3600)
@@ -25,7 +22,7 @@ class Podium2(commands.Cog):
         formatted_time = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         return formatted_time
 
-    def get_weekly_podium_data(self) -> Dict[str, Dict[str, str]]:
+    def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
         weekly_podium_url = "https://api.revomon.io/leaderboard/weekly_podium"
         response = requests.get(weekly_podium_url)
         response = response.json()
@@ -58,7 +55,7 @@ class Podium2(commands.Cog):
         }
         return self.rankings
 
-    def get_current_podium_data(self) -> Dict[str, Dict[str, str]]:
+    def get_current_podium_data(self) -> dict[str, dict[str, str]]:
         current_podium_url = "https://api.revomon.io/leaderboard/current_podium"
         response = requests.get(current_podium_url)
         response = response.json()
@@ -73,7 +70,7 @@ class Podium2(commands.Cog):
         self.rankings["third"] = {"user": third_user, "img": third_img}
         return self.rankings
 
-    def get_text_size(self, draw: Any, text: str, font: Any) -> Tuple[int, int]:
+    def get_text_size(self, draw: Any, text: str, font: Any) -> tuple[int, int]:
         bbox = draw.textbbox((0, 0), text, font=font)
         width = bbox[2] - bbox[0]
         height = bbox[3] - bbox[1]

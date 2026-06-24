@@ -1,5 +1,5 @@
-from typing import Any
 import asyncio
+from typing import Any
 
 import discord
 from discord.ext import commands
@@ -7,7 +7,7 @@ from discord.ext import commands
 from utils.button_utils import Buttons
 
 
-class allrevomon(commands.Cog):
+class allrevomon(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 

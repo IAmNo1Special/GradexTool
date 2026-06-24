@@ -1,21 +1,19 @@
-from typing import Any
 import datetime
 from io import BytesIO
+from typing import Any
 
+import discord.embeds
 import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
-import discord.embeds
-from discord.ext.commands.bot import Bot
-from typing import Dict, List, Optional, Union
 
 
 class PvpLeaderboard2(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings: Optional[List[Dict[str, Union[str, int]]]] = None
-        self.pvp_img: Dict[str, Any] = {}
+        self.rankings: list[dict[str, str | int]] | None = None
+        self.pvp_img: dict[str, Any] = {}
 
     def get_current_pvp_data(self) -> None:
         ranks = [
@@ -44,11 +42,11 @@ class PvpLeaderboard2(commands.Cog):
             return
 
         rankings_data = []
-        for count, rank in enumerate(ranks):
+        for count, _rank in enumerate(ranks):
             if pvp_top_fifteen[count] == {}:
                 break
             user = pvp_top_fifteen[count]["username"]
-            img = pvp_top_fifteen[count]["profilePicture"]
+            pvp_top_fifteen[count]["profilePicture"]
             amount = pvp_top_fifteen[count]["amount"]
             elo = pvp_top_fifteen[count]["elo"]
             current_rank = pvp_top_fifteen[count]["rank"]
@@ -69,7 +67,7 @@ class PvpLeaderboard2(commands.Cog):
 
         self.rankings = rankings_data
 
-    def update_pvp_image(self, data: Optional[List[Dict[str, Union[str, int]]]], output_path: None=None) -> None:
+    def update_pvp_image(self, data: list[dict[str, str | int]] | None, output_path: None=None) -> None:
         img_width, cell_height = 1050, 50
         header_height = 40
         total_height = header_height + 15 * cell_height

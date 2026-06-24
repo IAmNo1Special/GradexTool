@@ -1,21 +1,14 @@
-from typing import Union,  Any
 """Utility functions for the Gradex Tool."""
+
 
 import discord
 from discord.ext import commands
 
 from configs import GRA_GUILD_ID, PRO_TAMER_ROLE_IDS
 from data import UsersTable
-from discord.embeds import Embed
-from discord.ext.commands.bot import Bot
-from discord.member import Member
-from discord.message import Message
-from discord.ui.view import View
-from typing import Optional
-from unittest.mock import MagicMock
 
 
-def is_pro_tamer(gradex_tool: commands.Bot, user: Union[discord.User, discord.Member]) -> bool:
+def is_pro_tamer(gradex_tool: commands.Bot, user: discord.User | discord.Member) -> bool:
     gra_guild = gradex_tool.get_guild(GRA_GUILD_ID)
     if gra_guild is None:
         return False
@@ -58,10 +51,10 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
 
 async def respond(
     gradex_tool: commands.Bot,
-    message: Optional[discord.Message] = None,
-    embed: Optional[discord.Embed] = None,
-    buttons: Optional[discord.ui.View] = None,
-    file: Optional[discord.File]=None,
+    message: discord.Message | None = None,
+    embed: discord.Embed | None = None,
+    buttons: discord.ui.View | None = None,
+    file: discord.File | None=None,
 ) -> None:
     if message is None:
         return

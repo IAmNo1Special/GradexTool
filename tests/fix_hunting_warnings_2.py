@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting_part2.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Replace cog = HuntingCog(mock_bot) with cog._cleanup_wilds_spawn = AsyncMock() right after

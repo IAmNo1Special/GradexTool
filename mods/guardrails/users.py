@@ -1,4 +1,3 @@
-from typing import Any
 """Gradex Tool Guardrails for managing users."""
 
 import logging

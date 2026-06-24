@@ -1,8 +1,10 @@
 from typing import Any
+
 """Tests for various keyword and search components in the elders library mod."""
 
-import pytest
-from pathlib import Path
+from pathlib import Path  # noqa: E402
+
+import pytest  # noqa: E402
 
 # List of all previously untested components
 COMPONENTS = [
@@ -46,10 +48,10 @@ class TestMissingComponentsStructure:
         file_path = Path(__file__).parent.parent.parent.parent / 'mods' / 'the_elders_library' / component_file
         if not file_path.exists():
             pytest.skip(f"File {component_file} does not exist")
-            
+
         try:
             import ast
-            with open(file_path, 'r', encoding='utf-8') as f:
+            with open(file_path, encoding='utf-8') as f:
                 ast.parse(f.read())
         except SyntaxError as e:
             pytest.fail(f"{component_file} contains syntax error: {e}")
@@ -60,9 +62,9 @@ class TestMissingComponentsStructure:
         file_path = Path(__file__).parent.parent.parent.parent / 'mods' / 'the_elders_library' / component_file
         if not file_path.exists():
             pytest.skip(f"File {component_file} does not exist")
-            
+
         content = file_path.read_text(encoding='utf-8')
-        
+
         # Only check for setup function if it contains a Cog class
         if 'commands.Cog' in content or 'app_commands' in content or 'bot.listen' in content:
             assert 'async def setup' in content, f"{component_file} should have an async setup function"

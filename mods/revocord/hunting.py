@@ -1,20 +1,30 @@
 from typing import Any
+
 """Cog for wild Revomon encounter hunting loop."""
 
-import json
-import logging
-import random
-import time
-import asyncio
-from pathlib import Path
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import logging  # noqa: E402
+import random  # noqa: E402
+import time  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-import discord
-from discord import ui
-from discord.ext import commands, tasks
+import discord  # noqa: E402
+from discord import ui  # noqa: E402
+from discord.ext import commands, tasks  # noqa: E402
 
-from mods.revocord.shared import get_or_create_account, update_account
-from scripts.gradexDB import get_next_rc_id, get_guild_biome, save_active_encounter, get_active_encounter, delete_active_encounter
-from mods.revocord.broadcaster import broadcast_encounter, update_encounter_broadcast
+from mods.revocord.broadcaster import (  # noqa: E402
+    broadcast_encounter,
+    update_encounter_broadcast,
+)
+from mods.revocord.shared import get_or_create_account, update_account  # noqa: E402
+from scripts.gradexDB import (  # noqa: E402
+    delete_active_encounter,
+    get_active_encounter,
+    get_guild_biome,
+    get_next_rc_id,
+    save_active_encounter,
+)
 
 logger = logging.getLogger("discord_bot")
 
@@ -94,7 +104,7 @@ class WildSpawnView(ui.View):
         self.add_item(fight_btn)
         self.add_item(catch_btn)
         self.add_item(run_btn)
-        
+
         if event_msg_id == 0:
             share_btn: ui.Button[Any] = ui.Button(
                 label="Share", style=discord.ButtonStyle.primary, emoji="📤",
@@ -156,22 +166,22 @@ class HuntingCog(commands.Cog):
 
     def _get_revomon_image_path(self, revomon_data: dict[str, Any], is_shiny: bool) -> Path:
         """Helper method to construct and fallback the correct image asset path.
-        
+
         Args:
             revomon_data: Dictionary of the Revomon's database entry.
             is_shiny: Boolean indicating if the shiny variant is requested.
-            
+
         Returns:
             Path object pointing to the Revomon's image sprite.
         """
         id_revodex = revomon_data.get("dex_id", revomon_data.get("idRevodex"))
         suffix = "_shiny" if is_shiny else ""
         img_path = Path("data", "assets", "revomon", "raw", f"{id_revodex}{suffix}.png")
-        
+
         # Fallback to normal if shiny sprite is missing
         if is_shiny and not img_path.exists():
             img_path = Path("data", "assets", "revomon", "raw", f"{id_revodex}.png")
-            
+
         return img_path
 
 
@@ -198,16 +208,16 @@ class HuntingCog(commands.Cog):
         if custom_id == "console_hunt":
             await self.spawn_wild_revomon(interaction)
             return
-            
+
         if custom_id.startswith("return_console:"):
             await interaction.response.defer()
             spawner_id = int(custom_id.split(":")[1])
             account = await get_or_create_account(spawner_id)
-            from mods.revocord.portal import build_console_embed, GameConsoleView
+            from mods.revocord.portal import GameConsoleView, build_console_embed
             new_embed = await build_console_embed(account, interaction.user)
             await interaction.edit_original_response(embed=new_embed, view=GameConsoleView(spawner_id), attachments=[])
             return
-            
+
         if custom_id.startswith("wilds_claim:"):
             await self.handle_wilds_claim(interaction)
             return
@@ -249,15 +259,15 @@ class HuntingCog(commands.Cog):
             await interaction.response.defer()
             await delete_active_encounter(spawner_id)
             account = await get_or_create_account(spawner_id)
-            from mods.revocord.portal import build_console_embed, GameConsoleView
+            from mods.revocord.portal import GameConsoleView, build_console_embed
             new_embed = await build_console_embed(account, interaction.user)
             await interaction.edit_original_response(
-                content="❌ **This encounter has expired and the Revomon fled into the wilds!**", 
-                embed=new_embed, 
-                view=GameConsoleView(spawner_id), 
+                content="❌ **This encounter has expired and the Revomon fled into the wilds!**",
+                embed=new_embed,
+                view=GameConsoleView(spawner_id),
                 attachments=[]
             )
-            
+
             msg_id = int(parts[5]) if len(parts) > 5 else 0
             if msg_id:
                 try:
@@ -272,7 +282,7 @@ class HuntingCog(commands.Cog):
             await interaction.response.defer()
             await delete_active_encounter(spawner_id)
             account = await get_or_create_account(spawner_id)
-            from mods.revocord.portal import build_console_embed, GameConsoleView
+            from mods.revocord.portal import GameConsoleView, build_console_embed
             new_embed = await build_console_embed(account, interaction.user)
             await interaction.edit_original_response(embed=new_embed, view=GameConsoleView(spawner_id), attachments=[])
             if msg_id:
@@ -290,21 +300,21 @@ class HuntingCog(commands.Cog):
             # The original message has the embed
             if not interaction.message or not interaction.message.embeds:
                 return
-            
+
             embed = interaction.message.embeds[0]
             # Strip the "Expires at" footer
             embed.set_footer(text=None)
-            
+
             # Find the monster data to get rarity and details
             revomon_data = None
             for r in self.revomons:
                 if r.get("mon_id", r.get("idRevomon")) == id_revomon:
                     revomon_data = r
                     break
-            
+
             name = revomon_data.get("name", "Unknown").title() if revomon_data else "Unknown"
             rarity = revomon_data.get("rarity", "common").title() if revomon_data else "Common"
-            
+
             await broadcast_encounter(
                 self.bot, interaction.user, name, str(id_revomon), rarity, is_shiny, embed
             )
@@ -421,7 +431,7 @@ class HuntingCog(commands.Cog):
 
             name = revomon_data.get("name", "Unknown").title()
             rarity = revomon_data.get("rarity", "common").lower()
-            
+
             # Reconstruct image path for embeds using DRY helper
             img_path = self._get_revomon_image_path(revomon_data, is_shiny)
 
@@ -457,7 +467,7 @@ class HuntingCog(commands.Cog):
                 caught_nature = "hardy"
                 caught_ability = "unknown"
                 ivs_dict = {"hp": 0, "atk": 0, "def": 0, "spa": 0, "spd": 0, "spe": 0}
-                
+
                 if active_encounter_raw:
                     try:
                         encounter_data = json.loads(active_encounter_raw)
@@ -466,7 +476,7 @@ class HuntingCog(commands.Cog):
                         ivs_dict = encounter_data.get("ivs", ivs_dict)
                     except json.JSONDecodeError:
                         pass
-                
+
                 total_iv = sum(ivs_dict.values())
                 iv_pct = round((total_iv / 186.0) * 100, 2)
 
@@ -504,7 +514,7 @@ class HuntingCog(commands.Cog):
                 embed.title = f"🎉 {shiny_str}{name} was CAUGHT! 🎉"
                 embed.description = "It has been added to your TV."
                 embed.color = 0xF1C40F  # Gold/Success
-                
+
                 embed.set_footer(text=f"RC-ID: #{rc_id}")
 
                 class ReturnToConsoleView(ui.View):
@@ -512,16 +522,16 @@ class HuntingCog(commands.Cog):
                         super().__init__(timeout=None)
                     @ui.button(label="Back to Console", style=discord.ButtonStyle.primary, emoji="🎮", custom_id=f"return_console:{spawner_id}")
                     async def return_console(self, inter: discord.Interaction, btn: ui.Button): pass
-                
+
                 if file:
                     await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
                 else:
                     await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
-                
+
                 if msg_id:
                     await update_encounter_broadcast(interaction.guild, msg_id, "Caught", 0xF1C40F)
                     await self._cleanup_wilds_spawn(interaction.guild, msg_id)
-                    
+
                 await delete_active_encounter(spawner_id)
             else:
                 # Deduct orb
@@ -555,12 +565,12 @@ class HuntingCog(commands.Cog):
                             super().__init__(timeout=None)
                         @ui.button(label="Back to Console", style=discord.ButtonStyle.primary, emoji="🎮", custom_id=f"return_console:{spawner_id}")
                         async def return_console(self, inter: discord.Interaction, btn: ui.Button): pass
-                    
+
                     if file:
                         await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
                     else:
                         await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
-                    
+
                     if msg_id:
                         await update_encounter_broadcast(interaction.guild, msg_id, "Fled", 0x7F8C8D)
 
@@ -600,33 +610,33 @@ class HuntingCog(commands.Cog):
         parts = custom_id.split(":")
         if len(parts) < 6:
             return
-            
-        guild_id = int(parts[1])
+
+        int(parts[1])
         id_revomon = int(parts[2])
         is_shiny = bool(int(parts[3]))
-        timestamp = int(parts[4])
+        int(parts[4])
         msg_id = int(parts[5])
-        
+
         await interaction.response.defer()
-        
+
         from scripts.gradexDB import active_spawns_table
         spawn_data = await active_spawns_table.get_spawn(msg_id)
         if not spawn_data:
             await interaction.followup.send("❌ This Revomon has already been claimed or fled!", ephemeral=True)
             return
-            
+
         chosen = next((r for r in self.revomons if r.get("mon_id", r.get("idRevomon")) == id_revomon), None)
         if not chosen:
             await interaction.followup.send("❌ Error finding creature data.", ephemeral=True)
             return
-            
+
         img_path = self._get_revomon_image_path(chosen, is_shiny)
-        
+
         member = interaction.user
         await save_active_encounter(member.id, json.dumps(spawn_data))
-        
+
         file = discord.File(img_path, filename="revomon.png") if img_path.exists() else None
-        
+
         name = chosen.get("name", "Unknown").title()
         embed_color = TYPE_COLORS.get((chosen.get("type1") or "").lower(), 0x2ECC71)
 
@@ -634,19 +644,19 @@ class HuntingCog(commands.Cog):
         embed = discord.Embed(title=title, color=embed_color)
         if file:
             embed.set_image(url="attachment://revomon.png")
-            
+
         expiry_time = time.strftime("%H:%M:%S", time.gmtime(time.time() + 300))
         embed.set_footer(text=f"In battle with {member.display_name} | Expires at {expiry_time} UTC")
-            
+
         view = WildSpawnView(chosen, is_shiny, member.id, msg_id)
-        
+
         try:
             edit_kwargs = {"embed": embed, "view": view}
             if file:
                 edit_kwargs["attachments"] = [file]
             else:
                 edit_kwargs["attachments"] = []
-                
+
             if interaction.message:
                 await interaction.message.edit(**edit_kwargs)
             else:
@@ -661,7 +671,7 @@ class HuntingCog(commands.Cog):
             interaction: The user's Discord button interaction.
         """
         await interaction.response.defer()
-        
+
         if not self.revomons:
             await interaction.followup.send(
                 "❌ Creature database is currently unavailable. Try again later.",
@@ -682,7 +692,7 @@ class HuntingCog(commands.Cog):
         for r in self.revomons:
             r_type1 = (r.get("type1") or "").lower()
             r_type2 = (r.get("type2") or "").lower()
-            
+
             # Double safety: Must share a type with the Biome AND must be a first evolution stage
             if (
                 (r_type1 in allowed_types or r_type2 in allowed_types)
@@ -737,7 +747,7 @@ class HuntingCog(commands.Cog):
             "spd": random.randint(0, 31),
             "spe": random.randint(0, 31)
         }
-        
+
         encounter_data = {
             "nature": nature.lower(),
             "ability": ability.lower(),
@@ -755,11 +765,11 @@ class HuntingCog(commands.Cog):
         # We need the embed without the expiration timer for the broadcast
         broadcast_embed = embed.copy()
         broadcast_embed.set_footer(text=None)
-        
+
         event_msg_id = await broadcast_encounter(
             self.bot, member, name, str(chosen.get("mon_id", chosen.get("idRevomon"))), rarity, is_shiny, broadcast_embed
         )
-        
+
         view = WildSpawnView(chosen, is_shiny, member.id, event_msg_id)
         if file:
             await interaction.edit_original_response(embed=embed, view=view, attachments=[file])

@@ -1,50 +1,46 @@
-from typing import Any
 """Comprehensive tests for configs/__init__.py."""
 
-import importlib
-import yaml
 from pathlib import Path
-from unittest.mock import patch, mock_open
 
-import pytest
+import yaml
 
 # Import the module to test
 from configs import (
-    PROJECT_ROOT,
-    GRA_GUILD_ID,
-    PRO_TAMER_ROLE_IDS,
-    GRADEX_DB_PATH,
-    REVOMON_REVODEX_ENDPOINT,
-    REVOMON_RAW_IMAGE_ENDPOINT,
-    REVOMON_NFT_IMAGE_ENDPOINT,
-    REVOMON_BASE_TYPES_IMAGE_ENDPOINT,
-    REVOMON_MOVES_ENDPOINT,
-    POKEAPI_NATURES_ENDPOINT,
-    POKEAPI_NATURE_ENDPOINT,
-    POKEAPI_MEDICINE_CATEGORY_ENDPOINT,
-    POKEAPI_ITEM_ENDPOINT,
-    REVOMON_FILE,
     ABILITIES_FILE,
-    UNKNOWN_ABILITIES_FILE,
-    EVOLUTIONS_FILE,
     BASE_TYPES_FILE,
-    MOVEPOOLS_FILE,
-    MOVES_FILE,
-    TYPE_CHARTS_FILE,
-    MISSING_TYPE_CHARTS_FILE,
-    NATURES_FILE,
-    MEDICINES_FILE,
-    ITEMS_FILE,
-    FRUITYS_FILE,
+    BASE_TYPES_IMAGES_DIR,
+    CAPSULES_FILE,
     CAUGHT_REVOMON_FILE,
     CAUGHT_REVOMON_SCAN_STATE_FILE,
-    CAPSULES_FILE,
-    TYPE_CHART_IMAGES_DIR,
-    BASE_TYPES_IMAGES_DIR,
-    REVOMON_RAW_IMAGES_DIR,
-    REVOMON_NFT_IMAGES_DIR,
+    EVOLUTIONS_FILE,
+    FRUITYS_FILE,
+    GRA_GUILD_ID,
+    GRADEX_DB_PATH,
+    ITEMS_FILE,
+    MEDICINES_FILE,
+    MISSING_TYPE_CHARTS_FILE,
+    MOVEPOOLS_FILE,
+    MOVES_FILE,
+    NATURES_FILE,
+    POKEAPI_ITEM_ENDPOINT,
+    POKEAPI_MEDICINE_CATEGORY_ENDPOINT,
+    POKEAPI_NATURE_ENDPOINT,
+    POKEAPI_NATURES_ENDPOINT,
+    PRO_TAMER_ROLE_IDS,
+    PROJECT_ROOT,
+    REVOMON_BASE_TYPES_IMAGE_ENDPOINT,
+    REVOMON_FILE,
     REVOMON_IMAGES_DOWNLOAD_MANIFEST,
     REVOMON_IMAGES_DOWNLOAD_MANIFEST_FILE,
+    REVOMON_MOVES_ENDPOINT,
+    REVOMON_NFT_IMAGE_ENDPOINT,
+    REVOMON_NFT_IMAGES_DIR,
+    REVOMON_RAW_IMAGE_ENDPOINT,
+    REVOMON_RAW_IMAGES_DIR,
+    REVOMON_REVODEX_ENDPOINT,
+    TYPE_CHART_IMAGES_DIR,
+    TYPE_CHARTS_FILE,
+    UNKNOWN_ABILITIES_FILE,
     USER_AGENT,
     __all__,
 )
@@ -128,14 +124,13 @@ class TestGetConfigs:
         from configs import _get_configs
 
         configs = _get_configs()
-        
+
         # Test that .get() method returns defaults for missing keys
         assert configs.get("NON_EXISTENT_KEY") is None
         assert configs.get("NON_EXISTENT_KEY", "default_value") == "default_value"
 
     def test_get_configs_path_is_correct(self) -> None:
         """Test that the configs file path is correct."""
-        from configs import _get_configs
         from configs import PROJECT_ROOT
 
         expected_path = PROJECT_ROOT / "configs" / "configs.yaml"

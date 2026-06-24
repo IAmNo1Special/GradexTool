@@ -1,4 +1,5 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
@@ -6,7 +7,7 @@ from data import AbilitiesTable, RevomonTable
 from utils.helpers import respond
 
 
-class ability_search(commands.Cog):
+class ability_search(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -33,13 +34,13 @@ class ability_search(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    class ability_search_buttons(discord.ui.View):
+    class ability_search_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

@@ -1,13 +1,13 @@
 from typing import Any
+
 """Pytest configuration and common fixtures for testing mods."""
 
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, Mock
-from unittest.mock import patch
-import pytest
-import discord
-from discord import app_commands
-from discord.ext import commands
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
+
+import discord  # noqa: E402
+import pytest  # noqa: E402
+from discord import app_commands  # noqa: E402
+from discord.ext import commands  # noqa: E402
 
 
 @pytest.fixture
@@ -185,14 +185,6 @@ def mock_app_command() -> Any:
     command = MagicMock(spec=app_commands.Command)
     command.name = "test_command"
     return command
-
-
-@pytest.fixture  # type: ignore[no-redef]
-def mock_file() -> Any:
-    """Create a mock Discord file."""
-    file = MagicMock(spec=discord.File)
-    file.filename = "test.png"
-    return file
 
 
 @pytest.fixture

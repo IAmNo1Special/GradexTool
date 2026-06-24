@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 debug_mock = '''
@@ -14,7 +14,7 @@ debug_mock = '''
             channel.position = kwargs.get("position", 0)
             channel.edit = AsyncMock()
             return channel
-            
+
         mock_guild.create_text_channel = AsyncMock(side_effect=mock_create_text_channel)
 '''
 

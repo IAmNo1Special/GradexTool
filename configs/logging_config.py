@@ -1,4 +1,3 @@
-from typing import Any
 """Centralized logging configuration."""
 
 import logging

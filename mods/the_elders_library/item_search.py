@@ -1,4 +1,5 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
@@ -6,12 +7,12 @@ from data import ItemsTable
 from utils.helpers import respond
 
 
-class item_search(commands.Cog):
+class item_search(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    async def item_search_embed(item_name: Any) -> Any:
-        item_info = await ItemsTable().get_info(item_name=item_name.lower())[0]  # type: ignore[index]
+    async def item_search_embed(self: Any) -> Any:
+        item_info = await ItemsTable().get_info(item_name=self.lower())[0]  # type: ignore[index]
         embed = discord.Embed(
             title=item_info[0].title(),
             description=f"*{item_info[1].capitalize()}*",
@@ -34,13 +35,13 @@ class item_search(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class item_search_buttons(discord.ui.View):
+    class item_search_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

@@ -1,15 +1,15 @@
-from typing import Any
-import pytest
-import asyncio
-from unittest.mock import patch, AsyncMock, MagicMock
 import sys
 from pathlib import Path
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 
 # Add scripts directory to path for imports
 scripts_dir = Path(__file__).parent.parent.parent / 'scripts'
 sys.path.insert(0, str(scripts_dir))
 
-import main
+import main  # noqa: E402
 
 
 @pytest.mark.asyncio
@@ -42,7 +42,7 @@ async def test_build_data_default_args(
     mock_update_gradex_db: Any,
 ) -> None:
     await main.build_data()  # type: ignore[attr-defined]
-    
+
     mock_get_revomon_data.assert_awaited_once_with(download_images=True)
     mock_get_evolutions.assert_called_once_with(save_to_file=True)
     mock_get_base_types.assert_awaited_once_with(save_to_file=True, download_images=True)
@@ -88,7 +88,7 @@ async def test_build_data_custom_args(
     mock_update_gradex_db: Any,
 ) -> None:
     await main.build_data(save_to_file=False, download_images=False, process_caught_revomon=True)  # type: ignore[attr-defined]
-    
+
     mock_get_revomon_data.assert_awaited_once_with(download_images=False)
     mock_get_evolutions.assert_called_once_with(save_to_file=False)
     mock_get_base_types.assert_awaited_once_with(save_to_file=False, download_images=False)
@@ -107,13 +107,13 @@ async def test_build_data_custom_args(
 def test_main_execution() -> None:
     with patch.object(main.asyncio, "run", side_effect=lambda coro: coro.close()) as mock_run:  # type: ignore[attr-defined]
         with patch.object(main.logging, "basicConfig") as mock_config:  # type: ignore[attr-defined]
-            with open(main.__file__, "r", encoding="utf-8") as f:
+            with open(main.__file__, encoding="utf-8") as f:
                 code = f.read()
-            
+
             namespace = main.__dict__.copy()
             namespace["__name__"] = "__main__"
-            
+
             exec(code, namespace)
-            
+
             mock_config.assert_called_once()
             mock_run.assert_called_once()
