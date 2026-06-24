@@ -320,6 +320,7 @@ class TestCleanupTask:
         mock_msg.components = [mock_component]
 
         mock_channel = MagicMock()
+        mock_channel.name = "wilds"
 
         async def mock_history(*args: Any, **kwargs: Any) -> Any:
             yield mock_msg

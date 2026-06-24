@@ -26,7 +26,7 @@ class SearchCommand(commands.Cog):
         print("---------------------------")
 
     async def ability_search_embed(self, ability_name: str) -> discord.embeds.Embed:
-        ability_info = (await AbilitiesTable().get_info(ability_name.lower()))[0]  # type: ignore[attr-defined]
+        ability_info = (await AbilitiesTable().get_info(ability_name.lower()))[0]
         embed = Embed(
             title=ability_info[0].title(),
             description=f"*{ability_info[1].capitalize()}*",
@@ -34,7 +34,7 @@ class SearchCommand(commands.Cog):
         )
         learned_by = ""
         for revomon in await RevomonTable().get_names():
-            if await RevomonTable().has_ability(  # type: ignore[attr-defined]
+            if await RevomonTable().has_ability(
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
@@ -47,7 +47,7 @@ class SearchCommand(commands.Cog):
 
     async def allabilities_embed(self) -> discord.embeds.Embed:
         all_abilities_str = ""
-        for ability in sorted(await AbilitiesTable().get_names()):  # type: ignore[attr-defined]
+        for ability in sorted(await AbilitiesTable().get_names()):
             all_abilities_str += f"- {ability.title()}\n"
         embed = Embed(
             title="All Abilities",
@@ -61,7 +61,7 @@ class SearchCommand(commands.Cog):
         return embed
 
     async def fruity_search_embed(self, fruity_name: str) -> discord.embeds.Embed:
-        fruity_info = (await FruitysTable().get_info(fruity_name.lower()))[0]  # type: ignore[attr-defined]
+        fruity_info = (await FruitysTable().get_info(fruity_name.lower()))[0]
         embed = Embed(
             title=fruity_info[0].title(),
             description=f"*{fruity_info[1].capitalize()}*",
@@ -74,7 +74,7 @@ class SearchCommand(commands.Cog):
 
     async def allfruitys_embed(self) -> discord.embeds.Embed:
         fruitys_str = ""
-        for fruity in sorted(await FruitysTable().get_names()):  # type: ignore[attr-defined]
+        for fruity in sorted(await FruitysTable().get_names()):
             fruitys_str += f"- **{fruity.title()}** Fruity\n"
         embed = Embed(
             title="All Fruitys",

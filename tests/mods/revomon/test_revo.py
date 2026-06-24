@@ -12,6 +12,10 @@ def mock_bot() -> Any:
     bot.wait_until_ready = AsyncMock()
     bot.get_channel = MagicMock()
     bot.add_cog = AsyncMock()
+    
+    async def mock_run_in_executor(executor: Any, func: Any, *args: Any) -> Any:
+        return func(*args)
+    bot.loop.run_in_executor = AsyncMock(side_effect=mock_run_in_executor)
     return bot
 
 @pytest.mark.asyncio

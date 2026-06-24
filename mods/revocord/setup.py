@@ -164,7 +164,8 @@ class SetupCog(commands.Cog):
                 logger.info(f"Created brand new category: {category_name}")
             else:
                 # Sync privacy constraints if the category already existed
-                await revocord_category.edit(overwrites=permission_overwrites)
+                for target, overwrite in permission_overwrites.items():
+                    await revocord_category.set_permissions(target, overwrite=overwrite)
                 logger.info(f"Category located: {category_name}")
 
             # 2. Ensure Core Channels (News, Event Board, Portal, Wilds)

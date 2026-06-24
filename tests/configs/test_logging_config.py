@@ -266,7 +266,7 @@ class TestLogFileCreation:
         )
         assert file_handler is not None
         log_file_path = Path(file_handler.baseFilename)
-        assert "GradexTool_" in log_file_path.name
+        assert log_file_path.name == "GradexTool.log"
 
 
 class TestMultipleSetupCalls:
@@ -356,10 +356,7 @@ class TestDateTimeFormatting:
         )
         assert file_handler is not None
         log_file_path = Path(file_handler.baseFilename)
-        # Check that the datetime format matches expected pattern
-        # Pattern: GradexTool_YYYY-MM-DD_HH-MM-SS.log
-        assert log_file_path.name.startswith("GradexTool_")
-        assert log_file_path.name.endswith(".log")
+        assert log_file_path.name == "GradexTool.log"
 
 
 class TestEdgeCases:

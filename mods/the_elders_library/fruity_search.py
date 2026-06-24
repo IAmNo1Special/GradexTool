@@ -19,7 +19,7 @@ class fruity_search(commands.Cog):  # noqa: N801
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message) -> Any:
         async def fruity_search_embed(fruity_name: Any) -> Any:
-            fruity_info = await FruitysTable().get_info(fruity_name=fruity_name.lower())[0]  # type: ignore[attr-defined]
+            fruity_info = (await FruitysTable().get_info(fruity_name.lower()))[0]
             embed = discord.Embed(
                 title=fruity_info[0].title(),
                 description=f"*{fruity_info[1].capitalize()}*",
@@ -58,7 +58,7 @@ class fruity_search(commands.Cog):  # noqa: N801
 
         try:
             prompt = message.content.lower().strip()
-            if prompt in await FruitysTable().get_names():  # type: ignore[attr-defined]
+            if prompt in await FruitysTable().get_names():
                 embed = fruity_search_embed(prompt)
                 buttons = fruity_search_buttons()
                 await respond(

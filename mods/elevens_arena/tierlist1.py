@@ -43,22 +43,10 @@ class GsTierPoll(commands.Cog):
 
     async def get_winning_tiers(self, poll: discord.Poll) -> Any:
         """Get the winning tiers for a poll."""
-        await poll.end()
-        poll_msg = poll.message
-        if poll_msg is None:
+        final_poll = await poll.end()
+        if final_poll is None or final_poll.answers is None:
             return None, []
-        await self.gradex_tool.wait_for(
-            "message_edit",
-            check=lambda before, after: (
-                before.author == poll_msg.author and before.id == poll_msg.id
-            ),
-        )
-        if poll_msg.poll is None:
-            return None, []
-        print(f"{poll_msg.poll.question}'s poll has ended")
-        final_poll: Any = poll_msg.poll
-        if final_poll.answers is None:
-            return None, []
+        print(f"{final_poll.question}'s poll has ended")
         votes = {answer: answer.vote_count for answer in final_poll.answers}
         mon_name = final_poll.question
         max_votes = max(votes.values())

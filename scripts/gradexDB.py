@@ -448,6 +448,24 @@ class AbilitiesTable:
         # Return the count
         return count
 
+    async def get_info(self, ability_name: str) -> Any:
+        """Method to search the abilities table by name and return the info of the matching entry."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
+                "SELECT * FROM abilities WHERE name LIKE ?;", (f"%{ability_name.lower()}%",)
+            )
+            rows = await cursor.fetchall()
+            return rows
+
+    async def get_names(self) -> Any:
+        """Method to get a list of all the names of the abilities in the abilities table."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("SELECT name FROM abilities;")
+            rows = await cursor.fetchall()
+            return [row[0] for row in rows]
+
 
 class CapsulesTable:
     """Class to interact with the capsules table in the Gradex SQLite database."""
@@ -707,6 +725,24 @@ class FruitysTable:
 
         # Return the count
         return count
+
+    async def get_info(self, fruity_name: str) -> Any:
+        """Method to search the fruitys table by name and return the info of the matching entry."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
+                "SELECT * FROM fruitys WHERE name LIKE ?;", (f"%{fruity_name.lower()}%",)
+            )
+            rows = await cursor.fetchall()
+            return rows
+
+    async def get_names(self) -> Any:
+        """Method to get a list of all the names of the fruitys in the fruitys table."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("SELECT name FROM fruitys;")
+            rows = await cursor.fetchall()
+            return [row[0] for row in rows]
 
 
 class ItemsTable:
@@ -1873,6 +1909,40 @@ class RevomonTable:
             )
             rows = await cursor.fetchall()
             return rows
+
+    async def has_ability(self, ability_name: str, mon_name: str | None = None) -> Any:
+        """Check if a given Revomon has a specified ability."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            if mon_name is not None:
+                await cursor.execute(
+                    """
+                    SELECT name from revomon
+                    WHERE name = ? AND (ability1 = ? OR ability2 = ? OR ability_hidden = ?);
+                    """,
+                    (
+                        mon_name.lower(),
+                        ability_name.lower(),
+                        ability_name.lower(),
+                        ability_name.lower(),
+                    ),
+                )
+                results = await cursor.fetchall()
+                return len(results) > 0
+            else:
+                await cursor.execute(
+                    """
+                    SELECT name from revomon
+                    WHERE ability1 = ? OR ability2 = ? OR ability_hidden = ?;
+                    """,
+                    (
+                        ability_name.lower(),
+                        ability_name.lower(),
+                        ability_name.lower(),
+                    ),
+                )
+                results = await cursor.fetchall()
+                return [result[0] for result in results]
 
 
 class RevomonMovesTable:

@@ -164,6 +164,7 @@ class TestEnforcementCogLogic:
         cog = EnforcementCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.type = discord.MessageType.pins_add
+        mock_msg.channel.category.name = "RevoCord"
         mock_msg.delete = AsyncMock()
 
         await cog.on_message(mock_msg)
@@ -176,6 +177,7 @@ class TestEnforcementCogLogic:
         cog = EnforcementCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.type = discord.MessageType.pins_add
+        mock_msg.channel.category.name = "RevoCord"
         mock_msg.delete = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ''))
 
         await cog.on_message(mock_msg)
@@ -187,6 +189,7 @@ class TestEnforcementCogLogic:
         cog = EnforcementCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.type = discord.MessageType.pins_add
+        mock_msg.channel.category.name = "RevoCord"
         mock_msg.delete = AsyncMock(side_effect=Exception("foo"))
 
         await cog.on_message(mock_msg)
