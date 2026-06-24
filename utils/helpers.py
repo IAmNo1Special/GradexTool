@@ -6,6 +6,17 @@ from discord.ext import commands
 from configs import GRA_GUILD_ID, PRO_TAMER_ROLE_IDS
 from data import UsersTable
 
+# Singleton instance to prevent database connection exhaustion
+_users_table: UsersTable | None = None
+
+
+def get_users_table() -> UsersTable:
+    """Get or create the singleton UsersTable instance."""
+    global _users_table
+    if _users_table is None:
+        _users_table = UsersTable()
+    return _users_table
+
 
 def is_pro_tamer(
     gradex_tool: commands.Bot, user: discord.User | discord.Member
@@ -22,7 +33,7 @@ def is_pro_tamer(
 
 async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
     # If message is from an existing user, check if their membership status needs to be updated
-    users_data = UsersTable()
+    users_data = get_users_table()
     current_user = await users_data.get_user(user_id=user.id)
     is_pro_status = 1 if is_pro_tamer(gradex_tool=gradex_tool, user=user) else 0
     if current_user:
