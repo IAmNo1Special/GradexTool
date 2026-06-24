@@ -295,7 +295,7 @@ ______________________________________________________________________
 | `/evolutions` | Display evolution trees |
 | `/sapdaddy` | Display SapDaddy's library |
 | `/spawnchart` | Display the spawn chart & spawn times |
-| `/search <category> [keyword]` | Search for game data (subcommands: `abilities`, `fruitys`, `items`, `moves`, `natures`, `revomon`) |
+| `/search <subcommand> [name]` | Search for game data (subcommands: `abilities`, `fruitys`, `items`, `moves`, `natures`, `revomon`) |
 
 ### Keyword Triggers
 
@@ -346,7 +346,7 @@ ruff format .
 
 ### Running Tests
 
-The project includes an extensive test suite consisting of **1,046 automated unit and integration tests** validating cogs, core loop mechanics, database transitions, and utility functions.
+The project includes an extensive test suite consisting of **over 1,000 automated unit and integration tests** validating cogs, core loop mechanics, database transitions, and utility functions.
 
 **With uv (recommended)**:
 
