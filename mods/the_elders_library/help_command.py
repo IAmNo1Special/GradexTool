@@ -70,7 +70,9 @@ class HelpCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Make Public", style=ButtonStyle.green, custom_id="Save")
-        async def make_public_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def make_public_button(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 await interaction.response.defer(ephemeral=False, thinking=True)
                 embed = self.embed

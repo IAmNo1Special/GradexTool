@@ -6,7 +6,7 @@ with open(path, encoding="utf-8") as f:
 
 # Fix generic and forbidden exception
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     async def test_forbidden_exception(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
@@ -17,8 +17,8 @@ text = text.replace(
 
         mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))  # type: ignore
 
-        await setup_cog.setup_command.callback(setup_cog, mock_interaction)''',
-    '''    @pytest.mark.asyncio
+        await setup_cog.setup_command.callback(setup_cog, mock_interaction)""",
+    """    @pytest.mark.asyncio
     async def test_forbidden_exception(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
@@ -29,30 +29,30 @@ text = text.replace(
 
         mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))  # type: ignore
 
-        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)'''
+        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)""",
 )
 
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     async def test_generic_exception(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.fetch_channels = AsyncMock(side_effect=Exception("Random error"))
 
-        await setup_cog.setup_command.callback(setup_cog, mock_interaction)''',
-    '''    @pytest.mark.asyncio
+        await setup_cog.setup_command.callback(setup_cog, mock_interaction)""",
+    """    @pytest.mark.asyncio
     async def test_generic_exception(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.fetch_channels = AsyncMock(side_effect=Exception("Random error"))
 
-        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)'''
+        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)""",
 )
 
 # Fix test_setup_portal_fail by just throwing an exception directly inside create_text_channel, or returning a normal MagicMock then raising in _ensure_core_channel? No, if it returns None, _ensure_core_channel returns (None, True).
 text = re.sub(
     r'    @pytest\.mark\.asyncio\n    @patch\("mods\.revocord\.setup\.asyncio\.sleep", new_callable=AsyncMock\)\n    @patch\("mods\.revocord\.hunting\.initial_wilds_spawn", new_callable=AsyncMock\)\n    async def test_setup_portal_fail.*?assert len\(calls\) > 0',
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
@@ -83,9 +83,9 @@ text = re.sub(
 
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
-        assert len(calls) > 0''',
+        assert len(calls) > 0""",
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

@@ -67,7 +67,9 @@ class PvpLeaderboard2(commands.Cog):
 
         self.rankings = rankings_data
 
-    def update_pvp_image(self, data: list[dict[str, str | int]] | None, output_path: None=None) -> None:
+    def update_pvp_image(
+        self, data: list[dict[str, str | int]] | None, output_path: None = None
+    ) -> None:
         img_width, cell_height = 1050, 50
         header_height = 40
         total_height = header_height + 15 * cell_height

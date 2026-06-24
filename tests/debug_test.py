@@ -15,17 +15,20 @@ async def main() -> None:
     mock_message.embeds = [embed]
     mock_message.edit = AsyncMock()
 
-    view.message = mock_message
+    setattr(view, "message", mock_message)
 
     try:
         msg = getattr(view, "message", None)
         if msg:
             embed = msg.embeds[0]
-            embed.description = (embed.description or "") + "\n\n*(This encounter has expired)*"
+            embed.description = (
+                embed.description or ""
+            ) + "\n\n*(This encounter has expired)*"
             await msg.edit(embed=embed, view=None)
             print("Success! Edit was called.")
     except Exception as e:
         print(f"Exception: {e}")
+
 
 if __name__ == "__main__":
     asyncio.run(main())

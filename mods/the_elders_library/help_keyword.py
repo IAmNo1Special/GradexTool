@@ -32,7 +32,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Mon Search Help",
         )
         async def mon_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             mon_search_help_embed = discord.Embed(
                 title="Revomon search",
@@ -54,7 +56,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Move Search Help",
         )
         async def move_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             move_search_help_embed = discord.Embed(
                 title="Move search",
@@ -78,7 +82,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="PriMove Search Help",
         )
         async def primove_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             primove_search_help_embed = discord.Embed(
                 title="Priority Move search",
@@ -102,7 +108,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Ability Search Help",
         )
         async def ability_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             ability_search_help_embed = discord.Embed(
                 title="Ability search",
@@ -126,7 +134,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Nature Search Help",
         )
         async def nature_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             nature_search_help_embed = discord.Embed(
                 title="Nature search",
@@ -150,7 +160,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Item Search Help",
         )
         async def item_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             item_search_help_embed = discord.Embed(
                 title="Item search",
@@ -174,7 +186,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Fruity Search Help",
         )
         async def fruity_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             fruity_search_help_embed = discord.Embed(
                 title="Fruity search",
@@ -198,7 +212,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Tier List Help",
         )
         async def tier_list_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             tier_list_help_embed = discord.Embed(
                 title="Tier List",
@@ -220,7 +236,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="EV Chart Help",
         )
         async def ev_chart_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             ev_chart_help_embed = discord.Embed(
                 title="EV Training Chart",
@@ -242,7 +260,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Spawn Locations Help",
         )
         async def spawn_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             spawn_help_embed = discord.Embed(
                 title="Spawn Locations",
@@ -264,7 +284,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Pmon Help",
         )
         async def pmon_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             pmon_help_embed = discord.Embed(
                 title="Pokemon Counterparts",
@@ -289,7 +311,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Gdex Help",
         )
         async def gdex_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             gdex_help_embed = discord.Embed(
                 title="Features & Instructions",
@@ -326,7 +350,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="TTS Help",
         )
         async def tts_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             tts_help_embed = discord.Embed(
                 title="Tiptop's Top-up Shop",
@@ -351,7 +377,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="EED Help",
         )
         async def eed_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             eed_help_embed = discord.Embed(
                 title="Eazy's EV Daycare",
@@ -376,7 +404,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="EA Help",
         )
         async def ea_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             ea_help_embed = discord.Embed(
                 title="Eleven's Arena",
@@ -399,7 +429,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="Titles Help",
         )
         async def titles_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             titles_help_embed = discord.Embed(
                 title="How to gain your NFT Titles",
@@ -421,7 +453,9 @@ class help_keyword(commands.Cog):  # noqa: N801
             custom_id="OP Help",
         )
         async def op_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             op_help_embed = discord.Embed(
                 title="GRA Online Presence",
@@ -448,7 +482,9 @@ TheGlobalRevomonAssociation@Gmail.com""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
                 await interaction.message.delete()

@@ -1,11 +1,10 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_wilds_loop.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix test_do_spawn_no_eligible
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     async def test_do_spawn_no_eligible(self, mock_biome, cog):
         mock_biome.return_value = "water" # Pikachu is electric
@@ -14,8 +13,8 @@ text = text.replace(
         guild.text_channels[0].name = "wilds"
 
         await cog._do_spawn(guild)
-        guild.text_channels[0].send.assert_not_called()''',
-    '''    @pytest.mark.asyncio
+        guild.text_channels[0].send.assert_not_called()""",
+    """    @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     async def test_do_spawn_no_eligible(self, mock_biome, cog):
         mock_biome.return_value = "water" # Pikachu is neutral, but we will make allowed_types NOT neutral
@@ -27,28 +26,28 @@ text = text.replace(
 
         with patch("mods.revocord.wilds_loop.BIOME_TYPES", {"water": {"water"}}):
             await cog._do_spawn(guild)
-        guild.text_channels[0].send.assert_not_called()'''
+        guild.text_channels[0].send.assert_not_called()""",
 )
 
 # Cover line 63 (shiny fallback image)
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("pathlib.Path.exists")
-    async def test_do_spawn_success_with_image(self, mock_exists, mock_table, mock_biome, cog):''',
-    '''    @pytest.mark.asyncio
+    async def test_do_spawn_success_with_image(self, mock_exists, mock_table, mock_biome, cog):""",
+    """    @pytest.mark.asyncio
     @patch("random.random")
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("pathlib.Path.exists")
     async def test_do_spawn_success_with_image(self, mock_exists, mock_table, mock_biome, mock_rand, cog):
         mock_rand.return_value = 0.0 # Force shiny
-        mock_exists.side_effect = [False, True] # Shiny image doesn't exist, fallback does!'''
+        mock_exists.side_effect = [False, True] # Shiny image doesn't exist, fallback does!""",
 )
 
 # Add tests for lines 133 and 141
-tests = '''
+tests = """
     @pytest.mark.asyncio
     async def test_loop_no_revomons(self, cog):
         cog.revomons = []
@@ -76,8 +75,8 @@ tests = '''
 
         await cog.wilds_spawn_loop()
         cog._do_spawn.assert_called_once()
-'''
-text = text.replace('class TestWildsLoopTasks:', 'class TestWildsLoopTasks:' + tests)
+"""
+text = text.replace("class TestWildsLoopTasks:", "class TestWildsLoopTasks:" + tests)
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(text)

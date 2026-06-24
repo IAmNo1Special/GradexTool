@@ -78,7 +78,13 @@ TYPE_COLORS = {
 class WildSpawnView(ui.View):
     """View shown when a wild Revomon is spawned. Has Fight and Run buttons."""
 
-    def __init__(self, revomon: dict[str, Any], is_shiny: bool, spawner_id: int, event_msg_id: int = 0) -> None:
+    def __init__(
+        self,
+        revomon: dict[str, Any],
+        is_shiny: bool,
+        spawner_id: int,
+        event_msg_id: int = 0,
+    ) -> None:
         super().__init__(timeout=None)
         self.revomon = revomon
         self.is_shiny = is_shiny
@@ -90,15 +96,21 @@ class WildSpawnView(ui.View):
         shiny_int = 1 if is_shiny else 0
 
         fight_btn: ui.Button[Any] = ui.Button(
-            label="Fight", style=discord.ButtonStyle.danger, emoji="⚔️",
+            label="Fight",
+            style=discord.ButtonStyle.danger,
+            emoji="⚔️",
             custom_id=f"spawn_fight:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}:{event_msg_id}",
         )
         catch_btn: ui.Button[Any] = ui.Button(
-            label="Throw Orb", style=discord.ButtonStyle.success, emoji="🔮",
+            label="Throw Orb",
+            style=discord.ButtonStyle.success,
+            emoji="🔮",
             custom_id=f"spawn_catch_menu:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}:{event_msg_id}",
         )
         run_btn: ui.Button[Any] = ui.Button(
-            label="Run", style=discord.ButtonStyle.secondary, emoji="🏃",
+            label="Run",
+            style=discord.ButtonStyle.secondary,
+            emoji="🏃",
             custom_id=f"spawn_run:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}:{event_msg_id}",
         )
         self.add_item(fight_btn)
@@ -107,8 +119,10 @@ class WildSpawnView(ui.View):
 
         if event_msg_id == 0:
             share_btn: ui.Button[Any] = ui.Button(
-                label="Share", style=discord.ButtonStyle.primary, emoji="📤",
-                custom_id=f"spawn_share:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}"
+                label="Share",
+                style=discord.ButtonStyle.primary,
+                emoji="📤",
+                custom_id=f"spawn_share:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}",
             )
             self.add_item(share_btn)
 
@@ -120,7 +134,7 @@ class ReturnToConsoleView(ui.View):
             label="Back to Console",
             style=discord.ButtonStyle.primary,
             emoji="🎮",
-            custom_id=f"return_console:{spawner_id}"
+            custom_id=f"return_console:{spawner_id}",
         )
         self.add_item(btn)
 
@@ -137,8 +151,6 @@ class HuntingCog(commands.Cog):
         self.bot = bot
         self.revomons = []
         self.evolved_names = set()
-
-
 
         # Load evolution chains to determine first-stage stages
         evolutions_path = Path("data", "evolutions.json")
@@ -176,7 +188,9 @@ class HuntingCog(commands.Cog):
             except Exception as e:
                 logger.error("Failed to load natures data: %s", e)
 
-    def _get_revomon_image_path(self, revomon_data: dict[str, Any], is_shiny: bool) -> Path:
+    def _get_revomon_image_path(
+        self, revomon_data: dict[str, Any], is_shiny: bool
+    ) -> Path:
         """Helper method to construct and fallback the correct image asset path.
 
         Args:
@@ -195,8 +209,6 @@ class HuntingCog(commands.Cog):
             img_path = Path("data", "assets", "revomon", "raw", f"{id_revodex}.png")
 
         return img_path
-
-
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
@@ -226,8 +238,11 @@ class HuntingCog(commands.Cog):
             spawner_id = int(custom_id.split(":")[1])
             account = await get_or_create_account(spawner_id)
             from mods.revocord.portal import GameConsoleView, build_console_embed
+
             new_embed = await build_console_embed(account, interaction.user)
-            await interaction.edit_original_response(embed=new_embed, view=GameConsoleView(spawner_id), attachments=[])
+            await interaction.edit_original_response(
+                embed=new_embed, view=GameConsoleView(spawner_id), attachments=[]
+            )
             return
 
         if custom_id.startswith("wilds_claim:"):
@@ -272,18 +287,21 @@ class HuntingCog(commands.Cog):
             await delete_active_encounter(spawner_id)
             account = await get_or_create_account(spawner_id)
             from mods.revocord.portal import GameConsoleView, build_console_embed
+
             new_embed = await build_console_embed(account, interaction.user)
             await interaction.edit_original_response(
                 content="❌ **This encounter has expired and the Revomon fled into the wilds!**",
                 embed=new_embed,
                 view=GameConsoleView(spawner_id),
-                attachments=[]
+                attachments=[],
             )
 
             msg_id = int(parts[5]) if len(parts) > 5 else 0
             if msg_id and interaction.guild:
                 try:
-                    await update_encounter_broadcast(interaction.guild, msg_id, "Fled (Expired)", 0x7F8C8D)
+                    await update_encounter_broadcast(
+                        interaction.guild, msg_id, "Fled (Expired)", 0x7F8C8D
+                    )
                 except Exception:
                     pass
                 await self._cleanup_wilds_spawn(interaction.guild, msg_id)
@@ -295,11 +313,16 @@ class HuntingCog(commands.Cog):
             await delete_active_encounter(spawner_id)
             account = await get_or_create_account(spawner_id)
             from mods.revocord.portal import GameConsoleView, build_console_embed
+
             new_embed = await build_console_embed(account, interaction.user)
-            await interaction.edit_original_response(embed=new_embed, view=GameConsoleView(spawner_id), attachments=[])
+            await interaction.edit_original_response(
+                embed=new_embed, view=GameConsoleView(spawner_id), attachments=[]
+            )
             if msg_id and interaction.guild:
                 try:
-                    await update_encounter_broadcast(interaction.guild, msg_id, "Ran", 0x7F8C8D)
+                    await update_encounter_broadcast(
+                        interaction.guild, msg_id, "Ran", 0x7F8C8D
+                    )
                 except Exception:
                     pass
                 await self._cleanup_wilds_spawn(interaction.guild, msg_id)
@@ -324,15 +347,31 @@ class HuntingCog(commands.Cog):
                     revomon_data = r
                     break
 
-            name = revomon_data.get("name", "Unknown").title() if revomon_data else "Unknown"
-            rarity = revomon_data.get("rarity", "common").title() if revomon_data else "Common"
+            name = (
+                revomon_data.get("name", "Unknown").title()
+                if revomon_data
+                else "Unknown"
+            )
+            rarity = (
+                revomon_data.get("rarity", "common").title()
+                if revomon_data
+                else "Common"
+            )
 
             if not isinstance(interaction.user, discord.Member):
                 return
             await broadcast_encounter(
-                self.bot, interaction.user, name, str(id_revomon), rarity, is_shiny, embed
+                self.bot,
+                interaction.user,
+                name,
+                str(id_revomon),
+                rarity,
+                is_shiny,
+                embed,
             )
-            await interaction.followup.send("📤 Encounter shared to the Event Board!", ephemeral=True)
+            await interaction.followup.send(
+                "📤 Encounter shared to the Event Board!", ephemeral=True
+            )
         elif action == "spawn_catch_menu":
             account = await get_or_create_account(spawner_id)
             inventory = account.get("inventory", {})
@@ -464,7 +503,9 @@ class HuntingCog(commands.Cog):
             }
             base_rate = base_rates.get(rarity, 0.30)
 
-            orb_multipliers = {str(cfg["id"]): float(cfg["mult"]) for cfg in ORB_CONFIG.values()}
+            orb_multipliers = {
+                str(cfg["id"]): float(cfg["mult"]) for cfg in ORB_CONFIG.values()
+            }
             multiplier = orb_multipliers.get(orb_id, 1.0)
             final_rate = base_rate * multiplier
 
@@ -507,7 +548,7 @@ class HuntingCog(commands.Cog):
                     "nature": caught_nature.lower(),
                     "ability": caught_ability.lower(),
                     "ivs": ivs_dict,
-                    "iv_percent": iv_pct
+                    "iv_percent": iv_pct,
                 }
                 caught_list = account.get("caught_revomon", [])
                 caught_list.append(new_caught)
@@ -532,12 +573,22 @@ class HuntingCog(commands.Cog):
                 embed.set_footer(text=f"RC-ID: #{rc_id}")
 
                 if file:
-                    await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
+                    await interaction.response.edit_message(
+                        embed=embed,
+                        view=ReturnToConsoleView(spawner_id),
+                        attachments=[file],
+                    )
                 else:
-                    await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
+                    await interaction.response.edit_message(
+                        embed=embed,
+                        view=ReturnToConsoleView(spawner_id),
+                        attachments=[],
+                    )
 
                 if msg_id and interaction.guild:
-                    await update_encounter_broadcast(interaction.guild, msg_id, "Caught", 0xF1C40F)
+                    await update_encounter_broadcast(
+                        interaction.guild, msg_id, "Caught", 0xF1C40F
+                    )
                     await self._cleanup_wilds_spawn(interaction.guild, msg_id)
 
                 await delete_active_encounter(spawner_id)
@@ -563,13 +614,23 @@ class HuntingCog(commands.Cog):
                         embed.color = 0x7F8C8D  # Grey
 
                         if file:
-                            await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
+                            await interaction.response.edit_message(
+                                embed=embed,
+                                view=ReturnToConsoleView(spawner_id),
+                                attachments=[file],
+                            )
                         else:
-                            await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
+                            await interaction.response.edit_message(
+                                embed=embed,
+                                view=ReturnToConsoleView(spawner_id),
+                                attachments=[],
+                            )
 
                     if msg_id and interaction.guild:
                         try:
-                            await update_encounter_broadcast(interaction.guild, msg_id, "Fled", 0x7F8C8D)
+                            await update_encounter_broadcast(
+                                interaction.guild, msg_id, "Fled", 0x7F8C8D
+                            )
                         except Exception:
                             pass
                         await self._cleanup_wilds_spawn(interaction.guild, msg_id)
@@ -596,6 +657,7 @@ class HuntingCog(commands.Cog):
     async def _cleanup_wilds_spawn(self, guild: discord.Guild, msg_id: int) -> None:
         try:
             from scripts.gradexDB import active_spawns_table
+
             await active_spawns_table.remove_spawn(msg_id)
             if guild:
                 wilds_channel = discord.utils.get(guild.text_channels, name="wilds")
@@ -624,14 +686,26 @@ class HuntingCog(commands.Cog):
         await interaction.response.defer()
 
         from scripts.gradexDB import active_spawns_table
+
         spawn_data = await active_spawns_table.get_spawn(msg_id)
         if not spawn_data:
-            await interaction.followup.send("❌ This Revomon has already been claimed or fled!", ephemeral=True)
+            await interaction.followup.send(
+                "❌ This Revomon has already been claimed or fled!", ephemeral=True
+            )
             return
 
-        chosen = next((r for r in self.revomons if r.get("mon_id", r.get("idRevomon")) == id_revomon), None)
+        chosen = next(
+            (
+                r
+                for r in self.revomons
+                if r.get("mon_id", r.get("idRevomon")) == id_revomon
+            ),
+            None,
+        )
         if not chosen:
-            await interaction.followup.send("❌ Error finding creature data.", ephemeral=True)
+            await interaction.followup.send(
+                "❌ Error finding creature data.", ephemeral=True
+            )
             return
 
         img_path = self._get_revomon_image_path(chosen, is_shiny)
@@ -639,18 +713,28 @@ class HuntingCog(commands.Cog):
         member = interaction.user
         await save_active_encounter(member.id, json.dumps(spawn_data))
 
-        file = discord.File(img_path, filename="revomon.png") if img_path.exists() else None
+        file = (
+            discord.File(img_path, filename="revomon.png")
+            if img_path.exists()
+            else None
+        )
 
         name = chosen.get("name", "Unknown").title()
         embed_color = TYPE_COLORS.get((chosen.get("type1") or "").lower(), 0x2ECC71)
 
-        title = f"✨ A wild SHINY {name} appeared! ✨" if is_shiny else f"🌿 A wild {name} appeared! 🌿"
+        title = (
+            f"✨ A wild SHINY {name} appeared! ✨"
+            if is_shiny
+            else f"🌿 A wild {name} appeared! 🌿"
+        )
         embed = discord.Embed(title=title, color=embed_color)
         if file:
             embed.set_image(url="attachment://revomon.png")
 
         expiry_time = time.strftime("%H:%M:%S", time.gmtime(time.time() + 300))
-        embed.set_footer(text=f"In battle with {member.display_name} | Expires at {expiry_time} UTC")
+        embed.set_footer(
+            text=f"In battle with {member.display_name} | Expires at {expiry_time} UTC"
+        )
 
         view = WildSpawnView(chosen, is_shiny, member.id, msg_id)
 
@@ -661,9 +745,13 @@ class HuntingCog(commands.Cog):
                 attachments = []
 
             if interaction.message:
-                await interaction.message.edit(embed=embed, view=view, attachments=attachments)
+                await interaction.message.edit(
+                    embed=embed, view=view, attachments=attachments
+                )
             else:
-                await interaction.edit_original_response(embed=embed, view=view, attachments=attachments)
+                await interaction.edit_original_response(
+                    embed=embed, view=view, attachments=attachments
+                )
         except Exception as e:
             logger.error(f"Failed to update claimed spawn msg: {e}")
 
@@ -687,7 +775,9 @@ class HuntingCog(commands.Cog):
             return
         guild_id = interaction.guild_id
         if not guild_id:
-            await interaction.followup.send("❌ This command must be used in a server.", ephemeral=True)
+            await interaction.followup.send(
+                "❌ This command must be used in a server.", ephemeral=True
+            )
             return
 
         current_biome = await get_guild_biome(guild_id)
@@ -699,10 +789,9 @@ class HuntingCog(commands.Cog):
             r_type2 = (r.get("type2") or "").lower()
 
             # Double safety: Must share a type with the Biome AND must be a first evolution stage
-            if (
-                (r_type1 in allowed_types or r_type2 in allowed_types)
-                and r.get("name", "").lower() not in self.evolved_names
-            ):
+            if (r_type1 in allowed_types or r_type2 in allowed_types) and r.get(
+                "name", ""
+            ).lower() not in self.evolved_names:
                 eligible.append(r)
 
         if not eligible:
@@ -737,7 +826,11 @@ class HuntingCog(commands.Cog):
         rarity = chosen.get("rarity", "common").title()
 
         # Generate Background Battle Stats
-        nature = random.choice(self.natures)["name"].title() if hasattr(self, 'natures') and self.natures else "Hardy"
+        nature = (
+            random.choice(self.natures)["name"].title()
+            if hasattr(self, "natures") and self.natures
+            else "Hardy"
+        )
         abilities = []
         for k in ["ability1", "ability2", "ability_hidden"]:
             ab = chosen.get(k)
@@ -750,13 +843,13 @@ class HuntingCog(commands.Cog):
             "def": random.randint(0, 31),
             "spa": random.randint(0, 31),
             "spd": random.randint(0, 31),
-            "spe": random.randint(0, 31)
+            "spe": random.randint(0, 31),
         }
 
         encounter_data = {
             "nature": nature.lower(),
             "ability": ability.lower(),
-            "ivs": ivs
+            "ivs": ivs,
         }
         await save_active_encounter(member.id, json.dumps(encounter_data))
 
@@ -765,21 +858,33 @@ class HuntingCog(commands.Cog):
             file = discord.File(img_path, filename="revomon.png")
             embed.set_image(url="attachment://revomon.png")
         else:
-            embed.description = (embed.description or "") + "\n*(Image sprite not found)*"
+            embed.description = (
+                embed.description or ""
+            ) + "\n*(Image sprite not found)*"
 
         # We need the embed without the expiration timer for the broadcast
         broadcast_embed = embed.copy()
         broadcast_embed.set_footer(text=None)
 
         event_msg_id = await broadcast_encounter(
-            self.bot, member, name, str(chosen.get("mon_id", chosen.get("idRevomon"))), rarity, is_shiny, broadcast_embed
+            self.bot,
+            member,
+            name,
+            str(chosen.get("mon_id", chosen.get("idRevomon"))),
+            rarity,
+            is_shiny,
+            broadcast_embed,
         )
 
         view = WildSpawnView(chosen, is_shiny, member.id, event_msg_id)
         if file:
-            await interaction.edit_original_response(embed=embed, view=view, attachments=[file])
+            await interaction.edit_original_response(
+                embed=embed, view=view, attachments=[file]
+            )
         else:
-            await interaction.edit_original_response(embed=embed, view=view, attachments=[])
+            await interaction.edit_original_response(
+                embed=embed, view=view, attachments=[]
+            )
 
     @tasks.loop(minutes=5)
     async def cleanup_encounters(self) -> None:
@@ -793,7 +898,9 @@ class HuntingCog(commands.Cog):
                 async for msg in channel.history(limit=20):
                     if msg.components:
                         for component in msg.components:
-                            children = getattr(component, "children", getattr(component, "items", []))
+                            children = getattr(
+                                component, "children", getattr(component, "items", [])
+                            )
                             for item in children:
                                 custom_id = getattr(item, "custom_id", None)
                                 if isinstance(custom_id, str) and custom_id.startswith(
@@ -815,12 +922,14 @@ class HuntingCog(commands.Cog):
                     e,
                 )
 
+
 async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:
     """Trigger the initial wild spawns after setup."""
     wilds_loop_cog = bot.get_cog("WildsLoopCog")
     if not wilds_loop_cog:
         return
     from scripts.gradexDB import get_guild_spawn_config
+
     config = await get_guild_spawn_config(guild.id)
     limit = config["max_spawn_limit"]
     spawn_count = limit // 3
@@ -832,6 +941,7 @@ async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:
             await asyncio.sleep(0.5)  # Rate limiting safety
         except Exception as e:
             logger.error(f"Error doing initial spawn: {e}")
+
 
 async def setup(bot: commands.Bot) -> None:
     """Add the HuntingCog to the bot."""

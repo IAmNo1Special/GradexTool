@@ -5,7 +5,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # I will replace the test_setup_portal_fail again.
-good_test = '''    @pytest.mark.asyncio
+good_test = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
     @patch("mods.revocord.setup.discord.utils.get")
@@ -39,13 +39,13 @@ good_test = '''    @pytest.mark.asyncio
 
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
-        assert len(calls) > 0'''
+        assert len(calls) > 0"""
 
 text = re.sub(
     r'    @pytest\.mark\.asyncio\n    @patch\("mods\.revocord\.setup\.asyncio\.sleep", new_callable=AsyncMock\)\n    @patch\("mods\.revocord\.hunting\.initial_wilds_spawn", new_callable=AsyncMock\)\n    @patch\("mods\.revocord\.setup\.discord\.utils\.get"\)\n    async def test_setup_portal_fail.*?assert len\(calls\) > 0',
     good_test,
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

@@ -33,6 +33,7 @@ class TestBuildTVEmbed:
         embed = build_tv_embed(member, 0, 0, 0)
         assert embed.footer.text is not None and "Page 1 of 1" in embed.footer.text
 
+
 class TestBuildStatEmbed:
     @pytest.mark.asyncio
     async def test_build_stat_embed_basic(self) -> None:
@@ -45,7 +46,7 @@ class TestBuildStatEmbed:
             "ability": "static",
             "ivs": {"hp": 31, "atk": 31, "def": 31, "spa": 31, "spd": 31, "spe": 31},
             "iv_percent": 100.0,
-            "rc_id": "12345"
+            "rc_id": "12345",
         }
 
         embed = await build_stat_embed(mon, {"num": 25})
@@ -54,7 +55,10 @@ class TestBuildStatEmbed:
         assert embed.fields[0].value is not None and "500 XP" in embed.fields[0].value
         assert embed.fields[1].value is not None and "Bold" in embed.fields[1].value
         assert embed.fields[2].value is not None and "Static" in embed.fields[2].value
-        assert embed.fields[3].value is not None and "186/186 (100.0%)" in embed.fields[3].value
+        assert (
+            embed.fields[3].value is not None
+            and "186/186 (100.0%)" in embed.fields[3].value
+        )
         assert embed.footer.text is not None and "RC-ID: #12345" in embed.footer.text
         assert embed.thumbnail.url is not None and "25.png" in embed.thumbnail.url
 
@@ -75,13 +79,18 @@ class TestBuildStatEmbed:
     async def test_build_stat_embed_no_attrs(self) -> None:
         mon = {"name": "MissingNo"}
         embed = await build_stat_embed(mon, None)
-        assert not getattr(embed.thumbnail, 'url', None)
+        assert not getattr(embed.thumbnail, "url", None)
+
 
 class TestTVStatView:
     @pytest.mark.asyncio
     async def test_back_button_wrong_user(self, mock_interaction: Any) -> None:
         view = TVStatView(123, [], 0)
-        button = next(child for child in view.children if getattr(child, 'custom_id', '') == "tv_back")
+        button = next(
+            child
+            for child in view.children
+            if getattr(child, "custom_id", "") == "tv_back"
+        )
 
         mock_interaction.user.id = 999
         await button.callback(mock_interaction)
@@ -92,7 +101,11 @@ class TestTVStatView:
     @pytest.mark.asyncio
     async def test_back_button_success(self, mock_interaction: Any) -> None:
         view = TVStatView(123, [{"name": "A"}], 0)
-        button = next(child for child in view.children if getattr(child, 'custom_id', '') == "tv_back")
+        button = next(
+            child
+            for child in view.children
+            if getattr(child, "custom_id", "") == "tv_back"
+        )
 
         mock_interaction.user.id = 123
         mock_interaction.client._app_emojis_cache = []
@@ -102,6 +115,7 @@ class TestTVStatView:
 
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.edit_original_response.assert_called_once()
+
 
 class TestTVView:
     @pytest.mark.asyncio
@@ -116,19 +130,19 @@ class TestTVView:
 
         # Should have 5 nav buttons
         assert len(view.children) == 5
-        assert getattr(view.children[2], 'custom_id', '') == "tv_nav_close"
+        assert getattr(view.children[2], "custom_id", "") == "tv_nav_close"
 
     @pytest.mark.asyncio
     async def test_build_buttons_with_items(self) -> None:
         bot = MagicMock()
         bot.emojis = []
         bot.fetch_application_emojis = AsyncMock(return_value=[])
-        delattr(bot, '_app_emojis_cache')
+        delattr(bot, "_app_emojis_cache")
 
         caught: list[dict[str, Any]] = [
             {"name": "Pikachu", "rc_id": "1", "captured_at": 10},
             {"name": "Charmander", "rc_id": "2", "captured_at": 20},
-            {"name": "Squirtle", "rc_id": "3", "captured_at": 5}
+            {"name": "Squirtle", "rc_id": "3", "captured_at": 5},
         ]
 
         view = TVView(bot, 123, caught, 0)
@@ -136,12 +150,13 @@ class TestTVView:
 
         bot.fetch_application_emojis.assert_called_once()
 
-        assert len(view.children) == 8 # 3 mons + 5 nav
+        assert len(view.children) == 8  # 3 mons + 5 nav
 
-        labels = [getattr(c, 'label', '') for c in view.children if hasattr(c, 'label')]
-        assert "#2" in labels[0] # Charmander
-        assert "#1" in labels[1] # Pikachu
-        assert "#3" in labels[2] # Squirtle
+        labels = [getattr(c, "label", "") for c in view.children if hasattr(c, "label")]
+        assert "#2" in labels[0]  # Charmander
+        assert "#1" in labels[1]  # Pikachu
+        assert "#3" in labels[2]  # Squirtle
+
 
 class TestTVNavButton:
     @pytest.mark.asyncio
@@ -159,7 +174,9 @@ class TestTVNavButton:
     @pytest.mark.asyncio
     @patch("mods.revocord.shared.get_or_create_account")
     @patch("mods.revocord.portal.build_console_embed")
-    async def test_nav_close(self, mock_build: MagicMock, mock_get: MagicMock, mock_interaction: Any) -> None:
+    async def test_nav_close(
+        self, mock_build: MagicMock, mock_get: MagicMock, mock_interaction: Any
+    ) -> None:
         bot = MagicMock()
         bot.emojis = []
         bot._app_emojis_cache = []
@@ -254,6 +271,7 @@ class TestTVNavButton:
         kwargs = mock_interaction.edit_original_response.call_args[1]
         assert kwargs["view"].current_page == 2
 
+
 class TestRevomonTVButton:
     @pytest.mark.asyncio
     async def test_wrong_user(self, mock_interaction: Any) -> None:
@@ -281,7 +299,9 @@ class TestRevomonTVButton:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.tv.get_attributes")
-    async def test_get_attrs_exception(self, mock_get_attrs: Any, mock_interaction: Any) -> None:
+    async def test_get_attrs_exception(
+        self, mock_get_attrs: Any, mock_interaction: Any
+    ) -> None:
         bot = MagicMock()
         mon = {"name": "MissingNo", "rc_id": "1"}
         btn = RevomonTVButton(bot, 123, [mon], 0, mon, 0, None)

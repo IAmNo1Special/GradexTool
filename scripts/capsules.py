@@ -35,15 +35,18 @@ def get_capsules() -> None:
     capsules_list = []
 
     for move in moves_data:
-        capsule = move.get("capsule") if move.get("capsule") is not None else move.get("cap_num")
-        id_move = move.get("idMove") if move.get("idMove") is not None else move.get("id")
+        capsule = (
+            move.get("capsule")
+            if move.get("capsule") is not None
+            else move.get("cap_num")
+        )
+        id_move = (
+            move.get("idMove") if move.get("idMove") is not None else move.get("id")
+        )
         move_name = move.get("name", "")
         if capsule is not None and id_move is not None:
             capsules_list.append(
-                {
-                    "name": f"capsule {capsule}",
-                    "description": f"teaches {move_name}"
-                }
+                {"name": f"capsule {capsule}", "description": f"teaches {move_name}"}
             )
 
     # Sort by capsule name

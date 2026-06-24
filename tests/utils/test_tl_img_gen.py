@@ -17,15 +17,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_default_parameters(self) -> None:
         """Test create_base_tier_list with default parameters."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -39,15 +39,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_custom_dimensions(self) -> None:
         """Test create_base_tier_list with custom dimensions."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -58,15 +58,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_with_custom_row_gap(self) -> None:
         """Test create_base_tier_list with custom row gap."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -77,15 +77,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_with_custom_font(self) -> None:
         """Test create_base_tier_list with custom font path."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -98,15 +98,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_with_custom_font_size(self) -> None:
         """Test create_base_tier_list with custom font size."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -123,18 +123,18 @@ class TestCreateBaseTierList:
             "A": ["image3.png"],
             "B": [],
             "C": [],
-            "D": []
+            "D": [],
         }
 
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -145,15 +145,15 @@ class TestCreateBaseTierList:
 
     def test_create_base_tier_list_draws_tier_colors(self) -> None:
         """Test that create_base_tier_list draws correct tier colors."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 
@@ -166,20 +166,22 @@ class TestCreateBaseTierList:
                     # Verify tier colors are correct
 
                     # Check that some calls include these colors
-                    color_calls = [call for call in rectangle_calls if 'fill' in call[1]]
+                    color_calls = [
+                        call for call in rectangle_calls if "fill" in call[1]
+                    ]
                     assert len(color_calls) > 0
 
     def test_create_base_tier_list_draws_tier_labels(self) -> None:
         """Test that create_base_tier_list draws tier labels."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font_instance.textbbox = MagicMock(return_value=(0, 0, 50, 20))
                     mock_font.return_value = mock_font_instance
@@ -194,21 +196,21 @@ class TestCreateBaseTierList:
         """Test that create_base_tier_list calculates height based on images."""
         image_paths = {
             "S": ["image1.png"] * 10,  # 10 images
-            "A": ["image2.png"] * 5,   # 5 images
+            "A": ["image2.png"] * 5,  # 5 images
             "B": [],
             "C": [],
-            "D": []
+            "D": [],
         }
 
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font_instance.textbbox = MagicMock(return_value=(0, 0, 50, 20))
                     mock_font.return_value = mock_font_instance
@@ -224,18 +226,12 @@ class TestCreateTierListWithImages:
 
     def test_create_tier_list_with_images_basic(self) -> None:
         """Test basic functionality of create_tier_list_with_images."""
-        image_paths: dict[str, Any] = {
-            "S": [],
-            "A": [],
-            "B": [],
-            "C": [],
-            "D": []
-        }
-        with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
+        image_paths: dict[str, Any] = {"S": [], "A": [], "B": [], "C": [], "D": []}
+        with patch("utils.tl_img_gen.create_base_tier_list") as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw'):
+            with patch("utils.tl_img_gen.ImageDraw.Draw"):
                 result = create_tier_list_with_images(1000, 500, image_paths)
 
                 # Should return the base image after pasting
@@ -243,20 +239,14 @@ class TestCreateTierListWithImages:
 
     def test_create_tier_list_with_images_pastes_images(self) -> None:
         """Test that images are pasted onto the base image."""
-        image_paths = {
-            "S": ["test_image.png"],
-            "A": [],
-            "B": [],
-            "C": [],
-            "D": []
-        }
+        image_paths = {"S": ["test_image.png"], "A": [], "B": [], "C": [], "D": []}
 
-        with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
+        with patch("utils.tl_img_gen.create_base_tier_list") as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw'):
-                with patch('utils.tl_img_gen.Image.open') as mock_open:
+            with patch("utils.tl_img_gen.ImageDraw.Draw"):
+                with patch("utils.tl_img_gen.Image.open") as mock_open:
                     mock_img = MagicMock()
                     mock_open.return_value = mock_img
                     mock_img.convert.return_value = mock_img
@@ -276,15 +266,15 @@ class TestCreateTierListWithImages:
             "A": [],
             "B": [],
             "C": [],
-            "D": []
+            "D": [],
         }
 
-        with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
+        with patch("utils.tl_img_gen.create_base_tier_list") as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw'):
-                with patch('utils.tl_img_gen.Image.open') as mock_open:
+            with patch("utils.tl_img_gen.ImageDraw.Draw"):
+                with patch("utils.tl_img_gen.Image.open") as mock_open:
                     mock_open.side_effect = Exception("File not found")
 
                     # Should not raise exception
@@ -300,15 +290,15 @@ class TestCreateTierListWithImages:
             "A": [],
             "B": [],
             "C": [],
-            "D": []
+            "D": [],
         }
 
-        with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
+        with patch("utils.tl_img_gen.create_base_tier_list") as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw'):
-                with patch('utils.tl_img_gen.Image.open') as mock_open:
+            with patch("utils.tl_img_gen.ImageDraw.Draw"):
+                with patch("utils.tl_img_gen.Image.open") as mock_open:
                     mock_img = MagicMock()
                     mock_open.return_value = mock_img
                     mock_img.convert.return_value = mock_img
@@ -327,19 +317,21 @@ class TestCreateTierListWithImages:
                     first_y = paste_calls[0][0][1][1]
                     assert paste_calls[0][0][1][0] == 110  # x_offset
                     assert paste_calls[1][0][1][0] == 110  # x_offset after wrap
-                    assert paste_calls[1][0][1][1] == first_y + 110  # y_start after wrap
+                    assert (
+                        paste_calls[1][0][1][1] == first_y + 110
+                    )  # y_start after wrap
 
     def test_create_base_tier_list_negative_row_gap(self) -> None:
         """Test create_base_tier_list with negative row gap."""
-        with patch('utils.tl_img_gen.Image.new') as mock_new:
+        with patch("utils.tl_img_gen.Image.new") as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
 
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+            with patch("utils.tl_img_gen.ImageDraw.Draw") as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
 
-                with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
+                with patch("utils.tl_img_gen.ImageFont.truetype") as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
 

@@ -15,7 +15,9 @@ class TestWildsLoopDataLoading:
 
         # We need side_effect to return different data based on what file is opened
         ev_data = json.dumps({"1": {"to": "Raichu"}})
-        revomon_data = json.dumps({"revomons": [{"name": "Pikachu", "type1": "neutral"}]})
+        revomon_data = json.dumps(
+            {"revomons": [{"name": "Pikachu", "type1": "neutral"}]}
+        )
         natures_data = json.dumps([{"name": "hardy"}])
 
         def mock_open_side_effect(*args: Any, **kwargs: Any) -> Any:
@@ -65,13 +67,21 @@ class TestWildsLoopDataLoading:
         assert len(cog.revomons) == 0
         assert len(cog.natures) == 0
 
+
 class TestWildsLoopSpawning:
     @pytest.fixture
     def cog(self) -> Any:
         bot = MagicMock()
         with patch("discord.ext.tasks.Loop.start"):
             cog = WildsLoopCog(bot)
-        cog.revomons = [{"name": "Pikachu", "type1": "neutral", "dex_id": "25", "ability1": "static"}]
+        cog.revomons = [
+            {
+                "name": "Pikachu",
+                "type1": "neutral",
+                "dex_id": "25",
+                "ability1": "static",
+            }
+        ]
         cog.natures = [{"name": "hardy"}]
         cog.evolved_names = set()
         return cog
@@ -85,7 +95,9 @@ class TestWildsLoopSpawning:
     @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     async def test_do_spawn_no_eligible(self, mock_biome: Any, cog: Any) -> None:
-        mock_biome.return_value = "water" # Pikachu is neutral, but we will make allowed_types NOT neutral
+        mock_biome.return_value = (
+            "water"  # Pikachu is neutral, but we will make allowed_types NOT neutral
+        )
         cog.revomons = [{"name": "Pikachu", "type1": "fire"}]
         # water biome doesn't allow fire
         guild = MagicMock()
@@ -100,8 +112,10 @@ class TestWildsLoopSpawning:
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("pathlib.Path.exists")
-    async def test_do_spawn_success_no_image(self, mock_exists: Any, mock_table: Any, mock_biome: Any, cog: Any) -> None:
-        mock_biome.return_value = "unknown" # defaults to {"neutral"} allowed_types
+    async def test_do_spawn_success_no_image(
+        self, mock_exists: Any, mock_table: Any, mock_biome: Any, cog: Any
+    ) -> None:
+        mock_biome.return_value = "unknown"  # defaults to {"neutral"} allowed_types
         mock_exists.return_value = False
 
         guild = MagicMock()
@@ -132,10 +146,20 @@ class TestWildsLoopSpawning:
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("pathlib.Path.exists")
-    async def test_do_spawn_success_with_image(self, mock_exists: Any, mock_table: Any, mock_biome: Any, mock_rand: Any, cog: Any) -> None:
-        mock_rand.return_value = 0.0 # Force shiny
-        mock_exists.side_effect = [False, True] # Shiny image doesn't exist, fallback does!
-        mock_biome.return_value = "unknown" # defaults to {"neutral"} allowed_types
+    async def test_do_spawn_success_with_image(
+        self,
+        mock_exists: Any,
+        mock_table: Any,
+        mock_biome: Any,
+        mock_rand: Any,
+        cog: Any,
+    ) -> None:
+        mock_rand.return_value = 0.0  # Force shiny
+        mock_exists.side_effect = [
+            False,
+            True,
+        ]  # Shiny image doesn't exist, fallback does!
+        mock_biome.return_value = "unknown"  # defaults to {"neutral"} allowed_types
         mock_exists.return_value = True
 
         guild = MagicMock()
@@ -159,26 +183,31 @@ class TestWildsLoopSpawning:
         assert "view" in kwargs
         assert kwargs["embed"].image.url == "attachment://revomon.png"
 
+
 class TestWildsLoopTasks:
     @pytest.mark.asyncio
     async def test_loop_no_revomons(self, cog: Any) -> None:
         cog.revomons = []
-        await cog.wilds_spawn_loop() # Should return immediately
+        await cog.wilds_spawn_loop()  # Should return immediately
 
     @pytest.mark.asyncio
     @patch("scripts.gradexDB.update_guild_spawn_config")
     @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
-    async def test_loop_temp_limit(self, mock_table: Any, mock_config: Any, mock_update: Any, cog: Any) -> None:
+    async def test_loop_temp_limit(
+        self, mock_table: Any, mock_config: Any, mock_update: Any, cog: Any
+    ) -> None:
         mock_config.return_value = {
             "max_spawn_limit": 5,
             "temp_limit_expires": 9999999999,
             "temp_spawn_limit": 5,
             "next_spawn_time": 0,
             "spawn_multiplier": 1.0,
-            "spawn_multiplier_expires": 0
+            "spawn_multiplier_expires": 0,
         }
-        mock_table.count_guild_spawns = AsyncMock(return_value=6) # Over base limit, but under temp limit!
+        mock_table.count_guild_spawns = AsyncMock(
+            return_value=6
+        )  # Over base limit, but under temp limit!
         cog._do_spawn = AsyncMock()
 
         guild = MagicMock()
@@ -200,14 +229,16 @@ class TestWildsLoopTasks:
     @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("scripts.gradexDB.update_guild_spawn_config")
-    async def test_loop_spawn(self, mock_update: Any, mock_table: Any, mock_config: Any, cog: Any) -> None:
+    async def test_loop_spawn(
+        self, mock_update: Any, mock_table: Any, mock_config: Any, cog: Any
+    ) -> None:
         mock_config.return_value = {
             "max_spawn_limit": 5,
             "temp_limit_expires": 0,
             "temp_spawn_limit": 0,
             "next_spawn_time": 0,
             "spawn_multiplier": 2.0,
-            "spawn_multiplier_expires": 9999999999
+            "spawn_multiplier_expires": 9999999999,
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=0)
         cog._do_spawn = AsyncMock()
@@ -224,12 +255,14 @@ class TestWildsLoopTasks:
     @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
-    async def test_loop_limit_reached(self, mock_table: Any, mock_config: Any, cog: Any) -> None:
+    async def test_loop_limit_reached(
+        self, mock_table: Any, mock_config: Any, cog: Any
+    ) -> None:
         mock_config.return_value = {
             "max_spawn_limit": 5,
             "temp_limit_expires": 0,
             "temp_spawn_limit": 0,
-            "next_spawn_time": 0
+            "next_spawn_time": 0,
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=5)
         cog._do_spawn = AsyncMock()

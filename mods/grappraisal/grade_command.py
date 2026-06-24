@@ -143,7 +143,9 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Grade", style=ButtonStyle.green, custom_id="grade_button")
-        async def grade_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def grade_button(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
                 message_id = interaction.message.id  # type: ignore[union-attr]
@@ -155,7 +157,9 @@ class GradeCommand(commands.Cog):
                     attachments=[],
                     view=None,
                 )
-                appr = await appraise_revomon(GradeCommand.mon_manager.mon_info[user_id])
+                appr = await appraise_revomon(
+                    GradeCommand.mon_manager.mon_info[user_id]
+                )
                 if appr:
                     GradeCommand.mon_manager.mon_info[user_id].update(appr)
 
@@ -182,9 +186,10 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="❌", style=ButtonStyle.red, custom_id="exit")
-        async def exit_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def exit_embed(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     class MonInfoButtons6(ui.View):
@@ -192,7 +197,9 @@ class GradeCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Save", style=ButtonStyle.green, custom_id="Save")
-        async def save_embed(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def save_embed(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -233,7 +240,7 @@ class GradeCommand(commands.Cog):
                 )
 
         @ui.button(label="Flex this Revomon", style=ButtonStyle.green, custom_id="Flex")
-        async def flex(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def flex(self, interaction: Interaction, button: ui.Button[Any]) -> None:
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -262,7 +269,9 @@ class GradeCommand(commands.Cog):
             style=ButtonStyle.blurple,
             custom_id="why_this_grade",
         )
-        async def why_this_grade(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def why_this_grade(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
                 embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)  # type: ignore[arg-type]

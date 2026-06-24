@@ -1,25 +1,27 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix position updates for text channels and forum channel
-text = text.replace('mock_news.position = 0', 'mock_news.position = 999')
+text = text.replace("mock_news.position = 0", "mock_news.position = 999")
 
 # We need to add a mock forum channel to cover line 226
-if 'mock_support =' not in text:
-    support_mock = '''
+if "mock_support =" not in text:
+    support_mock = """
         mock_support = MagicMock(spec=discord.ForumChannel)
         mock_support.name = "support"
         mock_support.position = 999
         mock_support.edit = AsyncMock()
 
         mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds, mock_support])
-'''
-    text = text.replace('        mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds])', support_mock)
+"""
+    text = text.replace(
+        "        mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds])",
+        support_mock,
+    )
 
 # Fix test_app_command_error_original
-error_test_fix = '''    @pytest.mark.asyncio
+error_test_fix = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.logger")
     async def test_app_command_error_original(self, mock_logger):
         bot = MagicMock()
@@ -34,9 +36,9 @@ error_test_fix = '''    @pytest.mark.asyncio
 
         mock_logger.error.assert_called_once()
         assert "Original error" in mock_logger.error.call_args[0][0]
-'''
+"""
 
-error_test_correct = '''    @pytest.mark.asyncio
+error_test_correct = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.logger")
     async def test_app_command_error_original(self, mock_logger):
         bot = MagicMock()
@@ -55,11 +57,11 @@ error_test_correct = '''    @pytest.mark.asyncio
 
         mock_logger.error.assert_called_once()
         assert "Original error" in mock_logger.error.call_args[0][0]
-'''
+"""
 text = text.replace(error_test_fix, error_test_correct)
 
 # Add test for setup() exception
-setup_exception_test = '''    @pytest.mark.asyncio
+setup_exception_test = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.logger")
     async def test_setup_exception(self, mock_logger):
         from mods.revocord.setup import setup
@@ -71,8 +73,10 @@ setup_exception_test = '''    @pytest.mark.asyncio
         mock_logger.error.assert_called_once()
         assert "Failed to add cog" in mock_logger.error.call_args[0][0]
 
-'''
-text = text.replace('class TestBiomeSelect:', setup_exception_test + 'class TestBiomeSelect:')
+"""
+text = text.replace(
+    "class TestBiomeSelect:", setup_exception_test + "class TestBiomeSelect:"
+)
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(text)

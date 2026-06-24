@@ -1,10 +1,9 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Add test for user not being Member
-not_member_test = '''    @pytest.mark.asyncio
+not_member_test = """    @pytest.mark.asyncio
     @patch("discord.ext.commands.Bot")
     async def test_not_member(self, mock_bot):
         cog = SetupCog(mock_bot)
@@ -18,17 +17,20 @@ not_member_test = '''    @pytest.mark.asyncio
         mock_interaction.followup.send.assert_called_once()
         assert "server member" in mock_interaction.followup.send.call_args[0][0]
 
-'''
-text = text.replace('class TestSetupCogErrorHandling:', not_member_test + 'class TestSetupCogErrorHandling:')
+"""
+text = text.replace(
+    "class TestSetupCogErrorHandling:",
+    not_member_test + "class TestSetupCogErrorHandling:",
+)
 
 # Fix test_setup_existing_sync to cover position updates
 text = text.replace(
-    '        mock_channel.position = 0',
-    '        mock_channel.position = 999  # Force position update (line 194 / 226)'
+    "        mock_channel.position = 0",
+    "        mock_channel.position = 999  # Force position update (line 194 / 226)",
 )
 
 # Add test for original error logging
-original_error_test = '''    @pytest.mark.asyncio
+original_error_test = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.logger")
     async def test_app_command_error_original(self, mock_logger):
         bot = MagicMock()
@@ -44,8 +46,10 @@ original_error_test = '''    @pytest.mark.asyncio
         mock_logger.error.assert_called_once()
         assert "Original error" in mock_logger.error.call_args[0][0]
 
-'''
-text = text.replace('class TestBiomeSelect:', original_error_test + 'class TestBiomeSelect:')
+"""
+text = text.replace(
+    "class TestBiomeSelect:", original_error_test + "class TestBiomeSelect:"
+)
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(text)

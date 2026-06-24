@@ -1,9 +1,8 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\core\test_health.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-test = '''
+test = """
     @pytest.mark.asyncio
     async def test_create_task_success(self) -> None:
         async def my_task():
@@ -40,12 +39,9 @@ test = '''
         task = HealthCog.create_task(my_task(), on_error=mock_handler)
         await task
         mock_handler.assert_called_once()
-'''
+"""
 
-text = text.replace(
-    'class TestHealthCogLogic:',
-    'class TestHealthCogLogic:' + test
-)
+text = text.replace("class TestHealthCogLogic:", "class TestHealthCogLogic:" + test)
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(text)

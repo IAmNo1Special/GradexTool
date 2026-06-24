@@ -350,7 +350,9 @@ def types(attributes: dict[str, Any]) -> Embed:
     return types_embed
 
 
-def compare_types(attributes: dict[str, Any], attributes2: dict[str, Any]) -> tuple[Embed, Embed]:
+def compare_types(
+    attributes: dict[str, Any], attributes2: dict[str, Any]
+) -> tuple[Embed, Embed]:
     type_chart_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}",
         description="__**Type Chart**__",
@@ -406,7 +408,9 @@ def counterdex(attributes: dict[str, Any]) -> Embed:
     return counterdex_embed
 
 
-def compare_counterdexs(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Embed:
+def compare_counterdexs(
+    attributes: dict[str, Any], attributes2: dict[str, Any]
+) -> Embed:
     compare_counterdex_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}\n{attributes2['emoji']} | {attributes2['name'].title()}",
         description=f"__**Description**__\n- {attributes['emoji']} | *{attributes['cdex_description'].capitalize()}*\n\n- {attributes2['emoji']} | *{attributes2['cdex_description'].capitalize()}*",

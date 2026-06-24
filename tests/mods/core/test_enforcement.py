@@ -65,21 +65,21 @@ class TestEnforcementCogEventListeners:
         """Test that EnforcementCog has on_message listener."""
         cog = EnforcementCog(mock_bot)
 
-        assert hasattr(cog, 'on_message')
+        assert hasattr(cog, "on_message")
         assert callable(cog.on_message)
 
     def test_cog_has_on_guild_channel_update_listener(self, mock_bot: Any) -> None:
         """Test that EnforcementCog has on_guild_channel_update listener."""
         cog = EnforcementCog(mock_bot)
 
-        assert hasattr(cog, 'on_guild_channel_update')
+        assert hasattr(cog, "on_guild_channel_update")
         assert callable(cog.on_guild_channel_update)
 
     def test_cog_has_on_guild_channel_delete_listener(self, mock_bot: Any) -> None:
         """Test that EnforcementCog has on_guild_channel_delete listener."""
         cog = EnforcementCog(mock_bot)
 
-        assert hasattr(cog, 'on_guild_channel_delete')
+        assert hasattr(cog, "on_guild_channel_delete")
         assert callable(cog.on_guild_channel_delete)
 
 
@@ -121,9 +121,9 @@ class TestEnforcementCogIntegration:
         mock_bot.add_cog.assert_called_once()
 
         # Verify cog has all required listeners
-        assert hasattr(cog, 'on_message')
-        assert hasattr(cog, 'on_guild_channel_update')
-        assert hasattr(cog, 'on_guild_channel_delete')
+        assert hasattr(cog, "on_message")
+        assert hasattr(cog, "on_guild_channel_update")
+        assert hasattr(cog, "on_guild_channel_delete")
 
 
 # Note: Complex event listener tests have been simplified to avoid
@@ -148,7 +148,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_no_category(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_no_category(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_before = MagicMock(spec=discord.TextChannel)
         mock_after = MagicMock(spec=discord.TextChannel)
@@ -160,7 +162,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.logger")
-    async def test_on_message_deletes_pin(self, mock_logger: Any, mock_bot: Any) -> None:
+    async def test_on_message_deletes_pin(
+        self, mock_logger: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.type = discord.MessageType.pins_add
@@ -178,10 +182,12 @@ class TestEnforcementCogLogic:
         mock_msg = MagicMock()
         mock_msg.type = discord.MessageType.pins_add
         mock_msg.channel.category.name = "RevoCord"
-        mock_msg.delete = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ''))
+        mock_msg.delete = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ""))
 
         await cog.on_message(mock_msg)
-        mock_logger.error.assert_called_with("Permissions failure: Cannot delete pin notification. Bot needs 'Manage Channels'.")
+        mock_logger.error.assert_called_with(
+            "Permissions failure: Cannot delete pin notification. Bot needs 'Manage Channels'."
+        )
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.logger")
@@ -222,7 +228,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_wrong_type(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_wrong_type(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
 
         before = MagicMock()
@@ -234,14 +242,16 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_forbidden(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_forbidden(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
 
         before = MagicMock()
         after = MagicMock(spec=discord.TextChannel)
         after.name = "portal"
         after.category_id = 999
-        after.edit = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ''))
+        after.edit = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ""))
 
         mock_category = MagicMock()
         mock_category.id = 123
@@ -252,7 +262,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_http_exception(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_http_exception(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
 
         before = MagicMock()
@@ -261,8 +273,8 @@ class TestEnforcementCogLogic:
         after.category_id = 999
         mock_resp = MagicMock()
         mock_resp.status = 400
-        mock_resp.reason = 'Bad Request'
-        after.edit = AsyncMock(side_effect=discord.HTTPException(mock_resp, ''))
+        mock_resp.reason = "Bad Request"
+        after.edit = AsyncMock(side_effect=discord.HTTPException(mock_resp, ""))
 
         mock_category = MagicMock()
         mock_category.id = 123
@@ -273,7 +285,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_http_exception_race(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_http_exception_race(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
 
         before = MagicMock()
@@ -282,9 +296,11 @@ class TestEnforcementCogLogic:
         after.category_id = 999
         mock_resp = MagicMock()
         mock_resp.status = 400
-        mock_resp.reason = 'Bad Request'
+        mock_resp.reason = "Bad Request"
         # mock code and message for HttpException
-        exc = discord.HTTPException(mock_resp, message="parent_id: Category does not exist")
+        exc = discord.HTTPException(
+            mock_resp, message="parent_id: Category does not exist"
+        )
         exc.code = 50035
         after.edit = AsyncMock(side_effect=exc)
 
@@ -297,7 +313,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.enforcement.discord.utils.get")
-    async def test_on_guild_channel_update_exception(self, mock_get: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_update_exception(
+        self, mock_get: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
 
         before = MagicMock()
@@ -353,7 +371,7 @@ class TestEnforcementCogLogic:
         child1 = MagicMock(spec=discord.TextChannel)
         child1.name = "portal"
         child1.category_id = None
-        child1.delete = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ''))
+        child1.delete = AsyncMock(side_effect=discord.Forbidden(MagicMock(), ""))
 
         mock_channel.guild.channels = [child1]
 
@@ -372,8 +390,8 @@ class TestEnforcementCogLogic:
         child1.category_id = None
         mock_resp = MagicMock()
         mock_resp.status = 400
-        mock_resp.reason = 'Bad Request'
-        child1.delete = AsyncMock(side_effect=discord.HTTPException(mock_resp, ''))
+        mock_resp.reason = "Bad Request"
+        child1.delete = AsyncMock(side_effect=discord.HTTPException(mock_resp, ""))
 
         mock_channel.guild.channels = [child1]
 
@@ -381,7 +399,9 @@ class TestEnforcementCogLogic:
         child1.delete.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_on_guild_channel_delete_wrong_channel_type(self, mock_bot: Any) -> None:
+    async def test_on_guild_channel_delete_wrong_channel_type(
+        self, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_channel = MagicMock(spec=discord.TextChannel)
         await cog.on_guild_channel_delete(mock_channel)
@@ -395,7 +415,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock)
-    async def test_on_guild_channel_delete_success(self, mock_delete: Any, mock_bot: Any) -> None:
+    async def test_on_guild_channel_delete_success(
+        self, mock_delete: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_channel = MagicMock(spec=discord.CategoryChannel)
         mock_channel.name = "RevoCord"
@@ -406,8 +428,14 @@ class TestEnforcementCogLogic:
         mock_delete.assert_called_once_with(123)
 
     @pytest.mark.asyncio
-    @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock, side_effect=Exception("DB Error"))
-    async def test_on_guild_channel_delete_exception(self, mock_delete: Any, mock_bot: Any) -> None:
+    @patch(
+        "scripts.gradexDB.delete_guild_data",
+        new_callable=AsyncMock,
+        side_effect=Exception("DB Error"),
+    )
+    async def test_on_guild_channel_delete_exception(
+        self, mock_delete: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_channel = MagicMock(spec=discord.CategoryChannel)
         mock_channel.name = "RevoCord"
@@ -419,7 +447,9 @@ class TestEnforcementCogLogic:
 
     @pytest.mark.asyncio
     @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock)
-    async def test_on_guild_remove_success(self, mock_delete: Any, mock_bot: Any) -> None:
+    async def test_on_guild_remove_success(
+        self, mock_delete: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123
@@ -428,8 +458,14 @@ class TestEnforcementCogLogic:
         mock_delete.assert_called_once_with(123)
 
     @pytest.mark.asyncio
-    @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock, side_effect=Exception("DB Error"))
-    async def test_on_guild_remove_exception(self, mock_delete: Any, mock_bot: Any) -> None:
+    @patch(
+        "scripts.gradexDB.delete_guild_data",
+        new_callable=AsyncMock,
+        side_effect=Exception("DB Error"),
+    )
+    async def test_on_guild_remove_exception(
+        self, mock_delete: Any, mock_bot: Any
+    ) -> None:
         cog = EnforcementCog(mock_bot)
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123

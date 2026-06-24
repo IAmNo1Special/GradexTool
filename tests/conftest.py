@@ -190,7 +190,7 @@ def mock_app_command() -> Any:
 @pytest.fixture
 def mock_requests_get() -> None:  # type: ignore[misc]
     """Mock requests.get for API calls."""
-    with patch('requests.get') as mock_get:
+    with patch("requests.get") as mock_get:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = MagicMock(return_value={})
@@ -201,7 +201,7 @@ def mock_requests_get() -> None:  # type: ignore[misc]
 @pytest.fixture
 def mock_requests_post() -> None:  # type: ignore[misc]
     """Mock requests.post for API calls."""
-    with patch('requests.post') as mock_post:
+    with patch("requests.post") as mock_post:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = MagicMock(return_value={})
@@ -212,7 +212,7 @@ def mock_requests_post() -> None:  # type: ignore[misc]
 @pytest.fixture
 def mock_aiohttp_session() -> None:  # type: ignore[misc]
     """Mock aiohttp client session."""
-    with patch('aiohttp.ClientSession') as mock_session:
+    with patch("aiohttp.ClientSession") as mock_session:
         session = AsyncMock()
         mock_session.return_value = session
         yield session
@@ -310,6 +310,7 @@ def sample_pvp_data() -> Any:
 def mock_podium() -> Any:
     """Create a mock Podium2 instance for testing."""
     from mods.revomon.podium_command import Podium2
+
     mock_bot = MagicMock(spec=commands.Bot)
     return Podium2(mock_bot)
 
@@ -318,7 +319,6 @@ def mock_podium() -> Any:
 def mock_pvp_leaderboard() -> Any:
     """Create a mock PvpLeaderboard2 instance for testing."""
     from mods.revomon.pvp_command import PvpLeaderboard2
+
     mock_bot = MagicMock(spec=commands.Bot)
     return PvpLeaderboard2(mock_bot)
-
-

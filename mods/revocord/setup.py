@@ -19,35 +19,67 @@ from scripts.gradexDB import set_guild_biome  # noqa: E402
 
 logger = logging.getLogger("discord_bot")
 
+
 class BiomeSelect(discord.ui.Select[discord.ui.View]):
-    def __init__(self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild) -> None:
+    def __init__(
+        self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild
+    ) -> None:
         self.setup_cog = setup_cog
         self.user = user
         self.guild = guild
         options = [
-            discord.SelectOption(label="Forest", description="Bug, Grass, Neutral", emoji="🌳"),
-            discord.SelectOption(label="Jungle", description="Forest, Bug, Toxic", emoji="🌴"),
-            discord.SelectOption(label="Plains", description="Neutral, Battle, Sky", emoji="🌾"),
+            discord.SelectOption(
+                label="Forest", description="Bug, Grass, Neutral", emoji="🌳"
+            ),
+            discord.SelectOption(
+                label="Jungle", description="Forest, Bug, Toxic", emoji="🌴"
+            ),
+            discord.SelectOption(
+                label="Plains", description="Neutral, Battle, Sky", emoji="🌾"
+            ),
             discord.SelectOption(label="Tundra", description="Ice, Spirit", emoji="❄️"),
-            discord.SelectOption(label="Caves", description="Stone, Earth, Metal", emoji="🪨"),
+            discord.SelectOption(
+                label="Caves", description="Stone, Earth, Metal", emoji="🪨"
+            ),
             discord.SelectOption(label="Beach", description="Water, Sky", emoji="🏖️"),
-            discord.SelectOption(label="Crater", description="Fire, Stone, Draconic", emoji="🌋"),
-            discord.SelectOption(label="Swamp", description="Toxic, Phantom, Water", emoji="🐊"),
-            discord.SelectOption(label="Desert", description="Earth, Fire, Time", emoji="🏜️"),
-            discord.SelectOption(label="Urban", description="Electric, Metal, Twilight", emoji="🏙️"),
-            discord.SelectOption(label="Underwater", description="Water, Ice", emoji="🌊"),
+            discord.SelectOption(
+                label="Crater", description="Fire, Stone, Draconic", emoji="🌋"
+            ),
+            discord.SelectOption(
+                label="Swamp", description="Toxic, Phantom, Water", emoji="🐊"
+            ),
+            discord.SelectOption(
+                label="Desert", description="Earth, Fire, Time", emoji="🏜️"
+            ),
+            discord.SelectOption(
+                label="Urban", description="Electric, Metal, Twilight", emoji="🏙️"
+            ),
+            discord.SelectOption(
+                label="Underwater", description="Water, Ice", emoji="🌊"
+            ),
         ]
-        super().__init__(placeholder="Select the Biome for your Server...", min_values=1, max_values=1, options=options)
+        super().__init__(
+            placeholder="Select the Biome for your Server...",
+            min_values=1,
+            max_values=1,
+            options=options,
+        )
 
     async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         biome = self.values[0]
         await set_guild_biome(self.guild.id, biome)
-        await interaction.edit_original_response(content=f"🌍 Server Biome locked to **{biome}**! Building RevoCord...", view=None)
+        await interaction.edit_original_response(
+            content=f"🌍 Server Biome locked to **{biome}**! Building RevoCord...",
+            view=None,
+        )
         await self.setup_cog.execute_setup(interaction, self.user, self.guild)
 
+
 class BiomeSelectView(discord.ui.View):
-    def __init__(self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild):
+    def __init__(
+        self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild
+    ):
         super().__init__(timeout=300)
         self.add_item(BiomeSelect(setup_cog, user, guild))
 
@@ -101,7 +133,9 @@ class SetupCog(commands.Cog):
 
         user = interaction.user
         if not isinstance(user, discord.Member):
-            await interaction.followup.send("This command must be used by a server member.", ephemeral=True)
+            await interaction.followup.send(
+                "This command must be used by a server member.", ephemeral=True
+            )
             return
 
         guild = interaction.guild
@@ -110,10 +144,19 @@ class SetupCog(commands.Cog):
             return
 
         view = BiomeSelectView(self, user, guild)
-        await interaction.followup.send("Please select a Biome for this server:", view=view, ephemeral=True)
+        await interaction.followup.send(
+            "Please select a Biome for this server:", view=view, ephemeral=True
+        )
 
-    async def execute_setup(self, interaction: discord.Interaction, user: discord.Member, guild: discord.Guild) -> None:
-        permission_overwrites: dict[discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite] = {
+    async def execute_setup(
+        self,
+        interaction: discord.Interaction,
+        user: discord.Member,
+        guild: discord.Guild,
+    ) -> None:
+        permission_overwrites: dict[
+            discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite
+        ] = {
             guild.default_role: discord.PermissionOverwrite(
                 read_messages=True,
                 view_channel=True,
@@ -165,7 +208,10 @@ class SetupCog(commands.Cog):
             else:
                 # Sync privacy constraints if the category already existed
                 for target, overwrite in permission_overwrites.items():
-                    await revocord_category.set_permissions(target, overwrite=overwrite)
+                    await revocord_category.set_permissions(
+                        target,  # type: ignore[arg-type]
+                        overwrite=overwrite,
+                    )
                 logger.info(f"Category located: {category_name}")
 
             # 2. Ensure Core Channels (News, Event Board, Portal, Wilds)
@@ -173,12 +219,17 @@ class SetupCog(commands.Cog):
 
             async def ensure_text_channel(name: str, position: int) -> tuple[Any, bool]:
                 normalized_name = normalize_channel_name(name)
-                text_channel = discord.utils.get(guild.text_channels, name=normalized_name)
+                text_channel = discord.utils.get(
+                    guild.text_channels, name=normalized_name
+                )
                 is_new = False
                 if not text_channel:
                     all_channels = await guild.fetch_channels()
                     for channel in all_channels:
-                        if isinstance(channel, discord.TextChannel) and channel.name == normalized_name:
+                        if (
+                            isinstance(channel, discord.TextChannel)
+                            and channel.name == normalized_name
+                        ):
                             text_channel = channel
                             break
                 if not text_channel:
@@ -197,7 +248,9 @@ class SetupCog(commands.Cog):
                     await text_channel.edit(category=revocord_category)
                     for target, overwrite in permission_overwrites.items():
                         if isinstance(target, (discord.Role, discord.Member)):
-                            await text_channel.set_permissions(target, overwrite=overwrite)
+                            await text_channel.set_permissions(
+                                target, overwrite=overwrite
+                            )
                     logger.info(f"Core channel synced: {normalized_name}")
                 return text_channel, is_new
 
@@ -214,6 +267,7 @@ class SetupCog(commands.Cog):
             trigger_initial_spawn = wilds_channel_new
             if not trigger_initial_spawn:
                 from scripts.gradexDB import active_spawns_table
+
                 current_spawns = await active_spawns_table.count_guild_spawns(guild.id)
                 if current_spawns == 0:
                     trigger_initial_spawn = True
@@ -221,6 +275,7 @@ class SetupCog(commands.Cog):
             if trigger_initial_spawn:
                 try:
                     from mods.revocord.hunting import initial_wilds_spawn
+
                     self.bot.loop.create_task(initial_wilds_spawn(self.bot, guild))
                 except Exception as e:
                     logger.error(f"Failed to run initial wilds spawn: {e}")
@@ -255,7 +310,9 @@ class SetupCog(commands.Cog):
             )
             logger.info("Set portal channel to be visible to @everyone.")
 
-            response_view = build_text_view(f"RevoCord System fully deployed! Portal is at <#{portal_channel.id}>")
+            response_view = build_text_view(
+                f"RevoCord System fully deployed! Portal is at <#{portal_channel.id}>"
+            )
             await interaction.followup.send(view=response_view, ephemeral=True)
 
         except discord.Forbidden:

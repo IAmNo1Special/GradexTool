@@ -66,7 +66,9 @@ class BcTierPoll(commands.Cog):
             return None, None, None, None
 
         # Check if Tier List Forum already exists, if not create them
-        tier_vote_forum: Any = discord.utils.get(cdex_category.forum_channels, name="tierlist-polls")
+        tier_vote_forum: Any = discord.utils.get(
+            cdex_category.forum_channels, name="tierlist-polls"
+        )
         if tier_vote_forum is None:
             tier_vote_forum = await cdex_category.create_forum_channel(
                 name="tierlist-polls", topic="Tier List"
@@ -166,7 +168,9 @@ class BcTierPoll(commands.Cog):
         cdex_category: Any = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
         if cdex_category is None:
             return
-        voting_forum: Any = discord.utils.get(cdex_category.forum_channels, name="tierlist-polls")
+        voting_forum: Any = discord.utils.get(
+            cdex_category.forum_channels, name="tierlist-polls"
+        )
         if voting_forum is None:
             print("Creating new tier list voting forum")
             await self.create_polls(gra_server=gra_server)

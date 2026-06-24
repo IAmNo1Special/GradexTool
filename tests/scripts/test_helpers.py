@@ -17,7 +17,10 @@ class TestToSentenceCase:
     def test_multiple_sentences(self) -> None:
         """Test conversion of multiple sentences."""
         assert to_sentence_case("hello. world") == "Hello. World"
-        assert to_sentence_case("first sentence. second sentence. third sentence") == "First sentence. Second sentence. Third sentence"
+        assert (
+            to_sentence_case("first sentence. second sentence. third sentence")
+            == "First sentence. Second sentence. Third sentence"
+        )
 
     def test_preserves_internal_capitalization(self) -> None:
         """Test that internal capitalization is preserved."""
@@ -85,14 +88,21 @@ class TestToSentenceCase:
     def test_mixed_case_input(self) -> None:
         """Test mixed case input."""
         # The function capitalizes the first letter of each sentence
-        assert to_sentence_case("hELLo wORLD") == "HELLo wORLD"  # First letter capitalized
-        assert to_sentence_case("hELLo. wORLD") == "HELLo. WORLD"  # Both sentences capitalized
+        assert (
+            to_sentence_case("hELLo wORLD") == "HELLo wORLD"
+        )  # First letter capitalized
+        assert (
+            to_sentence_case("hELLo. wORLD") == "HELLo. WORLD"
+        )  # Both sentences capitalized
 
     def test_very_long_sentence(self) -> None:
         """Test very long sentence."""
         long_text = "this is a very long sentence that should still be processed correctly by the function without any issues"
         result = to_sentence_case(long_text)
-        assert result == "This is a very long sentence that should still be processed correctly by the function without any issues"
+        assert (
+            result
+            == "This is a very long sentence that should still be processed correctly by the function without any issues"
+        )
 
     def test_only_period(self) -> None:
         """Test input with only a period."""
@@ -136,7 +146,10 @@ class TestEdgeCases:
     def test_mixed_punctuation(self) -> None:
         """Test mixed punctuation."""
         # Without period+space, treats as one sentence
-        assert to_sentence_case("hello, world! how are you?") == "Hello, world! how are you?"
+        assert (
+            to_sentence_case("hello, world! how are you?")
+            == "Hello, world! how are you?"
+        )
         # With period+space, capitalizes each sentence
         assert to_sentence_case("yes. no. maybe!") == "Yes. No. Maybe!"
 

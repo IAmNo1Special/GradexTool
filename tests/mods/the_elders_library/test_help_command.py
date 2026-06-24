@@ -50,7 +50,9 @@ class TestHelpCommand:
         # Call the button callback
         await button_view.children[0].callback(interaction)
 
-        interaction.response.defer.assert_called_once_with(ephemeral=False, thinking=True)
+        interaction.response.defer.assert_called_once_with(
+            ephemeral=False, thinking=True
+        )
         interaction.followup.send.assert_called_once_with(embed=embed, ephemeral=False)
 
     @pytest.mark.asyncio
@@ -65,7 +67,10 @@ class TestHelpCommand:
         await button_view.children[0].callback(interaction)
 
         captured = capsys.readouterr()
-        assert "An error occurred trying to click the 'Make Public[PublicButton]'" in captured.out
+        assert (
+            "An error occurred trying to click the 'Make Public[PublicButton]'"
+            in captured.out
+        )
 
     @pytest.mark.asyncio
     async def test_help_command(self, help_cog: Any) -> None:
@@ -91,6 +96,7 @@ async def test_setup_function() -> None:
     mock_bot.add_cog.assert_called_once()
     added_cog = mock_bot.add_cog.call_args[0][0]
     assert isinstance(added_cog, HelpCommand)
+
 
 @pytest.mark.asyncio
 async def test_setup_function_exception(capsys: Any) -> None:

@@ -12,7 +12,9 @@ class TestBroadcaster:
     async def test_broadcast_encounter_not_notable(self) -> None:
         user = MagicMock(spec=discord.Member)
         embed = MagicMock(spec=discord.Embed)
-        res = await broadcast_encounter(MagicMock(), user, "Pikachu", "25", "Common", False, embed)
+        res = await broadcast_encounter(
+            MagicMock(), user, "Pikachu", "25", "Common", False, embed
+        )
         assert res == 0
 
     @pytest.mark.asyncio
@@ -20,7 +22,9 @@ class TestBroadcaster:
         user = MagicMock(spec=discord.Member)
         user.guild.channels = []
         embed = MagicMock(spec=discord.Embed)
-        res = await broadcast_encounter(MagicMock(), user, "Pikachu", "25", "Legendary", False, embed)
+        res = await broadcast_encounter(
+            MagicMock(), user, "Pikachu", "25", "Legendary", False, embed
+        )
         assert res == 0
 
     @pytest.mark.asyncio
@@ -53,7 +57,9 @@ class TestBroadcaster:
         mock_conn.cursor.return_value = mock_cursor
         mock_table._connect.return_value.__aenter__.return_value = mock_conn
 
-        res = await broadcast_encounter(MagicMock(), user, "Pikachu", "25", "Common", True, embed)
+        res = await broadcast_encounter(
+            MagicMock(), user, "Pikachu", "25", "Common", True, embed
+        )
 
         assert res == 999
         event_board.send.assert_called_once()
@@ -72,7 +78,9 @@ class TestBroadcaster:
         embed.fields = []
         embed.footer = None
 
-        res = await broadcast_encounter(MagicMock(), user, "Pikachu", "25", "Rare", False, embed)
+        res = await broadcast_encounter(
+            MagicMock(), user, "Pikachu", "25", "Rare", False, embed
+        )
         assert res == 0
 
     @pytest.mark.asyncio
@@ -185,7 +193,9 @@ class TestBroadcaster:
         event_board.name = "event-board"
         guild.channels = [event_board]
 
-        event_board.fetch_message = AsyncMock(side_effect=discord.NotFound(MagicMock(), ""))
+        event_board.fetch_message = AsyncMock(
+            side_effect=discord.NotFound(MagicMock(), "")
+        )
 
         # Should not raise
         await update_encounter_broadcast(guild, 999, "Caught", 0)

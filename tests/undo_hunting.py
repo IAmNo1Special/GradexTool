@@ -8,9 +8,9 @@ with open(path, encoding="utf-8") as f:
 # We need to match the exact string, but it could have any indentation.
 # Actually, let's just use re.sub to match "cog = HuntingCog(mock_bot)" followed by ANY whitespace and "cog._cleanup_wilds_spawn = AsyncMock()"
 text = re.sub(
-    r'cog = HuntingCog\(mock_bot\)\s+cog\._cleanup_wilds_spawn = AsyncMock\(\)',
-    r'cog = HuntingCog(mock_bot)',
-    text
+    r"cog = HuntingCog\(mock_bot\)\s+cog\._cleanup_wilds_spawn = AsyncMock\(\)",
+    r"cog = HuntingCog(mock_bot)",
+    text,
 )
 
 with open(path, "w", encoding="utf-8") as f:

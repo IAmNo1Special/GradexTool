@@ -11,6 +11,7 @@ def delete_blocks(path: Any, blocks: Any) -> None:
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
 
+
 act_path = r"f:\projects\Revomon\GradexTool\mods\revocord\activity.py"
 test_act_path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_activity.py"
 

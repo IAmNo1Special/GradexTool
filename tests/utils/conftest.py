@@ -178,52 +178,54 @@ def sample_land_attributes_not_for_sale() -> Any:
 def mock_revomon_table() -> Any:
     """Mock RevomonTable."""
     table = MagicMock()
-    table.get_info = MagicMock(return_value=[
-        (
-            1,  # dex_id
-            1,  # mon_id
-            "testmon",  # name
-            "A test description.",  # description
-            "rare",  # rarity
-            "overgrow",  # ability1
-            None,  # ability2
-            "chlorophyll",  # abilityh
-            None,  # evolution
-            None,  # evolution_lvl
-            "testmon tree",  # evolution_tree
-            "fire",  # type1
-            "https://example.com/fire.png",  # type1_img
-            None,  # type2
-            None,  # type2_img
-            45,  # hp
-            49,  # atk
-            49,  # def
-            65,  # spa
-            65,  # spd
-            45,  # spe
-            273,  # total_stats
-            1,  # ev_hp
-            0,  # ev_atk
-            0,  # ev_def
-            0,  # ev_spa
-            0,  # ev_spd
-            0,  # ev_spe
-            "Forest",  # spawn_loc1
-            "Morning",  # spawn_time1
-            None,  # spawn_loc2
-            None,  # spawn_time2
-            None,  # spawn_loc3
-            None,  # spawn_time3
-            "10%",  # spawn_rate
-            "forest_morning",  # spawn_table
-            "https://example.com/testmon.png",  # profile_img
-            "https://example.com/shiny-testmon.png",  # shiny_profile_img
-            "https://example.com/testmon-nft.png",  # nft_img
-            "https://example.com/shiny-testmon-nft.png",  # shiny_nft_img
-            "testmon_emoji_id",  # emoji_id
-            "shiny_testmon_emoji_id",  # shiny_emoji_id
-        )
-    ])
+    table.get_info = MagicMock(
+        return_value=[
+            (
+                1,  # dex_id
+                1,  # mon_id
+                "testmon",  # name
+                "A test description.",  # description
+                "rare",  # rarity
+                "overgrow",  # ability1
+                None,  # ability2
+                "chlorophyll",  # abilityh
+                None,  # evolution
+                None,  # evolution_lvl
+                "testmon tree",  # evolution_tree
+                "fire",  # type1
+                "https://example.com/fire.png",  # type1_img
+                None,  # type2
+                None,  # type2_img
+                45,  # hp
+                49,  # atk
+                49,  # def
+                65,  # spa
+                65,  # spd
+                45,  # spe
+                273,  # total_stats
+                1,  # ev_hp
+                0,  # ev_atk
+                0,  # ev_def
+                0,  # ev_spa
+                0,  # ev_spd
+                0,  # ev_spe
+                "Forest",  # spawn_loc1
+                "Morning",  # spawn_time1
+                None,  # spawn_loc2
+                None,  # spawn_time2
+                None,  # spawn_loc3
+                None,  # spawn_time3
+                "10%",  # spawn_rate
+                "forest_morning",  # spawn_table
+                "https://example.com/testmon.png",  # profile_img
+                "https://example.com/shiny-testmon.png",  # shiny_profile_img
+                "https://example.com/testmon-nft.png",  # nft_img
+                "https://example.com/shiny-testmon-nft.png",  # shiny_nft_img
+                "testmon_emoji_id",  # emoji_id
+                "shiny_testmon_emoji_id",  # shiny_emoji_id
+            )
+        ]
+    )
     table.get_names = MagicMock(return_value=["testmon", "dualmon"])
     return table
 
@@ -232,13 +234,15 @@ def mock_revomon_table() -> Any:
 def mock_types_table() -> Any:
     """Mock TypesTable."""
     table = MagicMock()
-    table.get_info = MagicMock(return_value=[
-        (
-            "fire",
-            "water",
-            "https://example.com/type-chart.png",
-        )
-    ])
+    table.get_info = MagicMock(
+        return_value=[
+            (
+                "fire",
+                "water",
+                "https://example.com/type-chart.png",
+            )
+        ]
+    )
     table.get_mono_types = MagicMock(return_value=["fire", "water", "grass"])
     return table
 
@@ -247,19 +251,21 @@ def mock_types_table() -> Any:
 def mock_counterdex_table() -> Any:
     """Mock CounterdexTable."""
     table = MagicMock()
-    table.get_info = MagicMock(return_value=[
-        (
-            1,  # id
-            "testmon",  # name
-            "b",  # tier
-            "A decent fire type.",  # description
-            "tackle,ember",  # meta_moves
-            "Physical Attacker",  # meta_build
-            "Use in sunny weather.",  # tips
-            "water types",  # counters
-            ["water", "rock"],  # weakness
-        )
-    ])
+    table.get_info = MagicMock(
+        return_value=[
+            (
+                1,  # id
+                "testmon",  # name
+                "b",  # tier
+                "A decent fire type.",  # description
+                "tackle,ember",  # meta_moves
+                "Physical Attacker",  # meta_build
+                "Use in sunny weather.",  # tips
+                "water types",  # counters
+                ["water", "rock"],  # weakness
+            )
+        ]
+    )
     return table
 
 
@@ -267,10 +273,12 @@ def mock_counterdex_table() -> Any:
 def mock_revomon_moves_table() -> Any:
     """Mock RevomonMovesTable."""
     table = MagicMock()
-    table.get_moves_for_revomon = MagicMock(return_value=[
-        ("tackle",),
-        ("ember",),
-    ])
+    table.get_moves_for_revomon = MagicMock(
+        return_value=[
+            ("tackle",),
+            ("ember",),
+        ]
+    )
     return table
 
 
@@ -278,10 +286,12 @@ def mock_revomon_moves_table() -> Any:
 def mock_natures_table() -> Any:
     """Mock NaturesTable."""
     table = MagicMock()
-    table.get_all = MagicMock(return_value=[
-        (1, "adamant", "atk", "spa"),
-        (2, "modest", "spa", "atk"),
-    ])
+    table.get_all = MagicMock(
+        return_value=[
+            (1, "adamant", "atk", "spa"),
+            (2, "modest", "spa", "atk"),
+        ]
+    )
     return table
 
 
@@ -289,21 +299,23 @@ def mock_natures_table() -> Any:
 def mock_owned_lands_table() -> Any:
     """Mock OwnedLandsTable."""
     table = MagicMock()
-    table.get_info = MagicMock(return_value=[
-        (
-            12345,  # token_id
-            "forest",  # land_type
-            "woodland",  # biome
-            "rare",  # rarity
-            "medium",  # size
-            "https://example.com/land.png",  # img_url
-            "0x1234567890abcdef1234567890abcdef12345678",  # owner_address
-            "land_emoji_id",  # emoji_id
-            100.0,  # price
-            "IMX",  # token_symbol
-            150.0,  # usd_price
-        )
-    ])
+    table.get_info = MagicMock(
+        return_value=[
+            (
+                12345,  # token_id
+                "forest",  # land_type
+                "woodland",  # biome
+                "rare",  # rarity
+                "medium",  # size
+                "https://example.com/land.png",  # img_url
+                "0x1234567890abcdef1234567890abcdef12345678",  # owner_address
+                "land_emoji_id",  # emoji_id
+                100.0,  # price
+                "IMX",  # token_symbol
+                150.0,  # usd_price
+            )
+        ]
+    )
     table.get_ids = MagicMock(return_value=[12345, 12346])
     return table
 
@@ -321,7 +333,7 @@ def mock_users_table() -> Any:
 @pytest.fixture
 def mock_pil_image() -> None:  # type: ignore[misc]
     """Mock PIL Image."""
-    with patch('PIL.Image.new') as mock_new:
+    with patch("PIL.Image.new") as mock_new:
         mock_image = MagicMock()
         mock_image.size = (100, 100)
         mock_new.return_value = mock_image
@@ -331,7 +343,7 @@ def mock_pil_image() -> None:  # type: ignore[misc]
 @pytest.fixture
 def mock_pil_image_draw() -> None:  # type: ignore[misc]
     """Mock PIL ImageDraw."""
-    with patch('PIL.ImageDraw.Draw') as mock_draw:
+    with patch("PIL.ImageDraw.Draw") as mock_draw:
         draw_instance = MagicMock()
         mock_draw.return_value = draw_instance
         yield draw_instance
@@ -340,7 +352,7 @@ def mock_pil_image_draw() -> None:  # type: ignore[misc]
 @pytest.fixture
 def mock_pil_image_font() -> None:  # type: ignore[misc]
     """Mock PIL ImageFont."""
-    with patch('PIL.ImageFont.truetype') as mock_font:
+    with patch("PIL.ImageFont.truetype") as mock_font:
         font_instance = MagicMock()
         mock_font.return_value = font_instance
         yield font_instance

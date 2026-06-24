@@ -74,7 +74,7 @@ async def test_process_nature_success(mock_client: Any) -> None:
     mock_response.status_code = 200
     mock_response.json.return_value = {
         "increased_stat": {"name": "attack"},
-        "decreased_stat": {"name": "special-attack"}
+        "decreased_stat": {"name": "special-attack"},
     }
     mock_client.get = AsyncMock(return_value=mock_response)
 
@@ -84,7 +84,7 @@ async def test_process_nature_success(mock_client: Any) -> None:
     assert natures_list[0] == {
         "name": "adamant",
         "increased_stat": "atk",
-        "decreased_stat": "spa"
+        "decreased_stat": "spa",
     }
 
 
@@ -95,10 +95,7 @@ async def test_process_nature_no_stats(mock_client: Any) -> None:
 
     mock_response = MagicMock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {
-        "increased_stat": None,
-        "decreased_stat": None
-    }
+    mock_response.json.return_value = {"increased_stat": None, "decreased_stat": None}
     mock_client.get = AsyncMock(return_value=mock_response)
 
     await process_nature(semaphore, mock_client, "hardy", natures_list)
@@ -107,7 +104,7 @@ async def test_process_nature_no_stats(mock_client: Any) -> None:
     assert natures_list[0] == {
         "name": "hardy",
         "increased_stat": None,
-        "decreased_stat": None
+        "decreased_stat": None,
     }
 
 
@@ -130,7 +127,12 @@ async def test_process_nature_fetch_failed(mock_client: Any) -> None:
 @patch("scripts.natures.json.dump")
 @patch("scripts.natures.os.makedirs")
 @patch("builtins.open", new_callable=MagicMock)
-async def test_get_natures_success(mock_open: Any, mock_makedirs: Any, mock_json_dump: Any, mock_async_client_class: Any) -> None:
+async def test_get_natures_success(
+    mock_open: Any,
+    mock_makedirs: Any,
+    mock_json_dump: Any,
+    mock_async_client_class: Any,
+) -> None:
     mock_client_instance = AsyncMock()
     mock_client_instance.__aenter__ = AsyncMock(return_value=mock_client_instance)
     mock_client_instance.__aexit__ = AsyncMock(return_value=None)
@@ -140,21 +142,23 @@ async def test_get_natures_success(mock_open: Any, mock_makedirs: Any, mock_json
         mock_resp = MagicMock()
         if url == "https://pokeapi.co/api/v2/nature?limit=25":
             mock_resp.status_code = 200
-            mock_resp.json.return_value = {"results": [{"name": "adamant"}, {"name": "jolly"}]}
+            mock_resp.json.return_value = {
+                "results": [{"name": "adamant"}, {"name": "jolly"}]
+            }
             mock_resp.raise_for_status = MagicMock()
             return mock_resp
         elif "nature/adamant" in url:
             mock_resp.status_code = 200
             mock_resp.json.return_value = {
                 "increased_stat": {"name": "attack"},
-                "decreased_stat": {"name": "special-attack"}
+                "decreased_stat": {"name": "special-attack"},
             }
             return mock_resp
         elif "nature/jolly" in url:
             mock_resp.status_code = 200
             mock_resp.json.return_value = {
                 "increased_stat": {"name": "speed"},
-                "decreased_stat": {"name": "special-attack"}
+                "decreased_stat": {"name": "special-attack"},
             }
             return mock_resp
 
@@ -194,7 +198,7 @@ async def test_get_natures_success_no_save(mock_async_client_class: Any) -> None
             mock_resp.status_code = 200
             mock_resp.json.return_value = {
                 "increased_stat": {"name": "attack"},
-                "decreased_stat": {"name": "special-attack"}
+                "decreased_stat": {"name": "special-attack"},
             }
             return mock_resp
 
@@ -218,15 +222,17 @@ async def test_get_natures_list_error(mock_async_client_class: Any) -> None:
 
 @patch("scripts.natures.logging.basicConfig")
 def test_main_execution(mock_basic_config: Any) -> None:
-    with patch("scripts.natures.asyncio.run", side_effect=lambda coro: coro.close()) as mock_asyncio_run, \
-         patch("scripts.natures.get_natures"):
-        with unittest.mock.patch.dict('sys.modules'):
-
+    with (
+        patch(
+            "scripts.natures.asyncio.run", side_effect=lambda coro: coro.close()
+        ) as mock_asyncio_run,
+        patch("scripts.natures.get_natures"),
+    ):
+        with unittest.mock.patch.dict("sys.modules"):
             import sys
 
-            sys.modules.pop('scripts.natures', None)
+            sys.modules.pop("scripts.natures", None)
 
-            runpy.run_module('scripts.natures', run_name='__main__')
+            runpy.run_module("scripts.natures", run_name="__main__")
         mock_basic_config.assert_called_once()
         mock_asyncio_run.assert_called_once()
-

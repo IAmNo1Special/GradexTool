@@ -76,20 +76,26 @@ def test_retry_after_seconds() -> None:
     future = datetime.now(UTC) + timedelta(seconds=10)
     date_str = future.strftime("%a, %d %b %Y %H:%M:%S GMT")
     response = httpx.Response(
-        429, headers={"Retry-After": date_str}, request=httpx.Request("GET", "http://test")
+        429,
+        headers={"Retry-After": date_str},
+        request=httpx.Request("GET", "http://test"),
     )
     assert 9 <= moves._retry_after_seconds(response) <= 11  # type: ignore[operator]
 
     # Header is valid date but missing tz
     date_str_naive = future.strftime("%a, %d %b %Y %H:%M:%S")
     response = httpx.Response(
-        429, headers={"Retry-After": date_str_naive}, request=httpx.Request("GET", "http://test")
+        429,
+        headers={"Retry-After": date_str_naive},
+        request=httpx.Request("GET", "http://test"),
     )
     assert 9 <= moves._retry_after_seconds(response) <= 11  # type: ignore[operator]
 
     # Header is invalid date
     response = httpx.Response(
-        429, headers={"Retry-After": "invalid_date"}, request=httpx.Request("GET", "http://test")
+        429,
+        headers={"Retry-After": "invalid_date"},
+        request=httpx.Request("GET", "http://test"),
     )
     assert moves._retry_after_seconds(response) is None
 
@@ -103,16 +109,12 @@ def test_main_block(monkeypatch: Any) -> None:
     mock_basic_config = MagicMock()
     monkeypatch.setattr("logging.basicConfig", mock_basic_config)
 
-    with unittest.mock.patch.dict('sys.modules'):
-
-
+    with unittest.mock.patch.dict("sys.modules"):
         import sys
 
+        sys.modules.pop("scripts.moves", None)
 
-        sys.modules.pop('scripts.moves', None)
-
-
-        runpy.run_module('scripts.moves', run_name='__main__')
+        runpy.run_module("scripts.moves", run_name="__main__")
 
     mock_basic_config.assert_called_once()
     mock_run.assert_called_once()
@@ -190,7 +192,9 @@ def test_load_movepools_cache(tmp_path: Any, monkeypatch: Any) -> None:
     assert moves._load_movepools_cache() == {}
 
     # Valid
-    file_path.write_text('{"1": [], "invalid": [], "2": null, "3": "not_list"}', encoding="utf-8")
+    file_path.write_text(
+        '{"1": [], "invalid": [], "2": null, "3": "not_list"}', encoding="utf-8"
+    )
     assert moves._load_movepools_cache() == {"1": [], "2": None}
 
 
@@ -211,7 +215,9 @@ async def test_fetch_moves_for_revomon() -> None:
     # Success
     client = AsyncMock(spec=httpx.AsyncClient)
     client.get.return_value = httpx.Response(
-        200, json={"data": {"moves": [{"idMove": 1}]}}, request=httpx.Request("GET", "http://test")
+        200,
+        json={"data": {"moves": [{"idMove": 1}]}},
+        request=httpx.Request("GET", "http://test"),
     )
     result = await moves.fetch_moves_for_revomon(client, pacer, 1)
     assert result.status == "found"
@@ -233,8 +239,16 @@ async def test_fetch_moves_for_revomon() -> None:
 
     # 429 then 200
     client.get.side_effect = [
-        httpx.Response(429, request=httpx.Request("GET", "http://test"), headers={"Retry-After": "0.01"}),
-        httpx.Response(200, json={"data": {"moves": [{"idMove": 1}]}}, request=httpx.Request("GET", "http://test")),
+        httpx.Response(
+            429,
+            request=httpx.Request("GET", "http://test"),
+            headers={"Retry-After": "0.01"},
+        ),
+        httpx.Response(
+            200,
+            json={"data": {"moves": [{"idMove": 1}]}},
+            request=httpx.Request("GET", "http://test"),
+        ),
     ]
     result = await moves.fetch_moves_for_revomon(client, pacer, 1, max_attempts=2)
     assert result.status == "found"
@@ -243,7 +257,11 @@ async def test_fetch_moves_for_revomon() -> None:
     # 500 then 200
     client.get.side_effect = [
         httpx.Response(500, request=httpx.Request("GET", "http://test")),
-        httpx.Response(200, json={"data": {"moves": [{"idMove": 1}]}}, request=httpx.Request("GET", "http://test")),
+        httpx.Response(
+            200,
+            json={"data": {"moves": [{"idMove": 1}]}},
+            request=httpx.Request("GET", "http://test"),
+        ),
     ]
     result = await moves.fetch_moves_for_revomon(client, pacer, 1, max_attempts=2)
     assert result.status == "found"
@@ -255,7 +273,9 @@ async def test_fetch_moves_for_revomon() -> None:
 
     # Invalid JSON
     client.get.side_effect = [
-        httpx.Response(200, text="not_json", request=httpx.Request("GET", "http://test")),
+        httpx.Response(
+            200, text="not_json", request=httpx.Request("GET", "http://test")
+        ),
     ]
     result = await moves.fetch_moves_for_revomon(client, pacer, 1, max_attempts=1)
     assert result.status == "error"
@@ -277,7 +297,9 @@ async def test_fetch_missing_movepools(monkeypatch: Any) -> None:
     movepools: dict[str, Any] = {}
     missing_ids = [1, 2, 3]
 
-    async def mock_fetch(client: Any, pacer: Any, id_revomon: Any, max_attempts: Any=1) -> Any:
+    async def mock_fetch(
+        client: Any, pacer: Any, id_revomon: Any, max_attempts: Any = 1
+    ) -> Any:
         if id_revomon == 1:
             return moves.MovesFetchResult(status="found", moves=[{"idMove": 1}])
         elif id_revomon == 2:
@@ -309,14 +331,20 @@ async def test_get_moves(monkeypatch: Any, tmp_path: Any) -> None:
     assert await moves.get_moves() == []
 
     # 2. revomon.json doesn't exist, but movepools.json does
-    movepools_file.write_text('{"1": [{"idMove": 1, "name": "tackle"}]}', encoding="utf-8")
+    movepools_file.write_text(
+        '{"1": [{"idMove": 1, "name": "tackle"}]}', encoding="utf-8"
+    )
     result = await moves.get_moves()
     assert len(result) == 1
     assert result[0]["idMove"] == 1
 
     # 3. revomon.json exists, missing_ids to fetch
-    revomon_file.write_text('[{"idRevomon": "1"}, {"idRevomon": "2"}]', encoding="utf-8")
-    movepools_file.write_text('{"1": [{"idMove": 1, "name": "tackle"}]}', encoding="utf-8")
+    revomon_file.write_text(
+        '[{"idRevomon": "1"}, {"idRevomon": "2"}]', encoding="utf-8"
+    )
+    movepools_file.write_text(
+        '{"1": [{"idMove": 1, "name": "tackle"}]}', encoding="utf-8"
+    )
 
     async def mock_fetch_missing(movepools: Any, missing_ids: Any) -> Any:
         assert missing_ids == [2]
@@ -335,6 +363,7 @@ async def test_get_moves(monkeypatch: Any, tmp_path: Any) -> None:
     # 4. failed_ids returned by fetch_missing
     async def mock_fetch_missing_failed(movepools: Any, missing_ids: Any) -> Any:
         return [2]
+
     monkeypatch.setattr(moves, "_fetch_missing_movepools", mock_fetch_missing_failed)
     assert await moves.get_moves() == []
 
@@ -342,6 +371,7 @@ async def test_get_moves(monkeypatch: Any, tmp_path: Any) -> None:
     async def mock_fetch_missing_refresh(movepools: Any, missing_ids: Any) -> Any:
         assert missing_ids == [1, 2]
         return []
+
     monkeypatch.setattr(moves, "REFRESH_MOVEPOOL_CACHE", True)
     monkeypatch.setattr(moves, "_fetch_missing_movepools", mock_fetch_missing_refresh)
     await moves.get_moves()

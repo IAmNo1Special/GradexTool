@@ -68,7 +68,9 @@ class UsersGuardrail(commands.Cog):
 
     @commands.Cog.listener()
     async def on_app_command_completion(
-        self, interaction: Interaction, command: app_commands.Command  # type: ignore[type-arg]
+        self,
+        interaction: Interaction,
+        command: app_commands.Command,  # type: ignore[type-arg]
     ) -> None:
         """Called when an app command is completed.
 

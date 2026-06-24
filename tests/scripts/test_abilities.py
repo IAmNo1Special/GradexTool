@@ -24,14 +24,8 @@ def test_remove_key_recursive() -> None:
     obj = {
         "a": 1,
         "language": "en",
-        "nested": {
-            "language": "fr",
-            "b": 2
-        },
-        "lst": [
-            {"language": "es", "c": 3},
-            "just string"
-        ]
+        "nested": {"language": "fr", "b": 2},
+        "lst": [{"language": "es", "c": 3}, "just string"],
     }
     remove_key_recursive(obj, "language")
     assert obj == {"a": 1, "nested": {"b": 2}, "lst": [{"c": 3}, "just string"]}
@@ -49,13 +43,13 @@ def test_traverse() -> None:
         "str": "line1\nline2",
         "int": 1,
         "list": ["“quote”", 2],
-        "dict": {"nested": "’smart‘"}
+        "dict": {"nested": "’smart‘"},
     }
     expected = {
         "str": "line1 line2",
         "int": 1,
-        "list": ["\"quote\"", 2],
-        "dict": {"nested": "'smart'"}
+        "list": ['"quote"', 2],
+        "dict": {"nested": "'smart'"},
     }
     assert traverse(obj) == expected
 
@@ -75,30 +69,32 @@ async def test_fetch_ability() -> None:
         "is_main_series": True,
         "effect_entries": [
             {"language": {"name": "en"}, "effect": "en effect"},
-            {"language": {"name": "fr"}, "effect": "fr effect"}
+            {"language": {"name": "fr"}, "effect": "fr effect"},
         ],
         "flavor_text_entries": [
             {"language": {"name": "fr"}, "flavor_text": "fr flavor"},
             {"language": {"name": "en"}, "flavor_text": "en flavor 1"},
-            {"language": {"name": "en"}, "flavor_text": "en flavor 2"}
+            {"language": {"name": "en"}, "flavor_text": "en flavor 2"},
         ],
         "names": [
             {"language": {"name": "en"}, "name": "Overgrow"},
-            {"language": {"name": "fr"}, "name": "Engrais"}
+            {"language": {"name": "fr"}, "name": "Engrais"},
         ],
         "effect_changes": [
             {
                 "effect_entries": [
                     {"language": {"name": "en"}, "effect": "en change"},
-                    {"language": {"name": "fr"}, "effect": "fr change"}
+                    {"language": {"name": "fr"}, "effect": "fr change"},
                 ]
             }
-        ]
+        ],
     }
     client.get.return_value = mock_response
 
     ability_to_revomon = {"overgrow": ["bulbasaur"]}
-    res_type, res_val = await fetch_ability(client, semaphore, "overgrow", ability_to_revomon)
+    res_type, res_val = await fetch_ability(
+        client, semaphore, "overgrow", ability_to_revomon
+    )
 
     assert res_type == "found"
     assert "generation" not in res_val
@@ -118,7 +114,7 @@ async def test_fetch_ability() -> None:
         "name": "overgrow",
         "flavor_text_entries": [
             {"language": {"name": "fr"}, "flavor_text": "fr flavor"},
-        ]
+        ],
     }
     res_type, res_val = await fetch_ability(client, semaphore, "overgrow", {})
     assert res_type == "found"
@@ -156,16 +152,18 @@ async def test_fetch_ability() -> None:
 
 @pytest.mark.asyncio
 async def test_get_abilities_file_not_found() -> None:
-    with patch('scripts.abilities.os.path.exists', return_value=False):
+    with patch("scripts.abilities.os.path.exists", return_value=False):
         with pytest.raises(FileNotFoundError):
             await get_abilities()
 
 
 @pytest.mark.asyncio
-@patch('scripts.abilities.httpx.AsyncClient')
-@patch('scripts.abilities.os.path.exists')
-@patch('scripts.abilities.os.makedirs')
-async def test_get_abilities_success(mock_makedirs: Any, mock_exists: Any, mock_client_cls: Any) -> None:
+@patch("scripts.abilities.httpx.AsyncClient")
+@patch("scripts.abilities.os.path.exists")
+@patch("scripts.abilities.os.makedirs")
+async def test_get_abilities_success(
+    mock_makedirs: Any, mock_exists: Any, mock_client_cls: Any
+) -> None:
     mock_exists.return_value = True
 
     revomon_data = [
@@ -174,50 +172,58 @@ async def test_get_abilities_success(mock_makedirs: Any, mock_exists: Any, mock_
             "idRevomon": "1",
             "ability1": "Overgrow ",
             "ability2": None,
-            "abilityHidden": " Chlorophyll"
+            "abilityHidden": " Chlorophyll",
         }
     ]
 
     m_open = mock_open(read_data=json.dumps(revomon_data))
 
-    with patch('builtins.open', m_open):
+    with patch("builtins.open", m_open):
         mock_client = AsyncMock()
         mock_client_cls.return_value.__aenter__.return_value = mock_client
 
-        async def mock_fetch(client: Any, semaphore: Any, ability: Any, ability_to_revomon: Any) -> Any:
+        async def mock_fetch(
+            client: Any, semaphore: Any, ability: Any, ability_to_revomon: Any
+        ) -> Any:
             if ability == "overgrow":
-                return ("found", {
-                    "name": "overgrow",
-                    "language": {"name": "en"},
-                    "version_group": {"name": "x-y"},
-                    "names": [{"name": "Overgrow", "language": {"name": "en"}}],
-                    "desc": "Pokémon power\nnewline"
-                })
+                return (
+                    "found",
+                    {
+                        "name": "overgrow",
+                        "language": {"name": "en"},
+                        "version_group": {"name": "x-y"},
+                        "names": [{"name": "Overgrow", "language": {"name": "en"}}],
+                        "desc": "Pokémon power\nnewline",
+                    },
+                )
             else:
                 return ("unknown", "chlorophyll")
 
-        with patch('scripts.abilities.fetch_ability', side_effect=mock_fetch):
-            with patch('scripts.abilities.REVOMON_FILE', 'revomon.json'), \
-                 patch('scripts.abilities.ABILITIES_FILE', 'abilities.json'), \
-                 patch('scripts.abilities.UNKNOWN_ABILITIES_FILE', 'unknown.json'):
+        with patch("scripts.abilities.fetch_ability", side_effect=mock_fetch):
+            with (
+                patch("scripts.abilities.REVOMON_FILE", "revomon.json"),
+                patch("scripts.abilities.ABILITIES_FILE", "abilities.json"),
+                patch("scripts.abilities.UNKNOWN_ABILITIES_FILE", "unknown.json"),
+            ):
+                await get_abilities()
 
-                 await get_abilities()
+                # Verify files were written
+                assert m_open.call_count == 3
+                write_calls = [call for call in m_open.mock_calls if "write" in call[0]]
 
-                 # Verify files were written
-                 assert m_open.call_count == 3
-                 write_calls = [call for call in m_open.mock_calls if 'write' in call[0]]
-
-                 # The output writes should replace "Pokémon" with "Monster"
-                 written_content = "".join([c.args[0] for c in write_calls if isinstance(c.args[0], str)])
-                 assert "Monster" in written_content
-                 assert "Pokémon" not in written_content
+                # The output writes should replace "Pokémon" with "Monster"
+                written_content = "".join(
+                    [c.args[0] for c in write_calls if isinstance(c.args[0], str)]
+                )
+                assert "Monster" in written_content
+                assert "Pokémon" not in written_content
 
 
 @pytest.mark.asyncio
 async def test_abilities_table(tmp_path: Any) -> None:
     db_path = tmp_path / "test.db"
 
-    with patch('scripts.abilities.GRADEX_DB_PATH', db_path):
+    with patch("scripts.abilities.GRADEX_DB_PATH", db_path):
         table = AbilitiesTable()
 
         # create
@@ -226,12 +232,12 @@ async def test_abilities_table(tmp_path: Any) -> None:
         # rebuild
         mock_abilities = [
             {"name": "Overgrow", "description": "Grass moves"},
-            {"name": "Blaze", "description": "Fire moves"}
+            {"name": "Blaze", "description": "Fire moves"},
         ]
         m_open = mock_open(read_data=json.dumps(mock_abilities))
 
-        with patch('builtins.open', m_open):
-            with patch.object(table, 'export_to_json') as mock_export:
+        with patch("builtins.open", m_open):
+            with patch.object(table, "export_to_json") as mock_export:
                 table.rebuild()
                 mock_export.assert_called_once()
 
@@ -256,15 +262,17 @@ async def test_abilities_table(tmp_path: Any) -> None:
 
         # export_to_json
         m_export_open = mock_open()
-        with patch('builtins.open', m_export_open):
+        with patch("builtins.open", m_export_open):
             table.export_to_json()
             m_export_open.assert_called_once_with("./data/abilities.json", "w")
 
         # build
-        with patch.object(table, 'create') as m_create, \
-             patch.object(table, 'rebuild') as m_rebuild, \
-             patch.object(table, 'count_entries') as m_count:
-             table.build()
-             m_create.assert_called_once()
-             m_rebuild.assert_called_once()
-             m_count.assert_called_once()
+        with (
+            patch.object(table, "create") as m_create,
+            patch.object(table, "rebuild") as m_rebuild,
+            patch.object(table, "count_entries") as m_count,
+        ):
+            table.build()
+            m_create.assert_called_once()
+            m_rebuild.assert_called_once()
+            m_count.assert_called_once()

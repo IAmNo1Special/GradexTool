@@ -17,8 +17,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
 # Setup basic logging for the script
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger("upload_emojis")
+
 
 class EmojiUploaderClient(discord.Client):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -54,7 +57,9 @@ class EmojiUploaderClient(discord.Client):
         dex_map = {}
         for mon in revomon_db:
             dex_id = str(mon.get("dex_id"))
-            name = mon.get("name", "unknown").lower().replace(" ", "_").replace("-", "_")
+            name = (
+                mon.get("name", "unknown").lower().replace(" ", "_").replace("-", "_")
+            )
             dex_map[dex_id] = name
 
         raw_dir = os.path.join("data", "assets", "revomon", "raw")
@@ -78,7 +83,9 @@ class EmojiUploaderClient(discord.Client):
             dex_id_str = base_name.replace("_shiny", "")
 
             if dex_id_str not in dex_map:
-                logger.warning(f"Unrecognized dex ID '{dex_id_str}' in file '{filename}'. Skipping.")
+                logger.warning(
+                    f"Unrecognized dex ID '{dex_id_str}' in file '{filename}'. Skipping."
+                )
                 continue
 
             revomon_name = dex_map[dex_id_str]
@@ -101,7 +108,9 @@ class EmojiUploaderClient(discord.Client):
 
                 # Double check size just in case, though 128x128 PNG is practically guaranteed to be < 256kb
                 if len(image_bytes) > 256 * 1024:
-                    logger.warning(f"Image {filename} is still too large after resize ({len(image_bytes)} bytes)! Skipping.")
+                    logger.warning(
+                        f"Image {filename} is still too large after resize ({len(image_bytes)} bytes)! Skipping."
+                    )
                     continue
 
                 # 4. Upload Application Emoji
@@ -114,21 +123,28 @@ class EmojiUploaderClient(discord.Client):
 
                 # Discord Application Emoji limit is 2000.
                 if len(existing_names) >= 2000:
-                    logger.warning("Reached the absolute maximum limit of 2,000 Application Emojis!")
+                    logger.warning(
+                        "Reached the absolute maximum limit of 2,000 Application Emojis!"
+                    )
                     break
 
                 # Sleep to prevent HTTP 429 Rate Limiting from Discord API
                 await asyncio.sleep(2.0)
 
             except discord.HTTPException as e:
-                logger.error(f"Discord HTTP Exception while uploading {emoji_name}: {e}")
+                logger.error(
+                    f"Discord HTTP Exception while uploading {emoji_name}: {e}"
+                )
                 if e.status == 429:
                     logger.warning("Hit hard rate limit. Sleeping for 15 seconds...")
                     await asyncio.sleep(15.0)
             except Exception as e:
                 logger.error(f"Failed to process {filename}: {e}")
 
-        logger.info(f"Finished uploading {upload_count} new emojis! Total app emojis: {len(existing_names)}.")
+        logger.info(
+            f"Finished uploading {upload_count} new emojis! Total app emojis: {len(existing_names)}."
+        )
+
 
 if __name__ == "__main__":
     token = os.getenv("DISCORD_BOT_TOKEN")

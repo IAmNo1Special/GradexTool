@@ -159,8 +159,6 @@ async def get_lands_for_sale() -> list[dict[str, Any]]:
             return for_sale_land_objs["result"]  # type: ignore[no-any-return]
 
 
-
-
 async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
     async with aiohttp.ClientSession() as session:
         url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"

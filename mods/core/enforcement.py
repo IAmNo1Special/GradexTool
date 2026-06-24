@@ -37,7 +37,11 @@ class EnforcementCog(commands.Cog):
         """Automatically delete system 'pin' notifications sent by the bot."""
         # Check if the message is a system "pinned" notification
         if message.type == discord.MessageType.pins_add:
-            if not (hasattr(message.channel, "category") and message.channel.category and message.channel.category.name == self.category_name):
+            if not (
+                hasattr(message.channel, "category")
+                and message.channel.category
+                and message.channel.category.name == self.category_name
+            ):
                 return
             try:
                 await message.delete()
@@ -140,8 +144,11 @@ class EnforcementCog(commands.Cog):
         # Wipe out guild configurations from DB to avoid tracking ghost data
         try:
             from scripts.gradexDB import delete_guild_data
+
             await delete_guild_data(channel.guild.id)
-            logger.info(f"Wiped guild data for {channel.guild.id} after category deletion.")
+            logger.info(
+                f"Wiped guild data for {channel.guild.id} after category deletion."
+            )
         except Exception as e:
             logger.error(f"Error wiping guild data on category delete: {e}")
 
@@ -150,10 +157,14 @@ class EnforcementCog(commands.Cog):
         """Triggered when the bot leaves or is kicked from a server."""
         try:
             from scripts.gradexDB import delete_guild_data
+
             await delete_guild_data(guild.id)
-            logger.info(f"Wiped guild data for {guild.id} after bot was removed from server.")
+            logger.info(
+                f"Wiped guild data for {guild.id} after bot was removed from server."
+            )
         except Exception as e:
             logger.error(f"Error wiping guild data on guild remove: {e}")
+
 
 async def setup(bot: commands.Bot) -> None:
     """Set up the EnforcementCog.

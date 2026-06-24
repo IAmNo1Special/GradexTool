@@ -16,8 +16,13 @@ def test_get_items(monkeypatch: Any, tmp_path: Any, caplog: Any) -> None:
     monkeypatch.setattr(items, "OUTPUT_PATH", out_path)
 
     test_items = [
-        {"name": "Potion", "description": "restores 20 hp.", "obtained_from": "RevoCenter", "cost": 200},
-        {"cost": 100} # missing name, description, obtained_from
+        {
+            "name": "Potion",
+            "description": "restores 20 hp.",
+            "obtained_from": "RevoCenter",
+            "cost": 200,
+        },
+        {"cost": 100},  # missing name, description, obtained_from
     ]
     monkeypatch.setattr(items, "ITEMS", test_items)
 
@@ -34,14 +39,14 @@ def test_get_items(monkeypatch: Any, tmp_path: Any, caplog: Any) -> None:
     assert data["2"]["description"] == "Restores 20 hp."
     assert data["2"]["obtained_from"] == "revocenter"
 
+
 def test_items_main(monkeypatch: Any) -> None:
     # Mock open so we don't write to the real file during runpy execution
     with patch("builtins.open"):
         with patch.dict("sys.modules", {"scripts.items": items}):
-            with unittest.mock.patch.dict('sys.modules'):
-
+            with unittest.mock.patch.dict("sys.modules"):
                 import sys
 
-                sys.modules.pop('scripts.items', None)
+                sys.modules.pop("scripts.items", None)
 
-                runpy.run_module('scripts.items', run_name='__main__')
+                runpy.run_module("scripts.items", run_name="__main__")

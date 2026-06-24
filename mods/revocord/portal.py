@@ -12,7 +12,10 @@ from mods.revocord.shared import (
 
 logger = logging.getLogger("discord_bot")
 
-async def build_console_embed(account: dict[str, Any], member: discord.Member | discord.User) -> discord.Embed:
+
+async def build_console_embed(
+    account: dict[str, Any], member: discord.Member | discord.User
+) -> discord.Embed:
     """Builds the ephemeral dashboard UI based on player data."""
     level = account.get("trainer_level", 1)
     xp = account.get("trainer_xp", 25)
@@ -35,7 +38,7 @@ async def build_console_embed(account: dict[str, Any], member: discord.Member | 
     embed = discord.Embed(
         title=f"🎮 {member.display_name.upper()}'S CONSOLE",
         description=f"**📍 Location:** {city}\n━━━━━━━━━━━━━━━━━━━━",
-        color=0x2b2d31,
+        color=0x2B2D31,
     )
     embed.add_field(name="Level & Rank", value=f"🏅 {rank} (Lv. {level})", inline=True)
     embed.add_field(name="Wealth", value=f"🪙 {coins} Coins", inline=True)
@@ -67,22 +70,46 @@ async def build_console_embed(account: dict[str, Any], member: discord.Member | 
 
 class GameConsoleView(ui.View):
     """The interactive buttons attached to the ephemeral game console."""
+
     def __init__(self, user_id: int):
         super().__init__(timeout=None)
         self.user_id = user_id
 
-    @ui.button(label="Bag", style=discord.ButtonStyle.secondary, emoji="🎒", custom_id="console_bag")
-    async def bag(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    @ui.button(
+        label="Bag",
+        style=discord.ButtonStyle.secondary,
+        emoji="🎒",
+        custom_id="console_bag",
+    )
+    async def bag(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         await interaction.response.defer()
 
-    @ui.button(label="Heal", style=discord.ButtonStyle.danger, emoji="🏥", custom_id="console_heal")
-    async def heal(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    @ui.button(
+        label="Heal",
+        style=discord.ButtonStyle.danger,
+        emoji="🏥",
+        custom_id="console_heal",
+    )
+    async def heal(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         await interaction.response.defer()
 
-    @ui.button(label="TV", style=discord.ButtonStyle.primary, emoji="📺", custom_id="console_tv")
-    async def tv(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    @ui.button(
+        label="TV",
+        style=discord.ButtonStyle.primary,
+        emoji="📺",
+        custom_id="console_tv",
+    )
+    async def tv(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         if interaction.user.id != self.user_id:
-            await interaction.response.send_message("❌ You cannot access someone else's Console!", ephemeral=True)
+            await interaction.response.send_message(
+                "❌ You cannot access someone else's Console!", ephemeral=True
+            )
             return
 
         await interaction.response.defer()
@@ -113,9 +140,11 @@ class PortalLoginView(ui.View):
         label="Log In",
         style=discord.ButtonStyle.success,
         custom_id="persistent_portal_login",
-        emoji="🎮"
+        emoji="🎮",
     )
-    async def login(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def login(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Handle the login button click."""
         await interaction.response.defer(ephemeral=True)
 
@@ -136,7 +165,9 @@ class PortalLoginView(ui.View):
 
         except Exception as e:
             logger.error(f"Error deploying console: {e}", exc_info=True)
-            await interaction.followup.send(f"❌ Error initializing console: {e}", ephemeral=True)
+            await interaction.followup.send(
+                f"❌ Error initializing console: {e}", ephemeral=True
+            )
 
 
 class PortalCog(commands.Cog):
@@ -148,6 +179,7 @@ class PortalCog(commands.Cog):
     async def cog_load(self) -> None:
         """Register persistent views."""
         self.bot.add_view(PortalLoginView())
+
 
 async def setup(bot: commands.Bot) -> None:
     try:

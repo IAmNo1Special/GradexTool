@@ -21,7 +21,9 @@ REVODEX_MOVEPOOLS_FILE = Path("data", "movepools.json")
 CONCURRENCY_LIMIT = 25
 
 
-async def get_raw_movepool(client: httpx.AsyncClient, id_revomon: int) -> dict[str, Any] | None:
+async def get_raw_movepool(
+    client: httpx.AsyncClient, id_revomon: int
+) -> dict[str, Any] | None:
     """Get the raw movepool data for a specific revomon from the Revomon Revodex API."""
     try:
         url = f"{REVODEX_MOVES_API_BASE}/{id_revomon}"

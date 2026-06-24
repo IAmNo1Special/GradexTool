@@ -1,9 +1,8 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\core\test_enforcement.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-test = '''    @pytest.mark.asyncio
+test = """    @pytest.mark.asyncio
     @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock)
     async def test_on_guild_channel_delete_success(self, mock_delete: Any, mock_bot: Any) -> None:
         cog = EnforcementCog(mock_bot)
@@ -33,15 +32,17 @@ test = '''    @pytest.mark.asyncio
         mock_guild.id = 123
 
         await cog.on_guild_remove(mock_guild)
-        mock_delete.assert_called_once_with(123)'''
+        mock_delete.assert_called_once_with(123)"""
 
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock)
-    async def test_on_guild_channel_delete_db_exception(self, mock_delete: Any, mock_bot: Any) -> None:''',
-    test + '\n\n' + '''    @pytest.mark.asyncio
+    async def test_on_guild_channel_delete_db_exception(self, mock_delete: Any, mock_bot: Any) -> None:""",
+    test
+    + "\n\n"
+    + """    @pytest.mark.asyncio
     @patch("scripts.gradexDB.delete_guild_data", new_callable=AsyncMock)
-    async def test_on_guild_channel_delete_db_exception(self, mock_delete: Any, mock_bot: Any) -> None:'''
+    async def test_on_guild_channel_delete_db_exception(self, mock_delete: Any, mock_bot: Any) -> None:""",
 )
 
 with open(path, "w", encoding="utf-8") as f:

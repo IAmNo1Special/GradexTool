@@ -90,7 +90,8 @@ class TestRootLoggerConfiguration:
 
         setup_logging()
         has_stream_handler = any(
-            isinstance(handler, logging.StreamHandler) for handler in logging.root.handlers
+            isinstance(handler, logging.StreamHandler)
+            for handler in logging.root.handlers
         )
         assert has_stream_handler
 
@@ -120,7 +121,8 @@ class TestConsoleHandler:
             (
                 handler
                 for handler in logging.root.handlers
-                if isinstance(handler, logging.StreamHandler) and not isinstance(handler, logging.handlers.RotatingFileHandler)
+                if isinstance(handler, logging.StreamHandler)
+                and not isinstance(handler, logging.handlers.RotatingFileHandler)
             ),
             None,
         )
@@ -137,7 +139,8 @@ class TestConsoleHandler:
             (
                 handler
                 for handler in logging.root.handlers
-                if isinstance(handler, logging.StreamHandler) and not isinstance(handler, logging.handlers.RotatingFileHandler)
+                if isinstance(handler, logging.StreamHandler)
+                and not isinstance(handler, logging.handlers.RotatingFileHandler)
             ),
             None,
         )
@@ -383,8 +386,7 @@ class TestLoggingOutput:
         setup_logging()
         # Check that there's a StreamHandler that writes to stdout
         has_stdout_handler = any(
-            isinstance(handler, logging.StreamHandler)
-            and handler.stream == sys.stdout
+            isinstance(handler, logging.StreamHandler) and handler.stream == sys.stdout
             for handler in logging.root.handlers
         )
         assert has_stdout_handler
@@ -416,13 +418,16 @@ class TestHandlerConfiguration:
             (
                 handler
                 for handler in logging.root.handlers
-                if isinstance(handler, logging.StreamHandler) and not isinstance(handler, logging.handlers.RotatingFileHandler)
+                if isinstance(handler, logging.StreamHandler)
+                and not isinstance(handler, logging.handlers.RotatingFileHandler)
             ),
             None,
         )
         assert stream_handler is not None
         # Console handler should inherit root logger level (INFO)
-        assert stream_handler.level == logging.NOTSET  # NOTSET means it inherits from logger
+        assert (
+            stream_handler.level == logging.NOTSET
+        )  # NOTSET means it inherits from logger
 
     def test_file_handler_level(self) -> None:
         """Test that file handler has correct level."""
@@ -440,4 +445,6 @@ class TestHandlerConfiguration:
         )
         assert file_handler is not None
         # File handler should inherit root logger level (INFO)
-        assert file_handler.level == logging.NOTSET  # NOTSET means it inherits from logger
+        assert (
+            file_handler.level == logging.NOTSET
+        )  # NOTSET means it inherits from logger

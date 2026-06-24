@@ -1,6 +1,5 @@
 """Utility functions for the Gradex Tool."""
 
-
 import discord
 from discord.ext import commands
 
@@ -8,7 +7,9 @@ from configs import GRA_GUILD_ID, PRO_TAMER_ROLE_IDS
 from data import UsersTable
 
 
-def is_pro_tamer(gradex_tool: commands.Bot, user: discord.User | discord.Member) -> bool:
+def is_pro_tamer(
+    gradex_tool: commands.Bot, user: discord.User | discord.Member
+) -> bool:
     gra_guild = gradex_tool.get_guild(GRA_GUILD_ID)
     if gra_guild is None:
         return False
@@ -54,7 +55,7 @@ async def respond(
     message: discord.Message | None = None,
     embed: discord.Embed | None = None,
     buttons: discord.ui.View | None = None,
-    file: discord.File | None=None,
+    file: discord.File | None = None,
 ) -> None:
     if message is None:
         return

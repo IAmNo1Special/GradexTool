@@ -1,16 +1,15 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Revert execute_setup back to setup_command.callback for tests that should test the command
 text = text.replace(
-    'await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)',
-    'await setup_cog.setup_command.callback(setup_cog, mock_interaction)'
+    "await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)",
+    "await setup_cog.setup_command.callback(setup_cog, mock_interaction)",
 )
 
 # But we WANT execute_setup for test_setup_portal_fail
-portal_fail_test_old = '''    @pytest.mark.asyncio
+portal_fail_test_old = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
@@ -39,9 +38,9 @@ portal_fail_test_old = '''    @pytest.mark.asyncio
         # We expect it to catch the exception and send a followup
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
-        assert len(calls) > 0'''
+        assert len(calls) > 0"""
 
-portal_fail_test_new = '''    @pytest.mark.asyncio
+portal_fail_test_new = """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
@@ -70,7 +69,7 @@ portal_fail_test_new = '''    @pytest.mark.asyncio
         # We expect it to catch the exception and send a followup
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
-        assert len(calls) > 0'''
+        assert len(calls) > 0"""
 
 text = text.replace(portal_fail_test_old, portal_fail_test_new)
 

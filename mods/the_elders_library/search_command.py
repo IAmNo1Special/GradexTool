@@ -240,7 +240,9 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(
         name="The name of the ability you'd like more info on. Enter 'all' for a list of all the ability names."
     )
-    async def abilities(self, interaction: Interaction, name: str | None = None) -> None:
+    async def abilities(
+        self, interaction: Interaction, name: str | None = None
+    ) -> None:
         try:
             if not name:
                 embed = await self.allabilities_embed()
@@ -323,8 +325,7 @@ class SearchCommand(commands.Cog):
                 revomon_name1, revomon_name2 = map(str.strip, name.split("&"))
                 if (
                     revomon_name1.lower() in await RevomonTable().get_names()
-                    and revomon_name2.lower()
-                    in await RevomonTable().get_names()
+                    and revomon_name2.lower() in await RevomonTable().get_names()
                 ):
                     attributes = await get_attributes(revomon_name=revomon_name1)
                     attributes2 = await get_attributes(revomon_name=revomon_name2)

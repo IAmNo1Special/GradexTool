@@ -1,9 +1,8 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_portal.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-test = '''
+test = """
     @pytest.mark.asyncio
     async def test_portal_login_not_member(self) -> None:
         view = PortalLoginView()
@@ -16,11 +15,10 @@ test = '''
 
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.followup.send.assert_not_called()
-'''
+"""
 
 text = text.replace(
-    'class TestPortalLoginViewButtons:',
-    'class TestPortalLoginViewButtons:' + test
+    "class TestPortalLoginViewButtons:", "class TestPortalLoginViewButtons:" + test
 )
 
 with open(path, "w", encoding="utf-8") as f:

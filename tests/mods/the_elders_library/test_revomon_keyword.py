@@ -16,13 +16,15 @@ class Testrevomon_search:  # noqa: N801
         """Test that revomon_search initializes correctly."""
         # Test the structure without actually calling __init__ which has async issues
         from mods.the_elders_library.revomon_search import revomon_search
+
         assert revomon_search is not None
 
     def test_on_ready(self) -> None:
         """Test the on_ready event handler."""
         # Test that the method exists
         from mods.the_elders_library.revomon_search import revomon_search
-        assert hasattr(revomon_search, 'on_ready')
+
+        assert hasattr(revomon_search, "on_ready")
 
     def test_keyword_detection_logic(self) -> None:
         """Test keyword detection logic."""

@@ -5,7 +5,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix inner exceptions test
-inner_test = '''    async def test_update_rankings_inner_exceptions(self, mock_bot: Any) -> None:
+inner_test = """    async def test_update_rankings_inner_exceptions(self, mock_bot: Any) -> None:
         cog = PvpLeaderboard(mock_bot)
         mock_channel = MagicMock()
 
@@ -22,27 +22,27 @@ inner_test = '''    async def test_update_rankings_inner_exceptions(self, mock_b
              patch.object(cog, 'update_pvp_image', side_effect=Exception("Image Error")), \\
              patch('asyncio.sleep', new_callable=AsyncMock, side_effect=Exception("Break Loop")):
 
-            await cog.update_rankings()'''
+            await cog.update_rankings()"""
 
 text = re.sub(
-    r'    async def test_update_rankings_inner_exceptions\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)',
+    r"    async def test_update_rankings_inner_exceptions\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)",
     inner_test,
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 # Fix outer exception test
-outer_test = '''    @pytest.mark.asyncio
+outer_test = """    @pytest.mark.asyncio
     async def test_update_rankings_outer_exception(self, mock_bot: Any) -> None:
         cog = PvpLeaderboard(mock_bot)
         mock_bot.get_channel = MagicMock(side_effect=Exception("Channel Error"))
-        await cog.update_rankings()'''
+        await cog.update_rankings()"""
 
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_update_rankings_outer_exception\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)',
+    r"    @pytest\.mark\.asyncio\n    async def test_update_rankings_outer_exception\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)",
     outer_test,
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

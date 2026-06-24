@@ -40,10 +40,11 @@ class ability_search(commands.Cog):  # noqa: N801
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()
@@ -60,10 +61,13 @@ class ability_search(commands.Cog):  # noqa: N801
         try:
             prompt = message.content.lower().strip()
             if prompt in await AbilitiesTable().get_names():
-                embed = self.ability_search_embed(prompt)
+                embed = await self.ability_search_embed(prompt)
                 buttons = self.ability_search_buttons()
                 await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons  # type: ignore[arg-type]
+                    self.gradex,
+                    message=message,
+                    embed=embed,
+                    buttons=buttons,
                 )
 
         except Exception as e:

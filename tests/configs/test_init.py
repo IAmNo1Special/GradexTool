@@ -240,11 +240,17 @@ class TestAPIEndpoints:
         assert REVOMON_REVODEX_ENDPOINT == configs["REVOMON_REVODEX_ENDPOINT"]
         assert REVOMON_RAW_IMAGE_ENDPOINT == configs["REVOMON_RAW_IMAGE_ENDPOINT"]
         assert REVOMON_NFT_IMAGE_ENDPOINT == configs["REVOMON_NFT_IMAGE_ENDPOINT"]
-        assert REVOMON_BASE_TYPES_IMAGE_ENDPOINT == configs["REVOMON_BASE_TYPES_IMAGE_ENDPOINT"]
+        assert (
+            REVOMON_BASE_TYPES_IMAGE_ENDPOINT
+            == configs["REVOMON_BASE_TYPES_IMAGE_ENDPOINT"]
+        )
         assert REVOMON_MOVES_ENDPOINT == configs["REVOMON_MOVES_ENDPOINT"]
         assert POKEAPI_NATURES_ENDPOINT == configs["POKEAPI_NATURES_ENDPOINT"]
         assert POKEAPI_NATURE_ENDPOINT == configs["POKEAPI_NATURE_ENDPOINT"]
-        assert POKEAPI_MEDICINE_CATEGORY_ENDPOINT == configs["POKEAPI_MEDICINE_CATEGORY_ENDPOINT"]
+        assert (
+            POKEAPI_MEDICINE_CATEGORY_ENDPOINT
+            == configs["POKEAPI_MEDICINE_CATEGORY_ENDPOINT"]
+        )
         assert POKEAPI_ITEM_ENDPOINT == configs["POKEAPI_ITEM_ENDPOINT"]
 
 
@@ -335,7 +341,9 @@ class TestFilePaths:
         assert ITEMS_FILE == configs["ITEMS_FILE"]
         assert FRUITYS_FILE == configs["FRUITYS_FILE"]
         assert CAUGHT_REVOMON_FILE == configs["CAUGHT_REVOMON_FILE"]
-        assert CAUGHT_REVOMON_SCAN_STATE_FILE == configs["CAUGHT_REVOMON_SCAN_STATE_FILE"]
+        assert (
+            CAUGHT_REVOMON_SCAN_STATE_FILE == configs["CAUGHT_REVOMON_SCAN_STATE_FILE"]
+        )
         assert CAPSULES_FILE == configs["CAPSULES_FILE"]
 
 
@@ -376,7 +384,10 @@ class TestDirectoryPaths:
         assert BASE_TYPES_IMAGES_DIR == configs["BASE_TYPES_IMAGES_DIR"]
         assert REVOMON_RAW_IMAGES_DIR == configs["REVOMON_RAW_IMAGES_DIR"]
         assert REVOMON_NFT_IMAGES_DIR == configs["REVOMON_NFT_IMAGES_DIR"]
-        assert REVOMON_IMAGES_DOWNLOAD_MANIFEST == configs["REVOMON_IMAGES_DOWNLOAD_MANIFEST"]
+        assert (
+            REVOMON_IMAGES_DOWNLOAD_MANIFEST
+            == configs["REVOMON_IMAGES_DOWNLOAD_MANIFEST"]
+        )
 
 
 class TestOtherConfiguration:
@@ -485,11 +496,17 @@ class TestDefaultValues:
         assert REVOMON_REVODEX_ENDPOINT == "https://api.revomon.io/revomon/revodex"
         assert REVOMON_RAW_IMAGE_ENDPOINT == "https://nft.revomon.io/image/raw/revomon"
         assert REVOMON_NFT_IMAGE_ENDPOINT == "https://nft.revomon.io/image/revomon"
-        assert REVOMON_BASE_TYPES_IMAGE_ENDPOINT == "https://app-v2.revomon.io/static/images/types"
+        assert (
+            REVOMON_BASE_TYPES_IMAGE_ENDPOINT
+            == "https://app-v2.revomon.io/static/images/types"
+        )
         assert REVOMON_MOVES_ENDPOINT == "https://api.revomon.io/revomon/moves"
         assert POKEAPI_NATURES_ENDPOINT == "https://pokeapi.co/api/v2/nature?limit=25"
         assert POKEAPI_NATURE_ENDPOINT == "https://pokeapi.co/api/v2/nature"
-        assert POKEAPI_MEDICINE_CATEGORY_ENDPOINT == "https://pokeapi.co/api/v2/item-category/26"
+        assert (
+            POKEAPI_MEDICINE_CATEGORY_ENDPOINT
+            == "https://pokeapi.co/api/v2/item-category/26"
+        )
         assert POKEAPI_ITEM_ENDPOINT == "https://pokeapi.co/api/v2/item"
 
     def test_file_paths_have_defaults(self) -> None:
@@ -517,7 +534,10 @@ class TestDefaultValues:
         assert BASE_TYPES_IMAGES_DIR == "data/assets/base_types"
         assert REVOMON_RAW_IMAGES_DIR == "data/assets/revomon/raw"
         assert REVOMON_NFT_IMAGES_DIR == "data/assets/revomon/nft"
-        assert REVOMON_IMAGES_DOWNLOAD_MANIFEST == "data/assets/revomon/download_results.json"
+        assert (
+            REVOMON_IMAGES_DOWNLOAD_MANIFEST
+            == "data/assets/revomon/download_results.json"
+        )
 
     def test_user_agent_has_default(self) -> None:
         """Test that USER_AGENT has a default value."""

@@ -218,7 +218,9 @@ class Podium(commands.Cog):
             podium_channel = await self.gradex.fetch_channel(1251022667935387740)
             if not isinstance(podium_channel, discord.TextChannel):
                 return
-            old_leaderboards = [message async for message in podium_channel.history(limit=2)]
+            old_leaderboards = [
+                message async for message in podium_channel.history(limit=2)
+            ]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
             current_leaderboard = await podium_channel.send(content="Loading...")

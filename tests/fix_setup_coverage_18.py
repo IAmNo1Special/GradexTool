@@ -4,7 +4,7 @@ path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-debug_mock = '''
+debug_mock = """
         async def mock_create_text_channel(name, **kwargs):
             print(f"CALLED MOCK CREATE TEXT CHANNEL FOR {name}")
             if name == "portal":
@@ -16,13 +16,13 @@ debug_mock = '''
             return channel
 
         mock_guild.create_text_channel = AsyncMock(side_effect=mock_create_text_channel)
-'''
+"""
 
 text = re.sub(
-    r'        async def mock_create_text_channel.*?mock_guild\.create_text_channel = mock_create_text_channel',
+    r"        async def mock_create_text_channel.*?mock_guild\.create_text_channel = mock_create_text_channel",
     debug_mock.strip(),
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

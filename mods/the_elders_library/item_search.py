@@ -11,8 +11,8 @@ class item_search(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    async def item_search_embed(self: Any) -> Any:
-        item_info = await ItemsTable().get_info(item_name=self.lower())[0]  # type: ignore[index]
+    async def item_search_embed(self, item_name: Any) -> Any:
+        item_info = await ItemsTable().get_info(item_name=item_name.lower())[0]  # type: ignore[index]
         embed = discord.Embed(
             title=item_info[0].title(),
             description=f"*{item_info[1].capitalize()}*",
@@ -41,10 +41,11 @@ class item_search(commands.Cog):  # noqa: N801
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()
@@ -61,10 +62,13 @@ class item_search(commands.Cog):  # noqa: N801
         try:
             prompt = message.content.lower().strip()
             if prompt in await ItemsTable().get_names():
-                embed = self.item_search_embed(prompt)  # type: ignore[call-arg]
+                embed = await self.item_search_embed(prompt)
                 buttons = self.item_search_buttons()
                 await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons  # type: ignore[arg-type]
+                    self.gradex,
+                    message=message,
+                    embed=embed,
+                    buttons=buttons,
                 )
         except Exception as e:
             print(f"An error occurred during 'item_search' on_message: {e}")

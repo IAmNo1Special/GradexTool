@@ -36,10 +36,11 @@ class allnatures(commands.Cog):  # noqa: N801
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()

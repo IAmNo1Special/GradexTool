@@ -220,7 +220,9 @@ Heal Bell""",
             custom_id="All Moves 2",
         )
         async def allmoves_page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             allmoves2_embed = discord.Embed(
                 title="Full Move List (Page 2)",
@@ -433,7 +435,9 @@ Spikes""",
             custom_id="All Moves 3",
         )
         async def allmoves_page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             allmoves3_embed = discord.Embed(
                 title="Full Move List (Page 3)",
@@ -551,10 +555,11 @@ Zen Headbutt""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()

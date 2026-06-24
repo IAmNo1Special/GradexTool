@@ -4,7 +4,7 @@ path = r"f:\projects\Revomon\GradexTool\tests\mods\core\test_health.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-test = '''
+test = """
     @pytest.mark.asyncio
     async def test_spawn_background_task_success(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
@@ -45,13 +45,13 @@ test = '''
         task = cog._spawn_background_task(my_task(), on_error=mock_handler)
         await task
         mock_handler.assert_called_once()
-'''
+"""
 
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_create_task_success.*?mock_handler\.assert_called_once\(\)\n',
+    r"    @pytest\.mark\.asyncio\n    async def test_create_task_success.*?mock_handler\.assert_called_once\(\)\n",
     test,
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

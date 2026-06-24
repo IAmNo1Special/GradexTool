@@ -8,7 +8,9 @@ import requests
 from aiosqlite.core import Connection
 
 
-def safe_get(url: str, timeout: int=10, retries: int=5, backoff_factor: float=1.0) -> Any:
+def safe_get(
+    url: str, timeout: int = 10, retries: int = 5, backoff_factor: float = 1.0
+) -> Any:
     """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff."""
     for i in range(retries):
         try:
@@ -35,7 +37,13 @@ def safe_get(url: str, timeout: int=10, retries: int=5, backoff_factor: float=1.
     return None
 
 
-def safe_post(url: str, json_payload: dict[str, list[Any]], timeout: int=15, retries: int=3, backoff_factor: float=1.0) -> Any:
+def safe_post(
+    url: str,
+    json_payload: dict[str, list[Any]],
+    timeout: int = 15,
+    retries: int = 3,
+    backoff_factor: float = 1.0,
+) -> Any:
     """Post to a URL with timeout, retries, and exponential backoff."""
     for i in range(retries):
         try:
@@ -221,7 +229,7 @@ class CounterdexTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -424,7 +432,7 @@ class AbilitiesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -453,7 +461,8 @@ class AbilitiesTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute(
-                "SELECT * FROM abilities WHERE name LIKE ?;", (f"%{ability_name.lower()}%",)
+                "SELECT * FROM abilities WHERE name LIKE ?;",
+                (f"%{ability_name.lower()}%",),
             )
             rows = await cursor.fetchall()
             return rows
@@ -564,7 +573,7 @@ class CapsulesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -702,7 +711,7 @@ class FruitysTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -731,7 +740,8 @@ class FruitysTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute(
-                "SELECT * FROM fruitys WHERE name LIKE ?;", (f"%{fruity_name.lower()}%",)
+                "SELECT * FROM fruitys WHERE name LIKE ?;",
+                (f"%{fruity_name.lower()}%",),
             )
             rows = await cursor.fetchall()
             return rows
@@ -804,7 +814,7 @@ class ItemsTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -845,7 +855,9 @@ class ItemsTable:
                 cost = item["cost"] if item["cost"] else None
 
                 # Execute the insert query
-                await cursor.execute(insert_query, (name, description, obtained_from, cost))
+                await cursor.execute(
+                    insert_query, (name, description, obtained_from, cost)
+                )
 
             # Commit the transaction
             await conn.commit()
@@ -875,7 +887,9 @@ class ItemsTable:
             # Return the count
             return count
 
-    async def add_item(self, name: str, description: str, obtained_from: str, cost: int) -> None:
+    async def add_item(
+        self, name: str, description: str, obtained_from: str, cost: int
+    ) -> None:
         """Add an Item to the items table."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
@@ -904,7 +918,9 @@ class ItemsTable:
         """Method to search the items table by item name and return the info of the closest matching item."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT * FROM items WHERE name LIKE ?", (f"%{item_name}%",))
+            await cursor.execute(
+                "SELECT * FROM items WHERE name LIKE ?", (f"%{item_name}%",)
+            )
             rows = await cursor.fetchall()
             return rows
 
@@ -977,7 +993,12 @@ class MovesTable:
         moves_data = []
 
         import os
-        if "PYTEST_CURRENT_TEST" not in os.environ and moves_file_path.exists() and moves_file_path.stat().st_size > 10:
+
+        if (
+            "PYTEST_CURRENT_TEST" not in os.environ
+            and moves_file_path.exists()
+            and moves_file_path.stat().st_size > 10
+        ):
             try:
                 with open(moves_file_path, encoding="utf-8") as file:
                     moves_data = json.load(file)
@@ -1088,7 +1109,7 @@ class MovesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -1280,7 +1301,9 @@ class NaturesTable:
                 dislikes = nature.get("dislikes")
 
                 # Execute the insert query
-                await cursor.execute(insert_query, (name, buffs, debuffs, likes, dislikes))
+                await cursor.execute(
+                    insert_query, (name, buffs, debuffs, likes, dislikes)
+                )
 
             # Commit the transaction
             await conn.commit()
@@ -1302,7 +1325,7 @@ class NaturesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -1506,7 +1529,7 @@ class OwnedLandsTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -1844,7 +1867,7 @@ class RevomonTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -1880,7 +1903,9 @@ class RevomonTable:
         """Get dex_id by mon_id."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT dex_id FROM revomon WHERE mon_id = ?;", (mon_id,))
+            await cursor.execute(
+                "SELECT dex_id FROM revomon WHERE mon_id = ?;", (mon_id,)
+            )
             result = await cursor.fetchone()
             return result[0] if result else None
 
@@ -1888,7 +1913,9 @@ class RevomonTable:
         """Get name by mon_id."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT name FROM revomon WHERE mon_id = ?;", (mon_id,))
+            await cursor.execute(
+                "SELECT name FROM revomon WHERE mon_id = ?;", (mon_id,)
+            )
             result = await cursor.fetchone()
             return result[0] if result else None
 
@@ -1928,7 +1955,7 @@ class RevomonTable:
                     ),
                 )
                 results = await cursor.fetchall()
-                return len(results) > 0
+                return len(list(results)) > 0
             else:
                 await cursor.execute(
                     """
@@ -2003,7 +2030,12 @@ class RevomonMovesTable:
         revomon_moves_data = []
 
         import os
-        if "PYTEST_CURRENT_TEST" not in os.environ and revomon_moves_file.exists() and revomon_moves_file.stat().st_size > 10:
+
+        if (
+            "PYTEST_CURRENT_TEST" not in os.environ
+            and revomon_moves_file.exists()
+            and revomon_moves_file.stat().st_size > 10
+        ):
             try:
                 with open(revomon_moves_file, encoding="utf-8") as file:
                     revomon_moves_data = json.load(file)
@@ -2099,7 +2131,7 @@ class RevomonMovesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -2171,7 +2203,9 @@ class RevomonMovesTable:
             results = await cursor.fetchall()
             return results
 
-    async def get_mons_for_move(self, move_id: Any = None, move_name: Any = None) -> Any:
+    async def get_mons_for_move(
+        self, move_id: Any = None, move_name: Any = None
+    ) -> Any:
         """Retrieves the names of Revomon associated with a specific move.
 
         Args:
@@ -2477,7 +2511,7 @@ class TypesTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -2661,7 +2695,7 @@ class UsersTable:
             column_names = [description[0] for description in cursor.description]
 
             # Convert rows to a list of dictionaries
-            data = [dict(zip(column_names, row)) for row in rows]
+            data = [dict(zip(column_names, row, strict=True)) for row in rows]
 
             # Write to JSON file
             with open(json_file_path, "w") as json_file:
@@ -2807,6 +2841,7 @@ class EventBoardLogsTable:
 
 class GlobalSettingsTable:
     """Class to interact with the global_settings table for global variables."""
+
     def __init__(self) -> None:
         self.db_path = db_path
 
@@ -2828,7 +2863,9 @@ class GlobalSettingsTable:
                 ) STRICT;
                 """
             )
-            await cursor.execute("INSERT OR IGNORE INTO global_settings (id, next_rc_id) VALUES (1, 1);")
+            await cursor.execute(
+                "INSERT OR IGNORE INTO global_settings (id, next_rc_id) VALUES (1, 1);"
+            )
             print("global_settings table created successfully")
             await conn.commit()
 
@@ -2837,7 +2874,9 @@ async def get_next_rc_id() -> int:
     """Atomically fetches and increments the next available rc_id."""
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
-        await cursor.execute("UPDATE global_settings SET next_rc_id = next_rc_id + 1 WHERE id = 1 RETURNING next_rc_id")
+        await cursor.execute(
+            "UPDATE global_settings SET next_rc_id = next_rc_id + 1 WHERE id = 1 RETURNING next_rc_id"
+        )
         row = await cursor.fetchone()
         if row:
             return int(row[0]) - 1
@@ -2846,6 +2885,7 @@ async def get_next_rc_id() -> int:
 
 class GuildsTable:
     """Class to interact with the guilds table for server-specific settings."""
+
     def __init__(self) -> None:
         self.db_path = db_path
 
@@ -2874,12 +2914,24 @@ class GuildsTable:
                 """
             )
             try:
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN max_spawn_limit INTEGER NOT NULL DEFAULT 100")
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN temp_spawn_limit INTEGER NOT NULL DEFAULT 0")
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN temp_limit_expires INTEGER NOT NULL DEFAULT 0")
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN next_spawn_time INTEGER NOT NULL DEFAULT 0")
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN spawn_multiplier REAL NOT NULL DEFAULT 1.0")
-                await cursor.execute("ALTER TABLE guilds ADD COLUMN spawn_multiplier_expires INTEGER NOT NULL DEFAULT 0")
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN max_spawn_limit INTEGER NOT NULL DEFAULT 100"
+                )
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN temp_spawn_limit INTEGER NOT NULL DEFAULT 0"
+                )
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN temp_limit_expires INTEGER NOT NULL DEFAULT 0"
+                )
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN next_spawn_time INTEGER NOT NULL DEFAULT 0"
+                )
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN spawn_multiplier REAL NOT NULL DEFAULT 1.0"
+                )
+                await cursor.execute(
+                    "ALTER TABLE guilds ADD COLUMN spawn_multiplier_expires INTEGER NOT NULL DEFAULT 0"
+                )
             except Exception:
                 pass
             print("guilds table created successfully")
@@ -2894,6 +2946,7 @@ async def get_guild_biome(guild_id: int) -> str:
         row = await cursor.fetchone()
         return row[0] if row else "Forest"
 
+
 async def set_guild_biome(guild_id: int, biome: str) -> None:
     """Sets the Biome for the specified guild."""
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
@@ -2904,9 +2957,10 @@ async def set_guild_biome(guild_id: int, biome: str) -> None:
             VALUES (?, ?)
             ON CONFLICT(guild_id) DO UPDATE SET biome = excluded.biome
             """,
-            (guild_id, biome)
+            (guild_id, biome),
         )
         await conn.commit()
+
 
 async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
     async with aiosqlite.connect(db_path) as conn:
@@ -2914,7 +2968,7 @@ async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
         cursor = await conn.cursor()
         await cursor.execute(
             "SELECT max_spawn_limit, temp_spawn_limit, temp_limit_expires, next_spawn_time, spawn_multiplier, spawn_multiplier_expires FROM guilds WHERE guild_id = ?",
-            (guild_id,)
+            (guild_id,),
         )
         row = await cursor.fetchone()
         if row:
@@ -2926,7 +2980,7 @@ async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
                 "temp_limit_expires": d.get("temp_limit_expires") or 0,
                 "next_spawn_time": d.get("next_spawn_time") or 0,
                 "spawn_multiplier": d.get("spawn_multiplier") or 1.0,
-                "spawn_multiplier_expires": d.get("spawn_multiplier_expires") or 0
+                "spawn_multiplier_expires": d.get("spawn_multiplier_expires") or 0,
             }
         return {
             "max_spawn_limit": 100,
@@ -2934,16 +2988,20 @@ async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
             "temp_limit_expires": 0,
             "next_spawn_time": 0,
             "spawn_multiplier": 1.0,
-            "spawn_multiplier_expires": 0
+            "spawn_multiplier_expires": 0,
         }
+
 
 async def delete_guild_data(guild_id: int) -> None:
     """Removes all server-specific data (but preserves accounts/progress) when RevoCord is removed."""
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
         await cursor.execute("DELETE FROM guilds WHERE guild_id = ?", (guild_id,))
-        await cursor.execute("DELETE FROM active_spawns WHERE guild_id = ?", (guild_id,))
+        await cursor.execute(
+            "DELETE FROM active_spawns WHERE guild_id = ?", (guild_id,)
+        )
         await conn.commit()
+
 
 async def update_guild_spawn_config(guild_id: int, **kwargs: Any) -> None:
     if not kwargs:
@@ -2953,9 +3011,14 @@ async def update_guild_spawn_config(guild_id: int, **kwargs: Any) -> None:
     values.append(guild_id)
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
-        await cursor.execute("INSERT OR IGNORE INTO guilds (guild_id) VALUES (?)", (guild_id,))
-        await cursor.execute(f"UPDATE guilds SET {sets} WHERE guild_id = ?", tuple(values))
+        await cursor.execute(
+            "INSERT OR IGNORE INTO guilds (guild_id) VALUES (?)", (guild_id,)
+        )
+        await cursor.execute(
+            f"UPDATE guilds SET {sets} WHERE guild_id = ?", tuple(values)
+        )
         await conn.commit()
+
 
 class ActiveSpawnsTable:
     def __init__(self) -> None:
@@ -2988,21 +3051,27 @@ class ActiveSpawnsTable:
             cursor = await conn.cursor()
             await cursor.execute(
                 "INSERT INTO active_spawns (message_id, guild_id, spawn_data) VALUES (?, ?, ?)",
-                (message_id, guild_id, spawn_data)
+                (message_id, guild_id, spawn_data),
             )
             await conn.commit()
 
     async def remove_spawn(self, message_id: int) -> None:
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("DELETE FROM active_spawns WHERE message_id = ?", (message_id,))
+            await cursor.execute(
+                "DELETE FROM active_spawns WHERE message_id = ?", (message_id,)
+            )
             await conn.commit()
 
     async def get_spawn(self, message_id: int) -> dict[str, Any] | None:
         import json
+
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT spawn_data FROM active_spawns WHERE message_id = ?", (message_id,))
+            await cursor.execute(
+                "SELECT spawn_data FROM active_spawns WHERE message_id = ?",
+                (message_id,),
+            )
             row = await cursor.fetchone()
             if row:
                 return cast(dict[str, Any], json.loads(row[0]))
@@ -3010,22 +3079,29 @@ class ActiveSpawnsTable:
 
     async def get_guild_spawns(self, guild_id: int) -> list[dict[str, Any]]:
         import json
+
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT message_id, spawn_data FROM active_spawns WHERE guild_id = ?", (guild_id,))
+            await cursor.execute(
+                "SELECT message_id, spawn_data FROM active_spawns WHERE guild_id = ?",
+                (guild_id,),
+            )
             rows = await cursor.fetchall()
             return [{"message_id": r[0], "data": json.loads(r[1])} for r in rows]
 
     async def count_guild_spawns(self, guild_id: int) -> int:
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            await cursor.execute("SELECT COUNT(*) FROM active_spawns WHERE guild_id = ?", (guild_id,))
+            await cursor.execute(
+                "SELECT COUNT(*) FROM active_spawns WHERE guild_id = ?", (guild_id,)
+            )
             row = await cursor.fetchone()
             return row[0] if row else 0
 
 
 class ActiveEncountersTable:
     """Class to interact with the active_encounters table for background battle stats."""
+
     def __init__(self) -> None:
         self.db_path = db_path
 
@@ -3061,27 +3137,35 @@ async def save_active_encounter(spawner_id: int, encounter_data: str) -> None:
             VALUES (?, ?)
             ON CONFLICT(spawner_id) DO UPDATE SET encounter_data = excluded.encounter_data
             """,
-            (spawner_id, encounter_data)
+            (spawner_id, encounter_data),
         )
         await conn.commit()
+
 
 async def get_active_encounter(spawner_id: int) -> str | None:
     """Fetches the serialized encounter data for the specified spawner."""
     async with aiosqlite.connect(db_path) as conn:
         cursor = await conn.cursor()
-        await cursor.execute("SELECT encounter_data FROM active_encounters WHERE spawner_id = ?", (spawner_id,))
+        await cursor.execute(
+            "SELECT encounter_data FROM active_encounters WHERE spawner_id = ?",
+            (spawner_id,),
+        )
         row = await cursor.fetchone()
         return row[0] if row else None
+
 
 async def delete_active_encounter(spawner_id: int) -> None:
     """Deletes the active encounter data for the specified spawner."""
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
-        await cursor.execute("DELETE FROM active_encounters WHERE spawner_id = ?", (spawner_id,))
+        await cursor.execute(
+            "DELETE FROM active_encounters WHERE spawner_id = ?", (spawner_id,)
+        )
         await conn.commit()
 
 
 active_spawns_table = ActiveSpawnsTable()
+
 
 async def update_gradex_db() -> None:
     # Initialize the global settings table
