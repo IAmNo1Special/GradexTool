@@ -254,26 +254,29 @@ ______________________________________________________________________
 
 ## 🗄️ Database Tables
 
-The SQLite database (`data/gradex.db`) contains 14+ tables:
+The SQLite database (`data/gradex.db`) contains 19 tables:
 
 | Table | Description |
 |-------|-------------|
 | `abilities` | Revomon abilities from PokeAPI |
+| `active_encounters` | Caches serialized active in-battle encounters per spawner |
+| `active_spawns` | Active wild spawn tracking |
 | `capsules` | Move capsules |
 | `counterdex` | Competitive counter information and meta builds |
-| `currentPodium` | Current leaderboard data |
-| `weeklyPodium` | Weekly podium tracking |
+| `current_podium` | Current leaderboard data |
+| `event_board_logs` | Event board logging and audit |
 | `fruitys` | Fruity items |
+| `global_settings` | Global configuration settings |
+| `guilds` | Server settings, biomes, next spawns, and multiplier rates |
 | `items` | Game items and medicines |
 | `moves` | Revomon moves with priority |
 | `natures` | Revomon natures with stat modifiers |
 | `ownedLands` | Immutable X land NFT ownership |
 | `revomon` | Revomon base data (stats, types, abilities) |
-| `revomonMoves` | Revomon-move relationships |
+| `revomon_moves` | Revomon-move relationships |
 | `types` | Type effectiveness charts |
 | `users` | User tracking and Pro Tamer status |
-| `eventBoardLogs` | Event board logging |
-| `activeSpawns` | Active wild spawn tracking |
+| `weekly_podium` | Weekly podium tracking |
 
 ______________________________________________________________________
 
@@ -284,13 +287,15 @@ ______________________________________________________________________
 | Command | Description |
 |---------|-------------|
 | `/help` | Display help menu |
+| `/setup` | Set up the bot's workspace (category and channels) (Server Owner only) |
 | `/grade <catch_id>` | Grade a Revomon competitively |
 | `/podium` | Display current & weekly podium leaderboards |
 | `/pvp` | Display PvP leaderboard |
 | `/evchart` | Display EV chart |
 | `/evolutions` | Display evolution trees |
 | `/sapdaddy` | Display SapDaddy's library |
-| `/search [category] [keyword]` | Unified game data search |
+| `/spawnchart` | Display the spawn chart & spawn times |
+| `/search <category> [keyword]` | Search for game data (subcommands: `abilities`, `fruitys`, `items`, `moves`, `natures`, `revomon`) |
 
 ### Keyword Triggers
 
@@ -303,6 +308,8 @@ The bot responds to keywords in messages for quick lookups:
 - **Revomon names** (e.g., "vyphern", "wyverdant")
 - **Type combinations** (e.g., "fire dragonic")
 - **"grade" / "appraise"** - Opens grading modal
+
+*Note: In servers, to avoid channel spam, keyword triggers automatically delete the triggering chat message and deliver results directly to the user's private DMs.*
 
 ______________________________________________________________________
 
@@ -339,11 +346,13 @@ ruff format .
 
 ### Running Tests
 
+The project includes an extensive test suite consisting of **1,046 automated unit and integration tests** validating cogs, core loop mechanics, database transitions, and utility functions.
+
 **With uv (recommended)**:
 
 ```bash
-# Run all tests
-uv run pytest
+# Run all tests (quiet mode)
+uv run pytest -q
 
 # Run with coverage
 uv run pytest --cov=.
@@ -386,7 +395,7 @@ async def setup(gradex: commands.Bot):
     await gradex.add_cog(MyMod(gradex))
 ```
 
-**Note**: The mod loader skips:
+**Note**: The mod loader automatically skips:
 
 - Directories: `example_mod`, `elevens_arena`
 - Files: `base_cog.py`, `shared.py`, `broadcaster.py`, `tv.py`
