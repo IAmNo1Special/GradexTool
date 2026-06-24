@@ -16,3 +16,4 @@ logs/
 .coverage
 coverage.xml
 htmlcov/
+.vscode/
