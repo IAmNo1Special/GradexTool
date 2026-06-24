@@ -35,8 +35,7 @@ def setup_logging(name: str = "GradexTool") -> logging.Logger:
         root_logger.addHandler(console_handler)
 
         # File handler
-        datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        log_path = Path("logs", f"GradexTool_{datetime_str}.log")
+        log_path = Path("logs", "GradexTool.log")
         log_path.parent.mkdir(parents=True, exist_ok=True)
         file_handler = RotatingFileHandler(
             log_path,
