@@ -11,8 +11,13 @@ from scripts.fruitys import FruitysTable, get_fruitys
 @patch("scripts.fruitys.os.makedirs")
 @patch("builtins.open", new_callable=mock_open)
 @patch("scripts.fruitys.json.dump")
-def test_get_fruitys(mock_json_dump: Any, mock_open_file: Any, mock_makedirs: Any) -> None:
-    with patch("scripts.fruitys.FRUITYS", [{"name": "Test", "type": "TestType", "description": "some description."}]):
+def test_get_fruitys(
+    mock_json_dump: Any, mock_open_file: Any, mock_makedirs: Any
+) -> None:
+    with patch(
+        "scripts.fruitys.FRUITYS",
+        [{"name": "Test", "type": "TestType", "description": "some description."}],
+    ):
         get_fruitys()
         mock_makedirs.assert_called_once()
         mock_open_file.assert_called_once()
@@ -26,16 +31,20 @@ def test_get_fruitys(mock_json_dump: Any, mock_open_file: Any, mock_makedirs: An
         assert data["1"]["description"] == "Some description."
         assert data["1"]["idFruity"] == 1
 
+
 @patch("scripts.fruitys.os.makedirs")
 @patch("builtins.open", new_callable=mock_open)
 @patch("scripts.fruitys.json.dump")
-def test_get_fruitys_missing_keys(mock_json_dump: Any, mock_open_file: Any, mock_makedirs: Any) -> None:
+def test_get_fruitys_missing_keys(
+    mock_json_dump: Any, mock_open_file: Any, mock_makedirs: Any
+) -> None:
     with patch("scripts.fruitys.FRUITYS", [{}]):
         get_fruitys()
         args, kwargs = mock_json_dump.call_args
         data = args[0]
         assert "1" in data
         assert "name" not in data["1"]
+
 
 class TestFruitysTable:
     @pytest.fixture
@@ -74,13 +83,17 @@ class TestFruitysTable:
 
     @patch("scripts.fruitys.json.load")
     @patch("builtins.open", new_callable=mock_open)
-    def test_rebuild(self, mock_open_file: Any, mock_json_load: Any, table: Any, mock_db: Any) -> None:
+    def test_rebuild(
+        self, mock_open_file: Any, mock_json_load: Any, table: Any, mock_db: Any
+    ) -> None:
         mock_conn = MagicMock()
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
 
-        mock_json_load.return_value = [{"name": "A", "description": "desc", "type": "type"}]
+        mock_json_load.return_value = [
+            {"name": "A", "description": "desc", "type": "type"}
+        ]
         table.export_to_json = MagicMock()
 
         table.rebuild()
@@ -91,7 +104,9 @@ class TestFruitysTable:
 
     @patch("scripts.fruitys.json.dump")
     @patch("builtins.open", new_callable=mock_open)
-    def test_export_to_json(self, mock_open_file: Any, mock_json_dump: Any, table: Any, mock_db: Any) -> None:
+    def test_export_to_json(
+        self, mock_open_file: Any, mock_json_dump: Any, table: Any, mock_db: Any
+    ) -> None:
         mock_conn = MagicMock()
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
@@ -151,14 +166,14 @@ class TestFruitysTable:
 
         assert table.get_names() == ["name1", "name2"]
 
+
 @patch("os.makedirs")
 @patch("json.dump")
 @patch("builtins.open", new_callable=mock_open)
 def test_main(mock_open_file: Any, mock_json_dump: Any, mock_makedirs: Any) -> None:
-    with unittest.mock.patch.dict('sys.modules'):
-
+    with unittest.mock.patch.dict("sys.modules"):
         import sys
 
-        sys.modules.pop('scripts.fruitys', None)
+        sys.modules.pop("scripts.fruitys", None)
 
-        runpy.run_module('scripts.fruitys', run_name='__main__')
+        runpy.run_module("scripts.fruitys", run_name="__main__")

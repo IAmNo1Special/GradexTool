@@ -5,10 +5,10 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # 1. Remove all global `.start()` patches from the top of the file.
-text = re.sub(r'patch\(.*?\.start\(\)\n', '', text)
+text = re.sub(r"patch\(.*?\.start\(\)\n", "", text)
 
 # 2. Add an autouse fixture to patch database access globally for this file so we don't need .start()
-fixture_code = '''
+fixture_code = """
 @pytest.fixture(autouse=True)
 def mock_db_and_broadcast():
     with patch("mods.revocord.hunting.update_encounter_broadcast", new_callable=AsyncMock), \\
@@ -17,14 +17,14 @@ def mock_db_and_broadcast():
          patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock, return_value={}), \\
          patch("mods.revocord.hunting.broadcast_encounter", new_callable=AsyncMock):
         yield
-'''
+"""
 # Insert after imports
-text = re.sub(r'(from unittest\.mock import .*?\n)', r'\1' + fixture_code, text)
+text = re.sub(r"(from unittest\.mock import .*?\n)", r"\1" + fixture_code, text)
 
 # 3. Replace test_on_timeout_exception
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_on_timeout_exception\(self.*?\):[\s\S]*?(?=    @pytest\.mark\.asyncio\n    async def test_on_timeout_success)',
-    r'''    @pytest.mark.asyncio
+    r"    @pytest\.mark\.asyncio\n    async def test_on_timeout_exception\(self.*?\):[\s\S]*?(?=    @pytest\.mark\.asyncio\n    async def test_on_timeout_success)",
+    r"""    @pytest.mark.asyncio
     async def test_on_timeout_exception(self, mock_interaction: Any) -> None:
         chosen = {"name": "TestMon"}
         view = WildSpawnView(chosen, False, 123, 456)
@@ -33,13 +33,14 @@ text = re.sub(
         view.message = mock_message
         await view.on_timeout()
         mock_message.edit.assert_called_once()
-''', text
+""",
+    text,
 )
 
 # 4. Replace test_on_timeout_success
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_on_timeout_success\(self.*?\):[\s\S]*?(?=class TestOnInteraction:)',
-    r'''    @pytest.mark.asyncio
+    r"    @pytest\.mark\.asyncio\n    async def test_on_timeout_success\(self.*?\):[\s\S]*?(?=class TestOnInteraction:)",
+    r"""    @pytest.mark.asyncio
     async def test_on_timeout_success(self, mock_interaction: Any) -> None:
         chosen = {"name": "TestMon"}
         view = WildSpawnView(chosen, False, 123, 456)
@@ -55,14 +56,15 @@ text = re.sub(
             mock_message.edit.assert_called_once()
             mock_remove.assert_called_once_with(456)
 
-''', text
+""",
+    text,
 )
 
 # 5. Replace test_expired to test_spawn_throw_orb_no_embeds inclusive!
 # We'll just replace the whole block from test_expired down to test_spawn_throw_orb_insufficient_orbs
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_expired\(self.*?\):[\s\S]*?(?=    @pytest\.mark\.asyncio\n    async def test_spawn_throw_orb_insufficient_orbs)',
-    r'''    @pytest.mark.asyncio
+    r"    @pytest\.mark\.asyncio\n    async def test_expired\(self.*?\):[\s\S]*?(?=    @pytest\.mark\.asyncio\n    async def test_spawn_throw_orb_insufficient_orbs)",
+    r"""    @pytest.mark.asyncio
     async def test_expired(self, cog: Any, mock_interaction: Any) -> None:
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time()) - 400
@@ -121,14 +123,15 @@ text = re.sub(
         mock_interaction.response.send_message.assert_called_once()
         assert "invalid" in mock_interaction.response.send_message.call_args[0][0]
 
-''', text
+""",
+    text,
 )
 
 # 6. We also need to fix `test_spawn_throw_orb_insufficient_orbs` and onwards because `get_or_create_account` needs `new_callable=AsyncMock`
 text = re.sub(
     r'@patch\("mods\.revocord\.hunting\.get_or_create_account"\)',
     r'@patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)',
-    text
+    text,
 )
 
 with open(path, "w", encoding="utf-8") as f:

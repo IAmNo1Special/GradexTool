@@ -1,9 +1,8 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-test = '''
+test = """
     @patch("mods.revocord.hunting.Path.exists", return_value=True)
     @patch("mods.revocord.hunting.json.load")
     @patch("builtins.open")
@@ -18,11 +17,11 @@ test = '''
         with patch("mods.revocord.hunting.logger") as mock_logger:
             cog = HuntingCog(mock_bot)
             assert mock_logger.error.call_count == 3
-'''
+"""
 
 text = text.replace(
-    'class TestHuntingCogInitialization:',
-    'class TestHuntingCogInitialization:\n' + test
+    "class TestHuntingCogInitialization:",
+    "class TestHuntingCogInitialization:\n" + test,
 )
 
 with open(path, "w", encoding="utf-8") as f:

@@ -25,7 +25,9 @@ class TravelButtonView(ui.View):
         emoji="🌿",
         custom_id="persistent_hunt_button",
     )
-    async def hunt(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def hunt(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Hunt a wild Revomon in the current city wilds."""
         await interaction.response.defer()
 
@@ -39,8 +41,6 @@ class TravelButtonView(ui.View):
             return
 
         await cog.spawn_wild_revomon(interaction)
-
-
 
 
 class ShopSelect(ui.Select[Any]):
@@ -139,7 +139,9 @@ class RestButtonView(ui.View):
         emoji="💤",
         custom_id="persistent_rest_button",
     )
-    async def rest(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def rest(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Fully restore the player's energy."""
         await interaction.response.defer(ephemeral=True)
         member = interaction.user
@@ -166,7 +168,9 @@ class RestButtonView(ui.View):
         emoji="🛒",
         custom_id="persistent_shop_button",
     )
-    async def shop(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def shop(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Open the RevoCenter Orb shop."""
         member = interaction.user
         account = await get_or_create_account(member.id)
@@ -199,13 +203,13 @@ class RouteAITrainerView(ui.View):
         emoji="⚔️",
         custom_id="persistent_battle_button",
     )
-    async def battle(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def battle(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Handle the AI trainer battle click."""
         await interaction.response.send_message(
             "The Battle system is not yet implemented! 🚧", ephemeral=True
         )
-
-
 
 
 class ActivityCog(commands.Cog):

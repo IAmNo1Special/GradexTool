@@ -43,6 +43,7 @@ async def test_fetch_single_type() -> None:
     assert scripts.type_charts.BASE_TYPE_MULTIPLIERS[rtype]["sky"] == 0.5
     assert scripts.type_charts.BASE_TYPE_MULTIPLIERS[rtype]["phantom"] == 0.0
 
+
 @pytest.mark.asyncio
 @patch("scripts.type_charts.fetch_single_type")
 async def test_fetch_base_type_multipliers(mock_fetch: Any) -> None:
@@ -52,17 +53,21 @@ async def test_fetch_base_type_multipliers(mock_fetch: Any) -> None:
     assert scripts.type_charts.BASE_TYPE_MULTIPLIERS["neutral"]["neutral"] == 1.0
     assert mock_fetch.call_count == len(REVOMON_TO_POKEMON_TYPE)
 
+
 def test_get_font() -> None:
     with patch("PIL.ImageFont.truetype") as mock_truetype:
         mock_truetype.return_value = "mock_font"
         font = get_font(30)
         assert font == "mock_font"
 
-    with patch("PIL.ImageFont.truetype", side_effect=OSError), \
-         patch("PIL.ImageFont.load_default") as mock_default:
+    with (
+        patch("PIL.ImageFont.truetype", side_effect=OSError),
+        patch("PIL.ImageFont.load_default") as mock_default,
+    ):
         mock_default.return_value = "default_font"
         font = get_font(30)
         assert font == "default_font"
+
 
 def test_calculate_section_height() -> None:
     assert calculate_section_height(100, [], {}) == 0
@@ -83,6 +88,7 @@ def test_calculate_section_height() -> None:
     height_wrap = calculate_section_height(50, targets, type_images)
     assert height_wrap > height
 
+
 def test_draw_icon_section() -> None:
     img = MagicMock()
     draw = MagicMock()
@@ -91,24 +97,33 @@ def test_draw_icon_section() -> None:
     type_images = {
         "fire": MagicMock(width=100, height=100),
         "water": MagicMock(width=100, height=100),
-        "grass": MagicMock(width=100, height=100)
+        "grass": MagicMock(width=100, height=100),
     }
-    y_end = draw_icon_section(img, draw, 0, 0, 100, "LABEL", targets, type_images, "font")
+    y_end = draw_icon_section(
+        img, draw, 0, 0, 100, "LABEL", targets, type_images, "font"
+    )
     assert y_end > 0
 
     # Wrapping test
-    y_wrap = draw_icon_section(img, draw, 0, 0, 50, "LABEL", targets, type_images, "font")
+    y_wrap = draw_icon_section(
+        img, draw, 0, 0, 50, "LABEL", targets, type_images, "font"
+    )
     assert y_wrap > 0
 
-    assert draw_icon_section(img, draw, 0, 0, 100, "LABEL", [], type_images, "font") == 0
+    assert (
+        draw_icon_section(img, draw, 0, 0, 100, "LABEL", [], type_images, "font") == 0
+    )
+
 
 @patch("scripts.type_charts.TYPE_CHART_IMAGES_DIR")
 @patch("scripts.type_charts.Image.new")
 @patch("scripts.type_charts.ImageDraw")
-def test_save_type_chart_images(mock_draw: Any, mock_image_new: Any, mock_dir: Any) -> None:
+def test_save_type_chart_images(
+    mock_draw: Any, mock_image_new: Any, mock_dir: Any
+) -> None:
     types_dict = {
         "fire": {"type1": "fire", "type2": None},
-        "fire_water": {"type1": "fire", "type2": "water"}
+        "fire_water": {"type1": "fire", "type2": "water"},
     }
     base_type_names = ["fire", "water", "grass"]
 
@@ -124,14 +139,12 @@ def test_save_type_chart_images(mock_draw: Any, mock_image_new: Any, mock_dir: A
     water_img.rotate.return_value.size = (100, 100)
     water_img.rotate.return_value.resize.return_value.size = (70, 70)
 
-    type_images = {
-        "fire": fire_img,
-        "water": water_img
-    }
+    type_images = {"fire": fire_img, "water": water_img}
 
     save_type_chart_images(types_dict, base_type_names, type_images)  # type: ignore[arg-type]
     assert mock_dir.mkdir.called
     assert mock_image_new.called
+
 
 @pytest.mark.asyncio
 @patch("scripts.type_charts.fetch_base_type_multipliers")
@@ -141,13 +154,25 @@ def test_save_type_chart_images(mock_draw: Any, mock_image_new: Any, mock_dir: A
 @patch("scripts.type_charts.MISSING_TYPE_CHARTS_FILE")
 @patch("scripts.type_charts.TYPE_CHART_IMAGES_DIR")
 @patch("scripts.type_charts.BASE_TYPES_IMAGES_DIR")
-async def test_get_type_charts(mock_base_dir: Any, mock_chart_dir: Any, mock_missing_file: Any, mock_charts_file: Any, mock_file: Any, mock_save: Any, mock_fetch: Any) -> None:
+async def test_get_type_charts(
+    mock_base_dir: Any,
+    mock_chart_dir: Any,
+    mock_missing_file: Any,
+    mock_charts_file: Any,
+    mock_file: Any,
+    mock_save: Any,
+    mock_fetch: Any,
+) -> None:
     import json
 
     # Add dummy files
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire", "water", "grass"])).return_value,
-        mock_open(read_data=json.dumps([{"type1": "fire", "type2": "water"}, {"type1": "grass"}])).return_value,
+        mock_open(
+            read_data=json.dumps(
+                [{"type1": "fire", "type2": "water"}, {"type1": "grass"}]
+            )
+        ).return_value,
         mock_open().return_value,
         mock_open().return_value,
     ]
@@ -162,7 +187,11 @@ async def test_get_type_charts(mock_base_dir: Any, mock_chart_dir: Any, mock_mis
     # Image load error handling
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire", "water", "grass"])).return_value,
-        mock_open(read_data=json.dumps([{"type1": "fire", "type2": "water"}, {"type1": "grass"}])).return_value,
+        mock_open(
+            read_data=json.dumps(
+                [{"type1": "fire", "type2": "water"}, {"type1": "grass"}]
+            )
+        ).return_value,
         mock_open().return_value,
         mock_open().return_value,
     ]
@@ -213,11 +242,10 @@ def test_main(mock_run: Any, mock_get_type_charts: Any) -> None:
     mock_run.side_effect = lambda coro: coro.close()
     # simulate __name__ == '__main__'
     with patch.dict("sys.modules", {"scripts.type_charts": scripts.type_charts}):
-        with unittest.mock.patch.dict('sys.modules'):
-
+        with unittest.mock.patch.dict("sys.modules"):
             import sys
 
-            sys.modules.pop('scripts.type_charts', None)
+            sys.modules.pop("scripts.type_charts", None)
 
-            runpy.run_module('scripts.type_charts', run_name='__main__')
+            runpy.run_module("scripts.type_charts", run_name="__main__")
         mock_run.assert_called_once()

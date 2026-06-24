@@ -13,6 +13,7 @@ def test_get_configs() -> None:
         res = _get_configs()
         assert res == {"TEST_KEY": "test_val"}
 
+
 @patch("scripts.configs.logging_config.Path")
 @patch("scripts.configs.logging_config.RotatingFileHandler")
 def test_setup_logging(mock_rfh: Any, mock_path: Any) -> None:

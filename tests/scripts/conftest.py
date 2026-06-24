@@ -57,7 +57,7 @@ def scripts_sample_revomon_data() -> Any:
             "spe": 45,
             "evolution": "desuke",
             "level_evolution": 16,
-            "rarity": "rare"
+            "rarity": "rare",
         },
         {
             "dex_id": 2,
@@ -77,8 +77,8 @@ def scripts_sample_revomon_data() -> Any:
             "spe": 60,
             "evolution": "deksciple",
             "level_evolution": 36,
-            "rarity": "epic"
-        }
+            "rarity": "epic",
+        },
     ]
 
 
@@ -90,14 +90,14 @@ def sample_nature_data() -> Any:
             "name": "adamant",
             "increased_stat": "atk",
             "decreased_stat": "spa",
-            "idNature": 1
+            "idNature": 1,
         },
         "2": {
             "name": "modest",
             "increased_stat": "spa",
             "decreased_stat": "atk",
-            "idNature": 2
-        }
+            "idNature": 2,
+        },
     }
 
 
@@ -111,10 +111,10 @@ def sample_ability_data() -> Any:
             "effect_entries": [
                 {
                     "effect": "Powers up grass-type moves when HP is low.",
-                    "short_effect": "Powers up grass-type moves in a pinch."
+                    "short_effect": "Powers up grass-type moves in a pinch.",
                 }
             ],
-            "flavor_text_entries": []
+            "flavor_text_entries": [],
         },
         "2": {
             "id": 2,
@@ -122,11 +122,11 @@ def sample_ability_data() -> Any:
             "effect_entries": [
                 {
                     "effect": "Powers up fire-type moves when HP is low.",
-                    "short_effect": "Powers up fire-type moves in a pinch."
+                    "short_effect": "Powers up fire-type moves in a pinch.",
                 }
             ],
-            "flavor_text_entries": []
-        }
+            "flavor_text_entries": [],
+        },
     }
 
 
@@ -139,15 +139,15 @@ def sample_item_data() -> Any:
             "description": "Restores 20 HP.",
             "obtained_from": "shop",
             "cost": 100,
-            "idItem": 1
+            "idItem": 1,
         },
         "2": {
             "name": "super potion",
             "description": "Restores 50 HP.",
             "obtained_from": "shop",
             "cost": 300,
-            "idItem": 2
-        }
+            "idItem": 2,
+        },
     }
 
 
@@ -162,7 +162,7 @@ def sample_move_data() -> Any:
             "category": "physical",
             "power": 40,
             "accuracy": 100,
-            "pp": 35
+            "pp": 35,
         },
         "2": {
             "id": 2,
@@ -171,8 +171,8 @@ def sample_move_data() -> Any:
             "category": "special",
             "power": 40,
             "accuracy": 100,
-            "pp": 25
-        }
+            "pp": 25,
+        },
     }
 
 
@@ -188,7 +188,7 @@ def sample_type_data() -> Any:
             "water": 0.5,
             "grass": 2.0,
             "ice": 2.0,
-            "neutral": 1.0
+            "neutral": 1.0,
         },
         "water": {
             "types_str": "water",
@@ -198,8 +198,8 @@ def sample_type_data() -> Any:
             "water": 1.0,
             "grass": 0.5,
             "ice": 0.5,
-            "neutral": 1.0
-        }
+            "neutral": 1.0,
+        },
     }
 
 
@@ -211,14 +211,14 @@ def sample_fruity_data() -> Any:
             "name": "barka",
             "description": "Reduces toxic damage.",
             "type": "held",
-            "idFruity": 1
+            "idFruity": 1,
         },
         "2": {
             "name": "cassius",
             "description": "Recovers HP at low health.",
             "type": "held",
-            "idFruity": 2
-        }
+            "idFruity": 2,
+        },
     }
 
 
@@ -232,12 +232,7 @@ def sample_capsule_data() -> Any:
 def sample_evolution_data() -> Any:
     """Sample evolution data for testing."""
     return [
-        {
-            "base": "dekute",
-            "evolves_to": "desuke",
-            "method": "level",
-            "condition": 16
-        }
+        {"base": "dekute", "evolves_to": "desuke", "method": "level", "condition": 16}
     ]
 
 
@@ -249,7 +244,7 @@ def sample_medicine_data() -> Any:
             "name": "potion",
             "description": "Restores 20 HP.",
             "category": "healing",
-            "cost": 100
+            "cost": 100,
         }
     ]
 
@@ -273,18 +268,18 @@ def mock_api_response() -> Any:
                         "idRevomon": 1,
                         "name": "Testmon",
                         "type1": "fire",
-                        "type2": None
+                        "type2": None,
                     }
                 ]
             }
-        }
+        },
     }
 
 
 @pytest.fixture
 def scripts_mock_requests_get() -> None:  # type: ignore[misc]
     """Mock requests.get for API calls."""
-    with patch('requests.get') as mock_get:
+    with patch("requests.get") as mock_get:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {}
@@ -295,7 +290,7 @@ def scripts_mock_requests_get() -> None:  # type: ignore[misc]
 @pytest.fixture
 def scripts_mock_requests_post() -> None:  # type: ignore[misc]
     """Mock requests.post for API calls."""
-    with patch('requests.post') as mock_post:
+    with patch("requests.post") as mock_post:
         mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json.return_value = {}
@@ -306,7 +301,7 @@ def scripts_mock_requests_post() -> None:  # type: ignore[misc]
 @pytest.fixture
 def mock_aiohttp_client() -> None:  # type: ignore[misc]
     """Mock aiohttp client for async HTTP requests."""
-    with patch('aiohttp.ClientSession') as mock_session:
+    with patch("aiohttp.ClientSession") as mock_session:
         session = AsyncMock()
         mock_session.return_value = session
         yield session
@@ -316,7 +311,7 @@ def mock_aiohttp_client() -> None:  # type: ignore[misc]
 def sample_json_file(temp_data_dir: Any, scripts_sample_revomon_data: Any) -> None:  # type: ignore[misc]
     """Create a sample JSON file for testing."""
     json_file = temp_data_dir / "revomon.json"
-    with open(json_file, 'w') as f:
+    with open(json_file, "w") as f:
         json.dump(scripts_sample_revomon_data, f, indent=2)
     yield json_file
 
@@ -328,7 +323,6 @@ def sample_json_file(temp_data_dir: Any, scripts_sample_revomon_data: Any) -> No
 #     asyncio.set_event_loop(loop)
 #     yield loop
 #     loop.close()
-
 
 
 @pytest.fixture

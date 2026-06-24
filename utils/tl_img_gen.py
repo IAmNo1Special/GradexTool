@@ -10,10 +10,10 @@ from utils.revomon_utils import get_attributes
 def create_base_tier_list(
     width: int,
     height: int,
-    row_gap: int=10,
-    font_path: str="data/fonts/CabalBold.ttf",
-    font_size: int=20,
-    image_paths: dict[str, list[str | Any]] | None=None,
+    row_gap: int = 10,
+    font_path: str = "data/fonts/CabalBold.ttf",
+    font_size: int = 20,
+    image_paths: dict[str, list[str | Any]] | None = None,
 ) -> MagicMock:
     """Creates the base tier list image with colored headers and black rows.
 
@@ -97,9 +97,9 @@ def create_tier_list_with_images(
     width: int,
     height: int,
     image_paths: dict[str, list[Any] | list[str | Any]],
-    row_gap: int=10,
-    font_path: str="data/fonts/CabalBold.ttf",
-    font_size: int=20,
+    row_gap: int = 10,
+    font_path: str = "data/fonts/CabalBold.ttf",
+    font_size: int = 20,
 ) -> MagicMock:
     """Creates a tier list image with the given Revomon images in their correct tiers.
 
@@ -233,4 +233,5 @@ async def main() -> None:
 
 if __name__ == "__main__":  # pragma: no cover
     import asyncio
+
     asyncio.run(main())

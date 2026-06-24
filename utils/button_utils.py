@@ -387,7 +387,9 @@ class Buttons(commands.Cog):
         return intro_view
 
     async def compare_intros_view(
-        self, attributes: dict = None, attributes2: dict = None  # type: ignore[assignment, type-arg]
+        self,
+        attributes: dict[Any, Any] | None = None,
+        attributes2: dict[Any, Any] | None = None,
     ) -> Any:
         print("Compare Intros buttons are being created...")
         if attributes is not None:
@@ -411,7 +413,7 @@ class Buttons(commands.Cog):
     @commands.Cog.listener()
     async def on_button_click(self, interaction: Interaction) -> None:
         try:
-            if interaction.user.bot:
+            if interaction.user.bot or not interaction.message:
                 return
 
             custom_id = interaction.data["custom_id"]  # type: ignore[index, typeddict-item]
@@ -463,7 +465,8 @@ class Buttons(commands.Cog):
                 self.current_page[interaction.user.id] = len(self.book_of_names)  # type: ignore[arg-type]
                 view = await self.mon_view(user_id=interaction.user.id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "previous_page":
@@ -473,7 +476,8 @@ class Buttons(commands.Cog):
                     self.current_page[interaction.user.id] = 1
                 view = await self.mon_view(user_id=interaction.user.id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "next_page":
@@ -483,7 +487,8 @@ class Buttons(commands.Cog):
                     self.current_page[interaction.user.id] = 1
                 view = await self.mon_view(user_id=interaction.user.id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "first_page":
@@ -491,7 +496,8 @@ class Buttons(commands.Cog):
                 self.current_page[interaction.user.id] = 1
                 view = await self.mon_view(user_id=interaction.user.id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "last_page_land":
@@ -502,7 +508,8 @@ class Buttons(commands.Cog):
                     self.book_of_land_current_page[user_id] = 1
                 view = await self.land_view(user_id=user_id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "previous_page_land":
@@ -514,7 +521,8 @@ class Buttons(commands.Cog):
                 curr_page = self.book_of_land_current_page[user_id]
                 view = await self.land_view(user_id=user_id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "next_page_land":
@@ -527,7 +535,8 @@ class Buttons(commands.Cog):
                 print(curr_page)
                 view = await self.land_view(user_id=user_id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "first_page_land":
@@ -536,7 +545,8 @@ class Buttons(commands.Cog):
                 self.book_of_land_current_page[user_id] = 1
                 view = await self.land_view(user_id=user_id)
                 await interaction.followup.edit_message(
-                    message_id=interaction.message.id, view=view  # type: ignore[union-attr]
+                    message_id=interaction.message.id,
+                    view=view,
                 )
 
             if custom_id == "search_settings_land":

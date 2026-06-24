@@ -32,9 +32,11 @@ def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any]:
     with patch("mods.revocord.shared.ACCOUNTS_FILE", file_path):
         yield file_path
 
+
 @pytest.fixture
 def clean_accounts(temp_accounts_file: Any) -> typing.Generator[Any]:
     yield temp_accounts_file
+
 
 @pytest.fixture
 def mock_user() -> Any:
@@ -54,8 +56,9 @@ def sample_account_data() -> Any:
         "current_location": "Center",
         "destination_city": "",
         "arrival_time": 0.0,
-        "is_logged_in": False
+        "is_logged_in": False,
     }
+
 
 class TestNormalizeChannelName:
     """Test suite for normalize_channel_name function."""
@@ -128,10 +131,12 @@ class TestAccountFileOperations:
         accounts = load_accounts()
         assert accounts == {}
 
-    def test_load_accounts_with_data(self, temp_accounts_file: Any, sample_account_data: Any) -> None:
+    def test_load_accounts_with_data(
+        self, temp_accounts_file: Any, sample_account_data: Any
+    ) -> None:
         """Test loading accounts with existing data."""
         user_id = "123456789"
-        with open(temp_accounts_file, 'w') as f:
+        with open(temp_accounts_file, "w") as f:
             json.dump({user_id: sample_account_data}, f)
 
         accounts = load_accounts()
@@ -139,13 +144,15 @@ class TestAccountFileOperations:
 
     def test_load_accounts_invalid_json(self, temp_accounts_file: Any) -> None:
         """Test loading accounts from a file with invalid JSON."""
-        with open(temp_accounts_file, 'w') as f:
+        with open(temp_accounts_file, "w") as f:
             f.write("invalid json content")
 
         accounts = load_accounts()
         assert accounts == {}
 
-    def test_save_accounts(self, temp_accounts_file: Any, sample_account_data: Any) -> None:
+    def test_save_accounts(
+        self, temp_accounts_file: Any, sample_account_data: Any
+    ) -> None:
         """Test saving accounts to file."""
         user_id = "123456789"
         accounts = {user_id: sample_account_data}
@@ -162,7 +169,9 @@ class TestGetOrCreateAccount:
     """Test suite for get_or_create_account function."""
 
     @pytest.mark.asyncio
-    async def test_create_new_account(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_create_new_account(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test creating a new account for a user."""
         account = await get_or_create_account(mock_user.id)
 
@@ -178,11 +187,13 @@ class TestGetOrCreateAccount:
         assert account["inventory"]["159"] == 5
 
     @pytest.mark.asyncio
-    async def test_get_existing_account(self, clean_accounts: Any, mock_user: Any, sample_account_data: Any) -> None:
+    async def test_get_existing_account(
+        self, clean_accounts: Any, mock_user: Any, sample_account_data: Any
+    ) -> None:
         """Test getting an existing account."""
         # First create the account
         user_id = str(mock_user.id)
-        with open(clean_accounts, 'w') as f:
+        with open(clean_accounts, "w") as f:
             json.dump({user_id: sample_account_data}, f)
 
         account = await get_or_create_account(mock_user.id)
@@ -191,7 +202,9 @@ class TestGetOrCreateAccount:
         assert account["coins"] == sample_account_data["coins"]
 
     @pytest.mark.asyncio
-    async def test_energy_regeneration(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_energy_regeneration(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that energy regenerates over time."""
         # Create account with low energy
         user_id = str(mock_user.id)
@@ -215,7 +228,7 @@ class TestGetOrCreateAccount:
             "caught_revomon": [],
         }
 
-        with open(clean_accounts, 'w') as f:
+        with open(clean_accounts, "w") as f:
             json.dump({user_id: account_data}, f)
 
         account = await get_or_create_account(mock_user.id)
@@ -224,14 +237,16 @@ class TestGetOrCreateAccount:
         assert account["energy"] >= 50
 
     @pytest.mark.asyncio
-    async def test_add_missing_fields_to_existing_account(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_add_missing_fields_to_existing_account(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that missing fields are added to existing accounts."""
         user_id = str(mock_user.id)
         incomplete_account = {
             "current_city": "drassius city",
         }
 
-        with open(clean_accounts, 'w') as f:
+        with open(clean_accounts, "w") as f:
             json.dump({user_id: incomplete_account}, f)
 
         account = await get_or_create_account(mock_user.id)
@@ -246,10 +261,12 @@ class TestUpdateAccount:
     """Test suite for update_account function."""
 
     @pytest.mark.asyncio
-    async def test_update_existing_account(self, clean_accounts: Any, mock_user: Any, sample_account_data: Any) -> None:
+    async def test_update_existing_account(
+        self, clean_accounts: Any, mock_user: Any, sample_account_data: Any
+    ) -> None:
         """Test updating an existing account."""
         user_id = str(mock_user.id)
-        with open(clean_accounts, 'w') as f:
+        with open(clean_accounts, "w") as f:
             json.dump({user_id: sample_account_data}, f)
 
         updated = await update_account(mock_user.id, coins=1000, energy=75)
@@ -258,7 +275,9 @@ class TestUpdateAccount:
         assert updated["energy"] == 75
 
     @pytest.mark.asyncio
-    async def test_update_creates_account_if_not_exists(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_creates_account_if_not_exists(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that update creates account if it doesn't exist."""
         updated = await update_account(mock_user.id, coins=1000)
 
@@ -266,14 +285,16 @@ class TestUpdateAccount:
         assert updated["current_city"] == "drassius city"
 
     @pytest.mark.asyncio
-    async def test_update_multiple_fields(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_multiple_fields(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test updating multiple fields at once."""
         updated = await update_account(
             mock_user.id,
             coins=1000,
             energy=80,
             current_city="marquis island",
-            trainer_level=5
+            trainer_level=5,
         )
 
         assert updated["coins"] == 1000
@@ -282,7 +303,9 @@ class TestUpdateAccount:
         assert updated["trainer_level"] == 5
 
     @pytest.mark.asyncio
-    async def test_update_energy_resets_regen_timer(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_energy_resets_regen_timer(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that manually updating energy resets regeneration timer."""
         updated = await update_account(mock_user.id, energy=50)
 
@@ -294,8 +317,11 @@ class TestWithTypingIndicator:
     """Test suite for with_typing_indicator decorator."""
 
     @pytest.mark.asyncio
-    async def test_typing_indicator_with_interaction(self, mock_interaction: Any, mock_channel: Any) -> None:
+    async def test_typing_indicator_with_interaction(
+        self, mock_interaction: Any, mock_channel: Any
+    ) -> None:
         """Test typing indicator with Discord interaction."""
+
         @with_typing_indicator
         async def test_func(interaction: Any) -> str:
             await asyncio.sleep(0.01)
@@ -308,8 +334,11 @@ class TestWithTypingIndicator:
         mock_channel.typing.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_typing_indicator_with_message(self, mock_message: Any, mock_channel: Any) -> None:
+    async def test_typing_indicator_with_message(
+        self, mock_message: Any, mock_channel: Any
+    ) -> None:
         """Test typing indicator with Discord message."""
+
         @with_typing_indicator
         async def test_func(message: Any) -> str:
             await asyncio.sleep(0.01)
@@ -324,6 +353,7 @@ class TestWithTypingIndicator:
     @pytest.mark.asyncio
     async def test_typing_indicator_without_channel(self) -> None:
         """Test typing indicator when no channel is available."""
+
         @with_typing_indicator
         async def test_func(obj: Any) -> str:
             return "success"
@@ -334,6 +364,7 @@ class TestWithTypingIndicator:
     @pytest.mark.asyncio
     async def test_typing_indicator_with_no_args(self) -> None:
         """Test typing indicator with no arguments."""
+
         @with_typing_indicator
         async def test_func() -> str:
             return "success"
@@ -351,14 +382,14 @@ class TestBuildTextView:
 
         assert view is not None
         # View should be a Discord UI View
-        assert hasattr(view, 'children')  # Basic view check
+        assert hasattr(view, "children")  # Basic view check
 
     def test_build_text_view_with_color(self) -> None:
         """Test building a text view with custom color."""
         view = build_text_view("Test content", accent_color=0xFF0000)
 
         assert view is not None
-        assert hasattr(view, 'children')  # Basic view check
+        assert hasattr(view, "children")  # Basic view check
 
 
 class TestIsServerOwner:
@@ -391,8 +422,6 @@ class TestIsServerOwner:
 class TestConstants:
     """Test suite for module constants."""
 
-
-
     def test_world_map_constant(self) -> None:
         """Test that WORLD_MAP is properly defined."""
         assert isinstance(WORLD_MAP, dict)
@@ -416,7 +445,9 @@ class TestEdgeCases:
     """Test suite for edge cases and error handling."""
 
     @pytest.mark.asyncio
-    async def test_concurrent_account_access(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_concurrent_account_access(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that concurrent account access is handled correctly."""
         # Create multiple concurrent requests
         tasks = []
@@ -454,7 +485,7 @@ class TestEdgeCases:
             "caught_revomon": [],
         }
 
-        with open(clean_accounts, 'w', encoding='utf-8') as f:
+        with open(clean_accounts, "w", encoding="utf-8") as f:
             json.dump({str(user_id): account_data}, f, ensure_ascii=False)
 
         account = await get_or_create_account(user_id)
@@ -469,12 +500,15 @@ class TestEdgeCases:
         assert normalize_channel_name("!@#$%") == ""
 
     @pytest.mark.asyncio
-    async def test_update_account_with_none_values(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_account_with_none_values(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test updating account with None values doesn't break."""
         updated = await update_account(mock_user.id, current_city=None)
 
         # Should handle None gracefully
         assert updated is not None
+
 
 class TestSharedRemainingCoverage:
     """Test suite for covering remaining lines in shared.py."""
@@ -482,11 +516,14 @@ class TestSharedRemainingCoverage:
     def test_load_accounts_file_not_exists(self, monkeypatch: Any) -> None:
         """Test load_accounts when file does not exist."""
         from mods.revocord.shared import load_accounts
+
         with patch("mods.revocord.shared.Path.exists", return_value=False):
             assert load_accounts() == {}
 
     @pytest.mark.asyncio
-    async def test_update_account_missing_fields(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_account_missing_fields(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test that update_account adds missing default fields."""
         user_id = str(mock_user.id)
         # Create an account that misses most fields
@@ -503,7 +540,9 @@ class TestSharedRemainingCoverage:
         assert updated["current_city"] == "drassius city"
 
     @pytest.mark.asyncio
-    async def test_update_account_energy_regen(self, clean_accounts: Any, mock_user: Any) -> None:
+    async def test_update_account_energy_regen(
+        self, clean_accounts: Any, mock_user: Any
+    ) -> None:
         """Test energy regeneration inside update_account."""
         user_id = str(mock_user.id)
         acc = {
@@ -515,7 +554,9 @@ class TestSharedRemainingCoverage:
         with open(clean_accounts, "w") as f:
             json.dump({user_id: acc}, f)
 
-        with patch("mods.revocord.shared.time.time", return_value=1120.0): # 120 seconds passed = +2 energy
+        with patch(
+            "mods.revocord.shared.time.time", return_value=1120.0
+        ):  # 120 seconds passed = +2 energy
             updated = await update_account(mock_user.id, coins=20)
 
         assert updated["energy"] == 52
@@ -524,6 +565,7 @@ class TestSharedRemainingCoverage:
     @pytest.mark.asyncio
     async def test_with_typing_indicator_isinstance(self) -> None:
         """Test with_typing_indicator fallback isinstance checks."""
+
         class MockMessage(discord.Message):
             def __init__(self) -> None:
                 self.channel = MagicMock()
@@ -535,6 +577,7 @@ class TestSharedRemainingCoverage:
         # But wait, we can't easily bypass hasattr if the property exists on class.
         # Let's mock hasattr to return False for 'channel' just for this test
         original_hasattr = hasattr
+
         def fake_hasattr(obj: Any, attr: Any) -> Any:
             if attr == "channel":
                 return False
@@ -545,15 +588,17 @@ class TestSharedRemainingCoverage:
             return "ok"
 
         # Mocking isinstance to force true for our mock object since we can't easily instantiate discord.Message
-        with patch("mods.revocord.shared.hasattr", side_effect=fake_hasattr), \
-             patch("mods.revocord.shared.isinstance", return_value=True):
-             # Also need to make sure `ctx.channel` is retrievable even if hasattr returned false
-             # By default a magic mock will return something for ctx.channel
-             mock_ctx = MagicMock()
-             mock_ctx.channel.typing = MagicMock()
-             res = await func(mock_ctx)
-             assert res == "ok"
-             mock_ctx.channel.typing.assert_called_once()
+        with (
+            patch("mods.revocord.shared.hasattr", side_effect=fake_hasattr),
+            patch("mods.revocord.shared.isinstance", return_value=True),
+        ):
+            # Also need to make sure `ctx.channel` is retrievable even if hasattr returned false
+            # By default a magic mock will return something for ctx.channel
+            mock_ctx = MagicMock()
+            mock_ctx.channel.typing = MagicMock()
+            res = await func(mock_ctx)
+            assert res == "ok"
+            mock_ctx.channel.typing.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_with_typing_indicator_no_typing(self) -> None:

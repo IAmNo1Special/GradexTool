@@ -47,21 +47,21 @@ class TestHealthCogMethods:
         """Test that HealthCog has _heartbeat_loop method."""
         cog = HealthCog(mock_bot)
 
-        assert hasattr(cog, '_heartbeat_loop')
+        assert hasattr(cog, "_heartbeat_loop")
         assert callable(cog._heartbeat_loop)
 
     def test_cog_has_sleep_method(self, mock_bot: Any) -> None:
         """Test that HealthCog has _sleep method."""
         cog = HealthCog(mock_bot)
 
-        assert hasattr(cog, '_sleep')
+        assert hasattr(cog, "_sleep")
         assert callable(cog._sleep)
 
     def test_cog_has_cog_unload(self, mock_bot: Any) -> None:
         """Test that HealthCog has cog_unload method."""
         cog = HealthCog(mock_bot)
 
-        assert hasattr(cog, 'cog_unload')
+        assert hasattr(cog, "cog_unload")
         assert callable(cog.cog_unload)
 
 
@@ -110,21 +110,23 @@ class TestHealthCogIntegration:
 # timing issues and Discord library dependencies. The structural tests
 # provide good coverage of the health monitoring functionality.
 
-class TestHealthCogLogic:
 
+class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_spawn_background_task_success(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
+
         async def my_task() -> int:
             return 42
 
         task = cog._spawn_background_task(my_task())
         await task
-        assert task.result() is None # wrapper returns None
+        assert task.result() is None  # wrapper returns None
 
     @pytest.mark.asyncio
     async def test_spawn_background_task_cancelled(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
+
         async def my_task() -> None:
             raise asyncio.CancelledError()
 
@@ -132,8 +134,11 @@ class TestHealthCogLogic:
         await task
 
     @pytest.mark.asyncio
-    async def test_spawn_background_task_exception_no_handler(self, mock_bot: Any) -> None:
+    async def test_spawn_background_task_exception_no_handler(
+        self, mock_bot: Any
+    ) -> None:
         cog = HealthCog(mock_bot)
+
         async def my_task() -> None:
             raise Exception("Fail")
 
@@ -143,8 +148,11 @@ class TestHealthCogLogic:
             mock_logger.error.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_spawn_background_task_exception_with_handler(self, mock_bot: Any) -> None:
+    async def test_spawn_background_task_exception_with_handler(
+        self, mock_bot: Any
+    ) -> None:
         cog = HealthCog(mock_bot)
+
         async def my_task() -> None:
             raise Exception("Fail")
 
@@ -180,7 +188,9 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     @patch("mods.core.health.logger")
     @patch("mods.core.health.time.monotonic")
-    async def test_heartbeat_loop(self, mock_monotonic: Any, mock_logger: Any, mock_bot: Any) -> None:
+    async def test_heartbeat_loop(
+        self, mock_monotonic: Any, mock_logger: Any, mock_bot: Any
+    ) -> None:
         cog = HealthCog(mock_bot)
         cog._start_time = 1000.0
 
@@ -190,8 +200,8 @@ class TestHealthCogLogic:
         # mock time to simulate 1h 1m 1s uptime -> 3661 seconds
         mock_monotonic.return_value = 4661.0
 
-        mock_bot.latency = 0.123 # 123ms
-        mock_bot.guilds = [1, 2, 3] # length 3
+        mock_bot.latency = 0.123  # 123ms
+        mock_bot.guilds = [1, 2, 3]  # length 3
 
         # mock sleep
         cog._sleep = AsyncMock()  # type: ignore[method-assign]
@@ -200,8 +210,7 @@ class TestHealthCogLogic:
 
         mock_bot.wait_until_ready.assert_called_once()
         mock_logger.info.assert_called_once_with(
-            "Heartbeat: uptime=%dh%dm%ds, guilds=%d, latency=%dms",
-            1, 1, 1, 3, 123
+            "Heartbeat: uptime=%dh%dm%ds, guilds=%d, latency=%dms", 1, 1, 1, 3, 123
         )
         cog._sleep.assert_called_once_with(300)
 
@@ -214,7 +223,9 @@ class TestHealthCogLogic:
 
     @pytest.mark.asyncio
     @patch("mods.core.health.asyncio.sleep")
-    async def test_sleep_cancelled(self, mock_asyncio_sleep: Any, mock_bot: Any) -> None:
+    async def test_sleep_cancelled(
+        self, mock_asyncio_sleep: Any, mock_bot: Any
+    ) -> None:
         mock_asyncio_sleep.side_effect = asyncio.CancelledError()
         cog = HealthCog(mock_bot)
         # Should catch CancelledError and not raise

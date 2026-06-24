@@ -32,8 +32,8 @@ class TestIsProTamer:
         mock_bot.get_guild.return_value = mock_guild
 
         # Mock the config to include the role ID
-        with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
-            with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.PRO_TAMER_ROLE_IDS", [111222333]):
+            with patch("utils.helpers.GRA_GUILD_ID", 123456789):
                 result = is_pro_tamer(mock_bot, mock_member)
                 assert result is True
 
@@ -52,8 +52,8 @@ class TestIsProTamer:
         mock_bot.get_guild.return_value = mock_guild
 
         # Mock the config to not include the role ID
-        with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
-            with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.PRO_TAMER_ROLE_IDS", [111222333]):
+            with patch("utils.helpers.GRA_GUILD_ID", 123456789):
                 result = is_pro_tamer(mock_bot, mock_member)
                 assert result is False
 
@@ -64,7 +64,7 @@ class TestIsProTamer:
 
         mock_bot.get_guild.return_value = None
 
-        with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.GRA_GUILD_ID", 123456789):
             result = is_pro_tamer(mock_bot, mock_member)
             assert result is False
 
@@ -81,7 +81,7 @@ class TestIsProTamer:
         mock_guild.get_member.return_value = None
         mock_bot.get_guild.return_value = mock_guild
 
-        with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.GRA_GUILD_ID", 123456789):
             result = is_pro_tamer(mock_bot, mock_member)
             assert result is False
 
@@ -100,8 +100,8 @@ class TestIsProTamer:
         mock_bot.get_guild.return_value = mock_guild
 
         # Mock the config to include multiple pro role IDs
-        with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333, 222333444]):
-            with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.PRO_TAMER_ROLE_IDS", [111222333, 222333444]):
+            with patch("utils.helpers.GRA_GUILD_ID", 123456789):
                 result = is_pro_tamer(mock_bot, mock_member)
                 assert result is True
 
@@ -119,8 +119,8 @@ class TestIsProTamer:
         mock_guild.get_member.return_value = mock_member
         mock_bot.get_guild.return_value = mock_guild
 
-        with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
-            with patch('utils.helpers.GRA_GUILD_ID', 123456789):
+        with patch("utils.helpers.PRO_TAMER_ROLE_IDS", [111222333]):
+            with patch("utils.helpers.GRA_GUILD_ID", 123456789):
                 result = is_pro_tamer(mock_bot, mock_member)
                 assert result is False
 
@@ -142,14 +142,14 @@ class TestUserCheck:
         mock_users_table.add_user = AsyncMock()
 
         # Mock is_pro_tamer to return True
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was added with pro status
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
-                assert call_args[1]['is_pro'] == 1
+                assert call_args[1]["is_pro"] == 1
 
     @pytest.mark.asyncio
     async def test_user_check_new_user_non_pro_status(self, mock_bot: Any) -> None:
@@ -165,17 +165,19 @@ class TestUserCheck:
         mock_users_table.add_user = AsyncMock()
 
         # Mock is_pro_tamer to return False
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was added without pro status
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
-                assert call_args[1]['is_pro'] == 0
+                assert call_args[1]["is_pro"] == 0
 
     @pytest.mark.asyncio
-    async def test_user_check_existing_user_pro_status_change(self, mock_bot: Any) -> None:
+    async def test_user_check_existing_user_pro_status_change(
+        self, mock_bot: Any
+    ) -> None:
         """Test user_check updates existing user when pro status changes."""
         # Create mock member
         mock_member = MagicMock(spec=discord.Member)
@@ -184,21 +186,36 @@ class TestUserCheck:
 
         # Mock database with existing user (non-pro)
         mock_users_table = AsyncMock()
-        mock_users_table.get_user.return_value = [987654321, "TestUser", 0, None, 0, 0, 0, 0, 0, 0, 0, 0]
+        mock_users_table.get_user.return_value = [
+            987654321,
+            "TestUser",
+            0,
+            None,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
         mock_users_table.update_user = AsyncMock()
 
         # Mock is_pro_tamer to return True (status changed)
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was updated with new pro status
                 mock_users_table.update_user.assert_called_once()
                 call_args = mock_users_table.update_user.call_args
-                assert call_args[1]['is_pro'] == 1
+                assert call_args[1]["is_pro"] == 1
 
     @pytest.mark.asyncio
-    async def test_user_check_existing_user_no_status_change(self, mock_bot: Any) -> None:
+    async def test_user_check_existing_user_no_status_change(
+        self, mock_bot: Any
+    ) -> None:
         """Test user_check doesn't update when pro status unchanged."""
         # Create mock member
         mock_member = MagicMock(spec=discord.Member)
@@ -207,12 +224,25 @@ class TestUserCheck:
 
         # Mock database with existing user (non-pro)
         mock_users_table = AsyncMock()
-        mock_users_table.get_user.return_value = [987654321, "TestUser", 0, None, 0, 0, 0, 0, 0, 0, 0, 0]
+        mock_users_table.get_user.return_value = [
+            987654321,
+            "TestUser",
+            0,
+            None,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        ]
         mock_users_table.update_user = AsyncMock()
 
         # Mock is_pro_tamer to return False (status unchanged)
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was not updated
@@ -231,21 +261,21 @@ class TestUserCheck:
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
 
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify all default values were set
                 call_args = mock_users_table.add_user.call_args
-                assert call_args[1]['wallet_connected'] == 0
-                assert call_args[1]['wallet_address'] == ""
-                assert call_args[1]['is_certified'] == 0
-                assert call_args[1]['experience_points'] == 0
-                assert call_args[1]['battle_points'] == 0
-                assert call_args[1]['victory_points'] == 0
-                assert call_args[1]['wins'] == 0
-                assert call_args[1]['losses'] == 0
-                assert call_args[1]['draws'] == 0
+                assert call_args[1]["wallet_connected"] == 0
+                assert call_args[1]["wallet_address"] == ""
+                assert call_args[1]["is_certified"] == 0
+                assert call_args[1]["experience_points"] == 0
+                assert call_args[1]["battle_points"] == 0
+                assert call_args[1]["victory_points"] == 0
+                assert call_args[1]["wins"] == 0
+                assert call_args[1]["losses"] == 0
+                assert call_args[1]["draws"] == 0
 
 
 class TestRespond:
@@ -265,13 +295,13 @@ class TestRespond:
         mock_embed = MagicMock(spec=discord.Embed)
 
         # Mock is_pro_tamer to return True
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
 
             # Verify embed was sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert call_args[1]['embed'] == mock_embed
+            assert call_args[1]["embed"] == mock_embed
 
     @pytest.mark.asyncio
     async def test_respond_in_dm_with_non_pro_user(self, mock_bot: Any) -> None:
@@ -287,13 +317,13 @@ class TestRespond:
         mock_embed = MagicMock(spec=discord.Embed)
 
         # Mock is_pro_tamer to return False
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
             await respond(mock_bot, mock_message, embed=mock_embed)
 
             # Verify error message was sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert "Pro or Pro+ Tamer" in call_args[1]['content']
+            assert "Pro or Pro+ Tamer" in call_args[1]["content"]
             # Verify the reply message deletion was set up
             assert mock_message.author.send.return_value.delete.called
 
@@ -310,7 +340,7 @@ class TestRespond:
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
 
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
 
             # Verify message was deleted
@@ -318,7 +348,7 @@ class TestRespond:
             # Verify embed was sent via DM
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert call_args[1]['embed'] == mock_embed
+            assert call_args[1]["embed"] == mock_embed
 
     @pytest.mark.asyncio
     async def test_respond_with_view(self, mock_bot: Any) -> None:
@@ -334,14 +364,14 @@ class TestRespond:
         mock_embed = MagicMock(spec=discord.Embed)
         mock_view = MagicMock(spec=discord.ui.View)
 
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed, buttons=mock_view)
 
             # Verify both embed and view were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert call_args[1]['embed'] == mock_embed
-            assert call_args[1]['view'] == mock_view
+            assert call_args[1]["embed"] == mock_embed
+            assert call_args[1]["view"] == mock_view
 
     @pytest.mark.asyncio
     async def test_respond_with_file(self, mock_bot: Any) -> None:
@@ -357,14 +387,14 @@ class TestRespond:
         mock_embed = MagicMock(spec=discord.Embed)
         mock_file = MagicMock(spec=discord.File)
 
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed, file=mock_file)
 
             # Verify embed and file were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert call_args[1]['embed'] == mock_embed
-            assert call_args[1]['file'] == mock_file
+            assert call_args[1]["embed"] == mock_embed
+            assert call_args[1]["file"] == mock_file
 
     @pytest.mark.asyncio
     async def test_respond_with_all_parameters(self, mock_bot: Any) -> None:
@@ -381,15 +411,21 @@ class TestRespond:
         mock_view = MagicMock(spec=discord.ui.View)
         mock_file = MagicMock(spec=discord.File)
 
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
-            await respond(mock_bot, mock_message, embed=mock_embed, buttons=mock_view, file=mock_file)
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
+            await respond(
+                mock_bot,
+                mock_message,
+                embed=mock_embed,
+                buttons=mock_view,
+                file=mock_file,
+            )
 
             # Verify all parameters were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
-            assert call_args[1]['embed'] == mock_embed
-            assert call_args[1]['view'] == mock_view
-            assert call_args[1]['file'] == mock_file
+            assert call_args[1]["embed"] == mock_embed
+            assert call_args[1]["view"] == mock_view
+            assert call_args[1]["file"] == mock_file
 
     @pytest.mark.asyncio
     async def test_respond_guild_with_pro_check(self, mock_bot: Any) -> None:
@@ -405,7 +441,7 @@ class TestRespond:
         mock_embed = MagicMock(spec=discord.Embed)
 
         # Mock is_pro_tamer - it should be called but result shouldn't matter in guild
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
 
             # Verify message was deleted and DM sent
@@ -429,14 +465,14 @@ class TestHelpersEdgeCases:
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
 
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
-            with patch('utils.helpers.UsersTable', return_value=mock_users_table):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
+            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Should handle long username
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
-                assert call_args[1]['username'] == "A" * 100
+                assert call_args[1]["username"] == "A" * 100
 
     @pytest.mark.asyncio
     async def test_respond_with_none_embed(self, mock_bot: Any) -> None:
@@ -448,14 +484,16 @@ class TestHelpersEdgeCases:
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
 
-        with patch('utils.helpers.is_pro_tamer', return_value=True):
+        with patch("utils.helpers.is_pro_tamer", return_value=True):
             await respond(mock_bot, mock_message, embed=None)
 
             # Should handle None embed
             mock_message.author.send.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_respond_in_guild_without_pro_check_bypass(self, mock_bot: Any) -> None:
+    async def test_respond_in_guild_without_pro_check_bypass(
+        self, mock_bot: Any
+    ) -> None:
         """Test respond in guild still sends DM even to non-pro users."""
         # Create mock message (from guild)
         mock_message = MagicMock(spec=discord.Message)
@@ -467,7 +505,7 @@ class TestHelpersEdgeCases:
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
 
-        with patch('utils.helpers.is_pro_tamer', return_value=False):
+        with patch("utils.helpers.is_pro_tamer", return_value=False):
             await respond(mock_bot, mock_message, embed=mock_embed)
 
             # Even non-pro users in guild should get DM

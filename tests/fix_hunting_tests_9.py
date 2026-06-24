@@ -6,34 +6,34 @@ with open(path, encoding="utf-8") as f:
 
 # 1. test_on_timeout_success & test_on_timeout_exception
 text = text.replace(
-    '        view.message = mock_message\n        \n        await view.on_timeout()',
-    '        view.message = mock_message\n        mock_message.embeds = [MagicMock()]\n        await view.on_timeout()'
+    "        view.message = mock_message\n        \n        await view.on_timeout()",
+    "        view.message = mock_message\n        mock_message.embeds = [MagicMock()]\n        await view.on_timeout()",
 )
 text = text.replace(
-    '        view.message = mock_message\n        await view.on_timeout()',
-    '        view.message = mock_message\n        mock_message.embeds = [MagicMock()]\n        await view.on_timeout()'
+    "        view.message = mock_message\n        await view.on_timeout()",
+    "        view.message = mock_message\n        mock_message.embeds = [MagicMock()]\n        await view.on_timeout()",
 )
 
 # 2. test_spawn_catch_menu_with_orbs
 text = text.replace(
-    '        mock_interaction.message.id = 100\n        await cog.on_interaction(mock_interaction)',
-    '        mock_interaction.message.id = 100\n        mock_interaction.message.embeds = [MagicMock()]\n        cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]\n        await cog.on_interaction(mock_interaction)'
+    "        mock_interaction.message.id = 100\n        await cog.on_interaction(mock_interaction)",
+    '        mock_interaction.message.id = 100\n        mock_interaction.message.embeds = [MagicMock()]\n        cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]\n        await cog.on_interaction(mock_interaction)',
 )
 
 # 3. test_handle_wilds_claim
 text = text.replace(
-    '    async def test_handle_wilds_claim(self, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:',
-    '    @patch("mods.revocord.hunting.save_active_encounter", new_callable=AsyncMock)\n    async def test_handle_wilds_claim(self, mock_save: Any, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:'
+    "    async def test_handle_wilds_claim(self, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:",
+    '    @patch("mods.revocord.hunting.save_active_encounter", new_callable=AsyncMock)\n    async def test_handle_wilds_claim(self, mock_save: Any, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:',
 )
 
 # 4. test_no_eligible
 text = text.replace(
     '    @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)\n    async def test_no_eligible(self, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:',
-    '    @patch("mods.revocord.hunting.get_guild_biome", return_value="Plains")\n    @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)\n    async def test_no_eligible(self, mock_get_account: Any, mock_biome: Any, cog: HuntingCog, mock_interaction: Any) -> None:'
+    '    @patch("mods.revocord.hunting.get_guild_biome", return_value="Plains")\n    @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)\n    async def test_no_eligible(self, mock_get_account: Any, mock_biome: Any, cog: HuntingCog, mock_interaction: Any) -> None:',
 )
 
 # 5. test_cleanup_encounters
-cleanup_fix = '''    @pytest.mark.asyncio
+cleanup_fix = """    @pytest.mark.asyncio
     async def test_cleanup_encounters(self, mock_bot: Any) -> None:
         cog = HuntingCog(mock_bot)
         mock_msg = MagicMock()
@@ -58,11 +58,11 @@ cleanup_fix = '''    @pytest.mark.asyncio
 
         await cog.cleanup_encounters()
         mock_msg.delete.assert_called_once()
-'''
+"""
 text = re.sub(
-    r'    @pytest\.mark\.asyncio\n    async def test_cleanup_encounters\(self.*?\):[\s\S]*',
+    r"    @pytest\.mark\.asyncio\n    async def test_cleanup_encounters\(self.*?\):[\s\S]*",
     cleanup_fix,
-    text
+    text,
 )
 
 with open(path, "w", encoding="utf-8") as f:

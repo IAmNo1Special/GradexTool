@@ -10,6 +10,7 @@ from data import EventBoardLogsTable
 
 logger = logging.getLogger("discord_bot")
 
+
 async def broadcast_encounter(
     bot: commands.Bot,
     user: discord.Member,
@@ -17,7 +18,7 @@ async def broadcast_encounter(
     mon_id: str,
     rarity: str,
     is_shiny: bool,
-    embed: discord.Embed
+    embed: discord.Embed,
 ) -> int:
     """Broadcasts a notable encounter to the #event-board.
 
@@ -41,14 +42,16 @@ async def broadcast_encounter(
         broadcast_embed = discord.Embed(
             title="🚨 WILD ENCOUNTER ALARM!",
             description=f"**{user.display_name}** has just encountered a wild {shiny_tag}**{mon_name.title()}**!",
-            color=0xffaa00 if is_shiny else 0xff0000
+            color=0xFFAA00 if is_shiny else 0xFF0000,
         )
         broadcast_embed.set_thumbnail(url=user.display_avatar.url)
 
         # Extract attributes from the passed-in encounter card
         for field in embed.fields:
             if field.name in ["Ability", "Nature", "IVs"]:
-                broadcast_embed.add_field(name=field.name, value=field.value, inline=field.inline)
+                broadcast_embed.add_field(
+                    name=field.name, value=field.value, inline=field.inline
+                )
 
         # Extract RC-ID from the footer
         footer_text = embed.footer.text if embed.footer and embed.footer.text else ""
@@ -66,7 +69,14 @@ async def broadcast_encounter(
                 INSERT INTO event_board_logs (message_id, user_id, revomon_id, is_shiny, outcome, timestamp)
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (msg.id, user.id, int(mon_id), 1 if is_shiny else 0, "Battling", int(time.time()))
+                (
+                    msg.id,
+                    user.id,
+                    int(mon_id),
+                    1 if is_shiny else 0,
+                    "Battling",
+                    int(time.time()),
+                ),
             )
             await conn.commit()
 
@@ -76,11 +86,9 @@ async def broadcast_encounter(
         logger.error(f"Failed to broadcast encounter: {e}", exc_info=True)
         return 0
 
+
 async def update_encounter_broadcast(
-    guild: discord.Guild,
-    event_msg_id: int,
-    outcome: str,
-    color: int
+    guild: discord.Guild, event_msg_id: int, outcome: str, color: int
 ) -> None:
     """Updates the public event board message with the outcome (Caught/Fled/Ran)."""
     if not event_msg_id:
@@ -103,7 +111,9 @@ async def update_encounter_broadcast(
         if outcome == "Caught":
             embed.description = desc + "\n\n✅ **OUTCOME:** Captured successfully!"
         elif outcome == "Fled":
-            embed.description = desc + "\n\n💨 **OUTCOME:** The Revomon broke free and fled!"
+            embed.description = (
+                desc + "\n\n💨 **OUTCOME:** The Revomon broke free and fled!"
+            )
         elif outcome == "Ran":
             embed.description = desc + "\n\n🏃 **OUTCOME:** The trainer ran away!"
 
@@ -117,7 +127,7 @@ async def update_encounter_broadcast(
             cursor = await conn.cursor()
             await cursor.execute(
                 "UPDATE event_board_logs SET outcome = ? WHERE message_id = ?",
-                (outcome, event_msg_id)
+                (outcome, event_msg_id),
             )
             await conn.commit()
 

@@ -48,7 +48,9 @@ async def img_url_to_emoji_size(img_url: str) -> bytes:
                 return b""
 
 
-async def create_application_emoji(image_data: bytes, emoji_name: str) -> dict[str, str]:
+async def create_application_emoji(
+    image_data: bytes, emoji_name: str
+) -> dict[str, str]:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis"
     headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",

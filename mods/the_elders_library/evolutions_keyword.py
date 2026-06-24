@@ -100,7 +100,9 @@ class evolutions(commands.Cog):  # noqa: N801
             custom_id="Evolution Page 2",
         )
         async def page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             page2_embed = discord.Embed(
                 title="Full Evolutions List Pt.2",
@@ -187,7 +189,9 @@ Azuroon	(Final Evolution)""",
             custom_id="Evolution Page 3",
         )
         async def page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             page3_embed = discord.Embed(
                 title="Full Evolutions List Pt.3",
@@ -214,10 +218,11 @@ Azuroon	(Final Evolution)""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()

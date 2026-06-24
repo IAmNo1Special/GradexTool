@@ -36,12 +36,12 @@ class TestTravelButtonViewButtons:
 
         hunt_button = None
         for child in view.children:
-            if hasattr(child, 'custom_id') and 'hunt' in child.custom_id:
+            if hasattr(child, "custom_id") and "hunt" in child.custom_id:
                 hunt_button = child
                 break
 
         assert hunt_button is not None
-        assert hasattr(hunt_button, 'callback')
+        assert hasattr(hunt_button, "callback")
 
 
 class TestShopSelectInitialization:
@@ -97,7 +97,7 @@ class TestShopSelectCallback:
     def test_shop_select_callback_exists(self) -> None:
         """Test that shop select callback exists."""
         select = ShopSelect()
-        assert hasattr(select, 'callback')
+        assert hasattr(select, "callback")
         assert callable(select.callback)
 
 
@@ -139,12 +139,12 @@ class TestRestButtonViewButtons:
 
         rest_button = None
         for child in view.children:
-            if hasattr(child, 'custom_id') and 'rest' in child.custom_id:
+            if hasattr(child, "custom_id") and "rest" in child.custom_id:
                 rest_button = child
                 break
 
         assert rest_button is not None
-        assert hasattr(rest_button, 'callback')
+        assert hasattr(rest_button, "callback")
 
     def test_shop_button_exists(self) -> None:
         """Test that shop button exists in the view."""
@@ -152,12 +152,12 @@ class TestRestButtonViewButtons:
 
         shop_button = None
         for child in view.children:
-            if hasattr(child, 'custom_id') and 'shop' in child.custom_id:
+            if hasattr(child, "custom_id") and "shop" in child.custom_id:
                 shop_button = child
                 break
 
         assert shop_button is not None
-        assert hasattr(shop_button, 'callback')
+        assert hasattr(shop_button, "callback")
 
 
 class TestRouteAITrainerViewInitialization:
@@ -180,12 +180,12 @@ class TestRouteAITrainerViewButtons:
 
         battle_button = None
         for child in view.children:
-            if hasattr(child, 'custom_id') and 'battle' in child.custom_id:
+            if hasattr(child, "custom_id") and "battle" in child.custom_id:
                 battle_button = child
                 break
 
         assert battle_button is not None
-        assert hasattr(battle_button, 'callback')
+        assert hasattr(battle_button, "callback")
 
 
 class TestActivityViewIntegration:
@@ -201,16 +201,16 @@ class TestActivityViewIntegration:
         ]
 
         for view in views_to_test:
-            assert hasattr(view, 'children')
+            assert hasattr(view, "children")
             assert isinstance(view, discord.ui.View)
 
     def test_all_views_have_required_components(self) -> None:
         """Test that all views have the required UI components."""
         views_to_test = [
             (TravelButtonView(), 1),  # Should have 2 buttons
-            (ShopSelectView(), 1),    # Should have 1 select
-            (RestButtonView(), 2),    # Should have 2 buttons
-            (RouteAITrainerView(), 1), # Should have 2 buttons
+            (ShopSelectView(), 1),  # Should have 1 select
+            (RestButtonView(), 2),  # Should have 2 buttons
+            (RouteAITrainerView(), 1),  # Should have 2 buttons
         ]
 
         for view, expected_children in views_to_test:
@@ -225,7 +225,11 @@ class TestTravelButtonViewCallbacks:
         view = TravelButtonView()
         mock_interaction.client.get_cog = MagicMock(return_value=None)
 
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_hunt_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_hunt_button"
+        ][0]
         await button.callback(mock_interaction)
 
         mock_interaction.response.defer.assert_called_once()
@@ -241,13 +245,15 @@ class TestTravelButtonViewCallbacks:
         mock_cog.spawn_wild_revomon = AsyncMock()
         mock_interaction.client.get_cog = MagicMock(return_value=mock_cog)
 
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_hunt_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_hunt_button"
+        ][0]
         await button.callback(mock_interaction)
 
         mock_interaction.response.defer.assert_called_once()
         mock_cog.spawn_wild_revomon.assert_called_once_with(mock_interaction)
-
-
 
 
 class TestShopSelectCallbackLogic:
@@ -256,19 +262,27 @@ class TestShopSelectCallbackLogic:
     @pytest.mark.asyncio
     async def test_shop_select_invalid_orb(self, mock_interaction: Any) -> None:
         select = ShopSelect()
-        with patch.object(ShopSelect, "values", new_callable=PropertyMock, return_value=["999"]):
+        with patch.object(
+            ShopSelect, "values", new_callable=PropertyMock, return_value=["999"]
+        ):
             await select.callback(mock_interaction)
 
             mock_interaction.response.defer.assert_called_once_with(ephemeral=True)
-            mock_interaction.followup.send.assert_called_once_with("❌ Invalid selection.", ephemeral=True)
+            mock_interaction.followup.send.assert_called_once_with(
+                "❌ Invalid selection.", ephemeral=True
+            )
 
     @pytest.mark.asyncio
     @patch("mods.revocord.activity.get_or_create_account")
-    async def test_shop_select_insufficient_funds(self, mock_get_account: Any, mock_interaction: Any) -> None:
+    async def test_shop_select_insufficient_funds(
+        self, mock_get_account: Any, mock_interaction: Any
+    ) -> None:
         select = ShopSelect()
         mock_get_account.return_value = {"coins": 50}
 
-        with patch.object(ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]):
+        with patch.object(
+            ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]
+        ):
             await select.callback(mock_interaction)
 
             mock_interaction.followup.send.assert_called_once()
@@ -278,17 +292,19 @@ class TestShopSelectCallbackLogic:
     @pytest.mark.asyncio
     @patch("mods.revocord.activity.get_or_create_account")
     @patch("mods.revocord.activity.update_account")
-    async def test_shop_select_success(self, mock_update: Any, mock_get_account: Any, mock_interaction: Any) -> None:
+    async def test_shop_select_success(
+        self, mock_update: Any, mock_get_account: Any, mock_interaction: Any
+    ) -> None:
         select = ShopSelect()
         mock_get_account.return_value = {"coins": 500, "inventory": {"159": 1}}
 
-        with patch.object(ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]):
+        with patch.object(
+            ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]
+        ):
             await select.callback(mock_interaction)
 
             mock_update.assert_called_once_with(
-                mock_interaction.user.id,
-                coins=300,
-                inventory={"159": 2}
+                mock_interaction.user.id, coins=300, inventory={"159": 2}
             )
             mock_interaction.followup.send.assert_called_once()
             args, kwargs = mock_interaction.followup.send.call_args
@@ -300,23 +316,37 @@ class TestRestButtonViewCallbacks:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.activity.get_or_create_account")
-    async def test_rest_button_already_full(self, mock_get_account: Any, mock_interaction: Any) -> None:
+    async def test_rest_button_already_full(
+        self, mock_get_account: Any, mock_interaction: Any
+    ) -> None:
         view = RestButtonView()
         mock_get_account.return_value = {"energy": 100, "max_energy": 100}
 
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_rest_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_rest_button"
+        ][0]
         await button.callback(mock_interaction)
 
-        mock_interaction.followup.send.assert_called_once_with("You are already fully rested!", ephemeral=True)
+        mock_interaction.followup.send.assert_called_once_with(
+            "You are already fully rested!", ephemeral=True
+        )
 
     @pytest.mark.asyncio
     @patch("mods.revocord.activity.get_or_create_account")
     @patch("mods.revocord.activity.update_account")
-    async def test_rest_button_success(self, mock_update: Any, mock_get_account: Any, mock_interaction: Any) -> None:
+    async def test_rest_button_success(
+        self, mock_update: Any, mock_get_account: Any, mock_interaction: Any
+    ) -> None:
         view = RestButtonView()
         mock_get_account.return_value = {"energy": 50, "max_energy": 100}
 
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_rest_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_rest_button"
+        ][0]
         await button.callback(mock_interaction)
 
         mock_update.assert_called_once_with(mock_interaction.user.id, energy=100)
@@ -326,11 +356,17 @@ class TestRestButtonViewCallbacks:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.activity.get_or_create_account")
-    async def test_shop_button(self, mock_get_account: Any, mock_interaction: Any) -> None:
+    async def test_shop_button(
+        self, mock_get_account: Any, mock_interaction: Any
+    ) -> None:
         view = RestButtonView()
         mock_get_account.return_value = {"coins": 1000}
 
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_shop_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_shop_button"
+        ][0]
         await button.callback(mock_interaction)
 
         mock_interaction.response.send_message.assert_called_once()
@@ -346,14 +382,16 @@ class TestRouteAITrainerViewCallbacks:
     @pytest.mark.asyncio
     async def test_battle_button(self, mock_interaction: Any) -> None:
         view = RouteAITrainerView()
-        button = [x for x in view.children if getattr(x, "custom_id", "") == "persistent_battle_button"][0]
+        button = [
+            x
+            for x in view.children
+            if getattr(x, "custom_id", "") == "persistent_battle_button"
+        ][0]
 
         await button.callback(mock_interaction)
         mock_interaction.response.send_message.assert_called_once_with(
             "The Battle system is not yet implemented! 🚧", ephemeral=True
         )
-
-
 
 
 class TestActivityCog:
@@ -362,6 +400,7 @@ class TestActivityCog:
     @pytest.mark.asyncio
     async def test_cog_load(self, mock_bot: Any) -> None:
         from mods.revocord.activity import ActivityCog
+
         cog = ActivityCog(mock_bot)
 
         await cog.cog_load()
@@ -370,5 +409,6 @@ class TestActivityCog:
     @pytest.mark.asyncio
     async def test_setup(self, mock_bot: Any) -> None:
         from mods.revocord.activity import setup
+
         await setup(mock_bot)
         mock_bot.add_cog.assert_called_once()

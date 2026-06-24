@@ -5,13 +5,9 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix the placement of the fixture
-text = re.sub(
-    r'(@pytest\.fixture\(autouse=True\)[\s\S]*?yield\n)',
-    '',
-    text
-)
+text = re.sub(r"(@pytest\.fixture\(autouse=True\)[\s\S]*?yield\n)", "", text)
 
-fixture_code = '''
+fixture_code = """
 @pytest.fixture(autouse=True)
 def mock_db_and_broadcast():
     with patch("mods.revocord.hunting.update_encounter_broadcast", new_callable=AsyncMock), \\
@@ -20,9 +16,9 @@ def mock_db_and_broadcast():
          patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock, return_value={}), \\
          patch("mods.revocord.hunting.broadcast_encounter", new_callable=AsyncMock):
         yield
-'''
+"""
 
-text = re.sub(r'(import pytest\n)', r'\1' + fixture_code, text)
+text = re.sub(r"(import pytest\n)", r"\1" + fixture_code, text)
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(text)

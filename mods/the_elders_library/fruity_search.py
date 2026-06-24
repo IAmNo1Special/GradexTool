@@ -49,7 +49,6 @@ class fruity_search(commands.Cog):  # noqa: N801
                 Button: discord.ui.Button[Any],  # noqa: N803
             ) -> None:
                 if interaction.message:
-
                     await interaction.message.delete()
 
         # Ignore messages from bots (including self)
@@ -59,10 +58,13 @@ class fruity_search(commands.Cog):  # noqa: N801
         try:
             prompt = message.content.lower().strip()
             if prompt in await FruitysTable().get_names():
-                embed = fruity_search_embed(prompt)
+                embed = await fruity_search_embed(prompt)
                 buttons = fruity_search_buttons()
                 await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons  # type: ignore[arg-type]
+                    self.gradex,
+                    message=message,
+                    embed=embed,
+                    buttons=buttons,
                 )
         except Exception as e:
             print(f"An error occurred during 'fruity_search' on_message: {e}")

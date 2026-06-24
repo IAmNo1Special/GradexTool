@@ -26,14 +26,22 @@ class TestRevomonSearch:
         assert "The Elder's Library(Revomon Search) is ready!" in captured.out
         assert "---------------------------" in captured.out
 
-    @patch('mods.the_elders_library.revomon_search.RevomonTable')
-    @patch('mods.the_elders_library.revomon_search.Buttons')
-    @patch('mods.the_elders_library.revomon_search.get_attributes', new_callable=AsyncMock)
-    @patch('mods.the_elders_library.revomon_search.compare_intros')
-    @patch('mods.the_elders_library.revomon_search.respond')
+    @patch("mods.the_elders_library.revomon_search.RevomonTable")
+    @patch("mods.the_elders_library.revomon_search.Buttons")
+    @patch(
+        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
+    )
+    @patch("mods.the_elders_library.revomon_search.compare_intros")
+    @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
     async def test_on_message_compare(
-        self, mock_respond: Any, mock_compare_intros: Any, mock_get_attributes: Any, mock_buttons_class: Any, mock_revomon_table: Any, revomon_search_cog: Any
+        self,
+        mock_respond: Any,
+        mock_compare_intros: Any,
+        mock_get_attributes: Any,
+        mock_buttons_class: Any,
+        mock_revomon_table: Any,
+        revomon_search_cog: Any,
     ) -> None:
         message = MagicMock(spec=Message)
         message.author.bot = False
@@ -43,7 +51,9 @@ class TestRevomonSearch:
         mock_revomon_table_instance.get_names = AsyncMock(return_value=["mon1", "mon2"])
 
         mock_buttons_instance = AsyncMock()
-        mock_buttons_instance.compare_intros_view = AsyncMock(return_value="mock_compare_buttons")
+        mock_buttons_instance.compare_intros_view = AsyncMock(
+            return_value="mock_compare_buttons"
+        )
         mock_buttons_class.return_value = mock_buttons_instance
 
         mock_get_attributes.side_effect = ["attrs1", "attrs2"]
@@ -53,18 +63,35 @@ class TestRevomonSearch:
 
         mock_get_attributes.assert_any_call(revomon_name="mon1")
         mock_get_attributes.assert_any_call(revomon_name="mon2")
-        mock_compare_intros.assert_called_once_with(attributes="attrs1", attributes2="attrs2")
-        mock_buttons_instance.compare_intros_view.assert_called_once_with(attributes="attrs1", attributes2="attrs2")
-        mock_respond.assert_called_once_with(revomon_search_cog.gradex, message, "mock_compare_embed", "mock_compare_buttons")
+        mock_compare_intros.assert_called_once_with(
+            attributes="attrs1", attributes2="attrs2"
+        )
+        mock_buttons_instance.compare_intros_view.assert_called_once_with(
+            attributes="attrs1", attributes2="attrs2"
+        )
+        mock_respond.assert_called_once_with(
+            revomon_search_cog.gradex,
+            message,
+            "mock_compare_embed",
+            "mock_compare_buttons",
+        )
 
-    @patch('mods.the_elders_library.revomon_search.RevomonTable')
-    @patch('mods.the_elders_library.revomon_search.Buttons')
-    @patch('mods.the_elders_library.revomon_search.get_attributes', new_callable=AsyncMock)
-    @patch('mods.the_elders_library.revomon_search.intro')
-    @patch('mods.the_elders_library.revomon_search.respond')
+    @patch("mods.the_elders_library.revomon_search.RevomonTable")
+    @patch("mods.the_elders_library.revomon_search.Buttons")
+    @patch(
+        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
+    )
+    @patch("mods.the_elders_library.revomon_search.intro")
+    @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
     async def test_on_message_intro(
-        self, mock_respond: Any, mock_intro: Any, mock_get_attributes: Any, mock_buttons_class: Any, mock_revomon_table: Any, revomon_search_cog: Any
+        self,
+        mock_respond: Any,
+        mock_intro: Any,
+        mock_get_attributes: Any,
+        mock_buttons_class: Any,
+        mock_revomon_table: Any,
+        revomon_search_cog: Any,
     ) -> None:
         message = MagicMock(spec=Message)
         message.author.bot = False
@@ -85,7 +112,9 @@ class TestRevomonSearch:
         mock_get_attributes.assert_called_once_with(revomon_name="mon1")
         mock_intro.assert_called_once_with(attributes="attrs1")
         mock_buttons_instance.intro_view.assert_called_once_with(attributes="attrs1")
-        mock_respond.assert_called_once_with(revomon_search_cog.gradex, message, "mock_intro_embed", "mock_intro_buttons")
+        mock_respond.assert_called_once_with(
+            revomon_search_cog.gradex, message, "mock_intro_embed", "mock_intro_buttons"
+        )
 
     @pytest.mark.asyncio
     async def test_on_message_bot(self, revomon_search_cog: Any) -> None:
@@ -96,7 +125,9 @@ class TestRevomonSearch:
         await revomon_search_cog.on_message(message)
 
     @pytest.mark.asyncio
-    async def test_on_message_exception(self, revomon_search_cog: Any, capsys: Any) -> None:
+    async def test_on_message_exception(
+        self, revomon_search_cog: Any, capsys: Any
+    ) -> None:
         message = MagicMock(spec=Message)
         # Mocking an exception in author.bot check to trigger the try-except
         type(message.author).bot = property(lambda self: int("error"))

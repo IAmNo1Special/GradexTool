@@ -162,7 +162,11 @@ async def get_caught_revomon(
 
             if response.status_code == 429:
                 retry_after = _retry_after_seconds(response)
-                wait_time = retry_after if retry_after is not None else RATE_LIMIT_COOLDOWN_SECONDS
+                wait_time = (
+                    retry_after
+                    if retry_after is not None
+                    else RATE_LIMIT_COOLDOWN_SECONDS
+                )
                 last_status = "rate_limited"
                 await pacer.pause_all(wait_time)
                 logger.warning(

@@ -1,4 +1,3 @@
-
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_portal.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
@@ -17,8 +16,7 @@ new_test = """    @pytest.mark.asyncio
 """
 
 text = text.replace(
-    'class TestGameConsoleView:',
-    new_test + '\nclass TestGameConsoleView:'
+    "class TestGameConsoleView:", new_test + "\nclass TestGameConsoleView:"
 )
 
 with open(path, "w", encoding="utf-8") as f:

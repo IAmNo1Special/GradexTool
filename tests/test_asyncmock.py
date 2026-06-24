@@ -11,4 +11,5 @@ async def test_async_mock() -> None:
     res = await m()
     print("Type of res:", type(res), "Value:", res)
 
+
 asyncio.run(test_async_mock())

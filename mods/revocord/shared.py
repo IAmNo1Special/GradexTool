@@ -34,8 +34,6 @@ def get_lock() -> asyncio.Lock:
     return _accounts_lock
 
 
-
-
 WORLD_MAP = {
     "drassius city": ["route1"],
     "route1": ["drassius city", "marquis island"],
@@ -240,6 +238,7 @@ def with_typing_indicator[T](
             return await func(*args, **kwargs)
 
     return wrapper
+
 
 def build_text_view(content: str, *, accent_color: int | None = None) -> ui.LayoutView:
     """Build a V2 LayoutView containing a single Container with TextDisplay.

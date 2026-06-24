@@ -39,7 +39,6 @@ class Spawn(commands.Cog):
         ) -> None:
             """Handle the exit button click."""
             if interaction.message:
-
                 await interaction.message.delete()
 
     @commands.Cog.listener()

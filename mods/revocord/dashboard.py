@@ -29,7 +29,9 @@ class DashboardView(ui.View):
         custom_id="persistent_dashboard_profile",
         emoji="👤",
     )
-    async def profile(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def profile(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Display the user's character profile."""
         await interaction.response.defer(ephemeral=True)
         member = interaction.user
@@ -127,14 +129,20 @@ class DashboardView(ui.View):
         custom_id="persistent_dashboard_logout",
         emoji="🚪",
     )
-    async def logout(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
+    async def logout(
+        self, interaction: discord.Interaction, button: ui.Button[Any]
+    ) -> None:
         """Handle the dashboard logout button click."""
         await interaction.response.defer(ephemeral=True)
 
         channel = interaction.channel
         member = interaction.user
 
-        if not isinstance(member, discord.Member) or not isinstance(channel, discord.abc.GuildChannel) or not channel.category:
+        if (
+            not isinstance(member, discord.Member)
+            or not isinstance(channel, discord.abc.GuildChannel)
+            or not channel.category
+        ):
             await interaction.followup.send(
                 "❌ Error: Workspace structure not found.", ephemeral=True
             )

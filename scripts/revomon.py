@@ -217,7 +217,11 @@ async def _download_image(
 
             if response.status_code == 429:
                 retry_after = _retry_after_seconds(response)
-                wait_time = retry_after if retry_after is not None else RATE_LIMIT_COOLDOWN_SECONDS
+                wait_time = (
+                    retry_after
+                    if retry_after is not None
+                    else RATE_LIMIT_COOLDOWN_SECONDS
+                )
                 last_status = "rate_limited"
                 await pacer.pause_all(wait_time)
                 logger.warning(
@@ -353,7 +357,9 @@ async def _process_revomon_images(
                 _save_download_manifest(manifest)
 
 
-async def _download_revomon_images(revomon_data: list[dict[str, Any]]) -> dict[int, dict[str, bool]]:
+async def _download_revomon_images(
+    revomon_data: list[dict[str, Any]],
+) -> dict[int, dict[str, bool]]:
     """Download images for all revomons from revodex."""
     results: dict[int, dict[str, bool]] = {}
     manifest = _load_download_manifest()
@@ -399,7 +405,9 @@ async def _download_revomon_images(revomon_data: list[dict[str, Any]]) -> dict[i
     return results
 
 
-async def get_revomon_data(download_images: bool = False) -> list[dict[str, Any]] | None:
+async def get_revomon_data(
+    download_images: bool = False,
+) -> list[dict[str, Any]] | None:
     """Get revomon data from the official Revodex API.
 
     Returns:
@@ -624,19 +632,16 @@ class RevomonTable:
                             evo_tree = branch
                     type1: str = revomon["type1"].lower()
                     type1_img = f"https://app-v2.revomon.io/static/images/types/{type1.lower()}.png"
-                    type2: str | None = revomon["type2"].lower() if revomon["type2"] else None
+                    type2: str | None = (
+                        revomon["type2"].lower() if revomon["type2"] else None
+                    )
                     type2_img = (
                         f"https://app-v2.revomon.io/static/images/types/{type2.lower()}.png"
                         if type2
                         else None
                     )
                     types_info = await TypesTable().get_info(type1, type2)
-                    type_chart_img = (
-                        types_info[0][1]
-                        if types_info
-                        else None
-                    )
-
+                    type_chart_img = types_info[0][1] if types_info else None
 
                     # Base stats
                     hp = revomon["hp"]
@@ -996,7 +1001,9 @@ class RevomonTable:
         print(f"Got {len(names)} names")
         return names
 
-    def get_name_by_id(self, mon_id: int | None = None, dex_id: int | None = None) -> str:
+    def get_name_by_id(
+        self, mon_id: int | None = None, dex_id: int | None = None
+    ) -> str:
         """Returns the name of the Revomon with the given mon_id or dex_id."""
         print("Getting name...")
         # Connect to the database and create a cursor

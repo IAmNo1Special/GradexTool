@@ -41,6 +41,7 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 mon_info[27],
                 mon_info[28],
             ],
+            strict=True,
         )
     )
     ev_rewards_list = [
@@ -76,7 +77,19 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
         "base_spa": mon_info[12],
         "base_spd": mon_info[13],
         "base_spe": mon_info[14],
-        "total_stats": sum(filter(None, [mon_info[9], mon_info[10], mon_info[11], mon_info[12], mon_info[13], mon_info[14]])),
+        "total_stats": sum(
+            filter(
+                None,
+                [
+                    mon_info[9],
+                    mon_info[10],
+                    mon_info[11],
+                    mon_info[12],
+                    mon_info[13],
+                    mon_info[14],
+                ],
+            )
+        ),
         "spawn_loc1": None,
         "spawn_time1": None,
         "spawn_loc2": None,
@@ -91,13 +104,27 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 mon_dex_id=mon_info[0]
             )
         ],
-        "cdex_tier": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][4],
-        "cdex_description": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][3],
-        "weakness": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][9],
-        "meta_build": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][6],
-        "meta_moves": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][5],
-        "tips": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][7],
-        "counters": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][8],
+        "cdex_tier": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][4],
+        "cdex_description": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][3],
+        "weakness": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][9],
+        "meta_build": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][6],
+        "meta_moves": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][5],
+        "tips": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][
+            7
+        ],
+        "counters": (
+            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+        )[0][8],
     }
     return attributes
 
@@ -220,7 +247,14 @@ async def get_natures() -> Any:
 
 
 def get_nature_mods(nature: str) -> dict[str, int | float]:
-    nature_mods: dict[str, int | float] = {"hp": 1, "atk": 1, "def": 1, "spa": 1, "spd": 1, "spe": 1}
+    nature_mods: dict[str, int | float] = {
+        "hp": 1,
+        "atk": 1,
+        "def": 1,
+        "spa": 1,
+        "spd": 1,
+        "spe": 1,
+    }
     nature = nature.title()
     if (
         nature == "Adamant"
@@ -398,7 +432,9 @@ def get_grade(grade_percent: float) -> str:
     return grade_letter
 
 
-def get_stat_weights(base_stats: dict[str, Any], mon_name: str = "") -> tuple[dict[str, float], str]:
+def get_stat_weights(
+    base_stats: dict[str, Any], mon_name: str = ""
+) -> tuple[dict[str, float], str]:
     """Determine stat weights based on base stats and competitive roles."""
     weights = {
         "hp": 1.0,
@@ -478,7 +514,9 @@ def evaluate_stat_iv(stat_name: str, iv: int, weight: float, role: str) -> int:
     return iv
 
 
-async def appraise_revomon(mon_stats: dict[str, Any]) -> dict[str, str | int | float | dict[str, float]] | None:
+async def appraise_revomon(
+    mon_stats: dict[str, Any],
+) -> dict[str, str | int | float | dict[str, float]] | None:
     try:
         mon_stats["lvl"] = 100
         mon_attrib = await get_attributes(mon_stats["mon_name"])
@@ -558,7 +596,11 @@ async def appraise_revomon(mon_stats: dict[str, Any]) -> dict[str, str | int | f
         return None
 
 
-def create_graded_mon_img(curr_stats: dict[str, Any], score_percentage: float | None=None, image_dir: str | None=None) -> Any:
+def create_graded_mon_img(
+    curr_stats: dict[str, Any],
+    score_percentage: float | None = None,
+    image_dir: str | None = None,
+) -> Any:
     # Directory containing the images
     image_dir = "./data/Images/Revomon"
     iv_stats = {
@@ -653,9 +695,11 @@ def create_graded_mon_img(curr_stats: dict[str, Any], score_percentage: float | 
         # Calculate centered offset for mon image
         mon_image_offset = (
             int((width - mon_image.width) / 2),  # Center horizontally
-            int(nature_ability_text_offset[1]
-            + nature_ability_text_size[1]
-            + text_spacing),  # Position below text
+            int(
+                nature_ability_text_offset[1]
+                + nature_ability_text_size[1]
+                + text_spacing
+            ),  # Position below text
         )
         graded_image.paste(mon_image, mon_image_offset, mon_image.convert("RGBA"))
         mon_image_height = mon_image.height

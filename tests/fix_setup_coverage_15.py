@@ -5,7 +5,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 text = text.replace(
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     async def test_setup_full_creation(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
@@ -29,8 +29,8 @@ text = text.replace(
         mock_guild.create_text_channel = AsyncMock(side_effect=lambda *args, **kwargs: mock_portal if kwargs.get("name") == "portal" else mock_create_ch(*args, **kwargs))
 
 
-        await setup_cog.setup_command.callback(setup_cog, mock_interaction)''',
-    '''    @pytest.mark.asyncio
+        await setup_cog.setup_command.callback(setup_cog, mock_interaction)""",
+    """    @pytest.mark.asyncio
     async def test_setup_full_creation(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
@@ -54,12 +54,12 @@ text = text.replace(
         mock_guild.create_text_channel = AsyncMock(side_effect=lambda *args, **kwargs: mock_portal if kwargs.get("name") == "portal" else mock_create_ch(*args, **kwargs))
 
 
-        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)'''
+        await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)""",
 )
 
 text = re.sub(
     r'    @pytest\.mark\.asyncio\n    @patch\("mods\.revocord\.setup\.asyncio\.sleep", new_callable=AsyncMock\)\n    @patch\("mods\.revocord\.hunting\.initial_wilds_spawn", new_callable=AsyncMock\)\n    async def test_setup_portal_fail.*?assert len\(calls\) > 0',
-    '''    @pytest.mark.asyncio
+    """    @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
     async def test_setup_portal_fail(self, mock_spawn: Any, mock_sleep: Any, setup_cog: Any, mock_interaction: Any) -> None:
@@ -91,9 +91,9 @@ text = re.sub(
 
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
-        assert len(calls) > 0''',
+        assert len(calls) > 0""",
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

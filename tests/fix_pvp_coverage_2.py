@@ -4,7 +4,7 @@ path = r"f:\projects\Revomon\GradexTool\tests\mods\revomon\test_keywords.py"
 with open(path, encoding="utf-8") as f:
     text = f.read()
 
-inner_test = '''    async def test_update_rankings_inner_exceptions(self, mock_bot: Any) -> None:
+inner_test = """    async def test_update_rankings_inner_exceptions(self, mock_bot: Any) -> None:
         cog = PvpLeaderboard(mock_bot)
         mock_channel = MagicMock()
 
@@ -23,13 +23,13 @@ inner_test = '''    async def test_update_rankings_inner_exceptions(self, mock_b
              patch.object(cog, 'update_pvp_image', side_effect=Exception("Image Error")), \\
              patch('asyncio.sleep', new_callable=AsyncMock, side_effect=Exception("Break Loop")):
 
-            await cog.update_rankings()'''
+            await cog.update_rankings()"""
 
 text = re.sub(
-    r'    async def test_update_rankings_inner_exceptions\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)',
+    r"    async def test_update_rankings_inner_exceptions\(self, mock_bot: Any\) -> None:.*?await cog\.update_rankings\(\)",
     inner_test,
     text,
-    flags=re.DOTALL
+    flags=re.DOTALL,
 )
 
 with open(path, "w", encoding="utf-8") as f:

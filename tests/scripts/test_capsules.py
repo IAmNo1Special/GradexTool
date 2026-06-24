@@ -20,41 +20,52 @@ def mock_moves_data() -> Any:
     return [
         {"capsule": 1, "idMove": 10},
         {"capsule": None, "idMove": 11},
-        {"idMove": 12}, # Missing capsule
-        {"capsule": 2}, # Missing idMove
-        {"capsule": 3, "idMove": 13}
+        {"idMove": 12},  # Missing capsule
+        {"capsule": 2},  # Missing idMove
+        {"capsule": 3, "idMove": 13},
     ]
 
+
 def test_get_capsules_moves_exists(mock_moves_data: Any) -> None:
-    with patch("scripts.capsules.Path.exists", return_value=True), \
-         patch("builtins.open", mock_open(read_data=json.dumps(mock_moves_data))), \
-         patch("os.makedirs") as mock_makedirs:
+    with (
+        patch("scripts.capsules.Path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data=json.dumps(mock_moves_data))),
+        patch("os.makedirs") as mock_makedirs,
+    ):
         get_capsules()
         mock_makedirs.assert_called_once()
 
+
 def test_get_capsules_moves_not_exists(mock_moves_data: Any) -> None:
     mock_moves_module = MagicMock()
-    with patch("scripts.capsules.Path.exists", return_value=False), \
-         patch.dict("sys.modules", {"scripts.gradex.moves": mock_moves_module}), \
-         patch("builtins.open", mock_open(read_data=json.dumps(mock_moves_data))), \
-         patch("os.makedirs"):
+    with (
+        patch("scripts.capsules.Path.exists", return_value=False),
+        patch.dict("sys.modules", {"scripts.gradex.moves": mock_moves_module}),
+        patch("builtins.open", mock_open(read_data=json.dumps(mock_moves_data))),
+        patch("os.makedirs"),
+    ):
         get_capsules()
         mock_moves_module.main.assert_called_once()
+
 
 def test_capsules_table_init() -> None:
     table = CapsulesTable()
     assert hasattr(table, "db_path")
 
+
 @pytest.mark.asyncio
 async def test_capsules_table_build() -> None:
     table = CapsulesTable()
-    with patch.object(table, "create") as mock_create, \
-         patch.object(table, "rebuild") as mock_rebuild, \
-         patch.object(table, "count_entries") as mock_count:
+    with (
+        patch.object(table, "create") as mock_create,
+        patch.object(table, "rebuild") as mock_rebuild,
+        patch.object(table, "count_entries") as mock_count,
+    ):
         await table.build()
         mock_create.assert_called_once()
         mock_rebuild.assert_called_once()
         mock_count.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_connect() -> None:
@@ -62,6 +73,7 @@ async def test_capsules_table_connect() -> None:
     with patch("sqlite3.connect") as mock_connect:
         table._connect()
         mock_connect.assert_called_once_with(table.db_path)
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_create() -> None:
@@ -75,6 +87,7 @@ async def test_capsules_table_create() -> None:
         mock_cursor.execute.assert_called_once()
         mock_conn.commit.assert_called_once()
         mock_conn.close.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_rebuild() -> None:
@@ -96,30 +109,32 @@ async def test_capsules_table_rebuild() -> None:
             "moves": [
                 {"idMove": 10, "capsule": 1, "name": "Move 1"},
                 {"idMove": 11, "capsule": None, "name": "Move 2"},
-                {"idMove": 12, "capsule": 2, "name": "Move 3"}
+                {"idMove": 12, "capsule": 2, "name": "Move 3"},
             ]
         }
     }
 
     mock_response_2 = MagicMock()
-    mock_response_2.status_code = 404 # Skip this one
+    mock_response_2.status_code = 404  # Skip this one
 
     def mock_requests_get(url: Any) -> Any:
         if url.endswith("1"):
             return mock_response_1
         return mock_response_2
 
-    with patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table), \
-         patch("requests.get", side_effect=mock_requests_get), \
-         patch.object(table, "_connect", return_value=mock_conn), \
-         patch.object(table, "export_to_json") as mock_export:
-
+    with (
+        patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table),
+        patch("requests.get", side_effect=mock_requests_get),
+        patch.object(table, "_connect", return_value=mock_conn),
+        patch.object(table, "export_to_json") as mock_export,
+    ):
         await table.rebuild()
 
         # 1 valid response with 2 capsule moves.
         assert mock_cursor.execute.call_count == 2
         mock_conn.commit.assert_called_once()
         mock_export.assert_called_once()
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_rebuild_rowcount_zero() -> None:
@@ -139,13 +154,15 @@ async def test_capsules_table_rebuild_rowcount_zero() -> None:
         "data": {"moves": [{"idMove": 10, "capsule": 1, "name": "Move 1"}]}
     }
 
-    with patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table), \
-         patch("requests.get", return_value=mock_response), \
-         patch.object(table, "_connect", return_value=mock_conn), \
-         patch.object(table, "export_to_json"):
-
+    with (
+        patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table),
+        patch("requests.get", return_value=mock_response),
+        patch.object(table, "_connect", return_value=mock_conn),
+        patch.object(table, "export_to_json"),
+    ):
         await table.rebuild()
         assert mock_cursor.execute.call_count == 1
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_export_to_json() -> None:
@@ -158,8 +175,10 @@ async def test_capsules_table_export_to_json() -> None:
     mock_cursor.fetchall.return_value = [(1, 10, "move_1"), (2, 20, "move_2")]
     mock_cursor.description = [("cap_num",), ("move_id",), ("move_name",)]
 
-    with patch.object(table, "_connect", return_value=mock_conn), \
-         patch("builtins.open", mock_open()) as m_open:
+    with (
+        patch.object(table, "_connect", return_value=mock_conn),
+        patch("builtins.open", mock_open()) as m_open,
+    ):
         table.export_to_json()
 
         mock_cursor.execute.assert_called_with("SELECT * FROM capsules;")
@@ -168,6 +187,7 @@ async def test_capsules_table_export_to_json() -> None:
         written = "".join(call.args[0] for call in handle.write.call_args_list)
         assert "move_1" in written
         assert "move_2" in written
+
 
 @pytest.mark.asyncio
 async def test_capsules_table_count_entries() -> None:
@@ -184,6 +204,7 @@ async def test_capsules_table_count_entries() -> None:
         mock_conn.close.assert_called_once()
         assert result == 5
 
+
 @pytest.mark.asyncio
 async def test_capsules_table_add_capsule() -> None:
     table = CapsulesTable()
@@ -198,14 +219,16 @@ async def test_capsules_table_add_capsule() -> None:
         mock_conn.commit.assert_called_once()
         mock_conn.close.assert_called_once()
 
-def test_main() -> None:
-    with patch("scripts.capsules.Path.exists", return_value=True), \
-         patch("builtins.open", mock_open(read_data='[]')), \
-         patch("os.makedirs"):
-        with unittest.mock.patch.dict('sys.modules'):
 
+def test_main() -> None:
+    with (
+        patch("scripts.capsules.Path.exists", return_value=True),
+        patch("builtins.open", mock_open(read_data="[]")),
+        patch("os.makedirs"),
+    ):
+        with unittest.mock.patch.dict("sys.modules"):
             import sys
 
-            sys.modules.pop('scripts.capsules', None)
+            sys.modules.pop("scripts.capsules", None)
 
-            runpy.run_module('scripts.capsules', run_name='__main__')
+            runpy.run_module("scripts.capsules", run_name="__main__")

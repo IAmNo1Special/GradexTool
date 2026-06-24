@@ -163,7 +163,9 @@ class Grade(commands.Cog):
             custom_id="Grade Revomon1",
         )
         async def grade(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            button: discord.ui.Button[Any],
         ) -> None:
             try:
                 await interaction.response.send_modal(Grade.MonInfoModal())
@@ -187,7 +189,9 @@ class Grade(commands.Cog):
             label="Grade", style=discord.ButtonStyle.green, custom_id="Grade"
         )
         async def grade(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            button: discord.ui.Button[Any],
         ) -> None:
             try:
                 user_id = interaction.user.id
@@ -219,7 +223,9 @@ class Grade(commands.Cog):
             label="Save", style=discord.ButtonStyle.green, custom_id="Save"
         )
         async def save_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            button: discord.ui.Button[Any],
         ) -> None:
             try:
                 user_id = interaction.user.id
@@ -260,7 +266,9 @@ class Grade(commands.Cog):
             style=discord.ButtonStyle.green,
             custom_id="Flex",
         )
-        async def flex(self, interaction: discord.Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
+        async def flex(
+            self, interaction: discord.Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
@@ -290,7 +298,9 @@ class Grade(commands.Cog):
             custom_id="why_this_grade",
         )
         async def why_this_grade(
-            self, interaction: discord.Interaction, Button: ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            button: ui.Button[Any],
         ) -> None:
             try:
                 user_id = interaction.user.id
@@ -307,7 +317,9 @@ class Grade(commands.Cog):
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
+            self,
+            interaction: discord.Interaction,
+            button: discord.ui.Button[Any],
         ) -> None:
             if interaction.message:
                 await interaction.message.delete()

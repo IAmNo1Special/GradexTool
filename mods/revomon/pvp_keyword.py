@@ -72,7 +72,9 @@ class PvpLeaderboard(commands.Cog):
 
         self.rankings = rankings_data
 
-    def update_pvp_image(self, data: list[dict[str, str | int]] | None, output_path: None=None) -> None:
+    def update_pvp_image(
+        self, data: list[dict[str, str | int]] | None, output_path: None = None
+    ) -> None:
         img_width, cell_height = 1050, 50
         header_height = 40
         total_height = header_height + 15 * cell_height
@@ -155,13 +157,17 @@ class PvpLeaderboard(commands.Cog):
             pvp_channel = self.gradex.get_channel(1251368616662929529)
             if pvp_channel is None or not hasattr(pvp_channel, "history"):
                 return
-            old_leaderboards = [message async for message in pvp_channel.history(limit=2)]
+            old_leaderboards = [
+                message async for message in pvp_channel.history(limit=2)
+            ]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
-            current_leaderboard = await pvp_channel.send(content="Loading...") # type: ignore
+            current_leaderboard = await pvp_channel.send(content="Loading...")  # type: ignore
             while True:
                 try:
-                    await self.gradex.loop.run_in_executor(None, self.get_current_pvp_data)
+                    await self.gradex.loop.run_in_executor(
+                        None, self.get_current_pvp_data
+                    )
                 except Exception as e:
                     print(f"Error during update_rankings(get_current_pvp_data): {e}")
                 try:
