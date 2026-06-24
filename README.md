@@ -440,7 +440,7 @@ ______________________________________________________________________
 | `DISCORD_BOT_TOKEN` | Discord bot token | ✅ Yes |
 | `APPLICATION_ID` | Discord application ID | ✅ Yes |
 
-### Config File (`configs/config.yaml`)
+### Config File (configs/configs.yaml)
 
 | Setting | Description |
 |---------|-------------|
