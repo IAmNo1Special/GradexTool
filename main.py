@@ -24,8 +24,6 @@ gradex_tool: commands.Bot = commands.Bot(command_prefix="/", intents=intents)
 
 gradex_tool.remove_command("help")
 
-BOT_OWNER_ID = getenv("BOT_OWNER_ID", "")
-
 
 async def entrypoint(rebase: bool = False) -> None:
     logger.info(f"Starting Gradex Tool...\n{'-' * 50}")
@@ -65,12 +63,7 @@ async def on_ready() -> None:
 )
 async def sync_commands(ctx: commands.Context[commands.Bot]) -> None:
     """Manually sync application commands. Owner only."""
-    is_owner = (
-        str(ctx.author.id) == str(BOT_OWNER_ID)
-        if BOT_OWNER_ID
-        else await gradex_tool.is_owner(ctx.author)
-    )
-    if not is_owner:
+    if not await gradex_tool.is_owner(ctx.author):
         await ctx.send("You do not have permission to use this command.")
         return
 
