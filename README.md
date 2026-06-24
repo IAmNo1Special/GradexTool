@@ -261,19 +261,19 @@ The SQLite database (`data/gradex.db`) contains 14+ tables:
 | `abilities` | Revomon abilities from PokeAPI |
 | `capsules` | Move capsules |
 | `counterdex` | Competitive counter information and meta builds |
-| `currentPodium` | Current leaderboard data |
-| `weeklyPodium` | Weekly podium tracking |
-| `fruitys` | Fruity items |
-| `items` | Game items and medicines |
-| `moves` | Revomon moves with priority |
-| `natures` | Revomon natures with stat modifiers |
-| `ownedLands` | Immutable X land NFT ownership |
-| `revomon` | Revomon base data (stats, types, abilities) |
-| `revomonMoves` | Revomon-move relationships |
-| `types` | Type effectiveness charts |
-| `users` | User tracking and Pro Tamer status |
-| `eventBoardLogs` | Event board logging |
-| `activeSpawns` | Active wild spawn tracking |
+| current_podium | Current leaderboard data |
+| weekly_podium | Weekly podium tracking |
+| fruitys | Fruity items |
+| items | Game items and medicines |
+| moves | Revomon moves with priority |
+| natures | Revomon natures with stat modifiers |
+| ownedLands | Immutable X land NFT ownership |
+| revomon | Revomon base data (stats, types, abilities) |
+| revomon_moves | Revomon-move relationships |
+| types | Type effectiveness charts |
+| users | User tracking and Pro Tamer status |
+| event_board_logs | Event board logging |
+| active_spawns | Active wild spawn tracking |
 
 ______________________________________________________________________
 
