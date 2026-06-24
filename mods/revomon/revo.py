@@ -19,7 +19,7 @@ class PriceTracker(commands.Cog):
 
     @tasks.loop(minutes=3)
     async def update_price(self) -> None:
-        price = self.get_revo_price()
+        price = await self.gradex.loop.run_in_executor(None, self.get_revo_price)
         if price is not None:
             channel = self.gradex.get_channel(self.price_channel_id)
             if channel is not None:
