@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center"> <!-- markdownlint-disable MD033 MD041 MD036 -->
 
 # 🎮 Gradex Tool
 
@@ -120,23 +120,13 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Edit `.env` and add your Discord credentials:
+Edit `.env` and add your Discord credentials & guild settings:
 
 ```env
 DISCORD_BOT_TOKEN=your_bot_token_here
 APPLICATION_ID=your_application_id_here
-```
-
-2. **Configure guild settings** in `configs/config.yaml`:
-
-```yaml
-GRA_GUILD_ID: 975120830193369088
-PRO_TAMER_ROLE_IDS:
-  - 1075670121097469965
-  - 997404663525683263
-  - 975592186177531914
-  - 975592348744556555
-  - 990783815771385896
+GRA_GUILD_ID=...
+GRA_PRO_TAMER_ROLE_IDS=...,...,...
 ```
 
 ______________________________________________________________________
@@ -257,7 +247,7 @@ ______________________________________________________________________
 The SQLite database (`data/gradex.db`) contains 19 tables:
 
 | Table | Description |
-|-------|-------------|
+| ------- | ------------- |
 | `abilities` | Revomon abilities from PokeAPI |
 | `active_encounters` | Caches serialized active in-battle encounters per spawner |
 | `active_spawns` | Active wild spawn tracking |
@@ -285,7 +275,7 @@ ______________________________________________________________________
 ### Slash Commands
 
 | Command | Description |
-|---------|-------------|
+| --------- | ------------- |
 | `/help` | Display help menu |
 | `/setup` | Set up the bot's workspace (category and channels) (Server Owner only) |
 | `/grade <catch_id>` | Grade a Revomon competitively |
@@ -445,16 +435,14 @@ ______________________________________________________________________
 ### Environment Variables
 
 | Variable | Description | Required |
-|----------|-------------|----------|
+| --------- | ------------- | ---------- |
 | `DISCORD_BOT_TOKEN` | Discord bot token | ✅ Yes |
 | `APPLICATION_ID` | Discord application ID | ✅ Yes |
 
-### Config File (`configs/config.yaml`)
+### Config File (configs/configs.yaml)
 
 | Setting | Description |
-|---------|-------------|
-| `GRA_GUILD_ID` | Main Discord guild ID |
-| `PRO_TAMER_ROLE_IDS` | List of Pro Tamer role IDs |
+| --------- | ------------- |
 | `REVOMON_REVODEX_ENDPOINT` | Revomon API endpoint |
 | `POKEAPI_NATURES_ENDPOINT` | PokeAPI natures endpoint |
 | `GRADEX_DB_PATH` | Path to SQLite database |
@@ -482,9 +470,9 @@ For issues or questions, contact the Global Revomon Association community.
 
 ______________________________________________________________________
 
-<div align="center">
+<div align="center"> <!-- markdownlint-disable MD033 -->
 
-**Built with ❤️ for the Revomon Community**
+**Built with ❤️ for the Revomon Community** <!-- markdownlint-disable MD036 -->
 
 [![uv](https://img.shields.io/badge/uv-0.5+-blue.svg)](https://github.com/astral-sh/uv)
 [![Ruff](https://img.shields.io/badge/ruff-0.15+-green.svg)](https://github.com/astral-sh/ruff)
