@@ -7,7 +7,8 @@ wheels/
 .venv
 .env
 experimental/
-data/assets/
+data/assets/*
+!data/assets/fonts/
 data/gradex.db
 logs/
 .ruff_cache/
