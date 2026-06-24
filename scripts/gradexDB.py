@@ -2783,14 +2783,20 @@ class UsersTable:
             return True
 
     async def get_user(self, user_id: int) -> Any:
-        """Get a user by user ID from the users table."""
+        """Get a user by user ID from the users table.
+        
+        Returns a dictionary with column names as keys for robust schema access.
+        """
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
             user = await cursor.fetchone()
             if user is None:
                 return False
-            return user
+            # Get column names from cursor description
+            column_names = [description[0] for description in cursor.description]
+            # Return as dictionary for robust schema access
+            return dict(zip(column_names, user, strict=True))
 
     async def get_users(self) -> Any:
         """Get all users from the users table."""
