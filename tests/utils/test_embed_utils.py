@@ -1,24 +1,25 @@
 from typing import Any
+
 """Comprehensive tests for embed_utils module."""
 
-import pytest
-from unittest.mock import MagicMock, patch
-from discord import Color, Embed
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-from utils.embed_utils import (
-    intro,
-    land_intro,
+from discord import Embed  # noqa: E402
+
+from utils.embed_utils import (  # noqa: E402
+    compare_counterdexs,
     compare_intros,
-    stats,
-    compare_stats,
-    spawns,
-    compare_spawns,
-    moves,
     compare_moves,
-    types,
+    compare_spawns,
+    compare_stats,
     compare_types,
     counterdex,
-    compare_counterdexs,
+    intro,
+    land_intro,
+    moves,
+    spawns,
+    stats,
+    types,
 )
 
 
@@ -30,19 +31,19 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes)
-            
+
+            intro(sample_revomon_attributes)
+
             # Verify Embed was called with correct parameters
             mock_embed_class.assert_called_once()
             call_args = mock_embed_class.call_args
             assert call_args[1]['title'] == "Testmon"
             assert call_args[1]['description'] == "*A test description for testmon.*"
             assert call_args[1]['url'] == "https://revomon.online/revodex/revomon/testmon/"
-            
+
             # Verify add_field was called for tier and rarity
             assert mock_embed.add_field.call_count >= 2
-            
+
             # Verify thumbnail and footer were set
             mock_embed.set_thumbnail.assert_called_once_with(url=sample_revomon_attributes["profile_img"])
             mock_embed.set_footer.assert_called_once_with(text="The Elder's Library · Global Revomon Association")
@@ -52,12 +53,12 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes_dual_type)
-            
+
+            intro(sample_revomon_attributes_dual_type)
+
             # Verify Embed was called
             mock_embed_class.assert_called_once()
-            
+
             # Verify type field includes both types
             type_calls = [call for call in mock_embed.add_field.call_args_list if 'Type' in str(call)]
             assert len(type_calls) > 0
@@ -67,9 +68,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes_dual_type)
-            
+
+            intro(sample_revomon_attributes_dual_type)
+
             # Verify ability fields were added
             ability_calls = [call for call in mock_embed.add_field.call_args_list if 'Ability' in str(call)]
             assert len(ability_calls) >= 2
@@ -79,9 +80,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes)
-            
+
+            intro(sample_revomon_attributes)
+
             # Verify hidden ability field was added
             ability_calls = [call for call in mock_embed.add_field.call_args_list if 'Ability(h)' in str(call)]
             assert len(ability_calls) >= 1
@@ -91,9 +92,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes_dual_type)
-            
+
+            intro(sample_revomon_attributes_dual_type)
+
             # Verify evolution field was added
             evo_calls = [call for call in mock_embed.add_field.call_args_list if 'Evolution' in str(call)]
             assert len(evo_calls) >= 2  # Evolution and Evolution Tree
@@ -103,9 +104,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes)
-            
+
+            intro(sample_revomon_attributes)
+
             # Verify evolution field shows Final Evolution
             evo_calls = [call for call in mock_embed.add_field.call_args_list if 'Evolution' in str(call)]
             assert len(evo_calls) >= 2
@@ -115,9 +116,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes_dual_type)
-            
+
+            intro(sample_revomon_attributes_dual_type)
+
             # Verify EV gains field was added
             ev_calls = [call for call in mock_embed.add_field.call_args_list if 'EV Gains' in str(call)]
             assert len(ev_calls) >= 1
@@ -127,9 +128,9 @@ class TestIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(sample_revomon_attributes)
-            
+
+            intro(sample_revomon_attributes)
+
             # Verify EV gains field was added even with single gain
             ev_calls = [call for call in mock_embed.add_field.call_args_list if 'EV Gains' in str(call)]
             assert len(ev_calls) >= 1
@@ -153,13 +154,13 @@ class TestIntro:
             "ev_gains2": None,
             "profile_img": "https://example.com/testmon.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(attributes)
-            
+
+            intro(attributes)
+
             call_args = mock_embed_class.call_args
             assert call_args[1]['title'] == "Testmon"
             assert call_args[1]['description'] == "*A test description*"
@@ -183,13 +184,13 @@ class TestIntro:
             "ev_gains2": None,
             "profile_img": "https://example.com/testmon.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(attributes)
-            
+
+            intro(attributes)
+
             call_args = mock_embed_class.call_args
             assert "test_mon" in call_args[1]['url']
 
@@ -202,16 +203,16 @@ class TestLandIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(sample_land_attributes)
-            
+
+            land_intro(sample_land_attributes)
+
             # Verify Embed was called with correct parameters
             mock_embed_class.assert_called_once()
             call_args = mock_embed_class.call_args
             assert "Forest" in call_args[1]['title']
             assert "Woodland" in call_args[1]['title']
             assert call_args[1]['url'] == "https://tokentrove.com/collection/RevomonNovusLands/zkEVM-12345"
-            
+
             # Verify price field was added (since for_sale is True)
             price_calls = [call for call in mock_embed.add_field.call_args_list if 'Price' in str(call)]
             assert len(price_calls) >= 1
@@ -221,12 +222,12 @@ class TestLandIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(sample_land_attributes_not_for_sale)
-            
+
+            land_intro(sample_land_attributes_not_for_sale)
+
             # Verify Embed was called
             mock_embed_class.assert_called_once()
-            
+
             # Verify price field was NOT added (since for_sale is False)
             price_calls = [call for call in mock_embed.add_field.call_args_list if 'Price' in str(call)]
             assert len(price_calls) == 0
@@ -236,9 +237,9 @@ class TestLandIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(sample_land_attributes)
-            
+
+            land_intro(sample_land_attributes)
+
             # Verify all standard fields were added
             field_names = [str(call) for call in mock_embed.add_field.call_args_list]
             assert any("For Sale" in name for name in field_names)
@@ -252,9 +253,9 @@ class TestLandIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(sample_land_attributes)
-            
+
+            land_intro(sample_land_attributes)
+
             # Verify thumbnail and footer were set
             mock_embed.set_thumbnail.assert_called_once_with(url=sample_land_attributes["img_url"])
             mock_embed.set_footer.assert_called_once_with(text="The Elder's Library · Global Revomon Association")
@@ -264,9 +265,9 @@ class TestLandIntro:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(sample_land_attributes)
-            
+
+            land_intro(sample_land_attributes)
+
             # Check price formatting
             price_calls = [call for call in mock_embed.add_field.call_args_list if 'Price' in str(call)]
             assert len(price_calls) >= 1
@@ -287,13 +288,13 @@ class TestLandIntro:
             "size": "medium",
             "img_url": "https://example.com/land.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(attributes)
-            
+
+            land_intro(attributes)
+
             call_args = mock_embed_class.call_args
             # Just check that title was called with the right components
             assert "Forest" in call_args[1]['title']
@@ -315,13 +316,13 @@ class TestLandIntro:
             "size": "large",
             "img_url": "https://example.com/land.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(attributes)
-            
+
+            land_intro(attributes)
+
             call_args = mock_embed_class.call_args
             assert call_args[1]['url'] == "https://tokentrove.com/collection/RevomonNovusLands/zkEVM-99999"
 
@@ -335,16 +336,16 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify Embed was called
             mock_embed_class.assert_called_once()
-            
+
             # Verify both Revomon are in title
             call_args = mock_embed_class.call_args
             assert "Testmon" in call_args[1]['title']
@@ -356,13 +357,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes_dual_type, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes_dual_type, attributes2)
+
             # Verify dual types are shown correctly
             type_calls = [call for call in mock_embed.add_field.call_args_list if 'Type' in str(call)]
             assert len(type_calls) >= 1
@@ -372,9 +373,9 @@ class TestCompareIntros:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, sample_revomon_attributes_dual_type)
-            
+
+            compare_intros(sample_revomon_attributes, sample_revomon_attributes_dual_type)
+
             # Verify type comparison works with mixed types
             type_calls = [call for call in mock_embed.add_field.call_args_list if 'Type' in str(call)]
             assert len(type_calls) >= 1
@@ -385,13 +386,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes_dual_type, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes_dual_type, attributes2)
+
             # Verify abilities are compared
             ability_calls = [call for call in mock_embed.add_field.call_args_list if 'Abilities' in str(call)]
             assert len(ability_calls) >= 1
@@ -402,13 +403,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify both show as Final Evolution
             evo_calls = [call for call in mock_embed.add_field.call_args_list if 'Evolution' in str(call)]
             assert len(evo_calls) >= 2
@@ -418,9 +419,9 @@ class TestCompareIntros:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, sample_revomon_attributes_dual_type)
-            
+
+            compare_intros(sample_revomon_attributes, sample_revomon_attributes_dual_type)
+
             # Verify evolution comparison handles mixed states
             evo_calls = [call for call in mock_embed.add_field.call_args_list if 'Evolution' in str(call)]
             assert len(evo_calls) >= 2
@@ -431,13 +432,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify EV gains are compared
             ev_calls = [call for call in mock_embed.add_field.call_args_list if 'EV Gains' in str(call)]
             assert len(ev_calls) >= 1
@@ -448,13 +449,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes_dual_type, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes_dual_type, attributes2)
+
             # Verify dual EV gains are shown
             ev_calls = [call for call in mock_embed.add_field.call_args_list if 'EV Gains' in str(call)]
             assert len(ev_calls) >= 1
@@ -465,13 +466,13 @@ class TestCompareIntros:
         attributes2["name"] = "testmon2"
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify emoji is in description
             call_args = mock_embed_class.call_args
             assert "testmon2_emoji" in call_args[1]['description']
@@ -483,13 +484,13 @@ class TestCompareIntros:
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
         attributes2["cdex_tier"] = "a"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify tier comparison is shown
             tier_calls = [call for call in mock_embed.add_field.call_args_list if 'Tier' in str(call)]
             assert len(tier_calls) >= 1
@@ -501,13 +502,13 @@ class TestCompareIntros:
         attributes2["num"] = 2
         attributes2["emoji"] = "testmon2_emoji"
         attributes2["rarity"] = "epic"
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, attributes2)
-            
+
+            compare_intros(sample_revomon_attributes, attributes2)
+
             # Verify rarity comparison is shown
             rarity_calls = [call for call in mock_embed.add_field.call_args_list if 'Rarity' in str(call)]
             assert len(rarity_calls) >= 1
@@ -535,13 +536,13 @@ class TestEmbedUtilsEdgeCases:
             "ev_gains2": None,
             "profile_img": "https://example.com/testmon.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(minimal_attributes)
-            
+
+            intro(minimal_attributes)
+
             # Should still create embed without errors
             mock_embed_class.assert_called_once()
 
@@ -560,13 +561,13 @@ class TestEmbedUtilsEdgeCases:
             "size": "medium",
             "img_url": "https://example.com/land.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = land_intro(attributes)
-            
+
+            land_intro(attributes)
+
             # Should handle zero price without errors
             mock_embed_class.assert_called_once()
 
@@ -575,9 +576,9 @@ class TestEmbedUtilsEdgeCases:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = compare_intros(sample_revomon_attributes, sample_revomon_attributes)
-            
+
+            compare_intros(sample_revomon_attributes, sample_revomon_attributes)
+
             # Should handle same Revomon comparison
             mock_embed_class.assert_called_once()
 
@@ -600,13 +601,13 @@ class TestEmbedUtilsEdgeCases:
             "ev_gains2": None,
             "profile_img": "https://example.com/testmon.png",
         }
-        
+
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
-            result = intro(attributes)
-            
+
+            intro(attributes)
+
             # Should handle special characters
             mock_embed_class.assert_called_once()
 
@@ -617,7 +618,7 @@ class TestCompareIntrosMissing:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_intros(attributes1, attributes2)
+            compare_intros(attributes1, attributes2)
             mock_embed_class.assert_called_once()
 
     def test_compare_intros_evolution_mixed_1(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
@@ -626,7 +627,7 @@ class TestCompareIntrosMissing:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_intros(attributes1, attributes2)
+            compare_intros(attributes1, attributes2)
             mock_embed_class.assert_called_once()
 
     def test_compare_intros_ev_gains_mixed(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
@@ -635,7 +636,7 @@ class TestCompareIntrosMissing:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_intros(attributes1, attributes2)
+            compare_intros(attributes1, attributes2)
             mock_embed_class.assert_called_once()
 
 class TestStats:
@@ -643,14 +644,14 @@ class TestStats:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = stats(sample_revomon_attributes)
+            stats(sample_revomon_attributes)
             mock_embed_class.assert_called_once()
 
     def test_compare_stats(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_stats(sample_revomon_attributes, sample_revomon_attributes_dual_type)
+            compare_stats(sample_revomon_attributes, sample_revomon_attributes_dual_type)
             mock_embed_class.assert_called_once()
 
 class TestSpawns:
@@ -658,14 +659,14 @@ class TestSpawns:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = spawns(sample_revomon_attributes)
+            spawns(sample_revomon_attributes)
             mock_embed_class.assert_called_once()
 
     def test_compare_spawns(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_spawns(sample_revomon_attributes, sample_revomon_attributes_dual_type)
+            compare_spawns(sample_revomon_attributes, sample_revomon_attributes_dual_type)
             mock_embed_class.assert_called_once()
 
 class TestMoves:
@@ -673,14 +674,14 @@ class TestMoves:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = moves(sample_revomon_attributes)
+            moves(sample_revomon_attributes)
             mock_embed_class.assert_called_once()
 
     def test_compare_moves(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = compare_moves(sample_revomon_attributes, sample_revomon_attributes_dual_type)
+            compare_moves(sample_revomon_attributes, sample_revomon_attributes_dual_type)
             mock_embed_class.assert_called_once()
 
 class TestTypes:
@@ -688,7 +689,7 @@ class TestTypes:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            result = types(sample_revomon_attributes)
+            types(sample_revomon_attributes)
             mock_embed_class.assert_called_once()
 
     def test_compare_types(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
@@ -703,20 +704,20 @@ class TestCounterdex:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
+
             attributes = sample_revomon_attributes.copy()
             attributes['weakness'] = "water, rock"
             attributes['meta_moves'] = "tackle, ember"
             attributes['counters'] = "water types"
-            
-            result = counterdex(attributes)
+
+            counterdex(attributes)
             mock_embed_class.assert_called_once()
 
     def test_compare_counterdexs(self, sample_revomon_attributes: Any, sample_revomon_attributes_dual_type: Any) -> None:
         with patch('utils.embed_utils.Embed') as mock_embed_class:
             mock_embed = MagicMock(spec=Embed)
             mock_embed_class.return_value = mock_embed
-            
+
             attributes1 = sample_revomon_attributes.copy()
             attributes1['weakness'] = "water, rock"
             attributes1['meta_moves'] = "tackle, ember"
@@ -726,6 +727,6 @@ class TestCounterdex:
             attributes2['weakness'] = "electric, grass"
             attributes2['meta_moves'] = "ember, water gun"
             attributes2['counters'] = "electric types"
-            
-            result = compare_counterdexs(attributes1, attributes2)
+
+            compare_counterdexs(attributes1, attributes2)
             mock_embed_class.assert_called_once()

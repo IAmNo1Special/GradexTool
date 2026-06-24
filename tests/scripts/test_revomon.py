@@ -1,42 +1,41 @@
-from typing import Any
 import sys
 from pathlib import Path
+from typing import Any
 
 # Fix sys.path for importing nested local modules
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / 'scripts'))
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-import pytest
 import asyncio
-import os
 import json
-import sqlite3
-from unittest.mock import patch, MagicMock, mock_open, AsyncMock
+import os
+from datetime import UTC, datetime, timedelta
 from email.utils import formatdate
-from datetime import datetime, UTC, timedelta
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
 import httpx
-respx = pytest.importorskip("respx")
-from httpx import Response
+import pytest
 
-import scripts.revomon as revomon_module
-from scripts.revomon import (
-    _env_int,
-    _env_float,
+respx = pytest.importorskip("respx")
+from httpx import Response  # noqa: E402
+
+from scripts.revomon import (  # noqa: E402
+    ImageDownloadResult,
     RequestPacer,
-    _retry_after_seconds,
+    RevomonTable,
+    _build_image_variants,
+    _download_image,
+    _download_revomon_images,
+    _env_float,
+    _env_int,
     _is_downloaded,
     _load_download_manifest,
-    _save_download_manifest,
-    _record_manifest_results,
-    _status_label,
-    _download_image,
-    ImageDownloadResult,
-    _build_image_variants,
     _process_revomon_images,
-    _download_revomon_images,
+    _record_manifest_results,
+    _retry_after_seconds,
+    _save_download_manifest,
+    _status_label,
     get_revomon_data,
-    RevomonTable,
 )
 
 
@@ -65,7 +64,7 @@ async def test_request_pacer() -> None:
     pacer = RequestPacer(0.1)
     await pacer.wait_for_slot()
     await pacer.wait_for_slot()
-    
+
     await pacer.pause_all(0.2)
     start_time = asyncio.get_running_loop().time()
     await pacer.wait_for_slot()
@@ -79,7 +78,7 @@ def test_retry_after_seconds() -> None:
 
     resp2 = Response(429, headers={"Retry-After": "5"})
     assert _retry_after_seconds(resp2) == 5.0
-    
+
     resp_neg = Response(429, headers={"Retry-After": "-2"})
     assert _retry_after_seconds(resp_neg) == 0.0
 
@@ -92,7 +91,7 @@ def test_retry_after_seconds() -> None:
 
     resp4 = Response(429, headers={"Retry-After": "invalid-date"})
     assert _retry_after_seconds(resp4) is None
-    
+
     past_date = datetime.now(UTC) - timedelta(seconds=10)
     http_date_past = formatdate(past_date.timestamp(), usegmt=True)
     resp5 = Response(429, headers={"Retry-After": http_date_past})
@@ -107,7 +106,7 @@ def test_retry_after_seconds() -> None:
     with patch("scripts.revomon.parsedate_to_datetime", side_effect=OverflowError):
         resp6 = Response(429, headers={"Retry-After": "valid-but-overflows"})
         assert _retry_after_seconds(resp6) is None
-        
+
     with patch("scripts.revomon.parsedate_to_datetime", return_value=datetime.now(UTC).replace(tzinfo=None)):
         resp7 = Response(429, headers={"Retry-After": "tz-naive"})
         val = _retry_after_seconds(resp7)
@@ -136,7 +135,7 @@ def test_load_download_manifest(tmp_path: Any) -> None:
 
         manifest_file.write_text('{"1": {"raw_normal": "downloaded"}}')
         assert _load_download_manifest() == {"1": {"raw_normal": "downloaded"}}
-        
+
     # trigger OSError
     with patch("scripts.revomon.REVOMON_IMAGES_DOWNLOAD_MANIFEST_FILE", manifest_file):
         with patch("builtins.open", side_effect=OSError):
@@ -227,7 +226,7 @@ async def test_download_image(tmp_path: Any) -> None:
             res = await _download_image(client, pacer, "http://test/500", save_path, max_attempts=2)
         assert res.success is False
         assert res.status == "failed"
-        
+
         async with httpx.AsyncClient() as client:
             res = await _download_image(client, pacer, "http://test/403", save_path, max_attempts=2)
         assert res.success is False
@@ -282,10 +281,10 @@ async def test_process_revomon_images(tmp_path: Any) -> None:
 
             with patch("scripts.revomon._download_image", new_callable=AsyncMock) as mock_download:
                 mock_download.return_value = ImageDownloadResult(success=True, status="downloaded")
-                
+
                 with patch("scripts.revomon.REVOMON_IMAGES_DOWNLOAD_MANIFEST_FILE", tmp_path / "manifest.json"):
                     await _process_revomon_images(semaphore, client, pacer, revomon_data, results, manifest, manifest_lock)
-                
+
                     assert 1 in results
                     assert results[1]["raw_normal"] is True
                     assert manifest["1"]["raw_normal"] == "downloaded"
@@ -301,7 +300,7 @@ async def test_process_revomon_images(tmp_path: Any) -> None:
                     mock_build.return_value = {"raw_normal": {"url": "http://test/1.png", "path": "not a path"}}
                     with pytest.raises(TypeError):
                         await _process_revomon_images(semaphore, client, pacer, revomon_data, results, manifest, manifest_lock)
-                        
+
                     mock_build.return_value = {"raw_normal": {"url": None, "path": img_path}}
                     img_path.unlink()
                     manifest["1"]["raw_normal"] = "something"
@@ -322,7 +321,7 @@ async def test_download_revomon_images(tmp_path: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_revomon_data(tmp_path: Any) -> None:
     data_file = tmp_path / "revomon.json"
-    
+
     with patch("scripts.revomon.REVOMON_FILE", data_file):
         with respx.mock:
             respx.post("https://api.revomon.io/revomon/revodex").respond(
@@ -335,7 +334,7 @@ async def test_get_revomon_data(tmp_path: Any) -> None:
                     }
                 }
             )
-            
+
             with patch("scripts.revomon._download_revomon_images", new_callable=AsyncMock) as mock_down:
                 res = await get_revomon_data(download_images=True)
                 assert res is not None
@@ -354,7 +353,7 @@ async def test_get_revomon_data(tmp_path: Any) -> None:
 
             respx.post("https://api.revomon.io/revomon/revodex").respond(404)
             assert await get_revomon_data() is None
-            
+
             respx.post("https://api.revomon.io/revomon/revodex").mock(side_effect=httpx.ConnectError("test"))
             assert await get_revomon_data() is None
 
@@ -366,7 +365,7 @@ async def test_get_revomon_data(tmp_path: Any) -> None:
 async def test_revomon_table_create(mock_db_path: Any) -> None:
     table = RevomonTable()
     table.db_path = mock_db_path
-    
+
     with patch("sqlite3.connect") as mock_conn:
         mock_conn.return_value.cursor.return_value = MagicMock()
         table.create()
@@ -435,7 +434,7 @@ async def test_revomon_table_rebuild(mock_db_path: Any) -> None:
                         with patch.dict('sys.modules', {}):
                             import builtins
                             original_table = getattr(builtins, "TypesTable", None)
-                            setattr(builtins, "TypesTable", MockTypesTable)
+                            builtins.TypesTable = MockTypesTable
                             try:
                                 await table.rebuild()
                             except Exception as e:
@@ -444,10 +443,10 @@ async def test_revomon_table_rebuild(mock_db_path: Any) -> None:
                                 raise e
                             finally:
                                 if original_table is not None:
-                                    setattr(builtins, "TypesTable", original_table)
+                                    builtins.TypesTable = original_table
                                 else:
                                     delattr(builtins, "TypesTable")
-                        
+
                         assert mock_conn.return_value.cursor.return_value.execute.called
 
 
@@ -488,7 +487,7 @@ async def test_revomon_table_count_entries(mock_db_path: Any) -> None:
     with patch("sqlite3.connect") as mock_conn:
         mock_cursor = mock_conn.return_value.cursor.return_value
         mock_cursor.fetchone.return_value = [42]
-        
+
         assert table.count_entries() == 42
 
 
@@ -496,7 +495,7 @@ async def test_revomon_table_count_entries(mock_db_path: Any) -> None:
 async def test_revomon_table_add_revomon(mock_db_path: Any) -> None:
     table = RevomonTable()
     table.db_path = mock_db_path
-    
+
     with patch("sqlite3.connect") as mock_conn:
         table.add_revomon(
             1, 1, "test", "desc", "common", "ab1", "ab2", "abh", "evo", 0, "et", "t1", "t1i", "t2", "t2i", None,
@@ -565,7 +564,7 @@ async def test_revomon_table_has_ability(mock_db_path: Any) -> None:
     table.db_path = mock_db_path
     with patch("sqlite3.connect") as mock_conn:
         mock_cursor = mock_conn.return_value.cursor.return_value
-        
+
         # Test 1
         mock_cursor.fetchall.return_value = [("testmon",)]
         assert table.has_ability("ab1", "testmon") is True

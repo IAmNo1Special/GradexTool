@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\mods\revocord\hunting.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # I will replace the except (ValueError, IndexError): return with a catch-all that logs everything

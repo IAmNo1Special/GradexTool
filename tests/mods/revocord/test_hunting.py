@@ -1,22 +1,16 @@
-import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
-import discord
 import time
-import json
-import random
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import discord
+import pytest
 
 from mods.revocord.hunting import (
     HuntingCog,
     WildSpawnView,
     setup,
-    get_or_create_account,
-    update_account,
-    update_encounter_broadcast,
-    broadcast_encounter,
-    delete_active_encounter,
-    save_active_encounter
 )
+
 
 @pytest.fixture(autouse=True)
 def mock_db_and_broadcast():
@@ -40,7 +34,7 @@ def mock_interaction():
     interaction.guild = MagicMock()
     interaction.guild.id = 456
     interaction.channel = MagicMock()
-    
+
     # Standard response mocks
     interaction.response = MagicMock()
     interaction.response.send_message = AsyncMock()
@@ -49,11 +43,11 @@ def mock_interaction():
     interaction.followup = MagicMock()
     interaction.followup.send = AsyncMock()
     interaction.edit_original_response = AsyncMock()
-    
+
     # Needs to be awaitable if used directly
     interaction.message = MagicMock()
     interaction.message.embeds = [MagicMock()]
-    
+
     return interaction
 
 @pytest.fixture
@@ -75,8 +69,8 @@ class TestWildSpawnView:
     @pytest.mark.asyncio
     async def test_on_timeout_success(self) -> None:
         chosen = {"name": "TestMon", "type1": "neutral"}
-        view = WildSpawnView(chosen, False, 123, 456)
-        
+        WildSpawnView(chosen, False, 123, 456)
+
         # We need to mock the `self.message.edit` to not fail.
         # But wait! If it raises Exception, it's caught and nothing happens.
         # Let's bypass it.
@@ -85,7 +79,7 @@ class TestWildSpawnView:
     @pytest.mark.asyncio
     async def test_on_timeout_exception(self) -> None:
         chosen = {"name": "TestMon", "type1": "neutral"}
-        view = WildSpawnView(chosen, False, 123, 456)
+        WildSpawnView(chosen, False, 123, 456)
         pass
 
 class TestOnInteraction:
@@ -103,7 +97,7 @@ class TestOnInteraction:
     async def test_console_hunt(self, cog: HuntingCog, mock_interaction: Any) -> None:
         mock_interaction.type = discord.InteractionType.component
         mock_interaction.data = {"custom_id": "console_hunt"}
-        
+
         with patch.object(cog, "spawn_wild_revomon", new_callable=AsyncMock) as mock_spawn:
             await cog.on_interaction(mock_interaction)
             mock_spawn.assert_called_once_with(mock_interaction)
@@ -192,10 +186,10 @@ class TestOnInteraction:
         mock_msg = MagicMock()
         mock_msg.embeds = [MagicMock()]
         mock_interaction.message = mock_msg
-        
+
         with patch("mods.revocord.hunting.random.random", return_value=0.01): # Guaranteed success
             await cog.on_interaction(mock_interaction)
-            
+
         mock_update.assert_called_once()
         mock_interaction.response.edit_message.assert_called_once()
         assert "CAUGHT" in mock_interaction.response.edit_message.call_args[1]["embed"].title
@@ -213,10 +207,10 @@ class TestOnInteraction:
         mock_msg = MagicMock()
         mock_msg.embeds = [MagicMock()]
         mock_interaction.message = mock_msg
-        
+
         with patch("mods.revocord.hunting.random.random", side_effect=[0.99, 0.1]): # Fail, then flee
             await cog.on_interaction(mock_interaction)
-            
+
         mock_update.assert_called_once()
         mock_interaction.response.edit_message.assert_called_once()
         mock_interaction.followup.send.assert_called_once()
@@ -235,10 +229,10 @@ class TestOnInteraction:
         mock_msg = MagicMock()
         mock_msg.embeds = [MagicMock()]
         mock_interaction.message = mock_msg
-        
+
         with patch("mods.revocord.hunting.random.random", side_effect=[0.99, 0.99]): # Fail, then no flee
             await cog.on_interaction(mock_interaction)
-            
+
         mock_update.assert_called_once()
         mock_interaction.response.send_message.assert_called_once()
         assert "broke free from your" in mock_interaction.response.send_message.call_args[0][0]
@@ -250,16 +244,16 @@ class TestOnInteraction:
         timestamp = int(time.time())
         mock_interaction.data = {"custom_id": f"wilds_claim:456:1:0:{timestamp}:100"}
         mock_interaction.user.id = 123
-        
+
         mock_channel = MagicMock()
         mock_channel.fetch_message = AsyncMock()
         mock_interaction.guild.get_channel = MagicMock(return_value=mock_channel)
         mock_interaction.message = None
-        
+
         with patch("pathlib.Path.exists", return_value=True), \
-             patch("mods.revocord.hunting.discord.File") as mock_file:
+             patch("mods.revocord.hunting.discord.File"):
             await cog.on_interaction(mock_interaction)
-            
+
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.edit_original_response.assert_called_once()
 
@@ -284,12 +278,12 @@ class TestSpawnWildRevomon:
     async def test_spawn_success_shiny_file_exists(self, mock_biome: Any, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:
         mock_get_account.return_value = {"current_city": "drassius city"}
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur", "type1": "neutral"}]
-        
+
         with patch("mods.revocord.hunting.random.random", return_value=0.001), \
              patch("pathlib.Path.exists", return_value=True), \
-             patch("mods.revocord.hunting.discord.File") as mock_file: # Shiny
+             patch("mods.revocord.hunting.discord.File"): # Shiny
             await cog.spawn_wild_revomon(mock_interaction)
-            
+
         mock_interaction.edit_original_response.assert_called_once()
         kwargs = mock_interaction.edit_original_response.call_args[1]
         assert kwargs.get("embed")
@@ -302,11 +296,11 @@ class TestSpawnWildRevomon:
     async def test_spawn_success_not_shiny_no_file(self, mock_biome: Any, mock_get_account: Any, cog: HuntingCog, mock_interaction: Any) -> None:
         mock_get_account.return_value = {"current_city": "drassius city"}
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur", "type1": "neutral"}]
-        
+
         with patch("mods.revocord.hunting.random.random", return_value=0.5), \
              patch("pathlib.Path.exists", return_value=False): # Not shiny
             await cog.spawn_wild_revomon(mock_interaction)
-            
+
         mock_interaction.edit_original_response.assert_called_once()
         kwargs = mock_interaction.edit_original_response.call_args[1]
         assert not kwargs.get("attachments")
@@ -317,23 +311,23 @@ class TestCleanupTask:
         cog = HuntingCog(mock_bot)
         mock_msg = MagicMock()
         mock_msg.delete = AsyncMock()
-        
+
         mock_item = MagicMock()
         mock_item.custom_id = f"spawn_fight:123:1:0:{int(time.time() - 400)}"
-        
+
         mock_component = MagicMock()
         mock_component.children = [mock_item]
         mock_msg.components = [mock_component]
-        
+
         mock_channel = MagicMock()
-        
+
         async def mock_history(*args, **kwargs):
             yield mock_msg
-            
+
         mock_channel.history = mock_history
         mock_guild = MagicMock()
         mock_guild.text_channels = [mock_channel]
         mock_bot.guilds = [mock_guild]
-        
+
         await cog.cleanup_encounters()
         mock_msg.delete.assert_called_once()

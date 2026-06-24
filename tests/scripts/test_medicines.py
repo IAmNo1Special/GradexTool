@@ -1,11 +1,20 @@
-from typing import Any
-import unittest.mock
-import pytest
-import httpx
 import asyncio
 import runpy
-from unittest.mock import patch, mock_open, AsyncMock, MagicMock
-from scripts.medicines import fetch_url, process_string, get_medicine_categories, process_item, get_medicines
+import unittest.mock
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
+import httpx
+import pytest
+
+from scripts.medicines import (
+    fetch_url,
+    get_medicine_categories,
+    get_medicines,
+    process_item,
+    process_string,
+)
+
 
 @pytest.mark.asyncio
 async def test_fetch_url() -> None:
@@ -14,7 +23,7 @@ async def test_fetch_url() -> None:
     response.status_code = 200
     response.json.return_value = {"a": 1}
     client.get = AsyncMock(return_value=response)
-    
+
     assert await fetch_url(client, "url") == {"a": 1}
 
     response.status_code = 404
@@ -51,7 +60,7 @@ async def test_process_item() -> None:
     client = MagicMock()
     semaphore = asyncio.Semaphore(1)
     potions_list: list[dict[str, Any]] = []
-    
+
     with patch("scripts.medicines.fetch_url", new_callable=AsyncMock) as mock_fetch:
         # Success case with en entries
         mock_fetch.return_value = {
@@ -106,15 +115,15 @@ async def test_get_medicines(mock_json_dump: Any, mock_open_file: Any, mock_make
     with patch("scripts.medicines.get_medicine_categories", new_callable=AsyncMock) as mock_get_cat:
         with patch("scripts.medicines.process_item", new_callable=AsyncMock) as mock_process:
             mock_get_cat.return_value = [{"name": "item1", "category": "cat1", "url": "url1"}]
-            
+
             async def side_effect(sem: Any, client: Any, ref: Any, plist: Any) -> None:
                 plist.append({"name": "z", "category": "cat1", "cost": 100, "effect": "", "short_effect": "", "flavor_text": ""})
                 plist.append({"name": "a", "category": "cat1", "cost": 100, "effect": "", "short_effect": "", "flavor_text": ""})
 
             mock_process.side_effect = side_effect
-            
+
             await get_medicines()
-            
+
             mock_makedirs.assert_called_once()
             mock_open_file.assert_called_once()
             mock_json_dump.assert_called_once()

@@ -1,5 +1,6 @@
 import os
 from io import BytesIO
+from typing import Any
 
 import aiohttp
 from dotenv import load_dotenv
@@ -7,7 +8,6 @@ from PIL import Image
 
 from data import OwnedLandsTable, RevomonTable
 from utils.revomon_utils import get_attributes
-from typing import Any, Dict, List, Union
 
 load_dotenv()
 
@@ -48,7 +48,7 @@ async def img_url_to_emoji_size(img_url: str) -> bytes:
                 return b""
 
 
-async def create_application_emoji(image_data: bytes, emoji_name: str) -> Dict[str, str]:
+async def create_application_emoji(image_data: bytes, emoji_name: str) -> dict[str, str]:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis"
     headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
@@ -79,7 +79,7 @@ async def create_application_emoji(image_data: bytes, emoji_name: str) -> Dict[s
                 return {}
 
 
-async def list_application_emojis() -> List[Union[Any, Dict[str, str]]]:
+async def list_application_emojis() -> list[Any | dict[str, str]]:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis"
     headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}"}
     app_emojis = []
@@ -146,13 +146,13 @@ async def delete_application_emoji(emoji_id: str) -> None:
                 )
 
 
-async def create_emoji_from_url(img_url: str, emoji_name: str) -> Dict[str, str]:
+async def create_emoji_from_url(img_url: str, emoji_name: str) -> dict[str, str]:
     image_data = await img_url_to_emoji_size(img_url)
     emoji_obj = await create_application_emoji(image_data, emoji_name=emoji_name)
     return emoji_obj
 
 
-async def create_revomon_emojis() -> List[Dict[str, str]]:
+async def create_revomon_emojis() -> list[dict[str, str]]:
     emoji_list = await list_application_emojis()
     for mon_name in await RevomonTable().get_names():
         if "-" in mon_name:
@@ -185,7 +185,7 @@ async def create_revomon_emojis() -> List[Dict[str, str]]:
     return emoji_list
 
 
-async def create_land_emojis() -> List[Dict[str, str]]:
+async def create_land_emojis() -> list[dict[str, str]]:
     emoji_list = await list_application_emojis()
     lands_table = OwnedLandsTable()
     for land_id in await lands_table.get_ids():

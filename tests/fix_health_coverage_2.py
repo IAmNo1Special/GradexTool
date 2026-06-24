@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\core\test_health.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 test = '''
@@ -10,7 +10,7 @@ test = '''
         cog = HealthCog(mock_bot)
         async def my_task():
             return 42
-        
+
         task = cog._spawn_background_task(my_task())
         await task
         assert task.result() is None # wrapper returns None
@@ -20,7 +20,7 @@ test = '''
         cog = HealthCog(mock_bot)
         async def my_task():
             raise asyncio.CancelledError()
-        
+
         task = cog._spawn_background_task(my_task())
         await task
 
@@ -29,7 +29,7 @@ test = '''
         cog = HealthCog(mock_bot)
         async def my_task():
             raise Exception("Fail")
-        
+
         with patch("mods.core.health.logger") as mock_logger:
             task = cog._spawn_background_task(my_task())
             await task
@@ -40,7 +40,7 @@ test = '''
         cog = HealthCog(mock_bot)
         async def my_task():
             raise Exception("Fail")
-        
+
         mock_handler = AsyncMock()
         task = cog._spawn_background_task(my_task(), on_error=mock_handler)
         await task

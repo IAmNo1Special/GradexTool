@@ -1,17 +1,19 @@
-from typing import Any
-import unittest.mock
 import json
-import pytest
 import runpy
 import sys
+import unittest.mock
 from pathlib import Path
-from unittest.mock import patch, mock_open, MagicMock, call
+from typing import Any
+from unittest.mock import MagicMock, mock_open, patch
+
+import pytest
 
 scripts_dir = Path(__file__).parent.parent.parent / "scripts"
 if str(scripts_dir) not in sys.path:
     sys.path.insert(0, str(scripts_dir))
 
-from scripts.capsules import get_capsules, CapsulesTable
+from scripts.capsules import CapsulesTable, get_capsules  # noqa: E402
+
 
 @pytest.fixture
 def mock_moves_data() -> Any:
@@ -80,13 +82,13 @@ async def test_capsules_table_rebuild() -> None:
     mock_mon_ids = [1, 2]
     mock_revomon_table = MagicMock()
     mock_revomon_table.get_mon_ids.return_value = mock_mon_ids
-    
+
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.__enter__.return_value = mock_conn
     mock_conn.cursor.return_value = mock_cursor
     mock_cursor.rowcount = 1
-    
+
     mock_response_1 = MagicMock()
     mock_response_1.status_code = 200
     mock_response_1.json.return_value = {
@@ -98,21 +100,22 @@ async def test_capsules_table_rebuild() -> None:
             ]
         }
     }
-    
+
     mock_response_2 = MagicMock()
     mock_response_2.status_code = 404 # Skip this one
-    
+
     def mock_requests_get(url: Any) -> Any:
-        if url.endswith("1"): return mock_response_1
+        if url.endswith("1"):
+            return mock_response_1
         return mock_response_2
-        
+
     with patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table), \
          patch("requests.get", side_effect=mock_requests_get), \
          patch.object(table, "_connect", return_value=mock_conn), \
          patch.object(table, "export_to_json") as mock_export:
-         
+
         await table.rebuild()
-        
+
         # 1 valid response with 2 capsule moves.
         assert mock_cursor.execute.call_count == 2
         mock_conn.commit.assert_called_once()
@@ -123,24 +126,24 @@ async def test_capsules_table_rebuild_rowcount_zero() -> None:
     table = CapsulesTable()
     mock_revomon_table = MagicMock()
     mock_revomon_table.get_mon_ids.return_value = [1]
-    
+
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_cursor.rowcount = 0
     mock_conn.__enter__.return_value = mock_conn
     mock_conn.cursor.return_value = mock_cursor
-    
+
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
         "data": {"moves": [{"idMove": 10, "capsule": 1, "name": "Move 1"}]}
     }
-    
+
     with patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table), \
          patch("requests.get", return_value=mock_response), \
          patch.object(table, "_connect", return_value=mock_conn), \
          patch.object(table, "export_to_json"):
-         
+
         await table.rebuild()
         assert mock_cursor.execute.call_count == 1
 
@@ -151,14 +154,14 @@ async def test_capsules_table_export_to_json() -> None:
     mock_cursor = MagicMock()
     mock_conn.__enter__.return_value = mock_conn
     mock_conn.cursor.return_value = mock_cursor
-    
+
     mock_cursor.fetchall.return_value = [(1, 10, "move_1"), (2, 20, "move_2")]
     mock_cursor.description = [("cap_num",), ("move_id",), ("move_name",)]
-    
+
     with patch.object(table, "_connect", return_value=mock_conn), \
          patch("builtins.open", mock_open()) as m_open:
         table.export_to_json()
-        
+
         mock_cursor.execute.assert_called_with("SELECT * FROM capsules;")
         # Check json.dump
         handle = m_open()
@@ -173,10 +176,10 @@ async def test_capsules_table_count_entries() -> None:
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
     mock_cursor.fetchone.return_value = (5,)
-    
+
     with patch.object(table, "_connect", return_value=mock_conn):
         result = table.count_entries()
-        
+
         mock_cursor.execute.assert_called_with("SELECT COUNT(*) FROM capsules;")
         mock_conn.close.assert_called_once()
         assert result == 5
@@ -187,10 +190,10 @@ async def test_capsules_table_add_capsule() -> None:
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
     mock_conn.cursor.return_value = mock_cursor
-    
+
     with patch.object(table, "_connect", return_value=mock_conn):
         table.add_capsule(1, 10, "Move 1")
-        
+
         mock_cursor.execute.assert_called_once()
         mock_conn.commit.assert_called_once()
         mock_conn.close.assert_called_once()

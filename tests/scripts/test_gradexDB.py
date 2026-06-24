@@ -1,34 +1,47 @@
-from typing import Any, Generator
-from contextlib import closing
-import json
+import json  # noqa: N999
 import sqlite3
+from collections.abc import Generator
+from contextlib import closing
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
 import pytest
-from unittest.mock import patch, mock_open, MagicMock, AsyncMock
 
 from scripts.gradexDB import (
-    CounterdexTable, AbilitiesTable, CapsulesTable, FruitysTable,
-    ItemsTable, MovesTable, NaturesTable, OwnedLandsTable, RevomonTable,
-    RevomonMovesTable, CurrentPodiumTable, WeeklyPodiumTable, TypesTable,
-    UsersTable, update_gradex_db
+    AbilitiesTable,
+    CapsulesTable,
+    CounterdexTable,
+    CurrentPodiumTable,
+    FruitysTable,
+    ItemsTable,
+    MovesTable,
+    NaturesTable,
+    OwnedLandsTable,
+    RevomonMovesTable,
+    RevomonTable,
+    TypesTable,
+    UsersTable,
+    WeeklyPodiumTable,
+    update_gradex_db,
 )
-import scripts.gradexDB as gradexDB
+
 
 @pytest.fixture
-def mock_db(tmp_path: Any) -> Generator[str, None, None]:
+def mock_db(tmp_path: Any) -> Generator[str]:
     db_file = tmp_path / "test.db"
     with patch("scripts.gradexDB.db_path", str(db_file)):
         yield str(db_file)
 
 @pytest.fixture
-def mock_requests() -> Generator[tuple[MagicMock, MagicMock], None, None]:
+def mock_requests() -> Generator[tuple[MagicMock, MagicMock]]:
     with patch("scripts.gradexDB.requests.get") as mock_get, \
          patch("scripts.gradexDB.requests.post") as mock_post:
-        
+
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {
             "data": {"revomons": [{"idRevodex": 1, "idRevomon": 1, "name": "TestMon"}]}
         }
-        
+
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "data": {"moves": [{"idMove": 1, "capsule": 1, "name": "testmove", "category": "cat", "type": "type", "description": "desc", "accuracy": 100, "power": 40, "pp": 35, "priority": 1, "method": "level", "level": 5}]}
@@ -63,7 +76,7 @@ def mock_json_files() -> Any:
 async def test_counterdex_table(mock_db: Any, mock_requests: Any, mock_json_files: Any) -> None:
     table = CounterdexTable()
     await table.build()
-    
+
     # Test adding and getting info
     await table.add_revomon(2, 2, "anothermon", "desc", "tier", "m", "b", "tips", "counters")
     assert await table.count_entries() == 2
@@ -121,10 +134,10 @@ async def test_moves_table(mock_db: Any, mock_requests: Any, mock_json_files: An
     table = MovesTable()
     await table.build()
     await table.rebuild()  # Trigger rowcount == 0 (duplicate skip)
-    
+
     await table.add_move(2, None, "move2", "cat", "type", "desc2", 100, 50, 10, 0)
     assert await table.count_entries() == 2
-    
+
     info = await table.get_info("move2")
     assert len(info) == 1
     names = await table.get_names()
@@ -137,7 +150,7 @@ async def test_natures_table(mock_db: Any, mock_json_files: Any) -> None:
     await table.build()
     await table.add_nature("timid", None, "atk", "likes", "dislikes")
     assert await table.count_entries() == 2
-    
+
     info = await table.get_info("timid")
     assert len(info) == 1
     names = await table.get_names()
@@ -150,19 +163,19 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
     with patch("utils.land_utils.get_land_data", new_callable=AsyncMock) as m_land, \
          patch("utils.emoji_utils.list_application_emojis", new_callable=AsyncMock) as m_emojis, \
          patch("utils.emoji_utils.create_emoji_from_url", new_callable=AsyncMock) as m_create:
-        
+
         m_land.return_value = [
             {"owners_address": "0x1", "land_info": [{"token_id": 1, "id": 1, "biome": "forest", "land_type": "base", "rarity": "common", "size": "small", "img_url": "url"}]},
             {"owners_address": "0x2", "land_info": [{"token_id": 2, "id": 2, "biome": "desert", "land_type": "advanced", "rarity": "rare", "size": "medium", "img_url": "url2"}]}
         ]
         m_emojis.return_value = [{"name": "forest_base", "id": "123"}]
         m_create.return_value = {"id": "456", "name": "desert_advanced"}
-        
+
         table = OwnedLandsTable()
         # Mock update_lands_sale_data
         table.update_lands_sale_data = AsyncMock()  # type: ignore[method-assign]
         await table.build()
-        
+
         assert await table.count_entries() == 2
         ids = await table.get_ids()
         assert 1 in ids
@@ -170,12 +183,12 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
         assert "forest" in biomes
         land_types = await table.get_land_types()
         assert "base" in land_types
-        
+
         info = await table.get_info(token_id=1, sort_by="biome", asc=False)
         assert len(info) == 1
         info2 = await table.get_info(id=1, owners_address="0x1", biome="forest", land_type="base", rarity="common", size="small", img_url="url", sale_status=0, sort_by="id")
         assert len(info2) == 1
-        
+
         # Test remaining sorting logic branches
         await table.get_info(sort_by="owners_address")
         await table.get_info(sort_by="land_type")
@@ -184,7 +197,7 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
         await table.get_info(sort_by="img_url")
         await table.get_info(sort_by="sale_status")
         await table.get_info(sort_by="invalid_sort")
-        
+
         # Hit sale_status filter and empty result
         await table.get_info(sale_status=1)
         await table.get_info(token_id=999)
@@ -233,14 +246,14 @@ async def test_revomon_moves_table(mock_db: Any, mock_requests: Any, mock_json_f
     table = RevomonMovesTable()
     await table.build()
     await table.rebuild()  # Trigger continue branch for existing entry
-    
+
     assert await table.count_entries() == 1
     await table.add_link(1, "testmon", 2, "move2", "tm", 0)
     assert await table.count_entries() == 2
-    
+
     moves = await table.get_moves_for_revomon(1)
     assert len(moves) == 1  # Note: only matches existing moves table entries
-    
+
     mons = await table.get_mons_for_move(move_id=1)
     assert "testmon" in mons
     mons = await table.get_mons_for_move(move_name="testmove")
@@ -267,10 +280,10 @@ async def test_types_table(mock_db: Any, mock_json_files: Any) -> None:
     table = TypesTable()
     await table.build()
     assert await table.count_entries() == 1
-    
+
     await table.add_type("water", {"type 1": "water", "neutral": 1.0})
     assert await table.count_entries() == 2
-    
+
     info = await table.get_info("water")
     assert len(info) == 1
     info2 = await table.get_info("water", "something")
@@ -283,23 +296,23 @@ async def test_types_table(mock_db: Any, mock_json_files: Any) -> None:
 async def test_users_table(mock_db: Any) -> None:
     table = UsersTable()
     await table.build()
-    
+
     await table.add_user(1, "user1", 1, "0x", 0, 0, 100, 50, 10, 5, 2, 1)
     assert await table.count_entries() == 1
-    
+
     await table.update_user(1, username="updated")
     user = await table.get_user(1)
     assert user[1] == "updated"
-    
+
     with pytest.raises(ValueError):
         await table.update_user(None)
-    
+
     # Manually export to JSON
     await table.export_to_json()
-    
+
     users = await table.get_users()
     assert len(users) == 1
-    
+
     await table.delete_user(1)
     assert await table.count_entries() == 0
     assert await table.get_user(1) is False
@@ -309,10 +322,10 @@ async def test_users_table(mock_db: Any) -> None:
 async def test_update_gradex_db(mock_db: Any, mock_requests: Any, mock_json_files: Any) -> None:
     with patch("utils.land_utils.get_land_data", new_callable=AsyncMock) as m_land, \
          patch("utils.emoji_utils.list_application_emojis", new_callable=AsyncMock) as m_emojis, \
-         patch("utils.emoji_utils.create_emoji_from_url", new_callable=AsyncMock) as m_create:
-        
+         patch("utils.emoji_utils.create_emoji_from_url", new_callable=AsyncMock):
+
         m_land.return_value = []
         m_emojis.return_value = []
-        
+
         # Avoid running OwnedLandsTable in the test because it is commented out in gradexDB.py
         await update_gradex_db()

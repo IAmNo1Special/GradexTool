@@ -1,7 +1,7 @@
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 good_test = '''    @pytest.mark.asyncio
@@ -12,17 +12,17 @@ good_test = '''    @pytest.mark.asyncio
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.text_channels = []
-        
+
         mock_get.return_value = None
-        
+
         mock_category = MagicMock()
         mock_category.name = "RevoCord"
         mock_category.channels = []
         mock_category.edit = AsyncMock()
         mock_guild.create_category = AsyncMock(return_value=mock_category)
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[])
-        
+
         async def real_mock_create(name, **kwargs):
             if name == "portal":
                 raise Exception("Portal channel failed to generate.")
@@ -31,11 +31,11 @@ good_test = '''    @pytest.mark.asyncio
             channel.position = kwargs.get("position", 0)
             channel.edit = AsyncMock()
             return channel
-            
+
         mock_guild.create_text_channel = real_mock_create
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
         assert len(calls) > 0'''

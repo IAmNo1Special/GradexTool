@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_tv.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix test_nav_close
@@ -12,7 +11,7 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = []
-        
+
         btn = TVNavButton("close", "❌", "Close", bot, 123, caught, 0)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)
@@ -26,10 +25,10 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = []
-        
+
         mock_get.return_value = {}
         mock_build.return_value = MagicMock()
-        
+
         btn = TVNavButton("close", "❌", "Close", bot, 123, caught, 0)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)
@@ -45,7 +44,7 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = [{"name": "A"} for _ in range(50)]
-        
+
         btn = TVNavButton("prev", "⏪", "Prev", bot, 123, caught, 0)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)
@@ -60,7 +59,7 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = [{"name": "A"} for _ in range(50)]
-        
+
         btn = TVNavButton("prev", "⏪", "Prev", bot, 123, caught, 0)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)
@@ -76,7 +75,7 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = [{"name": "A"} for _ in range(50)]
-        
+
         btn = TVNavButton("next", "⏩", "Next", bot, 123, caught, 2)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)
@@ -91,7 +90,7 @@ text = text.replace(
         bot.emojis = []
         bot._app_emojis_cache = []
         caught = [{"name": "A"} for _ in range(50)]
-        
+
         btn = TVNavButton("next", "⏩", "Next", bot, 123, caught, 2)
         mock_interaction.user.id = 123
         await btn.callback(mock_interaction)

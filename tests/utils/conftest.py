@@ -1,10 +1,11 @@
 from typing import Any
+
 """Pytest configuration and common fixtures for testing utils modules."""
 
-from unittest.mock import MagicMock, AsyncMock, patch
-import pytest
-import discord
-from discord.ext import commands
+from unittest.mock import MagicMock, patch  # noqa: E402
+
+import discord  # noqa: E402
+import pytest  # noqa: E402
 
 
 @pytest.fixture

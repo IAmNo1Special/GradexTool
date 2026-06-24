@@ -1,16 +1,17 @@
 from typing import Any
+
 """Script to discover all valid caught Revomon IDs from the API."""
 
-import asyncio
-import json
-import logging
-import os
-from dataclasses import dataclass
-from datetime import UTC, datetime
-from email.utils import parsedate_to_datetime
-from pathlib import Path
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+from dataclasses import dataclass  # noqa: E402
+from datetime import UTC, datetime  # noqa: E402
+from email.utils import parsedate_to_datetime  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-import httpx
+import httpx  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

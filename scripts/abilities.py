@@ -1,17 +1,23 @@
 from typing import Any
+
 """Script to fetch ability data from PokeAPI and save to abilities.json."""
 
-import asyncio
-import json
-import logging
-import os
-import sqlite3
-from contextlib import closing
-from pathlib import Path
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+import sqlite3  # noqa: E402
+from contextlib import closing  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-import httpx
+import httpx  # noqa: E402
 
-from configs import ABILITIES_FILE, GRADEX_DB_PATH, REVOMON_FILE, UNKNOWN_ABILITIES_FILE
+from configs import (  # noqa: E402
+    ABILITIES_FILE,
+    GRADEX_DB_PATH,
+    REVOMON_FILE,
+    UNKNOWN_ABILITIES_FILE,
+)
 
 logger = logging.getLogger(__name__)
 

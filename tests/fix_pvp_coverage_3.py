@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revomon\test_keywords.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 no_history_test = '''    @pytest.mark.asyncio
@@ -10,7 +9,7 @@ no_history_test = '''    @pytest.mark.asyncio
         mock_channel = MagicMock()
         del mock_channel.history  # So hasattr returns False
         mock_bot.get_channel = MagicMock(return_value=mock_channel)
-        
+
         await cog.update_rankings()
         mock_bot.get_channel.assert_called_once()
 '''

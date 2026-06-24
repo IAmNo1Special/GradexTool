@@ -1,12 +1,13 @@
 from typing import Any
+
 """Script to process item data from source items.json and save to gradex items.json."""
 
-import json
-import logging
-import os
-from pathlib import Path
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from helpers import to_sentence_case
+from helpers import to_sentence_case  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

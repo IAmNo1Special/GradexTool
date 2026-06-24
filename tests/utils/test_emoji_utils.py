@@ -1,10 +1,13 @@
-from typing import Any
 import unittest.mock
-import pytest
-from unittest.mock import patch, MagicMock, AsyncMock
 from io import BytesIO
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import pytest
 from PIL import Image
+
 from utils import emoji_utils
+
 
 @pytest.fixture
 def dummy_image_bytes() -> Any:
@@ -26,7 +29,7 @@ def setup_mock_response(session_mock: Any, method: Any, status: Any, json_data: 
     response_mock.json.return_value = json_data
     response_mock.text.return_value = text_data
     response_mock.read.return_value = content
-    
+
     ctx_mgr = MagicMock()
     ctx_mgr.__aenter__.return_value = response_mock
     getattr(session_mock, method).return_value = ctx_mgr
@@ -146,26 +149,26 @@ async def test_create_revomon_emojis_success(mock_get_attrs: Any, mock_revo_tabl
     mock_revo_table_inst = MagicMock()
     mock_revo_table_inst.get_names = AsyncMock(return_value=["existing-mon", "partial_mon", "new_mon", "error_mon"])
     mock_revo_table.return_value = mock_revo_table_inst
-    
+
     def get_attrs_side_effect(name: Any) -> Any:
         return {
             "profile_img": f"http://test.com/{name}.png",
             "shiny_profile_img": f"http://test.com/{name}_shiny.png"
         }
     mock_get_attrs.side_effect = get_attrs_side_effect
-    
+
     def create_emoji_side_effect(url: Any, emoji_name: Any) -> Any:
         if "error" in emoji_name:
             raise Exception("Test error")
         return {"name": emoji_name, "id": "123"}
-    
+
     mock_create_emoji.side_effect = create_emoji_side_effect
-    
+
     mock_list_emojis.side_effect = [
         [{"name": "existing_mon", "id": "1"}, {"name": "partial_mon_shiny", "id": "2"}], # First call
         [{"name": "existing_mon", "id": "1"}] # Second call, doesn't matter much
     ]
-    
+
     res = await emoji_utils.create_revomon_emojis()
     assert len(res) == 1
     assert mock_create_emoji.call_count == 4
@@ -177,7 +180,7 @@ async def test_create_revomon_emojis_success(mock_get_attrs: Any, mock_revo_tabl
 @patch("utils.emoji_utils.OwnedLandsTable")
 async def test_create_land_emojis(mock_lands_table: Any, mock_create_emoji: Any, mock_list_emojis: Any) -> None:
     mock_list_emojis.return_value = [{"name": "existing_land", "id": "1"}]
-    
+
     mock_lands_table_inst = MagicMock()
     mock_lands_table_inst.get_ids = AsyncMock(return_value=[1, 2])
     def get_info_side_effect(token_id: Any) -> Any:
@@ -185,12 +188,12 @@ async def test_create_land_emojis(mock_lands_table: Any, mock_create_emoji: Any,
             return [[0, 1, 2, "existing", "land", 5, 6, "http://test.com/land1.png"]]
         elif token_id == 2:
             return [[0, 1, 2, "new", "land", 5, 6, "http://test.com/land2.png"]]
-    
+
     mock_lands_table_inst.get_info = AsyncMock(side_effect=get_info_side_effect)
     mock_lands_table.return_value = mock_lands_table_inst
-    
+
     mock_create_emoji.return_value = {"name": "new_land", "id": "2"}
-    
+
     res = await emoji_utils.create_land_emojis()
     assert len(res) == 2
     assert mock_create_emoji.call_count == 1

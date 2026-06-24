@@ -1,23 +1,22 @@
-from typing import Any
-import unittest.mock
-import pytest
-import sys
 import runpy
-from unittest.mock import AsyncMock, MagicMock, patch, mock_open
-from pathlib import Path
-from PIL import Image
+import unittest.mock
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
+import pytest
 
 import scripts.type_charts
 from scripts.type_charts import (
-    fetch_single_type,
-    fetch_base_type_multipliers,
-    get_font,
+    REVOMON_TO_POKEMON_TYPE,
     calculate_section_height,
     draw_icon_section,
-    save_type_chart_images,
+    fetch_base_type_multipliers,
+    fetch_single_type,
+    get_font,
     get_type_charts,
-    REVOMON_TO_POKEMON_TYPE,
+    save_type_chart_images,
 )
+
 
 @pytest.mark.asyncio
 async def test_fetch_single_type() -> None:
@@ -34,7 +33,7 @@ async def test_fetch_single_type() -> None:
 
     rtype = "neutral"
     ptype = "normal"
-    
+
     scripts.type_charts.BASE_TYPE_MULTIPLIERS.clear()
     scripts.type_charts.BASE_TYPE_MULTIPLIERS[rtype] = {}
 
@@ -48,7 +47,7 @@ async def test_fetch_single_type() -> None:
 @patch("scripts.type_charts.fetch_single_type")
 async def test_fetch_base_type_multipliers(mock_fetch: Any) -> None:
     await fetch_base_type_multipliers()
-    
+
     assert "neutral" in scripts.type_charts.BASE_TYPE_MULTIPLIERS
     assert scripts.type_charts.BASE_TYPE_MULTIPLIERS["neutral"]["neutral"] == 1.0
     assert mock_fetch.call_count == len(REVOMON_TO_POKEMON_TYPE)
@@ -58,7 +57,7 @@ def test_get_font() -> None:
         mock_truetype.return_value = "mock_font"
         font = get_font(30)
         assert font == "mock_font"
-        
+
     with patch("PIL.ImageFont.truetype", side_effect=OSError), \
          patch("PIL.ImageFont.load_default") as mock_default:
         mock_default.return_value = "default_font"
@@ -67,7 +66,7 @@ def test_get_font() -> None:
 
 def test_calculate_section_height() -> None:
     assert calculate_section_height(100, [], {}) == 0
-    
+
     targets = ["fire", "water", "grass"]
     type_images = {}
     for t in targets:
@@ -78,7 +77,7 @@ def test_calculate_section_height() -> None:
 
     height = calculate_section_height(100, targets, type_images)
     assert height > 0
-    
+
     # Check wrapping
     targets = ["fire", "water", "grass"]
     height_wrap = calculate_section_height(50, targets, type_images)
@@ -96,11 +95,11 @@ def test_draw_icon_section() -> None:
     }
     y_end = draw_icon_section(img, draw, 0, 0, 100, "LABEL", targets, type_images, "font")
     assert y_end > 0
-    
+
     # Wrapping test
     y_wrap = draw_icon_section(img, draw, 0, 0, 50, "LABEL", targets, type_images, "font")
     assert y_wrap > 0
-    
+
     assert draw_icon_section(img, draw, 0, 0, 100, "LABEL", [], type_images, "font") == 0
 
 @patch("scripts.type_charts.TYPE_CHART_IMAGES_DIR")
@@ -112,19 +111,19 @@ def test_save_type_chart_images(mock_draw: Any, mock_image_new: Any, mock_dir: A
         "fire_water": {"type1": "fire", "type2": "water"}
     }
     base_type_names = ["fire", "water", "grass"]
-    
+
     fire_img = MagicMock()
     fire_img.width = 100
     fire_img.height = 100
     fire_img.rotate.return_value.size = (100, 100)
     fire_img.rotate.return_value.resize.return_value.size = (70, 70)
-    
+
     water_img = MagicMock()
     water_img.width = 100
     water_img.height = 100
     water_img.rotate.return_value.size = (100, 100)
     water_img.rotate.return_value.resize.return_value.size = (70, 70)
-    
+
     type_images = {
         "fire": fire_img,
         "water": water_img
@@ -144,38 +143,38 @@ def test_save_type_chart_images(mock_draw: Any, mock_image_new: Any, mock_dir: A
 @patch("scripts.type_charts.BASE_TYPES_IMAGES_DIR")
 async def test_get_type_charts(mock_base_dir: Any, mock_chart_dir: Any, mock_missing_file: Any, mock_charts_file: Any, mock_file: Any, mock_save: Any, mock_fetch: Any) -> None:
     import json
-    
+
     # Add dummy files
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire", "water", "grass"])).return_value,
         mock_open(read_data=json.dumps([{"type1": "fire", "type2": "water"}, {"type1": "grass"}])).return_value,
-        mock_open().return_value, 
-        mock_open().return_value, 
+        mock_open().return_value,
+        mock_open().return_value,
     ]
-    
+
     scripts.type_charts.BASE_TYPE_MULTIPLIERS.clear()
     scripts.type_charts.BASE_TYPE_MULTIPLIERS["fire"] = {"water": 0.5, "grass": 2.0}
     scripts.type_charts.BASE_TYPE_MULTIPLIERS["water"] = {"fire": 2.0, "grass": 0.5}
     scripts.type_charts.BASE_TYPE_MULTIPLIERS["grass"] = {"fire": 0.5, "water": 2.0}
 
     await get_type_charts(generate_images=False)
-    
+
     # Image load error handling
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire", "water", "grass"])).return_value,
         mock_open(read_data=json.dumps([{"type1": "fire", "type2": "water"}, {"type1": "grass"}])).return_value,
-        mock_open().return_value, 
-        mock_open().return_value, 
+        mock_open().return_value,
+        mock_open().return_value,
     ]
-    
+
     mock_path = MagicMock()
     mock_path.stem = "fire"
     mock_base_dir.glob.return_value = [mock_path]
-    
+
     mock_chart_path = MagicMock()
     mock_chart_path.exists.return_value = False
     mock_chart_dir.__truediv__.return_value = mock_chart_path
-    
+
     with patch("scripts.type_charts.Image.open") as mock_image_open:
         # Cause OSError on Image.open
         mock_image_open.side_effect = OSError("Error")
@@ -185,11 +184,11 @@ async def test_get_type_charts(mock_base_dir: Any, mock_chart_dir: Any, mock_mis
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire"])).return_value,
         mock_open(read_data=json.dumps([{"type1": "fire"}])).return_value,
-        mock_open().return_value, 
-        mock_open().return_value, 
+        mock_open().return_value,
+        mock_open().return_value,
     ]
     mock_chart_path.exists.return_value = False
-    
+
     with patch("scripts.type_charts.Image.open"):
         await get_type_charts(generate_images=False)
 
@@ -197,12 +196,12 @@ async def test_get_type_charts(mock_base_dir: Any, mock_chart_dir: Any, mock_mis
     mock_file.side_effect = [
         mock_open(read_data=json.dumps(["fire"])).return_value,
         mock_open(read_data=json.dumps([{"type1": "fire"}])).return_value,
-        mock_open().return_value, 
-        mock_open().return_value, 
+        mock_open().return_value,
+        mock_open().return_value,
     ]
     mock_chart_path.exists.return_value = True
     mock_missing_file.exists.return_value = True
-    
+
     with patch("scripts.type_charts.Image.open"):
         await get_type_charts(generate_images=False)
         assert mock_missing_file.unlink.called

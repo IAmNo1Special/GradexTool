@@ -1,33 +1,33 @@
-from typing import Any
-import unittest.mock
 import json
 import logging
-import sys
 import os
 import runpy
-from pathlib import Path
+import sys
+import unittest.mock
+from typing import Any
 from unittest.mock import patch
 
 sys.path.insert(0, os.path.abspath("scripts"))
 from scripts import items
 
+
 def test_get_items(monkeypatch: Any, tmp_path: Any, caplog: Any) -> None:
     out_path = tmp_path / "items.json"
     monkeypatch.setattr(items, "OUTPUT_PATH", out_path)
-    
+
     test_items = [
         {"name": "Potion", "description": "restores 20 hp.", "obtained_from": "RevoCenter", "cost": 200},
         {"cost": 100} # missing name, description, obtained_from
     ]
     monkeypatch.setattr(items, "ITEMS", test_items)
-    
+
     with caplog.at_level(logging.INFO):
         items.get_items()
-        
+
     assert out_path.exists()
-    with open(out_path, "r", encoding="utf-8") as f:
+    with open(out_path, encoding="utf-8") as f:
         data = json.load(f)
-        
+
     assert len(data) == 2
     assert data["1"]["cost"] == 100
     assert data["2"]["name"] == "potion"

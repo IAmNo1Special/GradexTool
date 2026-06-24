@@ -1,16 +1,17 @@
 from typing import Any
+
 """Script to process fruity data from source fruitys.json and save to gradex fruitys.json."""
 
-import json
-import logging
-import os
-import sqlite3
-from contextlib import closing
-from pathlib import Path
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+import sqlite3  # noqa: E402
+from contextlib import closing  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-from helpers import to_sentence_case
+from helpers import to_sentence_case  # noqa: E402
 
-from configs import GRADEX_DB_PATH
+from configs import GRADEX_DB_PATH  # noqa: E402
 
 db_path: Path = GRADEX_DB_PATH
 

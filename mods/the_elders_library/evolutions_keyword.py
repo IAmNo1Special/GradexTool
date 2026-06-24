@@ -1,11 +1,12 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class evolutions(commands.Cog):
+class evolutions(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -89,7 +90,7 @@ class evolutions(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class evolutions_buttons(discord.ui.View):
+    class evolutions_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -99,7 +100,7 @@ class evolutions(commands.Cog):
             custom_id="Evolution Page 2",
         )
         async def page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             page2_embed = discord.Embed(
                 title="Full Evolutions List Pt.2",
@@ -186,7 +187,7 @@ Azuroon	(Final Evolution)""",
             custom_id="Evolution Page 3",
         )
         async def page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             page3_embed = discord.Embed(
                 title="Full Evolutions List Pt.3",
@@ -213,7 +214,7 @@ Azuroon	(Final Evolution)""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
 

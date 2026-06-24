@@ -1,9 +1,9 @@
 from typing import Any
+
 import aiohttp
-from typing import Dict, List, Union
 
 
-async def get_land_info_for_ids(token_ids: List[Any]) -> List[Dict[str, Any]]:
+async def get_land_info_for_ids(token_ids: list[Any]) -> list[dict[str, Any]]:
     if len(token_ids) > 30:
         token_ids_list = [token_ids[i : i + 30] for i in range(0, len(token_ids), 30)]
     else:
@@ -62,7 +62,7 @@ async def get_land_info_for_ids(token_ids: List[Any]) -> List[Dict[str, Any]]:
     return land_info
 
 
-async def get_land_owners_and_ids() -> List[Dict[str, Any]]:
+async def get_land_owners_and_ids() -> list[dict[str, Any]]:
     print("Retrieving land owner with land ids data...")
     print("Retrieving raw land owner with land ids data...")
     base_url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/collections/0x5c40eb1eaad2a96e383e3b0a986a5377fc1ee239/owners"
@@ -127,7 +127,7 @@ async def get_land_owners_and_ids() -> List[Dict[str, Any]]:
     return final_data
 
 
-async def get_land_data() -> List[Dict[str, Any]]:
+async def get_land_data() -> list[dict[str, Any]]:
     print("Retrieving land data...")
     land_data = []
     owner_objs = await get_land_owners_and_ids()
@@ -150,7 +150,7 @@ async def get_land_data() -> List[Dict[str, Any]]:
     return land_data
 
 
-async def get_lands_for_sale() -> List[Dict[str, Any]]:
+async def get_lands_for_sale() -> list[dict[str, Any]]:
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
@@ -159,9 +159,9 @@ async def get_lands_for_sale() -> List[Dict[str, Any]]:
             return for_sale_land_objs["result"]  # type: ignore[no-any-return]
 
 
-from typing import Optional
 
-async def get_zkevm_token_data(token_address: str) -> Optional[Dict[str, Any]]:
+
+async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
     async with aiohttp.ClientSession() as session:
         url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"
         async with session.get(url) as response:
@@ -176,7 +176,7 @@ async def get_zkevm_token_data(token_address: str) -> Optional[Dict[str, Any]]:
                 return None
 
 
-async def get_lands_for_sale_amount() -> Dict[str, Dict[str, Union[str, float]]]:
+async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:
     print("Fetching lands for sale amount...")
     for_sale_lands_data = await get_lands_for_sale()
     for_sale_lands_data_dict = {}

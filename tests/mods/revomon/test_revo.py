@@ -1,7 +1,10 @@
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+
 from mods.revomon.revo import PriceTracker, setup
+
 
 @pytest.fixture
 def mock_bot() -> Any:

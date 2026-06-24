@@ -1,12 +1,14 @@
 from typing import Any
+
 """Comprehensive tests for the guardrails/users.py mod."""
 
-import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-import discord
-from discord.ext import commands
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
 
-from mods.guardrails.users import UsersGuardrail, setup
+import discord  # noqa: E402
+import pytest  # noqa: E402
+from discord.ext import commands  # noqa: E402
+
+from mods.guardrails.users import UsersGuardrail, setup  # noqa: E402
 
 
 @pytest.fixture
@@ -41,7 +43,7 @@ class TestUsersGuardrail:
         mock_message = MagicMock(spec=discord.Message)
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.bot = True
-        
+
         with patch('mods.guardrails.users.user_check') as mock_user_check:
             await cog.on_message(mock_message)
             mock_user_check.assert_not_called()
@@ -53,7 +55,7 @@ class TestUsersGuardrail:
         mock_message = MagicMock(spec=discord.Message)
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.bot = False
-        
+
         with patch('mods.guardrails.users.user_check', new_callable=AsyncMock) as mock_user_check:
             await cog.on_message(mock_message)
             mock_user_check.assert_called_once_with(gradex_tool=mock_bot, user=mock_message.author)
@@ -65,7 +67,7 @@ class TestUsersGuardrail:
         mock_message = MagicMock(spec=discord.Message)
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.bot = False
-        
+
         with patch('mods.guardrails.users.user_check', new_callable=AsyncMock) as mock_user_check:
             mock_user_check.side_effect = Exception("Test exception")
             with patch('mods.guardrails.users.logger.error') as mock_error:
@@ -78,7 +80,7 @@ class TestUsersGuardrail:
         """Test on_member_join when GRA_GUILD_ID is not set."""
         cog = UsersGuardrail(mock_bot)
         mock_member = MagicMock(spec=discord.Member)
-        
+
         with patch('mods.guardrails.users.logger.error') as mock_error:
             await cog.on_member_join(mock_member)
             mock_error.assert_called_once_with("GRA_GUILD_ID not found in configuration!")
@@ -91,7 +93,7 @@ class TestUsersGuardrail:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.guild = MagicMock(spec=discord.Guild)
         mock_member.guild.id = 54321  # Doesn't match
-        
+
         mock_member.add_roles = AsyncMock()
         await cog.on_member_join(mock_member)
         mock_member.add_roles.assert_not_called()
@@ -105,9 +107,9 @@ class TestUsersGuardrail:
         mock_member.guild = MagicMock(spec=discord.Guild)
         mock_member.guild.id = 12345
         mock_member.add_roles = AsyncMock()
-        
+
         mock_role = MagicMock(spec=discord.Role)
-        
+
         with patch('mods.guardrails.users.utils.get', return_value=mock_role) as mock_get:
             with patch('mods.guardrails.users.logger.info') as mock_info:
                 await cog.on_member_join(mock_member)
@@ -124,7 +126,7 @@ class TestUsersGuardrail:
         mock_member.guild = MagicMock(spec=discord.Guild)
         mock_member.guild.id = 12345
         mock_member.add_roles = AsyncMock()
-        
+
         with patch('mods.guardrails.users.utils.get', return_value=None) as mock_get:
             with patch('mods.guardrails.users.logger.warning') as mock_warn:
                 await cog.on_member_join(mock_member)
@@ -139,10 +141,10 @@ class TestUsersGuardrail:
         mock_interaction = MagicMock(spec=discord.Interaction)
         mock_interaction.client = mock_bot
         mock_interaction.user = MagicMock(spec=discord.Member)
-        
+
         mock_command = MagicMock()
         mock_command.name = "test_cmd"
-        
+
         with patch('mods.guardrails.users.user_check', new_callable=AsyncMock) as mock_user_check:
             await cog.on_app_command_completion(mock_interaction, mock_command)
             mock_user_check.assert_called_once_with(gradex_tool=mock_bot, user=mock_interaction.user)
@@ -154,10 +156,10 @@ class TestUsersGuardrail:
         mock_interaction = MagicMock(spec=discord.Interaction)
         mock_interaction.client = mock_bot
         mock_interaction.user = MagicMock(spec=discord.Member)
-        
+
         mock_command = MagicMock()
         mock_command.name = "test_cmd"
-        
+
         with patch('mods.guardrails.users.user_check', new_callable=AsyncMock) as mock_user_check:
             mock_user_check.side_effect = Exception("Command failed")
             with patch('mods.guardrails.users.logger.error') as mock_error:

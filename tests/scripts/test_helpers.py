@@ -1,7 +1,7 @@
-from typing import Any
-"""Comprehensive tests for scripts/helpers.py"""
+"""Comprehensive tests for scripts/helpers.py."""
 
 import pytest
+
 from scripts.helpers import to_sentence_case
 
 

@@ -1,7 +1,6 @@
-import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_wilds_loop.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Fix test_do_spawn_no_eligible
@@ -13,7 +12,7 @@ text = text.replace(
         guild = MagicMock()
         guild.text_channels = [MagicMock(name="wilds")]
         guild.text_channels[0].name = "wilds"
-        
+
         await cog._do_spawn(guild)
         guild.text_channels[0].send.assert_not_called()''',
     '''    @pytest.mark.asyncio
@@ -25,7 +24,7 @@ text = text.replace(
         guild = MagicMock()
         guild.text_channels = [MagicMock(name="wilds")]
         guild.text_channels[0].name = "wilds"
-        
+
         with patch("mods.revocord.wilds_loop.BIOME_TYPES", {"water": {"water"}}):
             await cog._do_spawn(guild)
         guild.text_channels[0].send.assert_not_called()'''
@@ -70,11 +69,11 @@ tests = '''
         }
         mock_table.count_guild_spawns = AsyncMock(return_value=6) # Over base limit, but under temp limit!
         cog._do_spawn = AsyncMock()
-        
+
         guild = MagicMock()
         guild.id = 123
         cog.bot.guilds = [guild]
-        
+
         await cog.wilds_spawn_loop()
         cog._do_spawn.assert_called_once()
 '''

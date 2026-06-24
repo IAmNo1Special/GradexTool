@@ -1,15 +1,13 @@
 from typing import Any
+
 """Comprehensive tests for health.py cog."""
 
-import sys
-from pathlib import Path
-import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
-import pytest
+import asyncio  # noqa: E402
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
 
+import pytest  # noqa: E402
 
-
-from mods.core.health import HealthCog, setup, _HEARTBEAT_INTERVAL
+from mods.core.health import _HEARTBEAT_INTERVAL, HealthCog, setup  # noqa: E402
 
 
 class TestHealthCogConstants:
@@ -28,7 +26,7 @@ class TestHealthCogInitialization:
     def test_health_cog_init(self, mock_bot: Any) -> None:
         """Test HealthCog initialization."""
         cog = HealthCog(mock_bot)
-        
+
         assert cog.bot == mock_bot
         assert cog._start_time == 0.0
         assert cog._heartbeat_task is None
@@ -37,7 +35,7 @@ class TestHealthCogInitialization:
     def test_health_cog_is_cog(self, mock_bot: Any) -> None:
         """Test that HealthCog is a proper Discord Cog."""
         from discord.ext import commands
-        
+
         cog = HealthCog(mock_bot)
         assert isinstance(cog, commands.Cog)
 
@@ -48,21 +46,21 @@ class TestHealthCogMethods:
     def test_cog_has_heartbeat_loop(self, mock_bot: Any) -> None:
         """Test that HealthCog has _heartbeat_loop method."""
         cog = HealthCog(mock_bot)
-        
+
         assert hasattr(cog, '_heartbeat_loop')
         assert callable(cog._heartbeat_loop)
 
     def test_cog_has_sleep_method(self, mock_bot: Any) -> None:
         """Test that HealthCog has _sleep method."""
         cog = HealthCog(mock_bot)
-        
+
         assert hasattr(cog, '_sleep')
         assert callable(cog._sleep)
 
     def test_cog_has_cog_unload(self, mock_bot: Any) -> None:
         """Test that HealthCog has cog_unload method."""
         cog = HealthCog(mock_bot)
-        
+
         assert hasattr(cog, 'cog_unload')
         assert callable(cog.cog_unload)
 
@@ -74,9 +72,9 @@ class TestHealthCogSetup:
     async def test_setup_adds_cog(self, mock_bot: Any) -> None:
         """Test that setup function adds the cog to bot."""
         await setup(mock_bot)
-        
+
         mock_bot.add_cog.assert_called_once()
-        
+
         call_args = mock_bot.add_cog.call_args
         cog = call_args[0][0]
         assert isinstance(cog, HealthCog)
@@ -85,9 +83,9 @@ class TestHealthCogSetup:
     async def test_setup_handles_exception(self, mock_bot: Any) -> None:
         """Test that setup handles exceptions gracefully."""
         mock_bot.add_cog = AsyncMock(side_effect=Exception("Setup error"))
-        
+
         await setup(mock_bot)
-        
+
         mock_bot.add_cog.assert_called_once()
 
 
@@ -98,12 +96,12 @@ class TestHealthCogIntegration:
     async def test_cog_lifecycle(self, mock_bot: Any) -> None:
         """Test cog lifecycle: setup -> initialization."""
         await setup(mock_bot)
-        
+
         cog = HealthCog(mock_bot)
-        
+
         # Verify setup was called
         mock_bot.add_cog.assert_called_once()
-        
+
         # Verify cog was created
         assert isinstance(cog, HealthCog)
 
@@ -119,7 +117,7 @@ class TestHealthCogLogic:
         cog = HealthCog(mock_bot)
         async def my_task():
             return 42
-        
+
         task = cog._spawn_background_task(my_task())
         await task
         assert task.result() is None # wrapper returns None
@@ -129,7 +127,7 @@ class TestHealthCogLogic:
         cog = HealthCog(mock_bot)
         async def my_task():
             raise asyncio.CancelledError()
-        
+
         task = cog._spawn_background_task(my_task())
         await task
 
@@ -138,7 +136,7 @@ class TestHealthCogLogic:
         cog = HealthCog(mock_bot)
         async def my_task():
             raise Exception("Fail")
-        
+
         with patch("mods.core.health.logger") as mock_logger:
             task = cog._spawn_background_task(my_task())
             await task
@@ -149,7 +147,7 @@ class TestHealthCogLogic:
         cog = HealthCog(mock_bot)
         async def my_task():
             raise Exception("Fail")
-        
+
         mock_handler = AsyncMock()
         task = cog._spawn_background_task(my_task(), on_error=mock_handler)
         await task
@@ -165,11 +163,11 @@ class TestHealthCogLogic:
         assert cog._heartbeat_task is None
 
         await cog.on_ready()
-        
+
         assert cog._start_time > 0.0
         mock_spawn.assert_called_once()
         assert cog._heartbeat_task == mock_spawn.return_value
-        
+
         # Cleanup unawaited coroutine
         coro = mock_spawn.call_args[0][0]
         coro.close()
@@ -185,16 +183,16 @@ class TestHealthCogLogic:
     async def test_heartbeat_loop(self, mock_monotonic: Any, mock_logger: Any, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
         cog._start_time = 1000.0
-        
+
         # We need the loop to run once and then stop.
         mock_bot.is_closed.side_effect = [False, True]
-        
+
         # mock time to simulate 1h 1m 1s uptime -> 3661 seconds
         mock_monotonic.return_value = 4661.0
-        
+
         mock_bot.latency = 0.123 # 123ms
         mock_bot.guilds = [1, 2, 3] # length 3
-        
+
         # mock sleep
         cog._sleep = AsyncMock()  # type: ignore[method-assign]
 
@@ -226,10 +224,10 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_cog_unload(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
-        
+
         # with no task
         await cog.cog_unload()
-        
+
         # with task
         mock_task = MagicMock()
         cog._heartbeat_task = mock_task

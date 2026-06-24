@@ -1,15 +1,16 @@
 from typing import Any
+
 """Comprehensive tests for helpers module."""
 
-import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
-import discord
-from discord.ext import commands
+from unittest.mock import AsyncMock, MagicMock, patch  # noqa: E402
 
-from utils.helpers import (
+import discord  # noqa: E402
+import pytest  # noqa: E402
+
+from utils.helpers import (  # noqa: E402
     is_pro_tamer,
-    user_check,
     respond,
+    user_check,
 )
 
 
@@ -21,15 +22,15 @@ class TestIsProTamer:
         # Create mock guild
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123456789
-        
+
         # Create mock member with pro role
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.roles = [MagicMock(id=111222333)]  # Pro role ID
-        
+
         mock_guild.get_member.return_value = mock_member
         mock_bot.get_guild.return_value = mock_guild
-        
+
         # Mock the config to include the role ID
         with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
             with patch('utils.helpers.GRA_GUILD_ID', 123456789):
@@ -41,15 +42,15 @@ class TestIsProTamer:
         # Create mock guild
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123456789
-        
+
         # Create mock member without pro role
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.roles = [MagicMock(id=999888777)]  # Non-pro role ID
-        
+
         mock_guild.get_member.return_value = mock_member
         mock_bot.get_guild.return_value = mock_guild
-        
+
         # Mock the config to not include the role ID
         with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
             with patch('utils.helpers.GRA_GUILD_ID', 123456789):
@@ -60,9 +61,9 @@ class TestIsProTamer:
         """Test that is_pro_tamer returns False when guild is not found."""
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
-        
+
         mock_bot.get_guild.return_value = None
-        
+
         with patch('utils.helpers.GRA_GUILD_ID', 123456789):
             result = is_pro_tamer(mock_bot, mock_member)
             assert result is False
@@ -72,14 +73,14 @@ class TestIsProTamer:
         # Create mock guild
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123456789
-        
+
         # Create mock member
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
-        
+
         mock_guild.get_member.return_value = None
         mock_bot.get_guild.return_value = mock_guild
-        
+
         with patch('utils.helpers.GRA_GUILD_ID', 123456789):
             result = is_pro_tamer(mock_bot, mock_member)
             assert result is False
@@ -89,15 +90,15 @@ class TestIsProTamer:
         # Create mock guild
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123456789
-        
+
         # Create mock member with second pro role
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.roles = [MagicMock(id=222333444)]  # Second pro role ID
-        
+
         mock_guild.get_member.return_value = mock_member
         mock_bot.get_guild.return_value = mock_guild
-        
+
         # Mock the config to include multiple pro role IDs
         with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333, 222333444]):
             with patch('utils.helpers.GRA_GUILD_ID', 123456789):
@@ -109,15 +110,15 @@ class TestIsProTamer:
         # Create mock guild
         mock_guild = MagicMock(spec=discord.Guild)
         mock_guild.id = 123456789
-        
+
         # Create mock member with no roles
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.roles = []
-        
+
         mock_guild.get_member.return_value = mock_member
         mock_bot.get_guild.return_value = mock_guild
-        
+
         with patch('utils.helpers.PRO_TAMER_ROLE_IDS', [111222333]):
             with patch('utils.helpers.GRA_GUILD_ID', 123456789):
                 result = is_pro_tamer(mock_bot, mock_member)
@@ -134,17 +135,17 @@ class TestUserCheck:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "TestUser"
-        
+
         # Mock database
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
-        
+
         # Mock is_pro_tamer to return True
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Verify user was added with pro status
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
@@ -157,17 +158,17 @@ class TestUserCheck:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "TestUser"
-        
+
         # Mock database
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
-        
+
         # Mock is_pro_tamer to return False
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Verify user was added without pro status
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
@@ -180,17 +181,17 @@ class TestUserCheck:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "TestUser"
-        
+
         # Mock database with existing user (non-pro)
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = [987654321, "TestUser", 0, None, 0, 0, 0, 0, 0, 0, 0, 0]
         mock_users_table.update_user = AsyncMock()
-        
+
         # Mock is_pro_tamer to return True (status changed)
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Verify user was updated with new pro status
                 mock_users_table.update_user.assert_called_once()
                 call_args = mock_users_table.update_user.call_args
@@ -203,17 +204,17 @@ class TestUserCheck:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "TestUser"
-        
+
         # Mock database with existing user (non-pro)
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = [987654321, "TestUser", 0, None, 0, 0, 0, 0, 0, 0, 0, 0]
         mock_users_table.update_user = AsyncMock()
-        
+
         # Mock is_pro_tamer to return False (status unchanged)
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Verify user was not updated
                 mock_users_table.update_user.assert_not_called()
 
@@ -224,16 +225,16 @@ class TestUserCheck:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "TestUser"
-        
+
         # Mock database
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Verify all default values were set
                 call_args = mock_users_table.add_user.call_args
                 assert call_args[1]['wallet_connected'] == 0
@@ -259,14 +260,14 @@ class TestRespond:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
-        
+
         # Mock is_pro_tamer to return True
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
-            
+
             # Verify embed was sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
@@ -281,14 +282,14 @@ class TestRespond:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
-        
+
         # Mock is_pro_tamer to return False
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             await respond(mock_bot, mock_message, embed=mock_embed)
-            
+
             # Verify error message was sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
@@ -305,13 +306,13 @@ class TestRespond:
         mock_message.delete = AsyncMock()
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
-            
+
             # Verify message was deleted
             mock_message.delete.assert_called_once()
             # Verify embed was sent via DM
@@ -328,14 +329,14 @@ class TestRespond:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed and view
         mock_embed = MagicMock(spec=discord.Embed)
         mock_view = MagicMock(spec=discord.ui.View)
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed, buttons=mock_view)
-            
+
             # Verify both embed and view were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
@@ -351,14 +352,14 @@ class TestRespond:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed and file
         mock_embed = MagicMock(spec=discord.Embed)
         mock_file = MagicMock(spec=discord.File)
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed, file=mock_file)
-            
+
             # Verify embed and file were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
@@ -374,15 +375,15 @@ class TestRespond:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed, view, and file
         mock_embed = MagicMock(spec=discord.Embed)
         mock_view = MagicMock(spec=discord.ui.View)
         mock_file = MagicMock(spec=discord.File)
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed, buttons=mock_view, file=mock_file)
-            
+
             # Verify all parameters were sent
             mock_message.author.send.assert_called_once()
             call_args = mock_message.author.send.call_args
@@ -399,14 +400,14 @@ class TestRespond:
         mock_message.delete = AsyncMock()
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
-        
+
         # Mock is_pro_tamer - it should be called but result shouldn't matter in guild
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=mock_embed)
-            
+
             # Verify message was deleted and DM sent
             mock_message.delete.assert_called_once()
             mock_message.author.send.assert_called_once()
@@ -422,16 +423,16 @@ class TestHelpersEdgeCases:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.id = 987654321
         mock_member.name = "A" * 100  # Very long username
-        
+
         # Mock database
         mock_users_table = AsyncMock()
         mock_users_table.get_user.return_value = None
         mock_users_table.add_user = AsyncMock()
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             with patch('utils.helpers.UsersTable', return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
-                
+
                 # Should handle long username
                 mock_users_table.add_user.assert_called_once()
                 call_args = mock_users_table.add_user.call_args
@@ -446,10 +447,10 @@ class TestHelpersEdgeCases:
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.id = 987654321
         mock_message.author.send = AsyncMock()
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=True):
             await respond(mock_bot, mock_message, embed=None)
-            
+
             # Should handle None embed
             mock_message.author.send.assert_called_once()
 
@@ -462,13 +463,13 @@ class TestHelpersEdgeCases:
         mock_message.delete = AsyncMock()
         mock_message.author = MagicMock(spec=discord.Member)
         mock_message.author.send = AsyncMock()
-        
+
         # Create mock embed
         mock_embed = MagicMock(spec=discord.Embed)
-        
+
         with patch('utils.helpers.is_pro_tamer', return_value=False):
             await respond(mock_bot, mock_message, embed=mock_embed)
-            
+
             # Even non-pro users in guild should get DM
             mock_message.delete.assert_called_once()
             mock_message.author.send.assert_called_once()

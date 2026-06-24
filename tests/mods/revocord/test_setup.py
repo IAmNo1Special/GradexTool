@@ -1,12 +1,13 @@
-import pytest
-from typing import Any, AsyncGenerator
-from unittest.mock import AsyncMock, MagicMock, patch, PropertyMock
+from collections.abc import AsyncGenerator
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
+import pytest
 from discord import app_commands
-import time
 
-from mods.revocord.setup import SetupCog, setup, BiomeSelectView, BiomeSelect
+from mods.revocord.setup import BiomeSelect, BiomeSelectView, SetupCog, setup
+
 
 class TestSetupCogInitialization:
     def test_setup_cog_init(self, mock_bot: Any) -> None:
@@ -36,7 +37,7 @@ class TestSetupCogCommand:
     async def test_missing_roles_permission(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_interaction.app_permissions.manage_roles = False
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "manage roles" in mock_interaction.followup.send.call_args[0][0].lower()
 
@@ -45,7 +46,7 @@ class TestSetupCogCommand:
         mock_interaction.app_permissions.manage_roles = True
         mock_interaction.app_permissions.manage_channels = False
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "manage channels" in mock_interaction.followup.send.call_args[0][0].lower()
 
@@ -55,7 +56,7 @@ class TestSetupCogCommand:
         mock_interaction.app_permissions.manage_channels = True
         mock_interaction.app_permissions.manage_messages = False
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "manage messages" in mock_interaction.followup.send.call_args[0][0].lower()
 
@@ -66,7 +67,7 @@ class TestSetupCogCommand:
         mock_interaction.app_permissions.manage_messages = True
         mock_interaction.guild = None
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once_with("This command must be used in a server.")
 
     @pytest.mark.asyncio
@@ -75,7 +76,7 @@ class TestSetupCogCommand:
         mock_interaction.app_permissions.manage_channels = True
         mock_interaction.app_permissions.manage_messages = True
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "select a Biome" in mock_interaction.followup.send.call_args[0][0]
         assert isinstance(mock_interaction.followup.send.call_args[1]["view"], BiomeSelectView)
@@ -89,25 +90,25 @@ class TestSetupCogCommand:
         mock_guild.channels = []
         mock_guild.fetch_channels = AsyncMock(return_value=[])
         mock_guild.text_channels = []
-        
+
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_category.edit = AsyncMock()
         mock_guild.create_category = AsyncMock(return_value=mock_category)
-        
+
         mock_portal = MagicMock(spec=discord.TextChannel)
         mock_portal.id = 999
-        
+
         def mock_create_ch(*args, **kwargs):
             ch = MagicMock()
             ch.position = kwargs.get("position", 0)
             ch.edit = AsyncMock()
             return ch
         mock_guild.create_text_channel = AsyncMock(side_effect=lambda *args, **kwargs: mock_portal if kwargs.get("name") == "portal" else mock_create_ch(*args, **kwargs))
-    
-        
+
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_guild.create_category.assert_called_once()
         assert mock_guild.create_text_channel.call_count == 4
         mock_interaction.followup.send.assert_called_once()
@@ -122,17 +123,17 @@ class TestSetupCogCommand:
         mock_category.name = "RevoCord"
         mock_category.edit = AsyncMock()
         mock_guild.categories = [mock_category]
-        
+
         mock_news = MagicMock(spec=discord.TextChannel)
         mock_news.name = "news"
         mock_news.position = 999
         mock_news.edit = AsyncMock()
-        
+
         mock_event_board = MagicMock(spec=discord.TextChannel)
         mock_event_board.name = "event-board"
         mock_event_board.position = 1
         mock_event_board.edit = AsyncMock()
-        
+
         mock_portal = MagicMock(spec=discord.TextChannel)
         mock_portal.name = "portal"
         mock_portal.position = 999
@@ -144,16 +145,16 @@ class TestSetupCogCommand:
             yield msg
         mock_portal.history = mock_history
 
-        
+
         mock_wilds = MagicMock(spec=discord.TextChannel)
         mock_wilds.name = "wilds"
         mock_wilds.position = 3
         mock_wilds.edit = AsyncMock()
-        
-        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any, None]:
+
+        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any]:
             yield MagicMock(author=setup_cog.bot.user)
         mock_portal.history = mock_history
-        
+
 
         mock_support = MagicMock(spec=discord.ForumChannel)
         mock_support.name = "support"
@@ -162,9 +163,9 @@ class TestSetupCogCommand:
         mock_category.channels = [mock_news, mock_event_board, mock_portal, mock_wilds, mock_support]
 
         mock_guild.channels = [mock_category, mock_news, mock_event_board, mock_portal, mock_wilds]
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_guild.create_category.assert_not_called()
         mock_guild.create_text_channel.assert_not_called()
 
@@ -175,21 +176,21 @@ class TestSetupCogCommand:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.channels = []
-        
+
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_category.edit = AsyncMock()
-        
+
         mock_news = MagicMock(spec=discord.TextChannel)
         mock_news.name = "news"
         mock_news.position = 999
         mock_news.edit = AsyncMock()
-        
+
         mock_event_board = MagicMock(spec=discord.TextChannel)
         mock_event_board.name = "event-board"
         mock_event_board.position = 1
         mock_event_board.edit = AsyncMock()
-        
+
         mock_portal = MagicMock(spec=discord.TextChannel)
         mock_portal.name = "portal"
         mock_portal.position = 999
@@ -201,27 +202,27 @@ class TestSetupCogCommand:
             yield msg
         mock_portal.history = mock_history
 
-        
+
         mock_wilds = MagicMock(spec=discord.TextChannel)
         mock_wilds.name = "wilds"
         mock_wilds.position = 3
         mock_wilds.edit = AsyncMock()
-        
-        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any, None]:
+
+        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any]:
             yield MagicMock(author=setup_cog.bot.user)
         mock_portal.history = mock_history
-        
+
 
         mock_support = MagicMock(spec=discord.ForumChannel)
         mock_support.name = "support"
         mock_support.position = 999
         mock_support.edit = AsyncMock()
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[mock_category, mock_news, mock_event_board, mock_portal, mock_wilds, mock_support])
 
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_guild.create_category.assert_not_called()
         mock_guild.create_text_channel.assert_not_called()
 
@@ -229,15 +230,15 @@ class TestSetupCogCommand:
     async def test_forbidden_exception(self, setup_cog: Any, mock_interaction: Any) -> None:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
-        
+
         class FakeResponse:
             status = 403
             reason = "Forbidden"
-            
+
         mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))  # type: ignore
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_interaction.followup.send.assert_called_with(
             "I don't have the required permissions to manage channels or permissions.",
             ephemeral=True
@@ -248,9 +249,9 @@ class TestSetupCogCommand:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.fetch_channels = AsyncMock(side_effect=Exception("Random error"))
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_interaction.followup.send.assert_called_with(
             "An error occurred: Random error",
             ephemeral=True
@@ -261,12 +262,12 @@ class TestSetupCogCommand:
     async def test_not_member(self, mock_bot):
         cog = SetupCog(mock_bot)
         mock_interaction = AsyncMock()
-        
+
         # User is not a Member
         mock_interaction.user = discord.User(state=MagicMock(), data={'id': 1, 'username': 'test', 'discriminator': '0', 'avatar': None})
-        
+
         await cog.setup_command.callback(cog, mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "server member" in mock_interaction.followup.send.call_args[0][0]
 
@@ -278,17 +279,17 @@ class TestSetupCogCommand:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.text_channels = []
-        
+
         mock_get.return_value = None
-        
+
         mock_category = MagicMock()
         mock_category.name = "RevoCord"
         mock_category.channels = []
         mock_category.edit = AsyncMock()
         mock_guild.create_category = AsyncMock(return_value=mock_category)
-        
+
         mock_guild.fetch_channels = AsyncMock(return_value=[])
-        
+
         async def real_mock_create(name, **kwargs):
             channel = MagicMock()
             if name == "portal":
@@ -297,11 +298,11 @@ class TestSetupCogCommand:
             channel.position = kwargs.get("position", 0)
             channel.edit = AsyncMock()
             return channel
-            
+
         mock_guild.create_text_channel = real_mock_create
-        
+
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)
-        
+
         mock_interaction.followup.send.assert_called()
         calls = [call for call in mock_interaction.followup.send.mock_calls if "Portal channel failed to generate." in str(call)]
         assert len(calls) > 0
@@ -330,9 +331,9 @@ class TestSetupCogErrorHandling:
         from mods.revocord.setup import setup
         bot = MagicMock()
         bot.add_cog = AsyncMock(side_effect=Exception("Failed to add cog"))
-        
+
         await setup(bot)
-        
+
         mock_logger.error.assert_called_once()
         assert "Failed to add cog" in str(mock_logger.error.call_args[0][1])
 
@@ -342,12 +343,12 @@ class TestBiomeSelect:
     async def test_biome_callback(self, mock_set_biome: Any, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         cog.execute_setup = AsyncMock() # type: ignore
-        
+
         select = BiomeSelect(cog, mock_interaction.user, mock_interaction.guild)
         select._values = ["Desert"]
-        
+
         await select.callback(mock_interaction)
-        
+
         mock_interaction.response.defer.assert_called_once()
         mock_set_biome.assert_called_once_with(mock_interaction.guild.id, "Desert")
         mock_interaction.edit_original_response.assert_called_once()

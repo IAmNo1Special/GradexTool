@@ -1,6 +1,7 @@
 """Cog for Portal session gateway login and ephemeral console deployment."""
 
 import logging
+
 import discord
 from discord import ui
 from discord.ext import commands
@@ -44,21 +45,24 @@ async def build_console_embed(account: dict, member: discord.Member) -> discord.
         value=f"**XP:** {xp_bar} {xp_percent}%\n**NRG:** {energy_bar} {energy}/{max_energy}",
         inline=False,
     )
-    
+
     # Inventory quick look
     inventory = account.get("inventory", {})
     red_count = inventory.get("159", 0)
     blue_count = inventory.get("4", 0)
     green_count = inventory.get("31", 0)
-    
+
     inventory_parts = []
-    if red_count > 0: inventory_parts.append(f"🔴 Red x{red_count}")
-    if blue_count > 0: inventory_parts.append(f"🔵 Blue x{blue_count}")
-    if green_count > 0: inventory_parts.append(f"🟢 Green x{green_count}")
-    
+    if red_count > 0:
+        inventory_parts.append(f"🔴 Red x{red_count}")
+    if blue_count > 0:
+        inventory_parts.append(f"🔵 Blue x{blue_count}")
+    if green_count > 0:
+        inventory_parts.append(f"🟢 Green x{green_count}")
+
     inventory_str = ", ".join(inventory_parts) if inventory_parts else "*No Orbs owned*"
     embed.add_field(name="Bag (Quick Look)", value=inventory_str, inline=False)
-    
+
     return embed
 
 
@@ -81,18 +85,19 @@ class GameConsoleView(ui.View):
         if interaction.user.id != self.user_id:
             await interaction.response.send_message("❌ You cannot access someone else's Console!", ephemeral=True)
             return
-            
+
         await interaction.response.defer()
+        import math
+
         from mods.revocord.shared import get_or_create_account
         from mods.revocord.tv import TVView, build_tv_embed
-        import math
-        
+
         account = await get_or_create_account(self.user_id)
         caught_list = account.get("caught_revomon", [])
-        
+
         total_caught = len(caught_list)
         total_pages = max(1, math.ceil(total_caught / 20))
-        
+
         embed = build_tv_embed(interaction.user, total_caught, 0, total_pages)
         view = TVView(interaction.client, self.user_id, caught_list, 0)
         await view.build_buttons()

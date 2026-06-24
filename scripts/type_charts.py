@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from typing import Any
 
 import httpx
 from PIL import Image, ImageDraw, ImageFont, UnidentifiedImageError
@@ -13,9 +14,6 @@ from configs import (
     TYPE_CHART_IMAGES_DIR,
     TYPE_CHARTS_FILE,
 )
-from PIL.ImageFont import FreeTypeFont
-from typing import Any, Dict, List, Optional, Union
-from unittest.mock import MagicMock
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +118,7 @@ def get_font(size: int) -> Any:
     return ImageFont.load_default()
 
 
-def calculate_section_height(max_width: Union[int, float], targets: List[Union[Any, str]], type_images: Dict[str, Any]) -> int:
+def calculate_section_height(max_width: int | float, targets: list[Any | str], type_images: dict[str, Any]) -> int:
     """Calculate the height required for a section based on target icons and wrapping."""
     if not targets:
         return 0
@@ -149,7 +147,7 @@ def calculate_section_height(max_width: Union[int, float], targets: List[Union[A
 
 
 def draw_icon_section(
-    img: Any, draw: Any, x_start: int, y_start: int, max_width: Union[int, float], label: str, targets: List[Union[Any, str]], type_images: Dict[str, Any], font: Any
+    img: Any, draw: Any, x_start: int, y_start: int, max_width: int | float, label: str, targets: list[Any | str], type_images: dict[str, Any], font: Any
 ) -> int:
     """Draw a category label and its corresponding type icons with wrapping, centered."""
     if not targets:
@@ -200,7 +198,7 @@ def draw_icon_section(
     return y - 10 + ROW_SPACING
 
 
-def save_type_chart_images(types_dict: Dict[str, Dict[str, Any]], base_type_names: List[str], type_images: Dict[str, Any]) -> None:
+def save_type_chart_images(types_dict: dict[str, dict[str, Any]], base_type_names: list[str], type_images: dict[str, Any]) -> None:
     """Generate and save type chart images using Pillow."""
     TYPE_CHART_IMAGES_DIR.mkdir(parents=True, exist_ok=True)
     font_medium = get_font(30)

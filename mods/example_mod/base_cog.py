@@ -1,4 +1,3 @@
-from typing import Any
 import logging
 
 from discord.ext import commands

@@ -1,15 +1,25 @@
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+
 import pytest
-from unittest.mock import patch, MagicMock, mock_open, AsyncMock
-import sys
 
 from utils.revomon_utils import (
-    get_attributes, save_mon_imgs, save_type_imgs, get_natures,
-    get_nature_mods, get_perferred_natures, get_evo_trees,
-    get_book_of_mon_names, get_book_of_land_ids, get_grade,
-    get_stat_weights, evaluate_stat_iv, appraise_revomon,
-    create_graded_mon_img, max_iv_total, max_ev_total
+    appraise_revomon,
+    create_graded_mon_img,
+    evaluate_stat_iv,
+    get_attributes,
+    get_book_of_land_ids,
+    get_book_of_mon_names,
+    get_evo_trees,
+    get_grade,
+    get_nature_mods,
+    get_natures,
+    get_perferred_natures,
+    get_stat_weights,
+    save_mon_imgs,
+    save_type_imgs,
 )
+
 
 @pytest.fixture
 def mock_tables() -> None:  # type: ignore[misc]
@@ -46,7 +56,7 @@ async def test_get_attributes(mock_tables: Any) -> None:
     tt.return_value.get_info = AsyncMock(return_value=[["type1", "chart_img_url"]])
     rmt.return_value.get_moves_for_revomon = AsyncMock(return_value=[["Thunderbolt"]])
     ct.return_value.get_info = AsyncMock(return_value=[[0, 1, 2, "cdex desc", "Tier 1", "Thunderbolt", "Modest", "tips", "counters", "Ground"]])
-    
+
     attr = await get_attributes("pikachu")
     assert attr["name"] == "Pikachu"
     assert attr["base_spe"] == 90
@@ -58,12 +68,12 @@ async def test_get_attributes_multiple_evs(mock_tables: Any) -> None:
     mock_mon_info[2] = "Bulbasaur"  # type: ignore[call-overload]
     mock_mon_info[23] = 1 # HP
     mock_mon_info[25] = 1 # Def
-    
+
     rt.return_value.get_info = AsyncMock(return_value=[mock_mon_info])
     tt.return_value.get_info = AsyncMock(return_value=[["type1", "chart_img_url"]])
     rmt.return_value.get_moves_for_revomon = AsyncMock(return_value=[])
     ct.return_value.get_info = AsyncMock(return_value=[[0] * 10])
-    
+
     attr = await get_attributes("bulbasaur")
     assert attr["ev_gains1"] == "+ 1 Hit Points"
     assert attr["ev_gains2"] == "+ 1 Defense "
@@ -75,15 +85,15 @@ async def test_save_mon_imgs(mock_get_attributes: Any, mock_requests_get: Any, m
     rt = mock_tables[0]
     rt.return_value.get_names = AsyncMock(return_value=["pikachu"])
     mock_get_attributes.return_value = {
-        "profile_img": "url1", "shiny_profile_img": "url2", 
+        "profile_img": "url1", "shiny_profile_img": "url2",
         "nft_img": "url3", "shiny_nft_img": "url4"
     }
-    
+
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.content = b"image_data"
     mock_requests_get.return_value = mock_response
-    
+
     m_open = mock_open()
     m_open.side_effect = [FileNotFoundError, m_open.return_value] * 4
 
@@ -97,7 +107,7 @@ async def test_save_mon_imgs_exists(mock_get_attributes: Any, mock_requests_get:
     rt = mock_tables[0]
     rt.return_value.get_names = AsyncMock(return_value=["pikachu"])
     mock_get_attributes.return_value = {
-        "profile_img": "url1", "shiny_profile_img": "url2", 
+        "profile_img": "url1", "shiny_profile_img": "url2",
         "nft_img": "url3", "shiny_nft_img": "url4"
     }
     m_open = mock_open()
@@ -113,7 +123,7 @@ async def test_save_type_imgs(mock_requests_get: Any, mock_tables: Any) -> None:
     mock_response.status_code = 200
     mock_response.content = b"image_data"
     mock_requests_get.return_value = mock_response
-    
+
     m_open = mock_open()
     m_open.side_effect = [FileNotFoundError, m_open.return_value]
     with patch("builtins.open", m_open):
@@ -272,10 +282,10 @@ def test_get_grade() -> None:
 def test_get_stat_weights() -> None:
     w, r = get_stat_weights({"base_atk": 120, "base_spa": 50, "base_spe": 110})
     assert r == "Fast Physical Attacker"
-    
+
     w, r = get_stat_weights({"base_spa": 120, "base_atk": 50, "base_spe": 40})
     assert r == "Slow Special Attacker"
-    
+
     w, r = get_stat_weights({"base_def": 120, "base_spd": 100, "base_spe": 60})
     assert r == "Defensive Balanced"
     assert w["def"] == 1.8
@@ -286,7 +296,7 @@ def test_get_stat_weights() -> None:
     assert w["spd"] == 1.8
     assert w["def"] == 1.2
     assert w["hp"] == 1.5
-    
+
     w, r = get_stat_weights({"base_atk": 100, "base_spa": 100, "base_spe": 80})
     assert r == "Mixed Attacker"
     assert w["atk"] == 1.5
@@ -353,11 +363,11 @@ def test_create_graded_mon_img(mock_figure: Any, mock_truetype: Any, mock_draw: 
     mock_image_instance.size = (750, 1050)
     mock_open.return_value = mock_image_instance
     mock_new.return_value = mock_image_instance
-    
+
     mock_draw_instance = MagicMock()
     mock_draw.return_value = mock_draw_instance
     mock_draw_instance.textbbox.return_value = (0, 0, 50, 20)
-    
+
     stats = {
         "mon_name": "Pikachu", "mon_nature": "Adamant", "mon_ability": "Static",
         "hp_iv": 31, "atk_iv": 31, "def_iv": 31, "spa_iv": 31, "spd_iv": 31, "spe_iv": 31,
@@ -377,20 +387,20 @@ def test_create_graded_mon_img_os_error_font_and_image(mock_figure: Any, mock_tr
     mock_image_instance.height = 100
     mock_image_instance.size = (750, 1050)
     mock_new.return_value = mock_image_instance
-    
+
     mock_truetype.side_effect = [OSError("No font"), MagicMock()]
-    
+
     def open_side_effect(path: Any, *args: Any, **kwargs: Any) -> Any:
         if isinstance(path, str) and path.endswith('.png'):
             if "shiny-" in path or "Pikachu.png" in path:
                 raise OSError("No image")
         return mock_image_instance
     mock_open.side_effect = open_side_effect
-    
+
     mock_draw_instance = MagicMock()
     mock_draw.return_value = mock_draw_instance
     mock_draw_instance.textbbox.return_value = (0, 0, 50, 20)
-    
+
     stats = {
         "mon_name": "Pikachu", "mon_nature": "Adamant", "mon_ability": "Static",
         "hp_iv": 31, "atk_iv": 31, "def_iv": 31, "spa_iv": 31, "spd_iv": 31, "spe_iv": 31,
@@ -413,11 +423,11 @@ def test_create_graded_mon_img_grades(mock_figure: Any, mock_truetype: Any, mock
     mock_image_instance.size = (750, 1050)
     mock_open.return_value = mock_image_instance
     mock_new.return_value = mock_image_instance
-    
+
     mock_draw_instance = MagicMock()
     mock_draw.return_value = mock_draw_instance
     mock_draw_instance.textbbox.return_value = (0, 0, 50, 20)
-    
+
     for grade in ["A", "B", "C", "D", "F", "F-"]:
         stats = {
             "mon_name": "Pikachu", "mon_nature": "Adamant", "mon_ability": "Static",

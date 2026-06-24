@@ -1,4 +1,5 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
@@ -6,7 +7,7 @@ from data import FruitysTable
 from utils.helpers import respond
 
 
-class fruity_search(commands.Cog):
+class fruity_search(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -35,7 +36,7 @@ class fruity_search(commands.Cog):
             embed.set_footer(text="The Elder's Library · Global Revomon Association")
             return embed
 
-        class fruity_search_buttons(discord.ui.View):
+        class fruity_search_buttons(discord.ui.View):  # noqa: N801
             def __init__(self) -> None:
                 super().__init__(timeout=None)
 
@@ -45,7 +46,7 @@ class fruity_search(commands.Cog):
             async def exit_embed(
                 self,
                 interaction: discord.Interaction,
-                Button: discord.ui.Button[Any],
+                Button: discord.ui.Button[Any],  # noqa: N803
             ) -> None:
                 if interaction.message:
 

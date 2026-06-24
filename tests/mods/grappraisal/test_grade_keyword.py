@@ -1,8 +1,9 @@
-from typing import Any
-import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
-import discord
 from io import BytesIO
+from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
+import discord
+import pytest
 
 from mods.grappraisal.grade_keyword import Grade, setup
 
@@ -57,7 +58,7 @@ def test_mon_info_embed1(grade_cog: Any, mock_mon_info: Any) -> None:
 def test_graded_mon_embed(mock_create_img: Any, grade_cog: Any, mock_mon_info: Any) -> None:
     user_id = 123
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
-    
+
     mock_img = MagicMock()
     mock_create_img.return_value = mock_img
 
@@ -70,11 +71,11 @@ def test_graded_mon_embed(mock_create_img: Any, grade_cog: Any, mock_mon_info: A
 def test_grade_breakdown_embed(grade_cog: Any, mock_mon_info: Any) -> None:
     user_id = 123
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
-    
+
     embed = grade_cog.grade_breakdown_embed(user_id)
     assert isinstance(embed, discord.Embed)
     assert "Breakdown:" in embed.title  # type: ignore[operator]
-    
+
     # Test alternative branches
     mock_mon_info["stat_weights"]["def"] = 0.1
     mock_mon_info["role"] = "Special Attacker"
@@ -89,7 +90,7 @@ def test_grade_breakdown_embed(grade_cog: Any, mock_mon_info: Any) -> None:
     mock_mon_info["nature_quality"] = "Poor"
     embed3 = grade_cog.grade_breakdown_embed(user_id)
     assert "Penalized" in embed3.fields[0].value
-    
+
     mock_mon_info["nature_quality"] = "Neutral"
     embed4 = grade_cog.grade_breakdown_embed(user_id)
     assert isinstance(embed4, discord.Embed)
@@ -122,10 +123,10 @@ async def test_mon_info_buttons1_grade(mock_embed: Any, mock_appraise: Any, mock
     user_id = mock_interaction.user.id
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
     mock_appraise.return_value = {"grade_percent": 99}
-    
+
     view = Grade.MonInfoButtons1()
     button = view.children[0]
-    
+
     await button.callback(mock_interaction)
     mock_interaction.response.edit_message.assert_called_once()
     assert Grade.mon_manager.mon_info[user_id]["grade_percent"] == 99
@@ -143,17 +144,17 @@ async def test_mon_info_buttons1_grade_exception(mock_interaction: Any) -> None:
 async def test_mon_info_buttons6_save(mock_embed: Any, mock_interaction: Any, mock_mon_info: Any) -> None:
     user_id = mock_interaction.user.id
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
-    
+
     view = Grade.MonInfoButtons6()
     save_btn = view.children[0]
-    
+
     # In guild
     mock_interaction.guild = MagicMock()
     mock_interaction.user.send = AsyncMock()
     await save_btn.callback(mock_interaction)
     mock_interaction.user.send.assert_called_once()
     mock_interaction.response.edit_message.assert_called_once()
-    
+
     # Not in guild
     mock_interaction.guild = None
     mock_interaction.user.send = AsyncMock()
@@ -174,7 +175,7 @@ async def test_mon_info_buttons6_flex(mock_embed: Any, mock_interaction: Any, mo
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
     view = Grade.MonInfoButtons6()
     flex_btn = view.children[1]
-    
+
     await flex_btn.callback(mock_interaction)
     mock_interaction.followup.send.assert_called()
 
@@ -192,7 +193,7 @@ async def test_mon_info_buttons6_why(mock_embed: Any, mock_interaction: Any, moc
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
     view = Grade.MonInfoButtons6()
     why_btn = view.children[2]
-    
+
     await why_btn.callback(mock_interaction)
     mock_interaction.response.send_message.assert_called_once()
 
@@ -229,7 +230,7 @@ async def test_mon_info_modal_success(mock_embed: Any, mock_create_img: Any, moc
         }
     }
     mock_get.return_value.__aenter__.return_value = mock_response
-    
+
     mock_img = MagicMock()
     mock_create_img.return_value = mock_img
 
@@ -241,11 +242,11 @@ async def test_mon_info_modal_success(mock_embed: Any, mock_create_img: Any, moc
             return str(self.value)
         def __int__(self) -> Any:
             return int(self.value)
-    
+
     modal.mon_catch_id = DummyTextInput("1234")  # type: ignore[assignment]
-    
+
     await modal.on_submit(mock_interaction)
-    
+
     mock_interaction.response.defer.assert_called_once()
     mock_interaction.response.send_message.assert_called_once()
     assert Grade.mon_manager.mon_info[mock_interaction.user.id]["catch_id"] == 1234
@@ -265,9 +266,9 @@ async def test_mon_info_modal_invalid_id(mock_get: Any, mock_interaction: Any) -
             return str(self.value)
         def __int__(self) -> Any:
             return int(self.value)
-            
+
     modal.mon_catch_id = DummyTextInput("9999")  # type: ignore[assignment]
-    
+
     await modal.on_submit(mock_interaction)
     mock_interaction.followup.send.assert_called_with("Invalid Revomon ID. Please try again.", ephemeral=True)
 
@@ -281,7 +282,7 @@ async def test_mon_info_modal_exception(mock_interaction: Any) -> None:
             return str(self.value)
         def __int__(self) -> Any:
             return int(self.value)
-            
+
     modal.mon_catch_id = DummyTextInput("1234")  # type: ignore[assignment]
     mock_interaction.response.defer.side_effect = Exception("Boom")
     await modal.on_submit(mock_interaction)
@@ -291,18 +292,18 @@ async def test_mon_info_modal_exception(mock_interaction: Any) -> None:
 async def test_on_message(mock_respond: Any, grade_cog: Any, mock_message: Any) -> None:
     mock_message.author.bot = False
     mock_message.content = "grade"
-    
+
     await grade_cog.on_message(mock_message)
     mock_respond.assert_called_once()
-    
+
     mock_message.content = "admin appraise"
     await grade_cog.on_message(mock_message)
     assert mock_respond.call_count == 2
-    
+
     mock_message.content = "something else"
     await grade_cog.on_message(mock_message)
     assert mock_respond.call_count == 2
-    
+
     mock_message.author.bot = True
     await grade_cog.on_message(mock_message)
     assert mock_respond.call_count == 2

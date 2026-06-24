@@ -1,20 +1,16 @@
-from typing import Any
 import asyncio
 import datetime
 import random
 from io import BytesIO
+from typing import Any
 
 import discord
 import requests
+from discord.embeds import Embed
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from utils.helpers import respond
-from discord.embeds import Embed
-from discord.ext.commands.bot import Bot
-from discord.message import Message
-from typing import Dict, Tuple
-from unittest.mock import MagicMock
 
 
 class Podium(commands.Cog):
@@ -30,7 +26,7 @@ class Podium(commands.Cog):
         formatted_time = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         return formatted_time
 
-    def get_weekly_podium_data(self) -> Dict[str, Dict[str, str]]:
+    def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
         weekly_podium_url = "https://api.revomon.io/leaderboard/weekly_podium"
         response = requests.get(weekly_podium_url)
         response = response.json()
@@ -63,7 +59,7 @@ class Podium(commands.Cog):
         }
         return self.rankings
 
-    def get_current_podium_data(self) -> Dict[str, Dict[str, str]]:
+    def get_current_podium_data(self) -> dict[str, dict[str, str]]:
         current_podium_url = "https://api.revomon.io/leaderboard/current_podium"
         response = requests.get(current_podium_url)
         response = response.json()
@@ -78,7 +74,7 @@ class Podium(commands.Cog):
         self.rankings["third"] = {"user": third_user, "img": third_img}
         return self.rankings
 
-    def get_text_size(self, draw: Any, text: str, font: Any) -> Tuple[int, int]:
+    def get_text_size(self, draw: Any, text: str, font: Any) -> tuple[int, int]:
         bbox = draw.textbbox((0, 0), text, font=font)
         width = bbox[2] - bbox[0]
         height = bbox[3] - bbox[1]
@@ -220,7 +216,8 @@ class Podium(commands.Cog):
     async def update_rankings(self) -> None:
         try:
             podium_channel = await self.gradex.fetch_channel(1251022667935387740)
-            if not isinstance(podium_channel, discord.TextChannel): return
+            if not isinstance(podium_channel, discord.TextChannel):
+                return
             old_leaderboards = [message async for message in podium_channel.history(limit=2)]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()

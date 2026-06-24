@@ -1,10 +1,11 @@
 from typing import Any
-import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import discord
+import pytest
 from discord.ext import commands
 
-from mods.tiptops_shop.tiptop_shop import tiptop_shop, setup
+from mods.tiptops_shop.tiptop_shop import setup, tiptop_shop
 
 
 @pytest.fixture

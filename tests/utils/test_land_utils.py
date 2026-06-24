@@ -1,14 +1,16 @@
-from typing import Any
 import unittest.mock
+from typing import Any
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
+
 from utils.land_utils import (
+    get_land_data,
     get_land_info_for_ids,
     get_land_owners_and_ids,
-    get_land_data,
     get_lands_for_sale,
-    get_zkevm_token_data,
     get_lands_for_sale_amount,
+    get_zkevm_token_data,
 )
 
 

@@ -1,7 +1,10 @@
 from typing import Any
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+
 from mods.revomon.pvp_command import PvpLeaderboard2, setup
+
 
 @pytest.fixture
 def mock_bot() -> Any:
@@ -58,7 +61,7 @@ class TestPvpLeaderboard2:
         mock_draw_instance = MagicMock()
         mock_draw_instance.textbbox.return_value = (0, 0, 100, 20)
         mock_draw.return_value = mock_draw_instance
-        
+
         cog.update_pvp_image(None)
         assert "image_bytes" in cog.pvp_img
         mock_image.save.assert_called_once()
@@ -72,7 +75,7 @@ class TestPvpLeaderboard2:
         mock_new.return_value = mock_image
         mock_draw_instance = MagicMock()
         mock_draw.return_value = mock_draw_instance
-        
+
         data = [
             {"Rank": 1, "Name": "u1", "Elo": 1500, "Wins": 20, "Losses": 10, "Winning": "66.67%", "Reward": "100 REVO"},
             {"Rank": 2, "Name": "u2", "Elo": 1400, "Wins": 10, "Losses": 20, "Winning": "33.33%", "Reward": "50 REVO"},
@@ -93,7 +96,7 @@ class TestPvpLeaderboard2:
         mock_new.return_value = mock_image
         mock_draw_instance = MagicMock()
         mock_draw.return_value = mock_draw_instance
-        
+
         cog.update_pvp_image([])
         mock_load_default.assert_called_once()
 
@@ -107,7 +110,7 @@ class TestPvpLeaderboard2:
         mock_new.return_value = mock_image
         mock_draw_instance = MagicMock()
         mock_draw.return_value = mock_draw_instance
-        
+
         cog.update_pvp_image([])
         # Exception is caught and printed
 
@@ -126,12 +129,12 @@ class TestPvpLeaderboard2:
         cog = PvpLeaderboard2(mock_bot)
         mock_bytes = MagicMock()
         cog.pvp_img = {"image_bytes": mock_bytes}
-        
+
         with patch.object(cog, 'get_current_pvp_data'), \
              patch.object(cog, 'update_pvp_image'), \
              patch.object(cog, 'current_pvp_embed', return_value=MagicMock()), \
              patch('mods.revomon.pvp_command.File'):
-            
+
             await cog.pvp.callback(cog, mock_interaction) # type: ignore
             mock_interaction.response.defer.assert_called_once_with(thinking=True, ephemeral=True)
             mock_interaction.followup.send.assert_called_once()
@@ -142,11 +145,11 @@ class TestPvpLeaderboard2:
         cog = PvpLeaderboard2(mock_bot)
         mock_bytes = MagicMock()
         cog.pvp_img = {"image_bytes": mock_bytes}
-        
+
         with patch.object(cog, 'get_current_pvp_data', side_effect=Exception("Get Data Error")), \
              patch.object(cog, 'update_pvp_image', side_effect=Exception("Update Image Error")), \
              patch.object(cog, 'current_pvp_embed', side_effect=Exception("Embed Error")), \
              patch('mods.revomon.pvp_command.File'):
-            
+
             with pytest.raises(UnboundLocalError):
                 await cog.pvp.callback(cog, mock_interaction) # type: ignore

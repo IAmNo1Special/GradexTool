@@ -1,4 +1,4 @@
-from typing import Any
+import discord.embeds
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
 
@@ -14,8 +14,6 @@ from data import (
 from utils.button_utils import Buttons
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes
-import discord.embeds
-from discord.ext.commands.bot import Bot
 
 
 class SearchCommand(commands.Cog):

@@ -1,14 +1,15 @@
 from typing import Any
+
 """Script to fetch medicine/potion data from PokeAPI and save to potions.json."""
 
-import asyncio
-import json
-import logging
-import os
-from pathlib import Path
+import asyncio  # noqa: E402
+import json  # noqa: E402
+import logging  # noqa: E402
+import os  # noqa: E402
+from pathlib import Path  # noqa: E402
 
-import httpx
-from helpers import to_sentence_case
+import httpx  # noqa: E402
+from helpers import to_sentence_case  # noqa: E402
 
 logger = logging.getLogger(__name__)
 

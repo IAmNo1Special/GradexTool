@@ -1,11 +1,12 @@
 from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class tiptop_shop(commands.Cog):
+class tiptop_shop(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
@@ -22,7 +23,7 @@ class tiptop_shop(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    class tiptop_shop_intro_buttons(discord.ui.View):
+    class tiptop_shop_intro_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -32,7 +33,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Nft Items",
         )
         async def tiptop_nft_items(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Only the best items for the best Tamers.",
@@ -48,12 +49,12 @@ class tiptop_shop(commands.Cog):
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             if interaction.message:
                 await interaction.message.delete()
 
-    class tiptop_shop_nft_items_buttons(discord.ui.View):
+    class tiptop_shop_nft_items_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -63,7 +64,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Tiptop Gradex Tool",
         )
         async def tiptop_gradex_tool(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Interested in the Gradex Tool(Pro+) are ya?",
@@ -85,7 +86,7 @@ class tiptop_shop(commands.Cog):
             custom_id="6000 IGC NFT",
         )
         async def tiptop_6000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Would you like to buy or redeem a 6,000 IGC NFT?",
@@ -108,7 +109,7 @@ class tiptop_shop(commands.Cog):
             custom_id="60000 IGC NFT",
         )
         async def tiptop_60000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Would you like to buy or redeem a 60,000 IGC NFT?",
@@ -130,7 +131,7 @@ class tiptop_shop(commands.Cog):
             custom_id="120000 IGC NFT",
         )
         async def tiptop_120000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Would you like to buy or redeem a 120,000 IGC NFT?",
@@ -146,7 +147,7 @@ class tiptop_shop(commands.Cog):
             await interaction.response.defer()
             await interaction.followup.send(embed=embed, view=buttons, ephemeral=True)
 
-    class igc_6000_nft_buttons(discord.ui.View):
+    class igc_6000_nft_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -156,7 +157,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Redeem 6000 IGC NFT",
         )
         async def redeem_6000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Either for one thing or another, you'll always need IGC.",
@@ -180,7 +181,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 6000 IGC NFT With REVO",
         )
         async def buy_6000_igc_revo(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Click here to buy a 6,000 IGC NFT for REVO",
@@ -203,7 +204,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 6000 IGC NFT With IGC",
         )
         async def buy_6000_igc_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: I keep telling people, NFTs are the future!",
@@ -221,7 +222,7 @@ class tiptop_shop(commands.Cog):
             await interaction.response.defer()
             await interaction.followup.send(embed=embed, ephemeral=True)
 
-    class igc_60000_nft_buttons(discord.ui.View):
+    class igc_60000_nft_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -231,7 +232,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Redeem 60000 IGC NFT",
         )
         async def redeem_60000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Either for one thing or another, you'll always need IGC.",
@@ -255,7 +256,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 60000 IGC NFT With REVO",
         )
         async def buy_60000_igc_revo(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Click here to buy a 60,000 IGC NFT for REVO",
@@ -280,7 +281,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 60000 IGC NFT With IGC",
         )
         async def buy_60000_igc_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: I keep telling people, NFTs are the future!",
@@ -298,7 +299,7 @@ class tiptop_shop(commands.Cog):
             await interaction.response.defer()
             await interaction.followup.send(embed=embed, ephemeral=True)
 
-    class igc_120000_nft_buttons(discord.ui.View):
+    class igc_120000_nft_buttons(discord.ui.View):  # noqa: N801
         def __init__(self) -> None:
             super().__init__(timeout=None)
 
@@ -308,7 +309,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Redeem 120000 IGC NFT",
         )
         async def redeem_120000_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: Either for one thing or another, you'll always need IGC.",
@@ -332,7 +333,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 120000 IGC NFT With REVO",
         )
         async def buy_120000_igc_revo(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Click here to buy a 120,000 IGC NFT for REVO",
@@ -357,7 +358,7 @@ class tiptop_shop(commands.Cog):
             custom_id="Buy 120000 IGC NFT With IGC",
         )
         async def buy_120000_igc_igc(
-            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]
+            self, interaction: discord.Interaction, Button: discord.ui.Button[Any]  # noqa: N803
         ) -> None:
             embed = discord.Embed(
                 title="Tip: I keep telling people, NFTs are the future!",

@@ -1,11 +1,12 @@
-from typing import Any
-import unittest.mock
-import json
-import sqlite3
-import pytest
 import runpy
-from unittest.mock import patch, mock_open, MagicMock
-from scripts.fruitys import get_fruitys, FruitysTable
+import unittest.mock
+from typing import Any
+from unittest.mock import MagicMock, mock_open, patch
+
+import pytest
+
+from scripts.fruitys import FruitysTable, get_fruitys
+
 
 @patch("scripts.fruitys.os.makedirs")
 @patch("builtins.open", new_callable=mock_open)
@@ -63,9 +64,9 @@ class TestFruitysTable:
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
-        
+
         table.create()
-        
+
         mock_conn.execute.assert_called_with("DROP TABLE IF EXISTS fruitys;")
         mock_cursor.execute.assert_called()
         mock_conn.commit.assert_called_once()
@@ -78,12 +79,12 @@ class TestFruitysTable:
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
-        
+
         mock_json_load.return_value = [{"name": "A", "description": "desc", "type": "type"}]
         table.export_to_json = MagicMock()
-        
+
         table.rebuild()
-        
+
         mock_cursor.execute.assert_called()
         mock_conn.commit.assert_called_once()
         table.export_to_json.assert_called_once()
@@ -97,18 +98,18 @@ class TestFruitysTable:
         mock_conn.cursor.return_value = mock_cursor
         mock_cursor.fetchall.return_value = [("a", "b", "c")]
         mock_cursor.description = [("name",), ("description",), ("type",)]
-        
+
         table.export_to_json()
-        
+
         mock_json_dump.assert_called_once()
-        
+
     def test_count_entries(self, table: Any, mock_db: Any) -> None:
         mock_conn = MagicMock()
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
         mock_cursor.fetchone.return_value = [5]
-        
+
         assert table.count_entries() == 5
         mock_conn.close.assert_called_once()
 
@@ -117,7 +118,7 @@ class TestFruitysTable:
         mock_db.return_value = mock_conn
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
-        
+
         table.add_fruity("name", "desc", "type")
         mock_cursor.execute.assert_called_once()
         mock_conn.commit.assert_called_once()
@@ -129,7 +130,7 @@ class TestFruitysTable:
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
         mock_cursor.fetchall.return_value = [("name", "desc", "type")]
-        
+
         assert table.get_info("name") == [("name", "desc", "type")]
 
     def test_get_type(self, table: Any, mock_db: Any) -> None:
@@ -138,7 +139,7 @@ class TestFruitysTable:
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
         mock_cursor.fetchall.return_value = [("type",)]
-        
+
         assert table.get_type("name") == "type"
 
     def test_get_names(self, table: Any, mock_db: Any) -> None:
@@ -147,7 +148,7 @@ class TestFruitysTable:
         mock_cursor = MagicMock()
         mock_conn.cursor.return_value = mock_cursor
         mock_cursor.fetchall.return_value = [("name1",), ("name2",)]
-        
+
         assert table.get_names() == ["name1", "name2"]
 
 @patch("os.makedirs")

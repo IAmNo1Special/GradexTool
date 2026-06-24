@@ -1,4 +1,5 @@
 from typing import Any
+
 from discord import ButtonStyle, Color, Embed, Interaction, app_commands, ui
 from discord.ext import commands
 
@@ -69,7 +70,7 @@ class HelpCommand(commands.Cog):
             super().__init__(timeout=None)
 
         @ui.button(label="Make Public", style=ButtonStyle.green, custom_id="Save")
-        async def make_public_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:
+        async def make_public_button(self, interaction: Interaction, Button: ui.Button[Any]) -> None:  # noqa: N803
             try:
                 await interaction.response.defer(ephemeral=False, thinking=True)
                 embed = self.embed

@@ -1,25 +1,22 @@
 from typing import Any
+
 """Comprehensive tests for scripts/abilities.py"""
 
-import asyncio
-import json
-import os
-import sqlite3
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock, AsyncMock, patch, mock_open
+import asyncio  # noqa: E402
+import json  # noqa: E402
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch  # noqa: E402
 
-import httpx
-import pytest
+import httpx  # noqa: E402
+import pytest  # noqa: E402
 
 # We can import directly if PYTHONPATH is set or we use normal imports
-from scripts.abilities import (
-    remove_key_recursive,
-    process_string,
-    traverse,
+from scripts.abilities import (  # noqa: E402
+    AbilitiesTable,
     fetch_ability,
     get_abilities,
-    AbilitiesTable,
+    process_string,
+    remove_key_recursive,
+    traverse,
 )
 
 
@@ -68,7 +65,7 @@ async def test_fetch_ability() -> None:
     # Mock httpx.AsyncClient
     client = AsyncMock(spec=httpx.AsyncClient)
     semaphore = asyncio.Semaphore(1)
-    
+
     # Test 1: 200 OK, full processing
     mock_response = MagicMock()
     mock_response.status_code = 200
@@ -99,10 +96,10 @@ async def test_fetch_ability() -> None:
         ]
     }
     client.get.return_value = mock_response
-    
+
     ability_to_revomon = {"overgrow": ["bulbasaur"]}
     res_type, res_val = await fetch_ability(client, semaphore, "overgrow", ability_to_revomon)
-    
+
     assert res_type == "found"
     assert "generation" not in res_val
     assert "is_main_series" not in res_val
@@ -180,13 +177,13 @@ async def test_get_abilities_success(mock_makedirs: Any, mock_exists: Any, mock_
             "abilityHidden": " Chlorophyll"
         }
     ]
-    
+
     m_open = mock_open(read_data=json.dumps(revomon_data))
-    
+
     with patch('builtins.open', m_open):
         mock_client = AsyncMock()
         mock_client_cls.return_value.__aenter__.return_value = mock_client
-        
+
         async def mock_fetch(client: Any, semaphore: Any, ability: Any, ability_to_revomon: Any) -> Any:
             if ability == "overgrow":
                 return ("found", {
@@ -198,18 +195,18 @@ async def test_get_abilities_success(mock_makedirs: Any, mock_exists: Any, mock_
                 })
             else:
                 return ("unknown", "chlorophyll")
-                
+
         with patch('scripts.abilities.fetch_ability', side_effect=mock_fetch):
             with patch('scripts.abilities.REVOMON_FILE', 'revomon.json'), \
                  patch('scripts.abilities.ABILITIES_FILE', 'abilities.json'), \
                  patch('scripts.abilities.UNKNOWN_ABILITIES_FILE', 'unknown.json'):
-                 
+
                  await get_abilities()
-                 
+
                  # Verify files were written
                  assert m_open.call_count == 3
                  write_calls = [call for call in m_open.mock_calls if 'write' in call[0]]
-                 
+
                  # The output writes should replace "Pokémon" with "Monster"
                  written_content = "".join([c.args[0] for c in write_calls if isinstance(c.args[0], str)])
                  assert "Monster" in written_content
@@ -219,50 +216,50 @@ async def test_get_abilities_success(mock_makedirs: Any, mock_exists: Any, mock_
 @pytest.mark.asyncio
 async def test_abilities_table(tmp_path: Any) -> None:
     db_path = tmp_path / "test.db"
-    
+
     with patch('scripts.abilities.GRADEX_DB_PATH', db_path):
         table = AbilitiesTable()
-        
+
         # create
         table.create()
-        
+
         # rebuild
         mock_abilities = [
             {"name": "Overgrow", "description": "Grass moves"},
             {"name": "Blaze", "description": "Fire moves"}
         ]
         m_open = mock_open(read_data=json.dumps(mock_abilities))
-        
+
         with patch('builtins.open', m_open):
             with patch.object(table, 'export_to_json') as mock_export:
                 table.rebuild()
                 mock_export.assert_called_once()
-        
+
         # count_entries
         assert table.count_entries() == 2
-        
+
         # add_ability
         table.add_ability("Torrent", "Water moves")
         assert table.count_entries() == 3
-        
+
         # get_info
         info = table.get_info("overgrow")
         assert len(info) == 1
         assert info[0][0] == "overgrow"
         assert info[0][1] == "grass moves"
-        
+
         # get_names
         names = table.get_names()
         assert "overgrow" in names
         assert "blaze" in names
         assert "torrent" in names
-        
+
         # export_to_json
         m_export_open = mock_open()
         with patch('builtins.open', m_export_open):
             table.export_to_json()
             m_export_open.assert_called_once_with("./data/abilities.json", "w")
-            
+
         # build
         with patch.object(table, 'create') as m_create, \
              patch.object(table, 'rebuild') as m_rebuild, \

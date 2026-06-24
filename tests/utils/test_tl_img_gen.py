@@ -1,11 +1,12 @@
 from typing import Any
+
 """Comprehensive tests for tl_img_gen module."""
 
-import pytest
-from unittest.mock import MagicMock, patch, Mock
-from PIL import Image
+from unittest.mock import MagicMock, patch  # noqa: E402
 
-from utils.tl_img_gen import (
+from PIL import Image  # noqa: E402
+
+from utils.tl_img_gen import (  # noqa: E402
     create_base_tier_list,
     create_tier_list_with_images,
 )
@@ -19,17 +20,17 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500)
-                    
+
+                    create_base_tier_list(1000, 500)
+
                     # Verify Image.new was called with RGBA mode
                     mock_new.assert_called_once()
                     call_args = mock_new.call_args
@@ -41,17 +42,17 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1800, 900)
-                    
+
+                    create_base_tier_list(1800, 900)
+
                     call_args = mock_new.call_args
                     assert call_args[0][1] == (1800, 900)
 
@@ -60,17 +61,17 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500, row_gap=20)
-                    
+
+                    create_base_tier_list(1000, 500, row_gap=20)
+
                     # Should use custom row gap
                     assert mock_draw_instance.rectangle.call_count > 0
 
@@ -79,17 +80,17 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500, font_path="custom.ttf")
-                    
+
+                    create_base_tier_list(1000, 500, font_path="custom.ttf")
+
                     # Should use custom font path
                     mock_font.assert_called()
                     call_args = mock_font.call_args
@@ -100,17 +101,17 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500, font_size=30)
-                    
+
+                    create_base_tier_list(1000, 500, font_size=30)
+
                     # Should call font with custom size (if implementation supports it)
                     mock_font.assert_called()
                     # Just verify the function completed without error
@@ -124,21 +125,21 @@ class TestCreateBaseTierList:
             "C": [],
             "D": []
         }
-        
+
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500, image_paths=image_paths)
-                    
+
+                    create_base_tier_list(1000, 500, image_paths=image_paths)
+
                     # Should calculate height based on image counts
                     assert mock_draw_instance.rectangle.call_count > 0
 
@@ -147,30 +148,23 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500)
-                    
+
+                    create_base_tier_list(1000, 500)
+
                     # Verify rectangles were drawn for each tier
                     rectangle_calls = mock_draw_instance.rectangle.call_args_list
                     assert len(rectangle_calls) >= 5  # 5 tiers
-                    
+
                     # Verify tier colors are correct
-                    expected_colors = [
-                        (255, 105, 97),   # S tier
-                        (255, 179, 71),   # A tier
-                        (253, 253, 150),  # B tier
-                        (255, 255, 204),  # C tier
-                        (119, 221, 119),  # D tier
-                    ]
-                    
+
                     # Check that some calls include these colors
                     color_calls = [call for call in rectangle_calls if 'fill' in call[1]]
                     assert len(color_calls) > 0
@@ -180,18 +174,18 @@ class TestCreateBaseTierList:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font_instance.textbbox = MagicMock(return_value=(0, 0, 50, 20))
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500)
-                    
+
+                    create_base_tier_list(1000, 500)
+
                     # Verify text was drawn for each tier
                     text_calls = mock_draw_instance.text.call_args_list
                     assert len(text_calls) >= 5  # 5 tiers
@@ -205,22 +199,22 @@ class TestCreateBaseTierList:
             "C": [],
             "D": []
         }
-        
+
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font_instance.textbbox = MagicMock(return_value=(0, 0, 50, 20))
                     mock_font.return_value = mock_font_instance
-                    
-                    result = create_base_tier_list(1000, 500, image_paths=image_paths)
-                    
+
+                    create_base_tier_list(1000, 500, image_paths=image_paths)
+
                     # Should calculate height based on number of images
                     assert mock_draw_instance.rectangle.call_count > 0
 
@@ -240,10 +234,10 @@ class TestCreateTierListWithImages:
         with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
-            
-            with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
+
+            with patch('utils.tl_img_gen.ImageDraw.Draw'):
                 result = create_tier_list_with_images(1000, 500, image_paths)
-                
+
                 # Should return the base image after pasting
                 assert result == mock_base_img
 
@@ -256,25 +250,25 @@ class TestCreateTierListWithImages:
             "C": [],
             "D": []
         }
-        
+
         with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw'):
                 with patch('utils.tl_img_gen.Image.open') as mock_open:
                     mock_img = MagicMock()
                     mock_open.return_value = mock_img
                     mock_img.convert.return_value = mock_img
                     mock_img.resize.return_value = mock_img
-                    
-                    result = create_tier_list_with_images(1000, 500, image_paths)
-                    
+
+                    create_tier_list_with_images(1000, 500, image_paths)
+
                     # Verify Image.open was called
                     mock_open.assert_called_once_with("test_image.png")
                     # Verify paste was called on the base image
                     mock_base_img.paste.assert_called_once()
-                    
+
     def test_create_tier_list_with_images_handles_errors(self) -> None:
         """Test that image loading errors are caught and handled."""
         image_paths = {
@@ -284,18 +278,18 @@ class TestCreateTierListWithImages:
             "C": [],
             "D": []
         }
-        
+
         with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw'):
                 with patch('utils.tl_img_gen.Image.open') as mock_open:
                     mock_open.side_effect = Exception("File not found")
-                    
+
                     # Should not raise exception
-                    result = create_tier_list_with_images(1000, 500, image_paths)
-                    
+                    create_tier_list_with_images(1000, 500, image_paths)
+
                     # Paste should not be called since open failed
                     mock_base_img.paste.assert_not_called()
 
@@ -308,25 +302,25 @@ class TestCreateTierListWithImages:
             "C": [],
             "D": []
         }
-        
+
         with patch('utils.tl_img_gen.create_base_tier_list') as mock_base:
             mock_base_img = MagicMock(spec=Image.Image)
             mock_base.return_value = mock_base_img
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw'):
                 with patch('utils.tl_img_gen.Image.open') as mock_open:
                     mock_img = MagicMock()
                     mock_open.return_value = mock_img
                     mock_img.convert.return_value = mock_img
                     mock_img.resize.return_value = mock_img
-                    
+
                     # Width 300 means max_images_per_row = (300 - 100) // 110 = 1
                     # So 2 images will force a row wrap
-                    result = create_tier_list_with_images(300, 500, image_paths)
-                    
+                    create_tier_list_with_images(300, 500, image_paths)
+
                     # Verify paste was called twice
                     assert mock_base_img.paste.call_count == 2
-                    
+
                     # Verify the first image was placed at x=110
                     # and the second image was placed at x=110 on the next row
                     paste_calls = mock_base_img.paste.call_args_list
@@ -340,16 +334,16 @@ class TestCreateTierListWithImages:
         with patch('utils.tl_img_gen.Image.new') as mock_new:
             mock_image = MagicMock(spec=Image.Image)
             mock_new.return_value = mock_image
-            
+
             with patch('utils.tl_img_gen.ImageDraw.Draw') as mock_draw:
                 mock_draw_instance = MagicMock()
                 mock_draw.return_value = mock_draw_instance
-                
+
                 with patch('utils.tl_img_gen.ImageFont.truetype') as mock_font:
                     mock_font_instance = MagicMock()
                     mock_font.return_value = mock_font_instance
-                    
+
                     # Should handle negative row gap (though not practical)
-                    result = create_base_tier_list(1000, 500, row_gap=-10)
-                    
+                    create_base_tier_list(1000, 500, row_gap=-10)
+
                     mock_new.assert_called_once()

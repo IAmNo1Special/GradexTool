@@ -1,9 +1,9 @@
 from typing import Any
-import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, patch
+
 import discord
+import pytest
 from discord.ext import commands
-from discord import Embed
 
 from mods.the_elders_library.search_command import SearchCommand, setup
 
@@ -32,7 +32,7 @@ class TestSearchCommand:
     async def test_ability_search_embed(self, mock_revomon_table: Any, mock_abilities_table: Any, search_cog: Any) -> None:
         mock_abilities_instance = mock_abilities_table.return_value
         mock_abilities_instance.get_info = AsyncMock(return_value=[("Blaze", "Powers up Fire-type moves.")])
-        
+
         mock_revomon_instance = mock_revomon_table.return_value
         mock_revomon_instance.get_names = AsyncMock(return_value=["Charmander"])
         mock_revomon_instance.has_ability = AsyncMock(return_value=True)
@@ -105,7 +105,7 @@ class TestSearchCommand:
         mock_moves_instance = mock_moves_table.return_value
         # (0, Capsule, Name, Category, Type, Description, Accuracy, Damage, PP, Priority)
         mock_moves_instance.get_info = AsyncMock(return_value=[(0, 1, "Flamethrower", "Special", "Fire", "Burns opponent.", 100, 90, 15, 0)])
-        
+
         mock_revomon_moves_instance = mock_revomon_moves_table.return_value
         mock_revomon_moves_instance.get_mons_for_move = AsyncMock(return_value=["Charmander"])
 
@@ -304,9 +304,9 @@ class TestSearchCommand:
 async def test_setup_function() -> None:
     mock_bot = MagicMock(spec=commands.Bot)
     mock_bot.add_cog = AsyncMock()
-    
+
     await setup(mock_bot)
-    
+
     mock_bot.add_cog.assert_called_once()
     added_cog = mock_bot.add_cog.call_args[0][0]
     assert isinstance(added_cog, SearchCommand)
@@ -315,8 +315,8 @@ async def test_setup_function() -> None:
 async def test_setup_function_exception(capsys: Any) -> None:
     mock_bot = MagicMock(spec=commands.Bot)
     mock_bot.add_cog = AsyncMock(side_effect=Exception("Test Exception"))
-    
+
     await setup(mock_bot)
-    
+
     captured = capsys.readouterr()
     assert "ERROR in ModName 'setup' function" in captured.out

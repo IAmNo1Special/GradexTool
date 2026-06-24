@@ -1,20 +1,21 @@
 from typing import Any
+
 """Setup cog for configuring the RevoCord workspace."""
 
-import asyncio
-import logging
+import asyncio  # noqa: E402
+import logging  # noqa: E402
 
-import discord
-from discord import app_commands
-from discord.ext import commands
+import discord  # noqa: E402
+from discord import app_commands  # noqa: E402
+from discord.ext import commands  # noqa: E402
 
-from mods.revocord.portal import PortalLoginView
-from mods.revocord.shared import (
+from mods.revocord.portal import PortalLoginView  # noqa: E402
+from mods.revocord.shared import (  # noqa: E402
     build_text_view,
     is_server_owner,
     normalize_channel_name,
 )
-from scripts.gradexDB import set_guild_biome
+from scripts.gradexDB import set_guild_biome  # noqa: E402
 
 logger = logging.getLogger("discord_bot")
 

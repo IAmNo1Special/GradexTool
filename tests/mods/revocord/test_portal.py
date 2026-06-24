@@ -1,17 +1,18 @@
-import pytest
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
+import pytest
 from discord.ext import commands
 
 from mods.revocord.portal import (
+    GameConsoleView,
     PortalCog,
     PortalLoginView,
-    GameConsoleView,
     build_console_embed,
     setup,
 )
+
 
 class TestPortalLoginViewInitialization:
     def test_portal_login_view_init(self) -> None:
@@ -26,10 +27,10 @@ class TestPortalLoginViewButtons:
         mock_interaction = MagicMock(spec=discord.Interaction)
         mock_interaction.response.defer = AsyncMock()
         mock_interaction.user = "not a member"
-        
+
         button = view.children[0]
         await button.callback(mock_interaction)
-        
+
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.followup.send.assert_not_called()
 
@@ -86,19 +87,19 @@ class TestPortalViewCallbacks:
     @patch("mods.revocord.portal.build_console_embed")
     async def test_login_callback(self, mock_build_embed: Any, mock_update: Any, mock_get_account: Any, mock_interaction: Any) -> None:
         view = PortalLoginView()
-        login_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "persistent_portal_login"))
-        
+        login_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "persistent_portal_login")
+
         mock_get_account.return_value = {"trainer_level": 5}
         mock_update.return_value = {"trainer_level": 5, "is_logged_in": True}
         mock_embed = MagicMock(spec=discord.Embed)
         mock_build_embed.return_value = mock_embed
-        
+
         await login_button.callback(mock_interaction)
-        
+
         mock_interaction.response.defer.assert_called_once_with(ephemeral=True)
         mock_update.assert_called_once_with(mock_interaction.user.id, is_logged_in=True)
         mock_interaction.followup.send.assert_called_once()
-        
+
         kwargs = mock_interaction.followup.send.call_args[1]
         assert kwargs["embed"] == mock_embed
         assert isinstance(kwargs["view"], GameConsoleView)
@@ -108,12 +109,12 @@ class TestPortalViewCallbacks:
     @patch("mods.revocord.portal.get_or_create_account")
     async def test_login_callback_exception(self, mock_get_account: Any, mock_interaction: Any) -> None:
         view = PortalLoginView()
-        login_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "persistent_portal_login"))
-        
+        login_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "persistent_portal_login")
+
         mock_get_account.side_effect = Exception("Database error")
-        
+
         await login_button.callback(mock_interaction)
-        
+
         mock_interaction.followup.send.assert_called_once()
         assert "Database error" in mock_interaction.followup.send.call_args[0][0]
 
@@ -121,24 +122,24 @@ class TestGameConsoleView:
     @pytest.mark.asyncio
     async def test_bag_button(self, mock_interaction: Any) -> None:
         view = GameConsoleView(123)
-        bag_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "console_bag"))
-        
+        bag_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "console_bag")
+
         await bag_button.callback(mock_interaction)
         mock_interaction.response.defer.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_heal_button(self, mock_interaction: Any) -> None:
         view = GameConsoleView(123)
-        heal_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "console_heal"))
-        
+        heal_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "console_heal")
+
         await heal_button.callback(mock_interaction)
         mock_interaction.response.defer.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_tv_button_wrong_user(self, mock_interaction: Any) -> None:
         view = GameConsoleView(123)
-        tv_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "console_tv"))
-        
+        tv_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "console_tv")
+
         mock_interaction.user.id = 999
         await tv_button.callback(mock_interaction)
         mock_interaction.response.send_message.assert_called_once()
@@ -150,20 +151,20 @@ class TestGameConsoleView:
     @patch("mods.revocord.tv.TVView")
     async def test_tv_button_success(self, mock_tv_view_cls: Any, mock_build_embed: Any, mock_get_account: Any, mock_interaction: Any) -> None:
         view = GameConsoleView(123)
-        tv_button = next((child for child in view.children if getattr(child, 'custom_id', '') == "console_tv"))
-        
+        tv_button = next(child for child in view.children if getattr(child, 'custom_id', '') == "console_tv")
+
         mock_interaction.user.id = 123
         mock_get_account.return_value = {"caught_revomon": []}
-        
+
         mock_tv_view = MagicMock()
         mock_tv_view.build_buttons = AsyncMock()
         mock_tv_view_cls.return_value = mock_tv_view
-        
+
         mock_embed = MagicMock()
         mock_build_embed.return_value = mock_embed
-        
+
         await tv_button.callback(mock_interaction)
-        
+
         mock_interaction.response.defer.assert_called_once()
         mock_get_account.assert_called_once_with(123)
         mock_tv_view.build_buttons.assert_called_once()
@@ -174,7 +175,7 @@ class TestBuildConsoleEmbed:
     async def test_build_console_embed(self) -> None:
         mock_member = MagicMock(spec=discord.Member)
         mock_member.display_name = "TestUser"
-        
+
         account = {
             "trainer_level": 5,
             "trainer_xp": 50,
@@ -185,24 +186,24 @@ class TestBuildConsoleEmbed:
             "current_city": "drassius city",
             "inventory": {"159": 5, "4": 2, "31": 0}
         }
-        
+
         embed = await build_console_embed(account, mock_member)
-        
+
         assert isinstance(embed, discord.Embed)
         assert "TESTUSER" in embed.title
         assert "Drassius City" in embed.description
-        
+
         fields = {f.name: f.value for f in embed.fields}
         assert "Level & Rank" in fields
         assert "Veteran" in fields["Level & Rank"]
-        
+
         assert "Wealth" in fields
         assert "100" in fields["Wealth"]
-        
+
         assert "Stats" in fields
         assert "50%" in fields["Stats"]
         assert "80/120" in fields["Stats"]
-        
+
         assert "Bag (Quick Look)" in fields
         assert "Red x5" in fields["Bag (Quick Look)"]
         assert "Blue x2" in fields["Bag (Quick Look)"]

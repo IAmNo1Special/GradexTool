@@ -1,4 +1,3 @@
-from typing import Any
 """Helper functions for the 'scripts' directory."""
 
 

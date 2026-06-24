@@ -1,13 +1,14 @@
 from typing import Any
+
 """Cog for Player Dashboard and character profile interface."""
 
-import logging
+import logging  # noqa: E402
 
-import discord
-from discord import ui
-from discord.ext import commands
+import discord  # noqa: E402
+from discord import ui  # noqa: E402
+from discord.ext import commands  # noqa: E402
 
-from mods.revocord.shared import (
+from mods.revocord.shared import (  # noqa: E402
     build_text_view,
     get_or_create_account,
     update_account,
@@ -130,7 +131,6 @@ class DashboardView(ui.View):
         """Handle the dashboard logout button click."""
         await interaction.response.defer(ephemeral=True)
 
-        guild = interaction.guild
         channel = interaction.channel
         member = interaction.user
 

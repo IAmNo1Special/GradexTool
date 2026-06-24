@@ -1,4 +1,5 @@
-import os, json
+import json
+import os
 
 brain_dir = r'C:\Users\ivmno\.gemini\antigravity\brain'
 found = False
@@ -8,7 +9,7 @@ for conv_id in os.listdir(brain_dir):
     if os.path.exists(transcript_path):
         # Read the lines in reverse or just keep track of the LAST one found to get the most recent valid backup
         latest_content = None
-        with open(transcript_path, 'r', encoding='utf-8') as f:
+        with open(transcript_path, encoding='utf-8') as f:
             for line in f:
                 try:
                     data = json.loads(line)
@@ -21,7 +22,7 @@ for conv_id in os.listdir(brain_dir):
                                         latest_content = args['CodeContent']
                 except Exception:
                     pass
-        
+
         if latest_content:
             print(f'Found backup in {conv_id}!')
             with open(r'f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py', 'w', encoding='utf-8') as out:

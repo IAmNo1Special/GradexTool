@@ -1,5 +1,5 @@
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
-with open(path, "r", encoding="utf-8") as f:
+with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # test_expired

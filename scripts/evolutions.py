@@ -1,4 +1,3 @@
-from typing import Any
 """Script to extract evolution data from revomon.json and save to evolutions.json."""
 
 import json
