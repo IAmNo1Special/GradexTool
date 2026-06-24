@@ -9,12 +9,12 @@ from the './mods' directory and its subdirectories.
 import logging  # noqa: E402
 from pathlib import Path  # noqa: E402
 
-from discord.ext import commands  # noqa: E402
+from discord.ext.commands import Bot  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
 
-async def load_mods(gradex_tool: commands.Bot) -> None:
+async def load_mods(gradex_tool: Bot) -> None:
     """Discover and load all Gradex Tool Mods from the './mods' directory."""
     logger.info(f"Loading Gradex Tool Mods...\n{'-' * 50}")
     mods_dir = Path(__file__).parent

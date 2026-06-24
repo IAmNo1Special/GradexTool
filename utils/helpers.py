@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from configs import GRA_GUILD_ID, PRO_TAMER_ROLE_IDS
+from configs import GRA_GUILD_ID, GRA_PRO_TAMER_ROLE_IDS
 from data import UsersTable
 
 # Singleton instance to prevent database connection exhaustion
@@ -21,6 +21,17 @@ def get_users_table() -> UsersTable:
 def is_pro_tamer(
     gradex_tool: commands.Bot, user: discord.User | discord.Member
 ) -> bool:
+    """Check if a user has a pro tamer role in the GRA guild.
+
+    Args:
+        gradex_tool: The bot instance
+        user: The user to check
+
+    Returns:
+        True if the user has a pro tamer role, False otherwise
+    """
+    if GRA_GUILD_ID is None:
+        raise ValueError("GRA_GUILD_ID not found in environment variables")
     gra_guild = gradex_tool.get_guild(GRA_GUILD_ID)
     if gra_guild is None:
         return False
@@ -28,7 +39,7 @@ def is_pro_tamer(
     if gra_member is None:
         return False
     user_roles = [role.id for role in gra_member.roles]
-    return any(role in PRO_TAMER_ROLE_IDS for role in user_roles)
+    return any(role in GRA_PRO_TAMER_ROLE_IDS for role in user_roles)
 
 
 async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
@@ -39,7 +50,9 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
     if current_user:
         if current_user["is_pro"] != is_pro_status:
             # update existing user's membership status
-            await users_data.update_user(user_id=current_user["user_id"], is_pro=is_pro_status)
+            await users_data.update_user(
+                user_id=current_user["user_id"], is_pro=is_pro_status
+            )
             print("Existing User Updated!")
             return
     else:

@@ -7,7 +7,6 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from configs import BOT_OWNER_ID
 from configs.logging_config import setup_logging
 from data import update_gradex_db
 from mods import load_mods
@@ -24,6 +23,8 @@ intents.message_content = True
 gradex_tool: commands.Bot = commands.Bot(command_prefix="/", intents=intents)
 
 gradex_tool.remove_command("help")
+
+BOT_OWNER_ID = getenv("BOT_OWNER_ID", "")
 
 
 async def entrypoint(rebase: bool = False) -> None:
@@ -59,13 +60,16 @@ async def on_ready() -> None:
         logger.warning(f"Command sync failed (may be rate limited): {e}\n{'-' * 50}")
 
 
-@gradex_tool.command(name="sync_commands", description="Manually sync application commands (owner only)")
-async def sync_commands(ctx: commands.Context) -> None:
+@gradex_tool.command(
+    name="sync_commands", description="Manually sync application commands (owner only)"
+)
+async def sync_commands(ctx: commands.Context[commands.Bot]) -> None:
     """Manually sync application commands. Owner only."""
-    if BOT_OWNER_ID and str(ctx.author.id) != BOT_OWNER_ID:
+    is_owner = str(ctx.author.id) == str(BOT_OWNER_ID) if BOT_OWNER_ID else await gradex_tool.is_owner(ctx.author)
+    if not is_owner:
         await ctx.send("You do not have permission to use this command.")
         return
-    
+
     try:
         synced_commands = await gradex_tool.tree.sync()
         logger.info(f"Synced {len(synced_commands)} commands\n{'-' * 50}")
