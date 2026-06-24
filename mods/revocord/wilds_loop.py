@@ -139,6 +139,8 @@ class WildsLoopCog(commands.Cog):
         for guild in self.bot.guilds:
             try:
                 config = await get_guild_spawn_config(guild.id)
+                if not config:
+                    continue
                 eff_limit = config["max_spawn_limit"]
                 if config["temp_limit_expires"] > current_time:
                     eff_limit += config["temp_spawn_limit"]
