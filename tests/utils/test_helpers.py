@@ -143,7 +143,7 @@ class TestUserCheck:
 
         # Mock is_pro_tamer to return True
         with patch("utils.helpers.is_pro_tamer", return_value=True):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was added with pro status
@@ -166,7 +166,7 @@ class TestUserCheck:
 
         # Mock is_pro_tamer to return False
         with patch("utils.helpers.is_pro_tamer", return_value=False):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was added without pro status
@@ -204,7 +204,7 @@ class TestUserCheck:
 
         # Mock is_pro_tamer to return True (status changed)
         with patch("utils.helpers.is_pro_tamer", return_value=True):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was updated with new pro status
@@ -242,7 +242,7 @@ class TestUserCheck:
 
         # Mock is_pro_tamer to return False (status unchanged)
         with patch("utils.helpers.is_pro_tamer", return_value=False):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify user was not updated
@@ -262,7 +262,7 @@ class TestUserCheck:
         mock_users_table.add_user = AsyncMock()
 
         with patch("utils.helpers.is_pro_tamer", return_value=False):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Verify all default values were set
@@ -466,7 +466,7 @@ class TestHelpersEdgeCases:
         mock_users_table.add_user = AsyncMock()
 
         with patch("utils.helpers.is_pro_tamer", return_value=False):
-            with patch("utils.helpers.UsersTable", return_value=mock_users_table):
+            with patch("utils.helpers.get_users_table", return_value=mock_users_table):
                 await user_check(mock_bot, mock_member)
 
                 # Should handle long username
