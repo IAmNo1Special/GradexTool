@@ -37,6 +37,8 @@ class EnforcementCog(commands.Cog):
         """Automatically delete system 'pin' notifications sent by the bot."""
         # Check if the message is a system "pinned" notification
         if message.type == discord.MessageType.pins_add:
+            if not (hasattr(message.channel, "category") and message.channel.category and message.channel.category.name == self.category_name):
+                return
             try:
                 await message.delete()
                 logger.info("Deleted pin notification.")
