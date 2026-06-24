@@ -211,10 +211,22 @@ class TestOnInteraction:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
+    @patch(
+        "mods.revocord.hunting.get_next_rc_id",
+        new_callable=AsyncMock,
+        return_value=1,
+    )
+    @patch(
+        "mods.revocord.hunting.get_active_encounter",
+        new_callable=AsyncMock,
+        return_value=None,
+    )
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     async def test_spawn_throw_orb_success(
         self,
         mock_get_account: Any,
+        mock_get_encounter: Any,
+        mock_get_rc_id: Any,
         mock_update: Any,
         cog: HuntingCog,
         mock_interaction: Any,
