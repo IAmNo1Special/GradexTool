@@ -160,6 +160,7 @@ class TestSetupCogCommand:
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_category.edit = AsyncMock()
+        mock_category.set_permissions = AsyncMock()
         mock_guild.categories = [mock_category]
 
         mock_news = MagicMock(spec=discord.TextChannel)
@@ -208,6 +209,12 @@ class TestSetupCogCommand:
             mock_portal,
             mock_wilds,
         ]
+        mock_guild.text_channels = [
+            mock_news,
+            mock_event_board,
+            mock_portal,
+            mock_wilds,
+        ]
 
         await setup_cog.execute_setup(
             mock_interaction, mock_interaction.user, mock_interaction.guild
@@ -225,10 +232,12 @@ class TestSetupCogCommand:
         mock_guild = mock_interaction.guild
         mock_guild.categories = []
         mock_guild.channels = []
+        mock_guild.text_channels = []
 
         mock_category = MagicMock(spec=discord.CategoryChannel)
         mock_category.name = "RevoCord"
         mock_category.edit = AsyncMock()
+        mock_category.set_permissions = AsyncMock()
 
         mock_news = MagicMock(spec=discord.TextChannel)
         mock_news.name = "news"
