@@ -31,19 +31,19 @@ jobs:
         run: uv sync --all-extras --dev
         
       - name: Lint with Ruff
-        run: uv run ruff check .
+        run: uvx ruff check .
         
       - name: Format with Ruff
-        run: uv run ruff format --check .
+        run: uvx ruff format --check .
         
       - name: Type check with mypy
-        run: uv run mypy . || echo "mypy has strict errors remaining, passing for now during migration."
+        run: uvx mypy . || echo "mypy has strict errors remaining, passing for now during migration."
         
       - name: Check markdown formatting
-        run: uv run mdformat --check .
+        run: uvx --python 3.13 mdformat --check .
         
       - name: Test with pytest
-        run: uv run pytest --cov=. --cov-report=xml
+        run: uvx pytest --cov=. --cov-report=xml
         
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
