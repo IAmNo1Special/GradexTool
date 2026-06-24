@@ -15,6 +15,7 @@ def _get_configs() -> Any:
 
 _configs = _get_configs()
 GRA_GUILD_ID = _configs.get("GRA_GUILD_ID")
+BOT_OWNER_ID = _configs.get("BOT_OWNER_ID")
 PRO_TAMER_ROLE_IDS = _configs.get("PRO_TAMER_ROLE_IDS", [])
 GRADEX_DB_PATH = _configs.get("GRADEX_DB_PATH", "data/gradex.db")
 
@@ -95,6 +96,7 @@ USER_AGENT = _configs.get(
 __all__ = [
     "PROJECT_ROOT",
     "GRA_GUILD_ID",
+    "BOT_OWNER_ID",
     "PRO_TAMER_ROLE_IDS",
     "GRADEX_DB_PATH",
     "REVOMON_REVODEX_ENDPOINT",
