@@ -37,7 +37,7 @@ jobs:
         run: uvx ruff format --check .
         
       - name: Type check with mypy
-        run: uvx mypy . || echo "mypy has strict errors remaining, passing for now during migration."
+        run: uvx mypy . --python-executable .venv/bin/python
         
       - name: Check markdown formatting
         run: uvx --python 3.13 mdformat --check .
