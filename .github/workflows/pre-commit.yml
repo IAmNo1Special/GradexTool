@@ -1,15 +1,16 @@
-name: CI
+name: Pre-commit
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
+      - dev
+  push:
+    branches:
+      - dev
 
 jobs:
-  test-and-lint:
+  pre-commit-checks:
     runs-on: ubuntu-latest
     
     steps:
@@ -41,11 +42,3 @@ jobs:
         
       - name: Check markdown formatting
         run: uvx --python 3.13 mdformat --check .
-        
-      - name: Test with pytest
-        run: uv run pytest --cov=. --cov-report=xml
-        
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
