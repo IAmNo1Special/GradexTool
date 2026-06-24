@@ -26,7 +26,7 @@ from mods.revocord.shared import (  # noqa: E402
 
 
 @pytest.fixture
-def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any, None, None]:
+def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any]:
     file_path = tmp_path / "revocord_accounts.json"
     file_path.write_text("{}")
     with patch("mods.revocord.shared.ACCOUNTS_FILE", file_path):
@@ -34,7 +34,7 @@ def temp_accounts_file(tmp_path: Any) -> typing.Generator[Any, None, None]:
 
 
 @pytest.fixture
-def clean_accounts(temp_accounts_file: Any) -> typing.Generator[Any, None, None]:
+def clean_accounts(temp_accounts_file: Any) -> typing.Generator[Any]:
     yield temp_accounts_file
 
 
