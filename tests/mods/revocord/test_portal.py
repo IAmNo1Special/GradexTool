@@ -190,21 +190,21 @@ class TestBuildConsoleEmbed:
         embed = await build_console_embed(account, mock_member)
 
         assert isinstance(embed, discord.Embed)
-        assert "TESTUSER" in embed.title
-        assert "Drassius City" in embed.description
+        assert embed.title is not None and "TESTUSER" in embed.title
+        assert embed.description is not None and "Drassius City" in embed.description
 
-        fields = {f.name: f.value for f in embed.fields}
+        fields = {f.name: f.value for f in embed.fields if f.name is not None}
         assert "Level & Rank" in fields
-        assert "Veteran" in fields["Level & Rank"]
+        assert fields["Level & Rank"] is not None and "Veteran" in fields["Level & Rank"]
 
         assert "Wealth" in fields
-        assert "100" in fields["Wealth"]
+        assert fields["Wealth"] is not None and "100" in fields["Wealth"]
 
         assert "Stats" in fields
-        assert "50%" in fields["Stats"]
-        assert "80/120" in fields["Stats"]
+        assert fields["Stats"] is not None and "50%" in fields["Stats"]
+        assert fields["Stats"] is not None and "80/120" in fields["Stats"]
 
         assert "Bag (Quick Look)" in fields
-        assert "Red x5" in fields["Bag (Quick Look)"]
-        assert "Blue x2" in fields["Bag (Quick Look)"]
-        assert "Green" not in fields["Bag (Quick Look)"]
+        assert fields["Bag (Quick Look)"] is not None and "Red x5" in fields["Bag (Quick Look)"]
+        assert fields["Bag (Quick Look)"] is not None and "Blue x2" in fields["Bag (Quick Look)"]
+        assert fields["Bag (Quick Look)"] is not None and "Green" not in fields["Bag (Quick Look)"]

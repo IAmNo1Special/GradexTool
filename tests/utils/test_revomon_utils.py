@@ -34,7 +34,7 @@ def mock_tables() -> None:  # type: ignore[misc]
 @pytest.mark.asyncio
 async def test_get_attributes(mock_tables: Any) -> None:
     rt, tt, rmt, ct, nt, olt = mock_tables
-    mock_mon_info = [0] * 43
+    mock_mon_info: list[Any] = [0] * 43
     mock_mon_info[0] = 1
     mock_mon_info[2] = "Pikachu"
     mock_mon_info[3] = "Desc"
@@ -64,8 +64,8 @@ async def test_get_attributes(mock_tables: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_attributes_multiple_evs(mock_tables: Any) -> None:
     rt, tt, rmt, ct, nt, olt = mock_tables
-    mock_mon_info = [0] * 43
-    mock_mon_info[2] = "Bulbasaur"  # type: ignore[call-overload]
+    mock_mon_info: list[Any] = [0] * 43
+    mock_mon_info[2] = "Bulbasaur"
     mock_mon_info[23] = 1 # HP
     mock_mon_info[25] = 1 # Def
 

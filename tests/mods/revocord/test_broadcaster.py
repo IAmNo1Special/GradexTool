@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
@@ -8,14 +9,14 @@ from mods.revocord.broadcaster import broadcast_encounter, update_encounter_broa
 
 class TestBroadcaster:
     @pytest.mark.asyncio
-    async def test_broadcast_encounter_not_notable(self):
+    async def test_broadcast_encounter_not_notable(self) -> None:
         user = MagicMock(spec=discord.Member)
         embed = MagicMock(spec=discord.Embed)
         res = await broadcast_encounter(MagicMock(), user, "Pikachu", "25", "Common", False, embed)
         assert res == 0
 
     @pytest.mark.asyncio
-    async def test_broadcast_encounter_no_event_board(self):
+    async def test_broadcast_encounter_no_event_board(self) -> None:
         user = MagicMock(spec=discord.Member)
         user.guild.channels = []
         embed = MagicMock(spec=discord.Embed)
@@ -24,7 +25,7 @@ class TestBroadcaster:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.broadcaster.EventBoardLogsTable")
-    async def test_broadcast_encounter_success(self, mock_table_cls):
+    async def test_broadcast_encounter_success(self, mock_table_cls: Any) -> None:
         user = MagicMock(spec=discord.Member)
         user.display_name = "Ash"
 
@@ -59,7 +60,7 @@ class TestBroadcaster:
         mock_cursor.execute.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_broadcast_encounter_exception(self):
+    async def test_broadcast_encounter_exception(self) -> None:
         user = MagicMock(spec=discord.Member)
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -75,17 +76,17 @@ class TestBroadcaster:
         assert res == 0
 
     @pytest.mark.asyncio
-    async def test_update_encounter_no_msg_id(self):
+    async def test_update_encounter_no_msg_id(self) -> None:
         await update_encounter_broadcast(MagicMock(), 0, "Caught", 0)
 
     @pytest.mark.asyncio
-    async def test_update_encounter_no_event_board(self):
+    async def test_update_encounter_no_event_board(self) -> None:
         guild = MagicMock()
         guild.channels = []
         await update_encounter_broadcast(guild, 999, "Caught", 0)
 
     @pytest.mark.asyncio
-    async def test_update_encounter_no_msg_found(self):
+    async def test_update_encounter_no_msg_found(self) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -96,7 +97,7 @@ class TestBroadcaster:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.broadcaster.EventBoardLogsTable")
-    async def test_update_encounter_success_caught(self, mock_table_cls):
+    async def test_update_encounter_success_caught(self, mock_table_cls: Any) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -127,7 +128,7 @@ class TestBroadcaster:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.broadcaster.EventBoardLogsTable")
-    async def test_update_encounter_success_fled(self, mock_table_cls):
+    async def test_update_encounter_success_fled(self, mock_table_cls: Any) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -153,7 +154,7 @@ class TestBroadcaster:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.broadcaster.EventBoardLogsTable")
-    async def test_update_encounter_success_ran(self, mock_table_cls):
+    async def test_update_encounter_success_ran(self, mock_table_cls: Any) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -178,7 +179,7 @@ class TestBroadcaster:
         assert "trainer ran away!" in embed.description
 
     @pytest.mark.asyncio
-    async def test_update_encounter_not_found(self):
+    async def test_update_encounter_not_found(self) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"
@@ -190,7 +191,7 @@ class TestBroadcaster:
         await update_encounter_broadcast(guild, 999, "Caught", 0)
 
     @pytest.mark.asyncio
-    async def test_update_encounter_exception(self):
+    async def test_update_encounter_exception(self) -> None:
         guild = MagicMock()
         event_board = MagicMock(spec=discord.TextChannel)
         event_board.name = "event-board"

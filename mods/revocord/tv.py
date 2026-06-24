@@ -1,3 +1,4 @@
+from typing import Any
 import math
 
 import discord
@@ -6,7 +7,7 @@ from discord import ui
 from utils.revomon_utils import get_attributes
 
 
-def build_tv_embed(member: discord.Member, total_caught: int, current_page: int, total_pages: int) -> discord.Embed:
+def build_tv_embed(member: discord.Member | discord.User, total_caught: int, current_page: int, total_pages: int) -> discord.Embed:
     embed = discord.Embed(
         title=f"📺 {member.display_name.upper()}'S TV",
         description=f"Browsing **{total_caught}** caught Revomon in storage.\n━━━━━━━━━━━━━━━━━━━━",
@@ -15,7 +16,7 @@ def build_tv_embed(member: discord.Member, total_caught: int, current_page: int,
     embed.set_footer(text=f"Page {current_page + 1} of {max(1, total_pages)}")
     return embed
 
-async def build_stat_embed(mon: dict, attrs: dict | None) -> discord.Embed:
+async def build_stat_embed(mon: dict[str, Any], attrs: dict[str, Any] | None) -> discord.Embed:
     name = mon.get("name", "Unknown").title()
     is_shiny = mon.get("is_shiny", False)
     level = mon.get("level", 1)
@@ -57,14 +58,14 @@ async def build_stat_embed(mon: dict, attrs: dict | None) -> discord.Embed:
     return embed
 
 class TVStatView(ui.View):
-    def __init__(self, spawner_id: int, caught_list: list, current_page: int):
+    def __init__(self, spawner_id: int, caught_list: list[dict[str, Any]], current_page: int):
         super().__init__(timeout=None)
         self.spawner_id = spawner_id
         self.caught_list = caught_list
         self.current_page = current_page
 
     @ui.button(label="Back to TV", style=discord.ButtonStyle.primary, emoji="📺", custom_id="tv_back")
-    async def back_button(self, interaction: discord.Interaction, button: ui.Button) -> None:
+    async def back_button(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
         if interaction.user.id != self.spawner_id:
             await interaction.response.send_message("❌ This is not your TV!", ephemeral=True)
             return
@@ -80,14 +81,14 @@ class TVStatView(ui.View):
         await interaction.edit_original_response(embed=embed, view=view, attachments=[])
 
 class TVView(ui.View):
-    def __init__(self, bot: discord.Client, spawner_id: int, caught_list: list, current_page: int = 0):
+    def __init__(self, bot: discord.Client, spawner_id: int, caught_list: list[dict[str, Any]], current_page: int = 0):
         super().__init__(timeout=None)
         self.bot = bot
         self.spawner_id = spawner_id
         self.caught_list = caught_list
         self.current_page = current_page
 
-    async def build_buttons(self):
+    async def build_buttons(self) -> None:
         # Sort newest first as requested (chronological by captured_at descending)
         sorted_list = sorted(self.caught_list, key=lambda x: x.get("captured_at", 0), reverse=True)
 
@@ -95,9 +96,9 @@ class TVView(ui.View):
         page_items = sorted_list[start_idx:start_idx + 20]
 
         if not hasattr(self.bot, "_app_emojis_cache"):
-            self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()
+            self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
 
-        app_emojis = self.bot._app_emojis_cache
+        app_emojis = self.bot._app_emojis_cache  # type: ignore[attr-defined]
 
         for i, mon in enumerate(page_items):
             name = mon.get("name", "unknown").replace(" ", "_").replace("-", "_")
@@ -116,8 +117,8 @@ class TVView(ui.View):
         self.add_item(TVNavButton("next", "⏩", "Next", self.bot, self.spawner_id, sorted_list, self.current_page))
         self.add_item(TVNavButton("last", "⏭️", "Last", self.bot, self.spawner_id, sorted_list, self.current_page))
 
-class RevomonTVButton(ui.Button):
-    def __init__(self, bot: discord.Client, spawner_id: int, caught_list: list, current_page: int, mon: dict, index: int, emoji_obj: discord.Emoji | None):
+class RevomonTVButton(ui.Button[Any]):
+    def __init__(self, bot: discord.Client, spawner_id: int, caught_list: list[dict[str, Any]], current_page: int, mon: dict[str, Any], index: int, emoji_obj: discord.Emoji | None):
         self.bot = bot
         self.spawner_id = spawner_id
         self.caught_list = caught_list
@@ -152,8 +153,8 @@ class RevomonTVButton(ui.Button):
 
         await interaction.edit_original_response(embed=embed, view=view, attachments=[])
 
-class TVNavButton(ui.Button):
-    def __init__(self, action: str, emoji: str, label: str, bot: discord.Client, spawner_id: int, sorted_list: list, current_page: int):
+class TVNavButton(ui.Button[Any]):
+    def __init__(self, action: str, emoji: str, label: str, bot: discord.Client, spawner_id: int, sorted_list: list[dict[str, Any]], current_page: int):
         self.action = action
         self.bot = bot
         self.spawner_id = spawner_id

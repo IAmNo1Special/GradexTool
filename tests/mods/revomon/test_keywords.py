@@ -335,7 +335,7 @@ class TestPvpKeyword:
         cog = PvpLeaderboard(mock_bot)
         mock_channel = MagicMock()
 
-        async def mock_history(*args, **kwargs):
+        async def mock_history(*args: Any, **kwargs: Any) -> Any:
             mock_msg = MagicMock()
             mock_msg.delete = AsyncMock()
             yield mock_msg

@@ -113,6 +113,18 @@ class WildSpawnView(ui.View):
             self.add_item(share_btn)
 
 
+class ReturnToConsoleView(ui.View):
+    def __init__(self, spawner_id: int):
+        super().__init__(timeout=None)
+        btn: ui.Button[Any] = ui.Button(
+            label="Back to Console",
+            style=discord.ButtonStyle.primary,
+            emoji="🎮",
+            custom_id=f"return_console:{spawner_id}"
+        )
+        self.add_item(btn)
+
+
 class HuntingCog(commands.Cog):
     """Cog for managing Revomon hunting spawner algorithms."""
 
@@ -269,7 +281,7 @@ class HuntingCog(commands.Cog):
             )
 
             msg_id = int(parts[5]) if len(parts) > 5 else 0
-            if msg_id:
+            if msg_id and interaction.guild:
                 try:
                     await update_encounter_broadcast(interaction.guild, msg_id, "Fled (Expired)", 0x7F8C8D)
                 except Exception:
@@ -285,7 +297,7 @@ class HuntingCog(commands.Cog):
             from mods.revocord.portal import GameConsoleView, build_console_embed
             new_embed = await build_console_embed(account, interaction.user)
             await interaction.edit_original_response(embed=new_embed, view=GameConsoleView(spawner_id), attachments=[])
-            if msg_id:
+            if msg_id and interaction.guild:
                 try:
                     await update_encounter_broadcast(interaction.guild, msg_id, "Ran", 0x7F8C8D)
                 except Exception:
@@ -315,6 +327,8 @@ class HuntingCog(commands.Cog):
             name = revomon_data.get("name", "Unknown").title() if revomon_data else "Unknown"
             rarity = revomon_data.get("rarity", "common").title() if revomon_data else "Common"
 
+            if not isinstance(interaction.user, discord.Member):
+                return
             await broadcast_encounter(
                 self.bot, interaction.user, name, str(id_revomon), rarity, is_shiny, embed
             )
@@ -517,18 +531,12 @@ class HuntingCog(commands.Cog):
 
                 embed.set_footer(text=f"RC-ID: #{rc_id}")
 
-                class ReturnToConsoleView(ui.View):
-                    def __init__(self, spawner_id: int):
-                        super().__init__(timeout=None)
-                    @ui.button(label="Back to Console", style=discord.ButtonStyle.primary, emoji="🎮", custom_id=f"return_console:{spawner_id}")
-                    async def return_console(self, inter: discord.Interaction, btn: ui.Button): pass
-
                 if file:
                     await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
                 else:
                     await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
 
-                if msg_id:
+                if msg_id and interaction.guild:
                     await update_encounter_broadcast(interaction.guild, msg_id, "Caught", 0xF1C40F)
                     await self._cleanup_wilds_spawn(interaction.guild, msg_id)
 
@@ -541,38 +549,30 @@ class HuntingCog(commands.Cog):
                 will_flee = random.random() < 0.30
                 if will_flee:
                     await delete_active_encounter(spawner_id)
-                    if msg_id:
+                    if interaction.message and interaction.message.embeds:
+                        embed = interaction.message.embeds[0]
+                        file = None
+                        if img_path.exists():
+                            file = discord.File(img_path, filename="revomon.png")
+                            embed.set_image(url="attachment://revomon.png")
+                        embed.title = f"💨 The wild {name} fled! 💨"
+                        embed.description = (
+                            f"Oh no! The wild **{name}** broke free and "
+                            f"fled into the tall grass!"
+                        )
+                        embed.color = 0x7F8C8D  # Grey
+
+                        if file:
+                            await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
+                        else:
+                            await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
+
+                    if msg_id and interaction.guild:
                         try:
                             await update_encounter_broadcast(interaction.guild, msg_id, "Fled", 0x7F8C8D)
                         except Exception:
                             pass
                         await self._cleanup_wilds_spawn(interaction.guild, msg_id)
-                    # Edit original message embed to FLED state
-                    embed = interaction.message.embeds[0]
-                    file = None
-                    if img_path.exists():
-                        file = discord.File(img_path, filename="revomon.png")
-                        embed.set_image(url="attachment://revomon.png")
-                    embed.title = f"💨 The wild {name} fled! 💨"
-                    embed.description = (
-                        f"Oh no! The wild **{name}** broke free and "
-                        f"fled into the tall grass!"
-                    )
-                    embed.color = 0x7F8C8D  # Grey
-
-                    class ReturnToConsoleView(ui.View):
-                        def __init__(self, spawner_id: int):
-                            super().__init__(timeout=None)
-                        @ui.button(label="Back to Console", style=discord.ButtonStyle.primary, emoji="🎮", custom_id=f"return_console:{spawner_id}")
-                        async def return_console(self, inter: discord.Interaction, btn: ui.Button): pass
-
-                    if file:
-                        await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[file])
-                    else:
-                        await interaction.response.edit_message(embed=embed, view=ReturnToConsoleView(spawner_id), attachments=[])
-
-                    if msg_id:
-                        await update_encounter_broadcast(interaction.guild, msg_id, "Fled", 0x7F8C8D)
 
                     await interaction.followup.send(
                         f"💨 **Oh no!** The wild **{name}** broke free and "
@@ -606,7 +606,11 @@ class HuntingCog(commands.Cog):
             pass
 
     async def handle_wilds_claim(self, interaction: discord.Interaction) -> None:
+        if not interaction.data or not isinstance(interaction.data, dict):
+            return
         custom_id = interaction.data.get("custom_id")
+        if not isinstance(custom_id, str):
+            return
         parts = custom_id.split(":")
         if len(parts) < 6:
             return
@@ -651,16 +655,15 @@ class HuntingCog(commands.Cog):
         view = WildSpawnView(chosen, is_shiny, member.id, msg_id)
 
         try:
-            edit_kwargs = {"embed": embed, "view": view}
             if file:
-                edit_kwargs["attachments"] = [file]
+                attachments = [file]
             else:
-                edit_kwargs["attachments"] = []
+                attachments = []
 
             if interaction.message:
-                await interaction.message.edit(**edit_kwargs)
+                await interaction.message.edit(embed=embed, view=view, attachments=attachments)
             else:
-                await interaction.edit_original_response(**edit_kwargs)
+                await interaction.edit_original_response(embed=embed, view=view, attachments=attachments)
         except Exception as e:
             logger.error(f"Failed to update claimed spawn msg: {e}")
 
@@ -680,6 +683,8 @@ class HuntingCog(commands.Cog):
             return
 
         member = interaction.user
+        if not isinstance(member, discord.Member):
+            return
         guild_id = interaction.guild_id
         if not guild_id:
             await interaction.followup.send("❌ This command must be used in a server.", ephemeral=True)
@@ -816,7 +821,9 @@ async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:
     spawn_count = limit // 3
     for _ in range(spawn_count):
         try:
-            await wilds_loop_cog._do_spawn(guild)
+            do_spawn = getattr(wilds_loop_cog, "_do_spawn", None)
+            if do_spawn:
+                await do_spawn(guild)
             await asyncio.sleep(0.5)  # Rate limiting safety
         except Exception as e:
             logger.error(f"Error doing initial spawn: {e}")

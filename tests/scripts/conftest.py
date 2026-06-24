@@ -317,7 +317,7 @@ def sample_json_file(temp_data_dir: Any, scripts_sample_revomon_data: Any) -> No
     """Create a sample JSON file for testing."""
     json_file = temp_data_dir / "revomon.json"
     with open(json_file, 'w') as f:
-        json.dump(scripts_sample_revomon_data, f, indent=2)  # type: ignore[name-defined]
+        json.dump(scripts_sample_revomon_data, f, indent=2)
     yield json_file
 
 

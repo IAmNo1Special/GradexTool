@@ -22,16 +22,16 @@ class TestBuildTVEmbed:
         embed = build_tv_embed(member, 100, 2, 5)
 
         assert isinstance(embed, discord.Embed)
-        assert "ASH" in embed.title
-        assert "100" in embed.description
-        assert "Page 3 of 5" in embed.footer.text
+        assert embed.title is not None and "ASH" in embed.title
+        assert embed.description is not None and "100" in embed.description
+        assert embed.footer.text is not None and "Page 3 of 5" in embed.footer.text
 
     def test_build_tv_embed_no_pages(self) -> None:
         member = MagicMock(spec=discord.Member)
         member.display_name = "Ash"
 
         embed = build_tv_embed(member, 0, 0, 0)
-        assert "Page 1 of 1" in embed.footer.text
+        assert embed.footer.text is not None and "Page 1 of 1" in embed.footer.text
 
 class TestBuildStatEmbed:
     @pytest.mark.asyncio
@@ -50,13 +50,13 @@ class TestBuildStatEmbed:
 
         embed = await build_stat_embed(mon, {"num": 25})
 
-        assert "Pikachu (Lv. 10)" in embed.title
-        assert "500 XP" in embed.fields[0].value
-        assert "Bold" in embed.fields[1].value
-        assert "Static" in embed.fields[2].value
-        assert "186/186 (100.0%)" in embed.fields[3].value
-        assert "RC-ID: #12345" in embed.footer.text
-        assert "25.png" in embed.thumbnail.url
+        assert embed.title is not None and "Pikachu (Lv. 10)" in embed.title
+        assert embed.fields[0].value is not None and "500 XP" in embed.fields[0].value
+        assert embed.fields[1].value is not None and "Bold" in embed.fields[1].value
+        assert embed.fields[2].value is not None and "Static" in embed.fields[2].value
+        assert embed.fields[3].value is not None and "186/186 (100.0%)" in embed.fields[3].value
+        assert embed.footer.text is not None and "RC-ID: #12345" in embed.footer.text
+        assert embed.thumbnail.url is not None and "25.png" in embed.thumbnail.url
 
     @pytest.mark.asyncio
     async def test_build_stat_embed_shiny(self) -> None:
@@ -68,8 +68,8 @@ class TestBuildStatEmbed:
 
         embed = await build_stat_embed(mon, {"num": 25})
 
-        assert "✨ SHINY Pikachu" in embed.title
-        assert "25_shiny.png" in embed.thumbnail.url
+        assert embed.title is not None and "✨ SHINY Pikachu" in embed.title
+        assert embed.thumbnail.url is not None and "25_shiny.png" in embed.thumbnail.url
 
     @pytest.mark.asyncio
     async def test_build_stat_embed_no_attrs(self) -> None:
@@ -125,7 +125,7 @@ class TestTVView:
         bot.fetch_application_emojis = AsyncMock(return_value=[])
         delattr(bot, '_app_emojis_cache')
 
-        caught = [
+        caught: list[dict[str, Any]] = [
             {"name": "Pikachu", "rc_id": "1", "captured_at": 10},
             {"name": "Charmander", "rc_id": "2", "captured_at": 20},
             {"name": "Squirtle", "rc_id": "3", "captured_at": 5}
@@ -149,7 +149,7 @@ class TestTVNavButton:
         bot = MagicMock()
         bot.emojis = []
         bot._app_emojis_cache = []
-        caught = []
+        caught: list[dict[str, Any]] = []
 
         btn = TVNavButton("next", "⏩", "Next", bot, 123, caught, 0)
         mock_interaction.user.id = 999
@@ -159,11 +159,11 @@ class TestTVNavButton:
     @pytest.mark.asyncio
     @patch("mods.revocord.shared.get_or_create_account")
     @patch("mods.revocord.portal.build_console_embed")
-    async def test_nav_close(self, mock_build, mock_get, mock_interaction: Any) -> None:
+    async def test_nav_close(self, mock_build: MagicMock, mock_get: MagicMock, mock_interaction: Any) -> None:
         bot = MagicMock()
         bot.emojis = []
         bot._app_emojis_cache = []
-        caught = []
+        caught: list[dict[str, Any]] = []
 
         mock_get.return_value = {}
         mock_build.return_value = MagicMock()

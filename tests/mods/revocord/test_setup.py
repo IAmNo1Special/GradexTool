@@ -99,7 +99,7 @@ class TestSetupCogCommand:
         mock_portal = MagicMock(spec=discord.TextChannel)
         mock_portal.id = 999
 
-        def mock_create_ch(*args, **kwargs):
+        def mock_create_ch(*args: Any, **kwargs: Any) -> Any:
             ch = MagicMock()
             ch.position = kwargs.get("position", 0)
             ch.edit = AsyncMock()
@@ -140,7 +140,7 @@ class TestSetupCogCommand:
         mock_portal.id = 999
         mock_portal.edit = AsyncMock()
 
-        async def mock_history(*args: Any, **kwargs: Any):
+        async def mock_history(*args: Any, **kwargs: Any) -> Any:
             msg = MagicMock(author=setup_cog.bot.user)
             yield msg
         mock_portal.history = mock_history
@@ -150,10 +150,6 @@ class TestSetupCogCommand:
         mock_wilds.name = "wilds"
         mock_wilds.position = 3
         mock_wilds.edit = AsyncMock()
-
-        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any]:
-            yield MagicMock(author=setup_cog.bot.user)
-        mock_portal.history = mock_history
 
 
         mock_support = MagicMock(spec=discord.ForumChannel)
@@ -197,7 +193,7 @@ class TestSetupCogCommand:
         mock_portal.id = 999
         mock_portal.edit = AsyncMock()
 
-        async def mock_history(*args: Any, **kwargs: Any):
+        async def mock_history(*args: Any, **kwargs: Any) -> Any:
             msg = MagicMock(author=setup_cog.bot.user)
             yield msg
         mock_portal.history = mock_history
@@ -207,10 +203,6 @@ class TestSetupCogCommand:
         mock_wilds.name = "wilds"
         mock_wilds.position = 3
         mock_wilds.edit = AsyncMock()
-
-        async def mock_history(*args: Any, **kwargs: Any) -> AsyncGenerator[Any]:
-            yield MagicMock(author=setup_cog.bot.user)
-        mock_portal.history = mock_history
 
 
         mock_support = MagicMock(spec=discord.ForumChannel)
@@ -259,14 +251,15 @@ class TestSetupCogCommand:
 
     @pytest.mark.asyncio
     @patch("discord.ext.commands.Bot")
-    async def test_not_member(self, mock_bot):
+    async def test_not_member(self, mock_bot: Any) -> None:
         cog = SetupCog(mock_bot)
         mock_interaction = AsyncMock()
 
         # User is not a Member
-        mock_interaction.user = discord.User(state=MagicMock(), data={'id': 1, 'username': 'test', 'discriminator': '0', 'avatar': None})
+        mock_user = MagicMock(spec=discord.User)
+        mock_interaction.user = mock_user
 
-        await cog.setup_command.callback(cog, mock_interaction)
+        await cog.setup_command.callback(cog, mock_interaction)  # type: ignore[arg-type]
 
         mock_interaction.followup.send.assert_called_once()
         assert "server member" in mock_interaction.followup.send.call_args[0][0]
@@ -290,7 +283,7 @@ class TestSetupCogCommand:
 
         mock_guild.fetch_channels = AsyncMock(return_value=[])
 
-        async def real_mock_create(name, **kwargs):
+        async def real_mock_create(name: str, **kwargs: Any) -> Any:
             channel = MagicMock()
             if name == "portal":
                 channel.__bool__.return_value = False
@@ -327,7 +320,7 @@ class TestSetupCogErrorHandling:
 
     @pytest.mark.asyncio
     @patch("mods.revocord.setup.logger")
-    async def test_setup_exception(self, mock_logger):
+    async def test_setup_exception(self, mock_logger: Any) -> None:
         from mods.revocord.setup import setup
         bot = MagicMock()
         bot.add_cog = AsyncMock(side_effect=Exception("Failed to add cog"))

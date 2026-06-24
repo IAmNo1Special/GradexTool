@@ -1,3 +1,4 @@
+from typing import Any
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
@@ -5,7 +6,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # I will replace `setup_command.callback` with `execute_setup` in the specific test functions that need it.
-def replace_in_test(test_name, old, new, content):
+def replace_in_test(test_name: Any, old: Any, new: Any, content: Any) -> str:
     pattern = rf"(def {test_name}\(.*?\):.*?)({re.escape(old)})"
     return re.sub(pattern, r"\1" + new, content, flags=re.DOTALL)
 

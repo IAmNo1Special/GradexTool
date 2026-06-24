@@ -13,7 +13,7 @@ from mods.revocord.hunting import (
 
 
 @pytest.fixture(autouse=True)
-def mock_db_and_broadcast():
+def mock_db_and_broadcast() -> Any:
     with patch("mods.revocord.hunting.update_encounter_broadcast", new_callable=AsyncMock), \
          patch("mods.revocord.hunting.HuntingCog._cleanup_wilds_spawn", new_callable=AsyncMock), \
          patch("mods.revocord.portal.build_console_embed", new_callable=AsyncMock) as mock_embed, \
@@ -26,7 +26,7 @@ def mock_db_and_broadcast():
         yield
 
 @pytest.fixture
-def mock_interaction():
+def mock_interaction() -> Any:
     interaction = MagicMock(spec=discord.Interaction)
     interaction.user = MagicMock(spec=discord.Member)
     interaction.user.id = 123
@@ -51,7 +51,7 @@ def mock_interaction():
     return interaction
 
 @pytest.fixture
-def sample_revomon():
+def sample_revomon() -> Any:
     return {
         "idRevomon": 1,
         "name": "Bulbasaur",
@@ -321,7 +321,7 @@ class TestCleanupTask:
 
         mock_channel = MagicMock()
 
-        async def mock_history(*args, **kwargs):
+        async def mock_history(*args: Any, **kwargs: Any) -> Any:
             yield mock_msg
 
         mock_channel.history = mock_history

@@ -1,3 +1,4 @@
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -8,7 +9,7 @@ from mods import load_mods
 class TestModsLoader:
     @pytest.mark.asyncio
     @patch('mods.Path')
-    async def test_load_mods_success(self, mock_path_class):
+    async def test_load_mods_success(self, mock_path_class: Any) -> None:
         mock_bot = MagicMock()
         mock_bot.load_extension = AsyncMock()
 
@@ -45,7 +46,7 @@ class TestModsLoader:
 
     @pytest.mark.asyncio
     @patch('mods.Path')
-    async def test_load_mods_exception(self, mock_path_class):
+    async def test_load_mods_exception(self, mock_path_class: Any) -> None:
         mock_bot = MagicMock()
         mock_bot.load_extension = AsyncMock(side_effect=Exception("Load error"))
 

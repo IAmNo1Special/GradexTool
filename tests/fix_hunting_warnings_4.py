@@ -1,3 +1,4 @@
+from typing import Any
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting_part2.py"
@@ -7,7 +8,7 @@ with open(path, encoding="utf-8") as f:
 # Remove the mock for _cleanup_wilds_spawn in the two tests that test it!
 # The tests are: test_cleanup_wilds_spawn_exception and test_cleanup_wilds_spawn_success
 
-def repl(match):
+def repl(match: Any) -> Any:
     # match.group(0) is the entire method. We just replace cog._cleanup_wilds_spawn = AsyncMock() with nothing
     return match.group(0).replace("        cog._cleanup_wilds_spawn = AsyncMock()\n", "")
 
