@@ -1,14 +1,16 @@
+from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class allnatures(commands.Cog):
-    def __init__(self, gradex):
+class allnatures(commands.Cog):  # noqa: N801
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def allnatures_embed(self):
+    def allnatures_embed(self) -> Any:
         embed = discord.Embed(
             title="Full Nature List",
             description="The Elder: Only 20 out of the total 25 natures increase one Stat by 10% while reducing another stat by 10%. 5 natures are considered neutral and have no effect at all.",
@@ -28,23 +30,26 @@ class allnatures(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class nature_buttons(discord.ui.View):
-        def __init__(self):
+    class nature_buttons(discord.ui.View):  # noqa: N801
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
+            if interaction.message:
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(All Natures Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -61,5 +66,5 @@ class allnatures(commands.Cog):
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(allnatures(gradex))

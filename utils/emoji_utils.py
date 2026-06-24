@@ -1,11 +1,12 @@
 import os
 from io import BytesIO
+from typing import Any
 
 import aiohttp
 from dotenv import load_dotenv
 from PIL import Image
 
-from data.gradexDB import OwnedLandsTable, RevomonTable
+from data import OwnedLandsTable, RevomonTable
 from utils.revomon_utils import get_attributes
 
 load_dotenv()
@@ -14,7 +15,7 @@ DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
 APPLICATION_ID = os.getenv("APPLICATION_ID")
 
 
-async def img_url_to_emoji_size(img_url: str):
+async def img_url_to_emoji_size(img_url: str) -> bytes:
     # URL of the image
     image_url = img_url
 
@@ -30,23 +31,26 @@ async def img_url_to_emoji_size(img_url: str):
                 ratio = int(min(width / 128, height / 128))
 
                 # Resize the image to 128 pixels
-                img = img.resize(
+                resized_img = img.resize(
                     (int(width / ratio), int(height / ratio)),
                     Image.Resampling.LANCZOS,
                 )
 
                 # Save the resized image to a BytesIO object
                 img_byte_arr = BytesIO()
-                img.save(img_byte_arr, format="PNG")
+                resized_img.save(img_byte_arr, format="PNG")
                 img_byte_arr.seek(0)
                 return img_byte_arr.getvalue()
             else:
                 print(
                     f"Failed to fetch image: {response.status} - {await response.text()}"
                 )
+                return b""
 
 
-async def create_application_emoji(image_data, emoji_name):
+async def create_application_emoji(
+    image_data: bytes, emoji_name: str
+) -> dict[str, str]:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis"
     headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
@@ -74,9 +78,10 @@ async def create_application_emoji(image_data, emoji_name):
                 print(
                     f"Failed to create emoji: {response.status} - {await response.text()}"
                 )
+                return {}
 
 
-async def list_application_emojis():
+async def list_application_emojis() -> list[Any | dict[str, str]]:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis"
     headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}"}
     app_emojis = []
@@ -94,7 +99,7 @@ async def list_application_emojis():
     return app_emojis
 
 
-async def get_application_emoji(emoji_id):
+async def get_application_emoji(emoji_id: str) -> None:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis/{emoji_id}"
     headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}"}
 
@@ -109,7 +114,7 @@ async def get_application_emoji(emoji_id):
                 )
 
 
-async def modify_application_emoji(emoji_id, new_name):
+async def modify_application_emoji(emoji_id: str, new_name: str) -> None:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis/{emoji_id}"
     headers = {
         "Authorization": f"Bot {DISCORD_BOT_TOKEN}",
@@ -129,7 +134,7 @@ async def modify_application_emoji(emoji_id, new_name):
                 )
 
 
-async def delete_application_emoji(emoji_id):
+async def delete_application_emoji(emoji_id: str) -> None:
     url = f"https://discord.com/api/v10/applications/{APPLICATION_ID}/emojis/{emoji_id}"
     headers = {"Authorization": f"Bot {DISCORD_BOT_TOKEN}"}
 
@@ -143,36 +148,36 @@ async def delete_application_emoji(emoji_id):
                 )
 
 
-async def create_emoji_from_url(img_url: str, emoji_name: str):
+async def create_emoji_from_url(img_url: str, emoji_name: str) -> dict[str, str]:
     image_data = await img_url_to_emoji_size(img_url)
     emoji_obj = await create_application_emoji(image_data, emoji_name=emoji_name)
     return emoji_obj
 
 
-async def create_revomon_emojis():
+async def create_revomon_emojis() -> list[dict[str, str]]:
     emoji_list = await list_application_emojis()
-    for mon_name in RevomonTable().get_names():
+    for mon_name in await RevomonTable().get_names():
         if "-" in mon_name:
-            emoji_mon_name: str = mon_name.replace("-", "_")
+            emoji_mon_name = mon_name.replace("-", "_")
         else:
-            emoji_mon_name: str = mon_name
+            emoji_mon_name = mon_name
         try:
             if emoji_mon_name in [emoji["name"] for emoji in emoji_list]:
                 continue
             else:
-                attributes = get_attributes(mon_name)
+                attributes = await get_attributes(mon_name)
                 mon_img_url = attributes["profile_img"]
                 emoji_obj = await create_emoji_from_url(
-                    mon_img_url, emoji_name=emoji_mon_name
+                    str(mon_img_url), emoji_name=emoji_mon_name
                 )
                 emoji_list.append(emoji_obj)
             if f"{emoji_mon_name}_shiny" in [emoji["name"] for emoji in emoji_list]:
                 continue
             else:
-                attributes = get_attributes(mon_name)
+                attributes = await get_attributes(mon_name)
                 shiny_mon_img_url = attributes["shiny_profile_img"]
                 emoji_obj = await create_emoji_from_url(
-                    shiny_mon_img_url, emoji_name=f"{emoji_mon_name}_shiny"
+                    str(shiny_mon_img_url), emoji_name=f"{emoji_mon_name}_shiny"
                 )
                 emoji_list.append(emoji_obj)
         except Exception as e:
@@ -182,11 +187,11 @@ async def create_revomon_emojis():
     return emoji_list
 
 
-async def create_land_emojis():
+async def create_land_emojis() -> list[dict[str, str]]:
     emoji_list = await list_application_emojis()
     lands_table = OwnedLandsTable()
-    for land_id in lands_table.get_ids():
-        land_info = OwnedLandsTable().get_info(token_id=land_id)[0]
+    for land_id in await lands_table.get_ids():
+        land_info = (await OwnedLandsTable().get_info(token_id=land_id))[0]
         emoji_name = f"{land_info[3]}_{land_info[4]}".replace(" ", "_")
         print("Attempting to create emoji for land: ", emoji_name)
         if emoji_name in [emoji["name"] for emoji in emoji_list]:

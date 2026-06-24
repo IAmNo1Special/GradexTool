@@ -1,12 +1,14 @@
+from typing import Any
+
 from discord import ButtonStyle, Color, Embed, Interaction, app_commands, ui
 from discord.ext import commands
 
 
 class SapDaddy2(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def sapdaddy_embed(self):
+    def sapdaddy_embed(self) -> Any:
         embed = Embed(
             title="➡Sapdaddy's Official Youtube⬅",
             description="Select a video from below.",
@@ -20,8 +22,8 @@ class SapDaddy2(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class sapdaddy_buttons(ui.View):
-        def __init__(self):
+    class sapdaddy_buttons(ui.View):  # noqa: N801
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @ui.button(
@@ -29,7 +31,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy1",
         )
-        async def video1(self, interaction: Interaction, Button: ui.Button):
+        async def video1(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://youtu.be/watch?v=YE8zJM_zN98)",
@@ -41,7 +45,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy2",
         )
-        async def video2(self, interaction: Interaction, Button: ui.Button):
+        async def video2(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://youtu.be/watch?v=wewZChz-jlc)",
@@ -53,7 +59,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy3",
         )
-        async def video3(self, interaction: Interaction, Button: ui.Button):
+        async def video3(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=5SEzlyGON0E)",
@@ -65,7 +73,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy4",
         )
-        async def video4(self, interaction: Interaction, Button: ui.Button):
+        async def video4(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=m9_OPeGfzE4)",
@@ -77,7 +87,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy5",
         )
-        async def video5(self, interaction: Interaction, Button: ui.Button):
+        async def video5(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=8G3NFKtGWuo)",
@@ -89,7 +101,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy6",
         )
-        async def video6(self, interaction: Interaction, Button: ui.Button):
+        async def video6(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=xEo4DDZXGOI)",
@@ -101,7 +115,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy7",
         )
-        async def video7(self, interaction: Interaction, Button: ui.Button):
+        async def video7(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=Z9T03ckC-6c)",
@@ -113,7 +129,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy8",
         )
-        async def video8(self, interaction: Interaction, Button: ui.Button):
+        async def video8(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=WOfw92OsXbk)\n\n*Spawn rates on all platforms are now the same*",
@@ -125,7 +143,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy9",
         )
-        async def video9(self, interaction: Interaction, Button: ui.Button):
+        async def video9(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=XzLwvV52wao)",
@@ -137,7 +157,9 @@ class SapDaddy2(commands.Cog):
             style=ButtonStyle.green,
             custom_id="sapdaddy10",
         )
-        async def video10(self, interaction: Interaction, Button: ui.Button):
+        async def video10(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             await interaction.response.defer()
             await interaction.followup.send(
                 content="[🎞](https://www.youtube.com/watch?v=eDbmnfZ4mss)",
@@ -145,13 +167,13 @@ class SapDaddy2(commands.Cog):
             )
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Sap Daddy Command) is ready!")
         print("---------------------------")
 
     @app_commands.command(name="sapdaddy", description="Sap Daddy Command")
     @app_commands.allowed_installs(guilds=True, users=True)
-    async def sapdaddy(self, interaction: Interaction):
+    async def sapdaddy(self, interaction: Interaction) -> None:
         embed = self.sapdaddy_embed()
         buttons = self.sapdaddy_buttons()
         await interaction.response.send_message(
@@ -159,5 +181,5 @@ class SapDaddy2(commands.Cog):
         )
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(SapDaddy2(gradex))

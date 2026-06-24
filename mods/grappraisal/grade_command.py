@@ -1,4 +1,5 @@
 from io import BytesIO
+from typing import Any
 
 import aiohttp
 from discord import (
@@ -23,12 +24,12 @@ class GradeCommand(commands.Cog):
         self.gradex = gradex
 
     class MonManager:
-        def __init__(self):
-            self.mon_info = {}
+        def __init__(self) -> None:
+            self.mon_info: dict[str | int, Any] = {}
 
     mon_manager = MonManager()
 
-    def mon_info_embed1(self, user_id):
+    def mon_info_embed1(self, user_id: Any) -> Any:
         mon = GradeCommand.mon_manager.mon_info[user_id]
         embed = Embed(
             title=f"Revomon: {mon['mon_name'].title()}",
@@ -40,7 +41,7 @@ class GradeCommand(commands.Cog):
         embed.set_footer(text="Grappraisal · Global Revomon Association")
         return embed
 
-    def graded_mon_embed(self, user_id):
+    def graded_mon_embed(self, user_id: Any) -> Any:
         mon = GradeCommand.mon_manager.mon_info[user_id]
         grade_image = create_graded_mon_img(mon, mon["grade_percent"])
         # Convert the PIL Image object to a BytesIO object
@@ -72,7 +73,7 @@ class GradeCommand(commands.Cog):
         embed.set_footer(text="Competitive Grade v2.0 · Global Revomon Association")
         return embed
 
-    def grade_breakdown_embed(self, user_id):
+    def grade_breakdown_embed(self, user_id: Any) -> Any:
         mon = GradeCommand.mon_manager.mon_info[user_id]
 
         embed = Embed(
@@ -138,14 +139,16 @@ class GradeCommand(commands.Cog):
         return embed
 
     class MonInfoButtons1(ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @ui.button(label="Grade", style=ButtonStyle.green, custom_id="grade_button")
-        async def grade_button(self, interaction: Interaction, Button: ui.Button):
+        async def grade_button(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
-                message_id = interaction.message.id
+                message_id = interaction.message.id  # type: ignore[union-attr]
                 await interaction.response.defer()
                 await interaction.followup.edit_message(
                     message_id=message_id,
@@ -154,11 +157,13 @@ class GradeCommand(commands.Cog):
                     attachments=[],
                     view=None,
                 )
-                appr = appraise_revomon(GradeCommand.mon_manager.mon_info[user_id])
+                appr = await appraise_revomon(
+                    GradeCommand.mon_manager.mon_info[user_id]
+                )
                 if appr:
                     GradeCommand.mon_manager.mon_info[user_id].update(appr)
 
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)
+                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
                 await interaction.followup.edit_message(
                     message_id=message_id,
                     content=None,
@@ -177,23 +182,28 @@ class GradeCommand(commands.Cog):
                 )
 
     class ExitMessageButton(ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @ui.button(label="❌", style=ButtonStyle.red, custom_id="exit")
-        async def exit_embed(self, interaction: Interaction, Button: ui.Button):
-            await interaction.message.delete()
+        async def exit_embed(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
+            if interaction.message:
+                await interaction.message.delete()
 
     class MonInfoButtons6(ui.View):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @ui.button(label="Save", style=ButtonStyle.green, custom_id="Save")
-        async def save_embed(self, interaction: Interaction, Button: ui.Button):
+        async def save_embed(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)
+                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
                 if interaction.guild:
                     await interaction.followup.send(
                         content=f"{interaction.user.mention} Your Revomon has been saved!\nCheck your DMs.",
@@ -230,11 +240,11 @@ class GradeCommand(commands.Cog):
                 )
 
         @ui.button(label="Flex this Revomon", style=ButtonStyle.green, custom_id="Flex")
-        async def flex(self, interaction: Interaction, Button: ui.Button):
+        async def flex(self, interaction: Interaction, button: ui.Button[Any]) -> None:
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)
+                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
                 await interaction.followup.send(
                     files=[
                         File(
@@ -259,10 +269,12 @@ class GradeCommand(commands.Cog):
             style=ButtonStyle.blurple,
             custom_id="why_this_grade",
         )
-        async def why_this_grade(self, interaction: Interaction, Button: ui.Button):
+        async def why_this_grade(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 user_id = interaction.user.id
-                embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)
+                embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)  # type: ignore[arg-type]
                 # Respond with a new ephemeral message instead of editing
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:
@@ -271,7 +283,7 @@ class GradeCommand(commands.Cog):
                 )
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
 
         buttons = [
             self.MonInfoButtons1(),
@@ -286,7 +298,7 @@ class GradeCommand(commands.Cog):
     @app_commands.command(name="grade", description="Grade a Revomon")
     @app_commands.allowed_installs(guilds=True, users=True)
     @app_commands.describe(catch_id="The Catch ID of the Revomon")
-    async def grade(self, interaction: Interaction, catch_id: int):
+    async def grade(self, interaction: Interaction, catch_id: int) -> None:
         try:
             await interaction.response.defer(ephemeral=True, thinking=True)
             current_mon_attribs_url = f"{REVO_API_URL}/{catch_id}"

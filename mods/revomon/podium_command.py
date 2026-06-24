@@ -1,6 +1,8 @@
 import datetime
 from io import BytesIO
+from typing import Any
 
+import discord.embeds
 import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
@@ -10,17 +12,17 @@ from PIL import Image, ImageDraw, ImageFont
 class Podium2(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings = {}
-        self.weekly_podium_img = {}
-        self.current_podium_img = {}
+        self.rankings: dict[str, dict[str, str]] = {}
+        self.weekly_podium_img: dict[str, Any] = {}
+        self.current_podium_img: dict[str, Any] = {}
 
-    def convert_time(self, total_seconds):
+    def convert_time(self, total_seconds: int) -> str:
         hours, remainder = divmod(total_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         formatted_time = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         return formatted_time
 
-    def get_weekly_podium_data(self):
+    def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
         weekly_podium_url = "https://api.revomon.io/leaderboard/weekly_podium"
         response = requests.get(weekly_podium_url)
         response = response.json()
@@ -53,7 +55,7 @@ class Podium2(commands.Cog):
         }
         return self.rankings
 
-    def get_current_podium_data(self):
+    def get_current_podium_data(self) -> dict[str, dict[str, str]]:
         current_podium_url = "https://api.revomon.io/leaderboard/current_podium"
         response = requests.get(current_podium_url)
         response = response.json()
@@ -68,13 +70,13 @@ class Podium2(commands.Cog):
         self.rankings["third"] = {"user": third_user, "img": third_img}
         return self.rankings
 
-    def get_text_size(self, draw, text, font):
+    def get_text_size(self, draw: Any, text: str, font: Any) -> tuple[int, int]:
         bbox = draw.textbbox((0, 0), text, font=font)
         width = bbox[2] - bbox[0]
         height = bbox[3] - bbox[1]
         return width, height
 
-    def podium_img(self, podium_type):
+    def podium_img(self, podium_type: str) -> None:
         # Define the image size and background color
         image_width, image_height = 800, 450
         background_color = (36, 36, 36)  # Dark background
@@ -183,7 +185,7 @@ class Podium2(commands.Cog):
             new_image.save(self.current_podium_img["image_bytes"], format="PNG")
             self.current_podium_img["image_bytes"].seek(0)
 
-    def current_podium_embed(self):
+    def current_podium_embed(self) -> discord.embeds.Embed:
         self.podium_img(podium_type="current")
         embed = Embed(
             title=None,
@@ -195,7 +197,7 @@ class Podium2(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    def weekly_podium_embed(self):
+    def weekly_podium_embed(self) -> discord.embeds.Embed:
         self.podium_img(podium_type="weekly")
         embed = Embed(
             title=None,
@@ -208,7 +210,7 @@ class Podium2(commands.Cog):
         return embed
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         # buttons = []
         # for button in buttons:
         #   self.gradex.add_view(button)
@@ -217,7 +219,7 @@ class Podium2(commands.Cog):
 
     @app_commands.command(name="podium", description="Display the Podium leaderboards.")
     @app_commands.allowed_installs(guilds=True, users=True)
-    async def podium(self, interaction: Interaction):
+    async def podium(self, interaction: Interaction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
         try:
             curr_podium_embed = self.current_podium_embed()

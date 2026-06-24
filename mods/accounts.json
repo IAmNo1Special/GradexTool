@@ -1,0 +1,48 @@
+{
+    "987654321": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": false,
+        "energy": 95,
+        "max_energy": 100,
+        "last_energy_update": 1000.0,
+        "arrival_time": 1003.0,
+        "destination_city": "route1",
+        "destination_location": "ai trainer 1",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "159": 5,
+            "4": 2,
+            "31": 1
+        },
+        "caught_revomon": []
+    },
+    "911508160408334366": {
+        "current_city": "drassius city",
+        "current_location": "revocenter",
+        "is_logged_in": true,
+        "energy": 100,
+        "max_energy": 100,
+        "last_energy_update": 1781978526.7211902,
+        "arrival_time": 0.0,
+        "destination_city": "",
+        "destination_location": "",
+        "trainer_level": 1,
+        "trainer_xp": 25,
+        "coins": 500,
+        "rank": "Rookie",
+        "battles_won": 0,
+        "battles_lost": 0,
+        "inventory": {
+            "159": 5,
+            "4": 2,
+            "31": 1
+        },
+        "caught_revomon": []
+    }
+}

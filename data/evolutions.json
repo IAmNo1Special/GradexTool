@@ -1,0 +1,2144 @@
+{
+  "1": {
+    "from": "admirargh",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 1
+  },
+  "2": {
+    "from": "antlorion",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 2
+  },
+  "3": {
+    "from": "arcetron",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 3
+  },
+  "4": {
+    "from": "atolloise",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 4
+  },
+  "5": {
+    "from": "avia",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 5
+  },
+  "6": {
+    "from": "azuroon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 6
+  },
+  "7": {
+    "from": "balletrix",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 7
+  },
+  "8": {
+    "from": "bambug",
+    "to": "bambupa",
+    "level": null,
+    "final": false,
+    "idEvolution": 8
+  },
+  "9": {
+    "from": "bambupa",
+    "to": "samurastick",
+    "level": null,
+    "final": false,
+    "idEvolution": 9
+  },
+  "10": {
+    "from": "barkshade",
+    "to": "sylvraith",
+    "level": null,
+    "final": false,
+    "idEvolution": 10
+  },
+  "11": {
+    "from": "bastarmor",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 11
+  },
+  "12": {
+    "from": "bearmare",
+    "to": "nightmort",
+    "level": null,
+    "final": false,
+    "idEvolution": 12
+  },
+  "13": {
+    "from": "beatbark",
+    "to": "groveking",
+    "level": null,
+    "final": false,
+    "idEvolution": 13
+  },
+  "14": {
+    "from": "bellicent",
+    "to": "judicrypt",
+    "level": null,
+    "final": false,
+    "idEvolution": 14
+  },
+  "15": {
+    "from": "berryball",
+    "to": "strikeleef",
+    "level": null,
+    "final": false,
+    "idEvolution": 15
+  },
+  "16": {
+    "from": "birkid",
+    "to": "barkshade",
+    "level": null,
+    "final": false,
+    "idEvolution": 16
+  },
+  "17": {
+    "from": "blazlet",
+    "to": "coalbra",
+    "level": null,
+    "final": false,
+    "idEvolution": 17
+  },
+  "18": {
+    "from": "blizzora",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 18
+  },
+  "19": {
+    "from": "bloomsee",
+    "to": "gardsee",
+    "level": null,
+    "final": false,
+    "idEvolution": 19
+  },
+  "20": {
+    "from": "bluezilla",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 20
+  },
+  "21": {
+    "from": "bogloom",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 21
+  },
+  "22": {
+    "from": "bonecrow",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 22
+  },
+  "23": {
+    "from": "booberry",
+    "to": "shellaboo",
+    "level": null,
+    "final": false,
+    "idEvolution": 23
+  },
+  "24": {
+    "from": "bookwyrm",
+    "to": "leximinth",
+    "level": null,
+    "final": false,
+    "idEvolution": 24
+  },
+  "25": {
+    "from": "bouldorable",
+    "to": "rockonid",
+    "level": null,
+    "final": false,
+    "idEvolution": 25
+  },
+  "26": {
+    "from": "brollo",
+    "to": "umbrino",
+    "level": null,
+    "final": false,
+    "idEvolution": 26
+  },
+  "27": {
+    "from": "buckalloy",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 27
+  },
+  "28": {
+    "from": "budly",
+    "to": "budrall",
+    "level": null,
+    "final": false,
+    "idEvolution": 28
+  },
+  "29": {
+    "from": "budrall",
+    "to": "rosprina",
+    "level": null,
+    "final": false,
+    "idEvolution": 29
+  },
+  "30": {
+    "from": "bullre",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 30
+  },
+  "31": {
+    "from": "bulmag",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 31
+  },
+  "32": {
+    "from": "burnabit",
+    "to": "sizzlebun",
+    "level": null,
+    "final": false,
+    "idEvolution": 32
+  },
+  "33": {
+    "from": "buzziron",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 33
+  },
+  "34": {
+    "from": "calfie",
+    "to": "calfing",
+    "level": null,
+    "final": false,
+    "idEvolution": 34
+  },
+  "35": {
+    "from": "calfing",
+    "to": "calforge",
+    "level": null,
+    "final": false,
+    "idEvolution": 35
+  },
+  "36": {
+    "from": "calforge",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 36
+  },
+  "37": {
+    "from": "calystrix",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 37
+  },
+  "38": {
+    "from": "camprikine",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 38
+  },
+  "39": {
+    "from": "capfin",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 39
+  },
+  "40": {
+    "from": "caracell",
+    "to": "snattery",
+    "level": null,
+    "final": false,
+    "idEvolution": 40
+  },
+  "41": {
+    "from": "carnivineer",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 41
+  },
+  "42": {
+    "from": "carpentray",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 42
+  },
+  "43": {
+    "from": "champlion",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 43
+  },
+  "44": {
+    "from": "chikito",
+    "to": "falcolt",
+    "level": null,
+    "final": false,
+    "idEvolution": 44
+  },
+  "45": {
+    "from": "chillipup",
+    "to": "balletrix",
+    "level": null,
+    "final": false,
+    "idEvolution": 45
+  },
+  "46": {
+    "from": "chiselbug",
+    "to": "scararok",
+    "level": null,
+    "final": false,
+    "idEvolution": 46
+  },
+  "47": {
+    "from": "clamsnap",
+    "to": "prismira",
+    "level": null,
+    "final": false,
+    "idEvolution": 47
+  },
+  "48": {
+    "from": "clawarb",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 48
+  },
+  "49": {
+    "from": "coalbra",
+    "to": "volcanolisk",
+    "level": null,
+    "final": false,
+    "idEvolution": 49
+  },
+  "50": {
+    "from": "coilite",
+    "to": "arcetron",
+    "level": null,
+    "final": false,
+    "idEvolution": 50
+  },
+  "51": {
+    "from": "comboworm",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 51
+  },
+  "52": {
+    "from": "construkto",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 52
+  },
+  "53": {
+    "from": "coronibex",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 53
+  },
+  "54": {
+    "from": "crabiscus",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 54
+  },
+  "55": {
+    "from": "craggon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 55
+  },
+  "56": {
+    "from": "cryaxe",
+    "to": "crylance",
+    "level": null,
+    "final": false,
+    "idEvolution": 56
+  },
+  "57": {
+    "from": "crylance",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 57
+  },
+  "58": {
+    "from": "cublitz",
+    "to": "fulmarauder",
+    "level": null,
+    "final": false,
+    "idEvolution": 58
+  },
+  "59": {
+    "from": "cublycan",
+    "to": "rocanid",
+    "level": null,
+    "final": false,
+    "idEvolution": 59
+  },
+  "60": {
+    "from": "cupidove",
+    "to": "dovamour",
+    "level": null,
+    "final": false,
+    "idEvolution": 60
+  },
+  "61": {
+    "from": "dairybell",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 61
+  },
+  "62": {
+    "from": "deksciple",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 62
+  },
+  "63": {
+    "from": "dekute",
+    "to": "desuke",
+    "level": null,
+    "final": false,
+    "idEvolution": 63
+  },
+  "64": {
+    "from": "desuke",
+    "to": "deksciple",
+    "level": null,
+    "final": false,
+    "idEvolution": 64
+  },
+  "65": {
+    "from": "dexdeux",
+    "to": "dexdrei",
+    "level": null,
+    "final": false,
+    "idEvolution": 65
+  },
+  "66": {
+    "from": "dexdrei",
+    "to": "dexfyre",
+    "level": null,
+    "final": false,
+    "idEvolution": 66
+  },
+  "67": {
+    "from": "dexfyre",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 67
+  },
+  "68": {
+    "from": "dexuno",
+    "to": "dexdeux",
+    "level": null,
+    "final": false,
+    "idEvolution": 68
+  },
+  "69": {
+    "from": "divulkra",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 69
+  },
+  "70": {
+    "from": "dominevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 70
+  },
+  "71": {
+    "from": "dormifrog",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 71
+  },
+  "72": {
+    "from": "dosoil",
+    "to": "comboworm",
+    "level": null,
+    "final": false,
+    "idEvolution": 72
+  },
+  "73": {
+    "from": "doubeel",
+    "to": "triplydra",
+    "level": null,
+    "final": false,
+    "idEvolution": 73
+  },
+  "74": {
+    "from": "dovamour",
+    "to": "romanfrig",
+    "level": null,
+    "final": false,
+    "idEvolution": 74
+  },
+  "75": {
+    "from": "drakefly",
+    "to": "meganeudra",
+    "level": null,
+    "final": false,
+    "idEvolution": 75
+  },
+  "76": {
+    "from": "drakevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 76
+  },
+  "77": {
+    "from": "drakosire",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 77
+  },
+  "78": {
+    "from": "dregg",
+    "to": "wyvegg",
+    "level": null,
+    "final": false,
+    "idEvolution": 78
+  },
+  "79": {
+    "from": "dribbom",
+    "to": "hydraquill",
+    "level": null,
+    "final": false,
+    "idEvolution": 79
+  },
+  "80": {
+    "from": "durakar",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 80
+  },
+  "81": {
+    "from": "echomaus",
+    "to": "radarent",
+    "level": null,
+    "final": false,
+    "idEvolution": 81
+  },
+  "82": {
+    "from": "electide",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 82
+  },
+  "83": {
+    "from": "elvifir",
+    "to": "twinkletree",
+    "level": null,
+    "final": false,
+    "idEvolution": 83
+  },
+  "84": {
+    "from": "episcionis",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 84
+  },
+  "85": {
+    "from": "eschargot",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 85
+  },
+  "86": {
+    "from": "falcolt",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 86
+  },
+  "87": {
+    "from": "farinade",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 87
+  },
+  "88": {
+    "from": "fawneel",
+    "to": "buckalloy",
+    "level": null,
+    "final": false,
+    "idEvolution": 88
+  },
+  "89": {
+    "from": "fetiflora",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 89
+  },
+  "90": {
+    "from": "floatiloch",
+    "to": "raftnesse",
+    "level": null,
+    "final": false,
+    "idEvolution": 90
+  },
+  "91": {
+    "from": "fluffae",
+    "to": "marsquish",
+    "level": null,
+    "final": false,
+    "idEvolution": 91
+  },
+  "92": {
+    "from": "folagon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 92
+  },
+  "93": {
+    "from": "frigorb",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 93
+  },
+  "94": {
+    "from": "frostoast",
+    "to": "furnice",
+    "level": null,
+    "final": false,
+    "idEvolution": 94
+  },
+  "95": {
+    "from": "frutslam",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 95
+  },
+  "96": {
+    "from": "fulmarauder",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 96
+  },
+  "97": {
+    "from": "fungas",
+    "to": "smogshroom",
+    "level": null,
+    "final": false,
+    "idEvolution": 97
+  },
+  "98": {
+    "from": "furguard",
+    "to": "majestican",
+    "level": null,
+    "final": false,
+    "idEvolution": 98
+  },
+  "99": {
+    "from": "furnice",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 99
+  },
+  "100": {
+    "from": "gardsee",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 100
+  },
+  "101": {
+    "from": "ghopher",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 101
+  },
+  "102": {
+    "from": "gizaith",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 102
+  },
+  "103": {
+    "from": "glaciox",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 103
+  },
+  "104": {
+    "from": "gloombog",
+    "to": "bogloom",
+    "level": null,
+    "final": false,
+    "idEvolution": 104
+  },
+  "105": {
+    "from": "gloomith",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 105
+  },
+  "106": {
+    "from": "gloomshell",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 106
+  },
+  "107": {
+    "from": "gorcano",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 107
+  },
+  "108": {
+    "from": "gorlit",
+    "to": "gorox",
+    "level": null,
+    "final": false,
+    "idEvolution": 108
+  },
+  "109": {
+    "from": "gorox",
+    "to": "gorcano",
+    "level": null,
+    "final": false,
+    "idEvolution": 109
+  },
+  "110": {
+    "from": "gravilon",
+    "to": "construkto",
+    "level": null,
+    "final": false,
+    "idEvolution": 110
+  },
+  "111": {
+    "from": "grizleaf",
+    "to": "wintursa",
+    "level": null,
+    "final": false,
+    "idEvolution": 111
+  },
+  "112": {
+    "from": "groveking",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 112
+  },
+  "113": {
+    "from": "gyraxis",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 113
+  },
+  "114": {
+    "from": "gyronix",
+    "to": "gyraxis",
+    "level": null,
+    "final": false,
+    "idEvolution": 114
+  },
+  "115": {
+    "from": "gyrop",
+    "to": "gyronix",
+    "level": null,
+    "final": false,
+    "idEvolution": 115
+  },
+  "116": {
+    "from": "hassurugu",
+    "to": "masakaridon",
+    "level": null,
+    "final": false,
+    "idEvolution": 116
+  },
+  "117": {
+    "from": "hauntevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 117
+  },
+  "118": {
+    "from": "hobeex",
+    "to": "honikoba",
+    "level": null,
+    "final": false,
+    "idEvolution": 118
+  },
+  "119": {
+    "from": "holleader",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 119
+  },
+  "120": {
+    "from": "honikoba",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 120
+  },
+  "121": {
+    "from": "hookanga",
+    "to": "roojab",
+    "level": null,
+    "final": false,
+    "idEvolution": 121
+  },
+  "122": {
+    "from": "hydraquill",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 122
+  },
+  "123": {
+    "from": "ignitick",
+    "to": "spectraloom",
+    "level": null,
+    "final": false,
+    "idEvolution": 123
+  },
+  "124": {
+    "from": "immubolt",
+    "to": "immutable",
+    "level": null,
+    "final": false,
+    "idEvolution": 124
+  },
+  "125": {
+    "from": "immutable",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 125
+  },
+  "126": {
+    "from": "inkspire",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 126
+  },
+  "127": {
+    "from": "ironmaw",
+    "to": "trapodon",
+    "level": null,
+    "final": false,
+    "idEvolution": 127
+  },
+  "128": {
+    "from": "judicrypt",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 128
+  },
+  "129": {
+    "from": "kaboomboo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 129
+  },
+  "130": {
+    "from": "kangkross",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 130
+  },
+  "131": {
+    "from": "kasket",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 131
+  },
+  "132": {
+    "from": "ketzalstone",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 132
+  },
+  "133": {
+    "from": "khepreetle",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 133
+  },
+  "134": {
+    "from": "kickundra",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 134
+  },
+  "135": {
+    "from": "kindling",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 135
+  },
+  "136": {
+    "from": "koigar",
+    "to": "slisces",
+    "level": null,
+    "final": false,
+    "idEvolution": 136
+  },
+  "137": {
+    "from": "koigup",
+    "to": "koigar",
+    "level": null,
+    "final": false,
+    "idEvolution": 137
+  },
+  "138": {
+    "from": "lavapod",
+    "to": "inkspire",
+    "level": null,
+    "final": false,
+    "idEvolution": 138
+  },
+  "139": {
+    "from": "leafasso",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 139
+  },
+  "140": {
+    "from": "leximinth",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 140
+  },
+  "141": {
+    "from": "liluck",
+    "to": "petaloon",
+    "level": null,
+    "final": false,
+    "idEvolution": 141
+  },
+  "142": {
+    "from": "locuna",
+    "to": "lunacoon",
+    "level": null,
+    "final": false,
+    "idEvolution": 142
+  },
+  "143": {
+    "from": "loftevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 143
+  },
+  "144": {
+    "from": "lunacoon",
+    "to": "moontis",
+    "level": null,
+    "final": false,
+    "idEvolution": 144
+  },
+  "145": {
+    "from": "luxtract",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 145
+  },
+  "146": {
+    "from": "lycub",
+    "to": "champlion",
+    "level": null,
+    "final": false,
+    "idEvolution": 146
+  },
+  "147": {
+    "from": "majestican",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 147
+  },
+  "148": {
+    "from": "maraudo",
+    "to": "capfin",
+    "level": null,
+    "final": false,
+    "idEvolution": 148
+  },
+  "149": {
+    "from": "marsquish",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 149
+  },
+  "150": {
+    "from": "masakaridon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 150
+  },
+  "151": {
+    "from": "meganeudra",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 151
+  },
+  "152": {
+    "from": "melomallow",
+    "to": "fluffae",
+    "level": null,
+    "final": false,
+    "idEvolution": 152
+  },
+  "153": {
+    "from": "merelion",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 153
+  },
+  "154": {
+    "from": "metaflutter",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 154
+  },
+  "155": {
+    "from": "minirit",
+    "to": "shalrock",
+    "level": null,
+    "final": false,
+    "idEvolution": 155
+  },
+  "156": {
+    "from": "miraflect",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 156
+  },
+  "157": {
+    "from": "mirrate",
+    "to": "miraflect",
+    "level": null,
+    "final": false,
+    "idEvolution": 157
+  },
+  "158": {
+    "from": "monarchat",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 158
+  },
+  "159": {
+    "from": "monking",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 159
+  },
+  "160": {
+    "from": "moomega",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 160
+  },
+  "161": {
+    "from": "moontis",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 161
+  },
+  "162": {
+    "from": "mootide",
+    "to": "glaciox",
+    "level": null,
+    "final": false,
+    "idEvolution": 162
+  },
+  "163": {
+    "from": "mummole",
+    "to": "ghopher",
+    "level": null,
+    "final": false,
+    "idEvolution": 163
+  },
+  "164": {
+    "from": "murdoll",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 164
+  },
+  "165": {
+    "from": "murkspecter",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 165
+  },
+  "166": {
+    "from": "myraclune",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 166
+  },
+  "167": {
+    "from": "mystariel",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 167
+  },
+  "168": {
+    "from": "narvethos",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 168
+  },
+  "169": {
+    "from": "navixy",
+    "to": "farinade",
+    "level": null,
+    "final": false,
+    "idEvolution": 169
+  },
+  "170": {
+    "from": "nightmort",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 170
+  },
+  "171": {
+    "from": "ninesee",
+    "to": "bloomsee",
+    "level": null,
+    "final": false,
+    "idEvolution": 171
+  },
+  "172": {
+    "from": "nivisowl",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 172
+  },
+  "173": {
+    "from": "noctarok",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 173
+  },
+  "174": {
+    "from": "odonymph",
+    "to": "drakefly",
+    "level": null,
+    "final": false,
+    "idEvolution": 174
+  },
+  "175": {
+    "from": "ofurage",
+    "to": "divulkra",
+    "level": null,
+    "final": false,
+    "idEvolution": 175
+  },
+  "176": {
+    "from": "opawan",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 176
+  },
+  "177": {
+    "from": "orbby",
+    "to": "vespor",
+    "level": null,
+    "final": false,
+    "idEvolution": 177
+  },
+  "178": {
+    "from": "oxidron",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 178
+  },
+  "179": {
+    "from": "pandozer",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 179
+  },
+  "180": {
+    "from": "panduff",
+    "to": "noctarok",
+    "level": null,
+    "final": false,
+    "idEvolution": 180
+  },
+  "181": {
+    "from": "panlow",
+    "to": "opawan",
+    "level": null,
+    "final": false,
+    "idEvolution": 181
+  },
+  "182": {
+    "from": "papirate",
+    "to": "admirargh",
+    "level": null,
+    "final": false,
+    "idEvolution": 182
+  },
+  "183": {
+    "from": "paragon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 183
+  },
+  "184": {
+    "from": "peafrost",
+    "to": "kickundra",
+    "level": null,
+    "final": false,
+    "idEvolution": 184
+  },
+  "185": {
+    "from": "pestibat",
+    "to": "plaguepire",
+    "level": null,
+    "final": false,
+    "idEvolution": 185
+  },
+  "186": {
+    "from": "pestillia",
+    "to": "fetiflora",
+    "level": null,
+    "final": false,
+    "idEvolution": 186
+  },
+  "187": {
+    "from": "petaloon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 187
+  },
+  "188": {
+    "from": "phantross",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 188
+  },
+  "189": {
+    "from": "pigbee",
+    "to": "steelbuzz",
+    "level": null,
+    "final": false,
+    "idEvolution": 189
+  },
+  "190": {
+    "from": "pincub",
+    "to": "camprikine",
+    "level": null,
+    "final": false,
+    "idEvolution": 190
+  },
+  "191": {
+    "from": "plaguepire",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 191
+  },
+  "192": {
+    "from": "plumystic",
+    "to": "prestodove",
+    "level": null,
+    "final": false,
+    "idEvolution": 192
+  },
+  "193": {
+    "from": "polluvern",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 193
+  },
+  "194": {
+    "from": "poshkit",
+    "to": "monarchat",
+    "level": null,
+    "final": false,
+    "idEvolution": 194
+  },
+  "195": {
+    "from": "prestodove",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 195
+  },
+  "196": {
+    "from": "prismira",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 196
+  },
+  "197": {
+    "from": "psymonkit",
+    "to": "zenithape",
+    "level": null,
+    "final": false,
+    "idEvolution": 197
+  },
+  "198": {
+    "from": "pupfurr",
+    "to": "furguard",
+    "level": null,
+    "final": false,
+    "idEvolution": 198
+  },
+  "199": {
+    "from": "pupple",
+    "to": "sharku",
+    "level": null,
+    "final": false,
+    "idEvolution": 199
+  },
+  "200": {
+    "from": "purptox",
+    "to": "toxilisk",
+    "level": null,
+    "final": false,
+    "idEvolution": 200
+  },
+  "201": {
+    "from": "pyroadrift",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 201
+  },
+  "202": {
+    "from": "pyroker",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 202
+  },
+  "203": {
+    "from": "pyrophia",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 203
+  },
+  "204": {
+    "from": "r3v-up",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 204
+  },
+  "205": {
+    "from": "radarent",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 205
+  },
+  "206": {
+    "from": "raftnesse",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 206
+  },
+  "207": {
+    "from": "raival",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 207
+  },
+  "208": {
+    "from": "raog",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 208
+  },
+  "209": {
+    "from": "reingifir",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 209
+  },
+  "210": {
+    "from": "rocanid",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 210
+  },
+  "211": {
+    "from": "rocaztec",
+    "to": "ketzalstone",
+    "level": null,
+    "final": false,
+    "idEvolution": 211
+  },
+  "212": {
+    "from": "rockonid",
+    "to": "pandozer",
+    "level": null,
+    "final": false,
+    "idEvolution": 212
+  },
+  "213": {
+    "from": "rokilo",
+    "to": "gravilon",
+    "level": null,
+    "final": false,
+    "idEvolution": 213
+  },
+  "214": {
+    "from": "romanfrig",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 214
+  },
+  "215": {
+    "from": "roojab",
+    "to": "kangkross",
+    "level": null,
+    "final": false,
+    "idEvolution": 215
+  },
+  "216": {
+    "from": "rosprina",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 216
+  },
+  "217": {
+    "from": "rotbloom",
+    "to": "pestillia",
+    "level": null,
+    "final": false,
+    "idEvolution": 217
+  },
+  "218": {
+    "from": "roughoon",
+    "to": "azuroon",
+    "level": null,
+    "final": false,
+    "idEvolution": 218
+  },
+  "219": {
+    "from": "samurastick",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 219
+  },
+  "220": {
+    "from": "sanctifin",
+    "to": "episcionis",
+    "level": null,
+    "final": false,
+    "idEvolution": 220
+  },
+  "221": {
+    "from": "scalord",
+    "to": "drakosire",
+    "level": null,
+    "final": false,
+    "idEvolution": 221
+  },
+  "222": {
+    "from": "scararok",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 222
+  },
+  "223": {
+    "from": "scorpyd",
+    "to": "tetrapion",
+    "level": null,
+    "final": false,
+    "idEvolution": 223
+  },
+  "224": {
+    "from": "seraphlea",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 224
+  },
+  "225": {
+    "from": "shadeon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 225
+  },
+  "226": {
+    "from": "shalrock",
+    "to": "gloomith",
+    "level": null,
+    "final": false,
+    "idEvolution": 226
+  },
+  "227": {
+    "from": "sharble",
+    "to": "maraudo",
+    "level": null,
+    "final": false,
+    "idEvolution": 227
+  },
+  "228": {
+    "from": "sharku",
+    "to": "tidju",
+    "level": null,
+    "final": false,
+    "idEvolution": 228
+  },
+  "229": {
+    "from": "shellaboo",
+    "to": "gloomshell",
+    "level": null,
+    "final": false,
+    "idEvolution": 229
+  },
+  "230": {
+    "from": "shellacay",
+    "to": "atolloise",
+    "level": null,
+    "final": false,
+    "idEvolution": 230
+  },
+  "231": {
+    "from": "silvariss",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 231
+  },
+  "232": {
+    "from": "sizzlebun",
+    "to": "pyroker",
+    "level": null,
+    "final": false,
+    "idEvolution": 232
+  },
+  "233": {
+    "from": "skadire",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 233
+  },
+  "234": {
+    "from": "skultergeist",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 234
+  },
+  "235": {
+    "from": "skwerberos",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 235
+  },
+  "236": {
+    "from": "skwimera",
+    "to": "skwerberos",
+    "level": null,
+    "final": false,
+    "idEvolution": 236
+  },
+  "237": {
+    "from": "skwitzen",
+    "to": "skwimera",
+    "level": null,
+    "final": false,
+    "idEvolution": 237
+  },
+  "238": {
+    "from": "sleepitad",
+    "to": "dormifrog",
+    "level": null,
+    "final": false,
+    "idEvolution": 238
+  },
+  "239": {
+    "from": "slisces",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 239
+  },
+  "240": {
+    "from": "smogshroom",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 240
+  },
+  "241": {
+    "from": "snattery",
+    "to": "eschargot",
+    "level": null,
+    "final": false,
+    "idEvolution": 241
+  },
+  "242": {
+    "from": "soarnap",
+    "to": "soarnox",
+    "level": null,
+    "final": false,
+    "idEvolution": 242
+  },
+  "243": {
+    "from": "soarnox",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 243
+  },
+  "244": {
+    "from": "solbean",
+    "to": "solderon",
+    "level": null,
+    "final": false,
+    "idEvolution": 244
+  },
+  "245": {
+    "from": "solderon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 245
+  },
+  "246": {
+    "from": "soleel",
+    "to": "doubeel",
+    "level": null,
+    "final": false,
+    "idEvolution": 246
+  },
+  "247": {
+    "from": "somnap",
+    "to": "soarnap",
+    "level": null,
+    "final": false,
+    "idEvolution": 247
+  },
+  "248": {
+    "from": "sonattin",
+    "to": "soperelle",
+    "level": null,
+    "final": false,
+    "idEvolution": 248
+  },
+  "249": {
+    "from": "sooni",
+    "to": "sonattin",
+    "level": null,
+    "final": false,
+    "idEvolution": 249
+  },
+  "250": {
+    "from": "soperelle",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 250
+  },
+  "251": {
+    "from": "sparantula",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 251
+  },
+  "252": {
+    "from": "sparknite",
+    "to": "immubolt",
+    "level": null,
+    "final": false,
+    "idEvolution": 252
+  },
+  "253": {
+    "from": "spectraloom",
+    "to": "pyrophia",
+    "level": null,
+    "final": false,
+    "idEvolution": 253
+  },
+  "254": {
+    "from": "spectreat",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 254
+  },
+  "255": {
+    "from": "spikrust",
+    "to": "stalagrunge",
+    "level": null,
+    "final": false,
+    "idEvolution": 255
+  },
+  "256": {
+    "from": "spookoon",
+    "to": "skultergeist",
+    "level": null,
+    "final": false,
+    "idEvolution": 256
+  },
+  "257": {
+    "from": "spriglet",
+    "to": "scalord",
+    "level": null,
+    "final": false,
+    "idEvolution": 257
+  },
+  "258": {
+    "from": "sproutkin",
+    "to": "beatbark",
+    "level": null,
+    "final": false,
+    "idEvolution": 258
+  },
+  "259": {
+    "from": "spydull",
+    "to": "spookoon",
+    "level": null,
+    "final": false,
+    "idEvolution": 259
+  },
+  "260": {
+    "from": "squablitz",
+    "to": "plumystic",
+    "level": null,
+    "final": false,
+    "idEvolution": 260
+  },
+  "261": {
+    "from": "stalagrunge",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 261
+  },
+  "262": {
+    "from": "steelbuzz",
+    "to": "buzziron",
+    "level": null,
+    "final": false,
+    "idEvolution": 262
+  },
+  "263": {
+    "from": "stenchir",
+    "to": "pestibat",
+    "level": null,
+    "final": false,
+    "idEvolution": 263
+  },
+  "264": {
+    "from": "strikeleef",
+    "to": "frutslam",
+    "level": null,
+    "final": false,
+    "idEvolution": 264
+  },
+  "265": {
+    "from": "sumbear",
+    "to": "grizleaf",
+    "level": null,
+    "final": false,
+    "idEvolution": 265
+  },
+  "266": {
+    "from": "swabbit",
+    "to": "papirate",
+    "level": null,
+    "final": false,
+    "idEvolution": 266
+  },
+  "267": {
+    "from": "swiftling",
+    "to": "veloswift",
+    "level": null,
+    "final": false,
+    "idEvolution": 267
+  },
+  "268": {
+    "from": "sylvraith",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 268
+  },
+  "269": {
+    "from": "tagami",
+    "to": "ofurage",
+    "level": null,
+    "final": false,
+    "idEvolution": 269
+  },
+  "270": {
+    "from": "teddream",
+    "to": "bearmare",
+    "level": null,
+    "final": false,
+    "idEvolution": 270
+  },
+  "271": {
+    "from": "tetrapion",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 271
+  },
+  "272": {
+    "from": "tidju",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 272
+  },
+  "273": {
+    "from": "tintoll",
+    "to": "bellicent",
+    "level": null,
+    "final": false,
+    "idEvolution": 273
+  },
+  "274": {
+    "from": "tipply",
+    "to": "hassurugu",
+    "level": null,
+    "final": false,
+    "idEvolution": 274
+  },
+  "275": {
+    "from": "toxilisk",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 275
+  },
+  "276": {
+    "from": "trapodon",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 276
+  },
+  "277": {
+    "from": "triplydra",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 277
+  },
+  "278": {
+    "from": "turtislet",
+    "to": "shellacay",
+    "level": null,
+    "final": false,
+    "idEvolution": 278
+  },
+  "279": {
+    "from": "twilevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 279
+  },
+  "280": {
+    "from": "twinkletree",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 280
+  },
+  "281": {
+    "from": "umbravix",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 281
+  },
+  "282": {
+    "from": "umbrino",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 282
+  },
+  "283": {
+    "from": "urnacle",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 283
+  },
+  "284": {
+    "from": "vacapow",
+    "to": "moomega",
+    "level": null,
+    "final": false,
+    "idEvolution": 284
+  },
+  "285": {
+    "from": "vachita",
+    "to": "vacapow",
+    "level": null,
+    "final": false,
+    "idEvolution": 285
+  },
+  "286": {
+    "from": "veloswift",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 286
+  },
+  "287": {
+    "from": "venturevo",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 287
+  },
+  "288": {
+    "from": "verdawn",
+    "to": "antlorion",
+    "level": null,
+    "final": false,
+    "idEvolution": 288
+  },
+  "289": {
+    "from": "vespor",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 289
+  },
+  "290": {
+    "from": "vitraelume",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 290
+  },
+  "291": {
+    "from": "volcanolisk",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 291
+  },
+  "292": {
+    "from": "voltolot",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 292
+  },
+  "293": {
+    "from": "vyphern",
+    "to": "wyverdant",
+    "level": null,
+    "final": false,
+    "idEvolution": 293
+  },
+  "294": {
+    "from": "warble",
+    "to": "warhi",
+    "level": null,
+    "final": false,
+    "idEvolution": 294
+  },
+  "295": {
+    "from": "wardolith",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 295
+  },
+  "296": {
+    "from": "warhi",
+    "to": "clawarb",
+    "level": null,
+    "final": false,
+    "idEvolution": 296
+  },
+  "297": {
+    "from": "wintursa",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 297
+  },
+  "298": {
+    "from": "wolpan",
+    "to": "panlow",
+    "level": null,
+    "final": false,
+    "idEvolution": 298
+  },
+  "299": {
+    "from": "wyvegg",
+    "to": "craggon",
+    "level": null,
+    "final": false,
+    "idEvolution": 299
+  },
+  "300": {
+    "from": "wyverdant",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 300
+  },
+  "301": {
+    "from": "xaltek",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 301
+  },
+  "302": {
+    "from": "yelloon",
+    "to": "roughoon",
+    "level": null,
+    "final": false,
+    "idEvolution": 302
+  },
+  "303": {
+    "from": "zenithape",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 303
+  },
+  "304": {
+    "from": "zorelle",
+    "to": "zorene",
+    "level": null,
+    "final": false,
+    "idEvolution": 304
+  },
+  "305": {
+    "from": "zorene",
+    "to": "blizzora",
+    "level": null,
+    "final": false,
+    "idEvolution": 305
+  },
+  "306": {
+    "from": "zorvix",
+    "to": null,
+    "level": null,
+    "final": true,
+    "idEvolution": 306
+  }
+}

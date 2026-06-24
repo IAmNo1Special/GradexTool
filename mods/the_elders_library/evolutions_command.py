@@ -1,3 +1,5 @@
+from typing import Any
+
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
 
@@ -5,10 +7,10 @@ from utils.revomon_utils import get_evo_trees
 
 
 class Evolutions2(commands.Cog):
-    def __init__(self, gradex):
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evolutions_embed(self):
+    def evolutions_embed(self) -> Any:
         evo_trees = get_evo_trees()
         evo_trees_str = " ".join(branch for branch in evo_trees)
         embed = Embed(
@@ -23,7 +25,7 @@ class Evolutions2(commands.Cog):
         return embed
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Evolutions Command) is ready!")
         print("---------------------------")
 
@@ -31,10 +33,10 @@ class Evolutions2(commands.Cog):
         name="evolutions", description="Displays the full evolution tree."
     )
     @app_commands.allowed_installs(guilds=True, users=True)
-    async def evolutions(self, interaction: Interaction):
+    async def evolutions(self, interaction: Interaction) -> None:
         embed = self.evolutions_embed()
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(Evolutions2(gradex))

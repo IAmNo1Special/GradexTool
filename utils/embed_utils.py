@@ -1,7 +1,9 @@
+from typing import Any
+
 from discord import Color, Embed
 
 
-def intro(attributes: dict) -> Embed:
+def intro(attributes: dict[str, Any]) -> Embed:
     embed = Embed(
         title=f"{attributes['name'].title()}",
         description=f"*{attributes['main_description'].capitalize()}*",
@@ -69,7 +71,7 @@ def intro(attributes: dict) -> Embed:
     return embed
 
 
-def land_intro(attributes: dict) -> Embed:
+def land_intro(attributes: dict[str, Any]) -> Embed:
     embed = Embed(
         title=f"{attributes['land_type'].title()} in the {attributes['biome'].title()} Biome",
         color=Color.red(),
@@ -94,7 +96,7 @@ def land_intro(attributes: dict) -> Embed:
     return embed
 
 
-def compare_intros(attributes: dict, attributes2: dict) -> Embed:
+def compare_intros(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Embed:
     embed = Embed(
         title=f"{attributes['num']}. {attributes['name'].title()}\n{attributes2['num']}. {attributes2['name'].title()}",
         description=f"__**Description**__\n- {attributes['num']}. {attributes['main_description'].capitalize()}\n\n- {attributes2['emoji']} | {attributes2['main_description'].capitalize()}",
@@ -199,7 +201,7 @@ def compare_intros(attributes: dict, attributes2: dict) -> Embed:
     return embed
 
 
-def stats(attributes: dict):
+def stats(attributes: dict[str, Any]) -> Embed:
     print("Stats embed is being created...")
     stats_embed = Embed(
         title=f"{attributes['num']}. {attributes['name'].title()}",
@@ -223,7 +225,7 @@ def stats(attributes: dict):
     return stats_embed
 
 
-def compare_stats(attributes: dict, attributes2: dict):
+def compare_stats(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Embed:
     compare_stats_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}\n{attributes2['emoji']} | {attributes2['name'].title()}",
         description="__**Base Stats**__",
@@ -277,7 +279,7 @@ def compare_stats(attributes: dict, attributes2: dict):
     return compare_stats_embed
 
 
-def spawns(attributes: dict):
+def spawns(attributes: dict[str, Any]) -> Embed:
     spawns_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}",
         description="__**Spawn Info**__",
@@ -293,7 +295,7 @@ def spawns(attributes: dict):
     return spawns_embed
 
 
-def compare_spawns(attributes: dict, attributes2: dict):
+def compare_spawns(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Embed:
     compare_spawns_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}\n{attributes2['emoji']} | {attributes2['name'].title()}",
         description="__**Spawn Info**__",
@@ -311,7 +313,7 @@ def compare_spawns(attributes: dict, attributes2: dict):
     return compare_spawns_embed
 
 
-def moves(attributes: dict):
+def moves(attributes: dict[str, Any]) -> Embed:
     move_list_str = "\n".join([f"- {move}" for move in attributes["move_list"]])
 
     moves_embed = Embed(
@@ -324,7 +326,7 @@ def moves(attributes: dict):
 
 
 # Update this function to include both revomon's move list
-def compare_moves(attributes: dict, attributes2: dict):
+def compare_moves(attributes: dict[str, Any], attributes2: dict[str, Any]) -> Embed:
     compare_moves_embed = Embed(
         title=f"{attributes['num']}. {attributes['name'].title()}",
         description=f"__**Move List**__\n\n{attributes['move_list']}",
@@ -336,7 +338,7 @@ def compare_moves(attributes: dict, attributes2: dict):
     return compare_moves_embed
 
 
-def types(attributes: dict):
+def types(attributes: dict[str, Any]) -> Embed:
     types_embed = Embed(
         title=f"{attributes['num']}. {attributes['name'].title()}",
         description="*Type Chart*",
@@ -348,7 +350,9 @@ def types(attributes: dict):
     return types_embed
 
 
-def compare_types(attributes: dict, attributes2: dict):
+def compare_types(
+    attributes: dict[str, Any], attributes2: dict[str, Any]
+) -> tuple[Embed, Embed]:
     type_chart_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}",
         description="__**Type Chart**__",
@@ -370,7 +374,7 @@ def compare_types(attributes: dict, attributes2: dict):
     return type_chart_embed, type_chart2_embed
 
 
-def counterdex(attributes: dict):
+def counterdex(attributes: dict[str, Any]) -> Embed:
     counterdex_embed = Embed(
         title=f"{attributes['num']}. {attributes['name'].title()}",
         description=f"*{attributes['cdex_description'].capitalize()}*",
@@ -404,7 +408,9 @@ def counterdex(attributes: dict):
     return counterdex_embed
 
 
-def compare_counterdexs(attributes: dict, attributes2: dict):
+def compare_counterdexs(
+    attributes: dict[str, Any], attributes2: dict[str, Any]
+) -> Embed:
     compare_counterdex_embed = Embed(
         title=f"{attributes['emoji']} | {attributes['name'].title()}\n{attributes2['emoji']} | {attributes2['name'].title()}",
         description=f"__**Description**__\n- {attributes['emoji']} | *{attributes['cdex_description'].capitalize()}*\n\n- {attributes2['emoji']} | *{attributes2['cdex_description'].capitalize()}*",

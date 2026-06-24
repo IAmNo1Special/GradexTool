@@ -1,0 +1,552 @@
+[
+    {
+        "id": 1,
+        "name": "adaptability",
+        "description": "increases the same-type attack bonus from 1.5\u00e3\u2014 to 2\u00e3\u2014."
+    },
+    {
+        "id": 2,
+        "name": "aftermath",
+        "description": "damages the attacker for 1/4 its max hp when knocked out by a contact move."
+    },
+    {
+        "id": 3,
+        "name": "air-lock",
+        "description": "negates all effects of weather, but does not prevent the weather itself."
+    },
+    {
+        "id": 4,
+        "name": "anger-point",
+        "description": "raises attack to the maximum of six stages upon receiving a critical hit."
+    },
+    {
+        "id": 5,
+        "name": "anticipation",
+        "description": "notifies all trainers upon entering battle if an opponent has a super-effective move, self-destruct, explosion, or a one-hit ko move."
+    },
+    {
+        "id": 6,
+        "name": "bad-dreams",
+        "description": "damages sleeping opponents for 1/8 their max hp after each turn."
+    },
+    {
+        "id": 7,
+        "name": "battery",
+        "description": "ally monster's moves have their power increased to 1.3\u00e3\u2014."
+    },
+    {
+        "id": 8,
+        "name": "battle-armor",
+        "description": "protects against critical hits."
+    },
+    {
+        "id": 9,
+        "name": "beast-boost",
+        "description": "raises this monster's highest stat by one stage when it faints another monster."
+    },
+    {
+        "id": 10,
+        "name": "big-pecks",
+        "description": "protects against defense drops."
+    },
+    {
+        "id": 11,
+        "name": "blaze",
+        "description": "strengthens fire moves to inflict 1.5\u00e3\u2014 damage at 1/3 max hp or less."
+    },
+    {
+        "id": 12,
+        "name": "chlorophyll",
+        "description": "doubles speed during strong sunlight."
+    },
+    {
+        "id": 13,
+        "name": "clear-body",
+        "description": "prevents stats from being lowered by other monster."
+    },
+    {
+        "id": 14,
+        "name": "cloud-nine",
+        "description": "negates all effects of weather, but does not prevent the weather itself."
+    },
+    {
+        "id": 15,
+        "name": "competitive",
+        "description": "raises special attack by two stages upon having any stat lowered."
+    },
+    {
+        "id": 16,
+        "name": "compound-eyes",
+        "description": "increases moves' accuracy to 1.3\u00e3\u2014."
+    },
+    {
+        "id": 17,
+        "name": "cursed-body",
+        "description": "has a 30% chance of disabling any move that hits the monster."
+    },
+    {
+        "id": 18,
+        "name": "cute-charm",
+        "description": "has a 30% chance of infatuating attacking monster on contact."
+    },
+    {
+        "id": 19,
+        "name": "damp",
+        "description": "prevents self-destruct, explosion, and aftermath from working while the monster is in battle."
+    },
+    {
+        "id": 20,
+        "name": "defeatist",
+        "description": "halves attack and special attack at 50% max hp or less."
+    },
+    {
+        "id": 21,
+        "name": "defiant",
+        "description": "raises attack two stages upon having any stat lowered."
+    },
+    {
+        "id": 22,
+        "name": "disguise",
+        "description": "prevents the first instance of battle damage."
+    },
+    {
+        "id": 23,
+        "name": "drizzle",
+        "description": "summons rain that lasts indefinitely upon entering battle."
+    },
+    {
+        "id": 24,
+        "name": "drought",
+        "description": "summons strong sunlight that lasts indefinitely upon entering battle."
+    },
+    {
+        "id": 25,
+        "name": "early-bird",
+        "description": "makes sleep pass twice as quickly."
+    },
+    {
+        "id": 26,
+        "name": "effect-spore",
+        "description": "has a 30% chance of inflcting either paralysis, poison, or sleep on attacking monster on contact."
+    },
+    {
+        "id": 27,
+        "name": "flame-body",
+        "description": "has a 30% chance of burning attacking monster on contact."
+    },
+    {
+        "id": 28,
+        "name": "flash-fire",
+        "description": "protects against fire moves.  once one has been blocked, the monster's own fire moves inflict 1.5\u00e3\u2014 damage until it leaves battle."
+    },
+    {
+        "id": 29,
+        "name": "forewarn",
+        "description": "reveals the opponents' strongest move upon entering battle."
+    },
+    {
+        "id": 30,
+        "name": "frisk",
+        "description": "reveals an opponent's held item upon entering battle."
+    },
+    {
+        "id": 31,
+        "name": "gluttony",
+        "description": "makes the monster eat any held berry triggered by low hp below 1/2 its max hp."
+    },
+    {
+        "id": 32,
+        "name": "guts",
+        "description": "increases attack to 1.5\u00e3\u2014 with a major status ailment."
+    },
+    {
+        "id": 33,
+        "name": "honey-gather",
+        "description": "the monster may pick up honey after battle."
+    },
+    {
+        "id": 34,
+        "name": "huge-power",
+        "description": "doubles attack in battle."
+    },
+    {
+        "id": 35,
+        "name": "hustle",
+        "description": "strengthens physical moves to inflict 1.5\u00e3\u2014 damage, but decreases their accuracy to 0.8\u00e3\u2014."
+    },
+    {
+        "id": 36,
+        "name": "hydration",
+        "description": "cures any major status ailment after each turn during rain."
+    },
+    {
+        "id": 37,
+        "name": "hyper-cutter",
+        "description": "prevents attack from being lowered by other monster."
+    },
+    {
+        "id": 38,
+        "name": "infiltrator",
+        "description": "bypasses light screen, reflect, and safeguard."
+    },
+    {
+        "id": 39,
+        "name": "inner-focus",
+        "description": "prevents flinching."
+    },
+    {
+        "id": 40,
+        "name": "insomnia",
+        "description": "prevents sleep."
+    },
+    {
+        "id": 41,
+        "name": "intimidate",
+        "description": "lowers opponents' attack one stage upon entering battle."
+    },
+    {
+        "id": 42,
+        "name": "iron-fist",
+        "description": "strengthens punch-based moves to 1.2\u00e3\u2014 their power."
+    },
+    {
+        "id": 43,
+        "name": "justified",
+        "description": "raises attack one stage upon taking damage from a dark move."
+    },
+    {
+        "id": 44,
+        "name": "keen-eye",
+        "description": "prevents accuracy from being lowered."
+    },
+    {
+        "id": 45,
+        "name": "klutz",
+        "description": "prevents the monster from using its held item in battle."
+    },
+    {
+        "id": 46,
+        "name": "leaf-guard",
+        "description": "protects against major status ailments during strong sunlight."
+    },
+    {
+        "id": 47,
+        "name": "levitate",
+        "description": "evades ground moves."
+    },
+    {
+        "id": 48,
+        "name": "lightning-rod",
+        "description": "redirects single-target electric moves to this monster where possible.  absorbs electric moves, raising special attack one stage."
+    },
+    {
+        "id": 49,
+        "name": "limber",
+        "description": "prevents paralysis."
+    },
+    {
+        "id": 50,
+        "name": "magic-guard",
+        "description": "protects against damage not directly caused by a move."
+    },
+    {
+        "id": 51,
+        "name": "magician",
+        "description": "steals the target's held item when the bearer uses a damaging move."
+    },
+    {
+        "id": 52,
+        "name": "magnet-pull",
+        "description": "prevents steel opponents from fleeing or switching out."
+    },
+    {
+        "id": 53,
+        "name": "marvel-scale",
+        "description": "increases defense to 1.5\u00e3\u2014 with a major status ailment."
+    },
+    {
+        "id": 54,
+        "name": "mold-breaker",
+        "description": "bypasses targets' abilities if they could hinder or prevent a move."
+    },
+    {
+        "id": 55,
+        "name": "motor-drive",
+        "description": "absorbs electric moves, raising speed one stage."
+    },
+    {
+        "id": 56,
+        "name": "moxie",
+        "description": "raises attack one stage upon koing a monster."
+    },
+    {
+        "id": 57,
+        "name": "natural-cure",
+        "description": "cures any major status ailment upon switching out."
+    },
+    {
+        "id": 58,
+        "name": "no-guard",
+        "description": "ensures all moves used by and against the monster hit."
+    },
+    {
+        "id": 59,
+        "name": "oblivious",
+        "description": "prevents infatuation and protects against captivate."
+    },
+    {
+        "id": 60,
+        "name": "overgrow",
+        "description": "strengthens grass moves to inflict 1.5\u00e3\u2014 damage at 1/3 max hp or less."
+    },
+    {
+        "id": 61,
+        "name": "own-tempo",
+        "description": "prevents confusion."
+    },
+    {
+        "id": 62,
+        "name": "pickup",
+        "description": "picks up other monster's used and flung held items.  may also pick up an item after battle."
+    },
+    {
+        "id": 63,
+        "name": "plus",
+        "description": "increases special attack to 1.5\u00e3\u2014 when a friendly monster has plus or minus."
+    },
+    {
+        "id": 64,
+        "name": "poison-point",
+        "description": "has a 30% chance of poisoning attacking monster on contact."
+    },
+    {
+        "id": 65,
+        "name": "prankster",
+        "description": "raises non-damaging moves' priority by one stage."
+    },
+    {
+        "id": 66,
+        "name": "pressure",
+        "description": "increases the pp cost of moves targetting the monster by one."
+    },
+    {
+        "id": 67,
+        "name": "rain-dish",
+        "description": "heals for 1/16 max hp after each turn during rain."
+    },
+    {
+        "id": 68,
+        "name": "rivalry",
+        "description": "increases damage inflicted to 1.25\u00e3\u2014 against monster of the same gender, but decreases damage to 0.75\u00e3\u2014 against the opposite gender."
+    },
+    {
+        "id": 69,
+        "name": "rock-head",
+        "description": "protects against recoil damage."
+    },
+    {
+        "id": 70,
+        "name": "run-away",
+        "description": "ensures success fleeing from wild battles."
+    },
+    {
+        "id": 71,
+        "name": "sand-force",
+        "description": "strengthens rock, ground, and steel moves to 1.3\u00e3\u2014 their power during a sandstorm.  protects against sandstorm damage."
+    },
+    {
+        "id": 72,
+        "name": "sand-rush",
+        "description": "doubles speed during a sandstorm.  protects against sandstorm damage."
+    },
+    {
+        "id": 73,
+        "name": "sand-stream",
+        "description": "summons a sandstorm that lasts indefinitely upon entering battle."
+    },
+    {
+        "id": 74,
+        "name": "sand-veil",
+        "description": "increases evasion to 1.25\u00e3\u2014 during a sandstorm.  protects against sandstorm damage."
+    },
+    {
+        "id": 75,
+        "name": "sap-sipper",
+        "description": "absorbs grass moves, raising attack one stage."
+    },
+    {
+        "id": 76,
+        "name": "scrappy",
+        "description": "lets the monster's normal and fighting moves hit ghost monster."
+    },
+    {
+        "id": 77,
+        "name": "serene-grace",
+        "description": "doubles the chance of moves' extra effects occurring."
+    },
+    {
+        "id": 78,
+        "name": "shadow-tag",
+        "description": "prevents opponents from fleeing or switching out."
+    },
+    {
+        "id": 79,
+        "name": "shed-skin",
+        "description": "has a 33% chance of curing any major status ailment after each turn."
+    },
+    {
+        "id": 80,
+        "name": "sheer-force",
+        "description": "strengthens moves with extra effects to 1.3\u00e3\u2014 their power, but prevents their extra effects."
+    },
+    {
+        "id": 81,
+        "name": "shell-armor",
+        "description": "protects against critical hits."
+    },
+    {
+        "id": 82,
+        "name": "shield-dust",
+        "description": "protects against incoming moves' extra effects."
+    },
+    {
+        "id": 83,
+        "name": "skill-link",
+        "description": "extends two-to-five-hit moves and triple kick to their full length every time."
+    },
+    {
+        "id": 84,
+        "name": "slow-start",
+        "description": "halves attack and speed for five turns upon entering battle."
+    },
+    {
+        "id": 85,
+        "name": "sniper",
+        "description": "strengthens critical hits to inflict 3\u00e3\u2014 damage rather than 2\u00e3\u2014."
+    },
+    {
+        "id": 86,
+        "name": "snow-warning",
+        "description": "summons hail that lasts indefinitely upon entering battle."
+    },
+    {
+        "id": 87,
+        "name": "solar-power",
+        "description": "increases special attack to 1.5\u00e3\u2014 but costs 1/8 max hp after each turn during strong sunlight."
+    },
+    {
+        "id": 88,
+        "name": "soundproof",
+        "description": "protects against sound-based moves."
+    },
+    {
+        "id": 89,
+        "name": "stamina",
+        "description": "raises this monster's defense by one stage when it takes damage from a move."
+    },
+    {
+        "id": 90,
+        "name": "static",
+        "description": "has a 30% chance of paralyzing attacking monster on contact."
+    },
+    {
+        "id": 91,
+        "name": "stench",
+        "description": "has a 10% chance of making target monster flinch with each hit."
+    },
+    {
+        "id": 92,
+        "name": "sticky-hold",
+        "description": "prevents a held item from being removed by other monster."
+    },
+    {
+        "id": 93,
+        "name": "storm-drain",
+        "description": "redirects single-target water moves to this monster where possible.  absorbs water moves, raising special attack one stage."
+    },
+    {
+        "id": 94,
+        "name": "sturdy",
+        "description": "prevents being koed from full hp, leaving 1 hp instead.  protects against the one-hit ko moves regardless of hp."
+    },
+    {
+        "id": 95,
+        "name": "super-luck",
+        "description": "raises moves' critical hit rates one stage."
+    },
+    {
+        "id": 96,
+        "name": "swarm",
+        "description": "strengthens bug moves to inflict 1.5\u00e3\u2014 damage at 1/3 max hp or less."
+    },
+    {
+        "id": 97,
+        "name": "swift-swim",
+        "description": "doubles speed during rain."
+    },
+    {
+        "id": 98,
+        "name": "synchronize",
+        "description": "copies burns, paralysis, and poison received onto the monster that inflicted them."
+    },
+    {
+        "id": 99,
+        "name": "tangled-feet",
+        "description": "doubles evasion when confused."
+    },
+    {
+        "id": 100,
+        "name": "technician",
+        "description": "strengthens moves of 60 base power or less to 1.5\u00e3\u2014 their power."
+    },
+    {
+        "id": 101,
+        "name": "thick-fat",
+        "description": "halves damage from fire and ice moves."
+    },
+    {
+        "id": 102,
+        "name": "tinted-lens",
+        "description": "doubles damage inflicted with not-very-effective moves."
+    },
+    {
+        "id": 103,
+        "name": "torrent",
+        "description": "strengthens water moves to inflict 1.5\u00e3\u2014 damage at 1/3 max hp or less."
+    },
+    {
+        "id": 104,
+        "name": "tough-claws",
+        "description": "strengthens moves that make contact to 1.33\u00e3\u2014 their power."
+    },
+    {
+        "id": 105,
+        "name": "unburden",
+        "description": "doubles speed upon using or losing a held item."
+    },
+    {
+        "id": 106,
+        "name": "unnerve",
+        "description": "prevents opposing monster from eating held berries."
+    },
+    {
+        "id": 107,
+        "name": "vital-spirit",
+        "description": "prevents sleep."
+    },
+    {
+        "id": 108,
+        "name": "volt-absorb",
+        "description": "absorbs electric moves, healing for 1/4 max hp."
+    },
+    {
+        "id": 109,
+        "name": "water-absorb",
+        "description": "absorbs water moves, healing for 1/4 max hp."
+    },
+    {
+        "id": 110,
+        "name": "weak-armor",
+        "description": "raises speed and lowers defense by one stage each upon being hit by a physical move."
+    }
+]

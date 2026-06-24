@@ -2,9 +2,12 @@ import asyncio
 import datetime
 import random
 from io import BytesIO
+from typing import Any
+from unittest.mock import MagicMock
 
 import discord
 import requests
+from discord.embeds import Embed
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
@@ -14,10 +17,10 @@ from utils.helpers import respond
 class PvpLeaderboard(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings = {}
-        self.pvp_img = {}
+        self.rankings: list[dict[str, str | int]] | None = None
+        self.pvp_img: dict[str, Any] = {}
 
-    def get_current_pvp_data(self):
+    def get_current_pvp_data(self) -> None:
         ranks = [
             "first",
             "second",
@@ -44,11 +47,11 @@ class PvpLeaderboard(commands.Cog):
             return
 
         rankings_data = []
-        for count, rank in enumerate(ranks):
+        for count, _rank in enumerate(ranks):
             if pvp_top_fifteen[count] == {}:
                 break
             user = pvp_top_fifteen[count]["username"]
-            img = pvp_top_fifteen[count]["profilePicture"]
+            pvp_top_fifteen[count]["profilePicture"]
             amount = pvp_top_fifteen[count]["amount"]
             elo = pvp_top_fifteen[count]["elo"]
             current_rank = pvp_top_fifteen[count]["rank"]
@@ -69,14 +72,16 @@ class PvpLeaderboard(commands.Cog):
 
         self.rankings = rankings_data
 
-    def update_pvp_image(self, data, output_path=None):
+    def update_pvp_image(
+        self, data: list[dict[str, str | int]] | None, output_path: None = None
+    ) -> None:
         img_width, cell_height = 1050, 50
         header_height = 40
         total_height = header_height + 15 * cell_height
         img = Image.new("RGB", (img_width, total_height), color=(0, 0, 0))
         draw = ImageDraw.Draw(img)
         try:
-            font = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
+            font: Any = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
         except Exception as e:
             print(f"Error loading font during update_pvp_image: {e}")
             font = ImageFont.load_default()
@@ -136,7 +141,7 @@ class PvpLeaderboard(commands.Cog):
         except Exception as e:
             print(f"Error converting PIL image during update_pvp_image: {e}")
 
-    def current_pvp_embed(self):
+    def current_pvp_embed(self) -> Embed:
         embed = discord.Embed(
             title=None,
             description=None,
@@ -147,16 +152,22 @@ class PvpLeaderboard(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    async def update_rankings(self):
+    async def update_rankings(self) -> None:
         try:
-            pvp_channel = await self.gradex.get_channel(1251368616662929529)
-            old_leaderboards = [message for message in pvp_channel.history(limit=2)]
+            pvp_channel = self.gradex.get_channel(1251368616662929529)
+            if pvp_channel is None or not hasattr(pvp_channel, "history"):
+                return
+            old_leaderboards = [
+                message async for message in pvp_channel.history(limit=2)
+            ]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
-            current_leaderboard = await pvp_channel.send(content="Loading...")
+            current_leaderboard = await pvp_channel.send(content="Loading...")  # type: ignore
             while True:
                 try:
-                    self.get_current_pvp_data()
+                    await self.gradex.loop.run_in_executor(
+                        None, self.get_current_pvp_data
+                    )
                 except Exception as e:
                     print(f"Error during update_rankings(get_current_pvp_data): {e}")
                 try:
@@ -180,19 +191,19 @@ class PvpLeaderboard(commands.Cog):
                     )
                 await asyncio.sleep(random.randint(600, 900))
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"PvP Tracker Error: {e}")
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        buttons = []
-        for button in buttons:
-            self.gradex.add_view(button)
+    async def on_ready(self) -> None:
+        # buttons = []
+        # for button in buttons:
+        #     self.gradex.add_view(button)
         print("Revomon Mod(PvP Leaderboard Tracker) is ready!")
         print("---------------------------")
         await self.update_rankings()
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: MagicMock) -> None:
         if message.author.bot:
             return
 
@@ -202,7 +213,7 @@ class PvpLeaderboard(commands.Cog):
                 self.get_current_pvp_data()
                 self.update_pvp_image(self.rankings)
                 embed = self.current_pvp_embed()
-                await respond(self.gradex, message=message, embed=embed, buttons=None)
+                await respond(self.gradex, message=message, embed=embed)
         except Exception as e:
             print(f"An error occurred during PvP Rankings Keyword on_message: {e}")
 
