@@ -1,9 +1,24 @@
+from os import getenv
 from pathlib import Path
 from typing import Any
 
 import yaml
 
 PROJECT_ROOT = Path(__file__).parent.parent
+
+
+def _get_optional_int_env(name: str) -> int | None:
+    """Return an integer environment variable, or None when it is unset."""
+    value = getenv(name)
+    if not value:
+        return None
+    return int(value)
+
+
+def _get_int_list_env(name: str) -> list[int]:
+    """Return a comma-separated integer environment variable as a list."""
+    value = getenv(name, "")
+    return [int(item) for item in value.split(",") if item]
 
 
 def _get_configs() -> Any:
@@ -14,9 +29,8 @@ def _get_configs() -> Any:
 
 
 _configs = _get_configs()
-GRA_GUILD_ID = _configs.get("GRA_GUILD_ID")
-BOT_OWNER_ID = _configs.get("BOT_OWNER_ID")
-PRO_TAMER_ROLE_IDS = _configs.get("PRO_TAMER_ROLE_IDS", [])
+GRA_GUILD_ID = _get_optional_int_env("GRA_GUILD_ID")
+GRA_PRO_TAMER_ROLE_IDS = _get_int_list_env("GRA_PRO_TAMER_ROLE_IDS")
 GRADEX_DB_PATH = _configs.get("GRADEX_DB_PATH", "data/gradex.db")
 
 # API endpoints
@@ -96,8 +110,7 @@ USER_AGENT = _configs.get(
 __all__ = [
     "PROJECT_ROOT",
     "GRA_GUILD_ID",
-    "BOT_OWNER_ID",
-    "PRO_TAMER_ROLE_IDS",
+    "GRA_PRO_TAMER_ROLE_IDS",
     "GRADEX_DB_PATH",
     "REVOMON_REVODEX_ENDPOINT",
     "REVOMON_RAW_IMAGE_ENDPOINT",

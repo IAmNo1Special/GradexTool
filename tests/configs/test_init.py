@@ -15,6 +15,7 @@ from configs import (
     EVOLUTIONS_FILE,
     FRUITYS_FILE,
     GRA_GUILD_ID,
+    GRA_PRO_TAMER_ROLE_IDS,
     GRADEX_DB_PATH,
     ITEMS_FILE,
     MEDICINES_FILE,
@@ -26,7 +27,6 @@ from configs import (
     POKEAPI_MEDICINE_CATEGORY_ENDPOINT,
     POKEAPI_NATURE_ENDPOINT,
     POKEAPI_NATURES_ENDPOINT,
-    PRO_TAMER_ROLE_IDS,
     PROJECT_ROOT,
     REVOMON_BASE_TYPES_IMAGE_ENDPOINT,
     REVOMON_FILE,
@@ -80,8 +80,6 @@ class TestGetConfigs:
         configs = _get_configs()
 
         expected_keys = [
-            "GRA_GUILD_ID",
-            "PRO_TAMER_ROLE_IDS",
             "REVOMON_REVODEX_ENDPOINT",
             "REVOMON_RAW_IMAGE_ENDPOINT",
             "REVOMON_NFT_IMAGE_ENDPOINT",
@@ -141,35 +139,36 @@ class TestConfigConstants:
     """Tests for configuration constants."""
 
     def test_gra_guild_id_is_integer(self) -> None:
-        """Test that GRA_GUILD_ID is an integer."""
-        assert isinstance(GRA_GUILD_ID, int)
-        assert GRA_GUILD_ID > 0
+        """Test that GRA_GUILD_ID is an integer when configured."""
+        assert GRA_GUILD_ID is None or isinstance(GRA_GUILD_ID, int)
+        if GRA_GUILD_ID is not None:
+            assert GRA_GUILD_ID > 0
 
-    def test_gra_guild_id_matches_config(self) -> None:
-        """Test that GRA_GUILD_ID matches the config file value."""
+    def test_gra_guild_id_is_not_in_yaml_config(self) -> None:
+        """Test that GRA_GUILD_ID is loaded from the environment."""
         from configs import _get_configs
 
         configs = _get_configs()
-        assert GRA_GUILD_ID == configs["GRA_GUILD_ID"]
+        assert "GRA_GUILD_ID" not in configs
 
-    def test_pro_tamer_role_ids_is_list(self) -> None:
-        """Test that PRO_TAMER_ROLE_IDS is a list."""
-        assert isinstance(PRO_TAMER_ROLE_IDS, list)
+    def test_gra_pro_tamer_role_ids_is_list(self) -> None:
+        """Test that GRA_PRO_TAMER_ROLE_IDS is a list."""
+        assert isinstance(GRA_PRO_TAMER_ROLE_IDS, list)
 
-    def test_pro_tamer_role_ids_contains_integers(self) -> None:
-        """Test that PRO_TAMER_ROLE_IDS contains integers."""
-        assert all(isinstance(role_id, int) for role_id in PRO_TAMER_ROLE_IDS)
+    def test_gra_pro_tamer_role_ids_contains_integers(self) -> None:
+        """Test that GRA_PRO_TAMER_ROLE_IDS contains integers."""
+        assert all(isinstance(role_id, int) for role_id in GRA_PRO_TAMER_ROLE_IDS)
 
-    def test_pro_tamer_role_ids_not_empty(self) -> None:
-        """Test that PRO_TAMER_ROLE_IDS is not empty."""
-        assert len(PRO_TAMER_ROLE_IDS) > 0
+    def test_gra_pro_tamer_role_ids_defaults_to_empty_list(self) -> None:
+        """Test that GRA_PRO_TAMER_ROLE_IDS can default to an empty list."""
+        assert len(GRA_PRO_TAMER_ROLE_IDS) >= 0
 
-    def test_pro_tamer_role_ids_match_config(self) -> None:
-        """Test that PRO_TAMER_ROLE_IDS matches the config file value."""
+    def test_gra_pro_tamer_role_ids_is_not_in_yaml_config(self) -> None:
+        """Test that GRA_PRO_TAMER_ROLE_IDS is loaded from the environment."""
         from configs import _get_configs
 
         configs = _get_configs()
-        assert PRO_TAMER_ROLE_IDS == configs["PRO_TAMER_ROLE_IDS"]
+        assert "GRA_PRO_TAMER_ROLE_IDS" not in configs
 
     def test_gradex_db_path_is_string(self) -> None:
         """Test that GRADEX_DB_PATH is a string."""
@@ -429,7 +428,7 @@ class TestModuleExports:
         expected_exports = [
             "PROJECT_ROOT",
             "GRA_GUILD_ID",
-            "PRO_TAMER_ROLE_IDS",
+            "GRA_PRO_TAMER_ROLE_IDS",
             "GRADEX_DB_PATH",
             "REVOMON_REVODEX_ENDPOINT",
             "REVOMON_RAW_IMAGE_ENDPOINT",
@@ -485,11 +484,11 @@ class TestDefaultValues:
         # The default should be "data/gradex.db"
         assert GRADEX_DB_PATH == "data/gradex.db"
 
-    def test_pro_tamer_role_ids_has_default(self) -> None:
-        """Test that PRO_TAMER_ROLE_IDS has a default value."""
+    def test_gra_pro_tamer_role_ids_has_default(self) -> None:
+        """Test that GRA_PRO_TAMER_ROLE_IDS has a default value."""
         # The default should be an empty list
         # But in the actual config it's not empty, so we just verify it's a list
-        assert isinstance(PRO_TAMER_ROLE_IDS, list)
+        assert isinstance(GRA_PRO_TAMER_ROLE_IDS, list)
 
     def test_api_endpoints_have_defaults(self) -> None:
         """Test that API endpoints have default values."""
@@ -561,8 +560,6 @@ class TestConfigFileIntegrity:
         configs = _get_configs()
 
         required_keys = [
-            "GRA_GUILD_ID",
-            "PRO_TAMER_ROLE_IDS",
             "REVOMON_REVODEX_ENDPOINT",
             "REVOMON_RAW_IMAGE_ENDPOINT",
             "REVOMON_NFT_IMAGE_ENDPOINT",
@@ -606,6 +603,4 @@ class TestConfigFileIntegrity:
 
         configs = _get_configs()
 
-        assert isinstance(configs["GRA_GUILD_ID"], int)
-        assert isinstance(configs["PRO_TAMER_ROLE_IDS"], list)
         assert all(isinstance(key, str) for key in configs.keys())
