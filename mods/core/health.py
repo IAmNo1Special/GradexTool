@@ -9,16 +9,16 @@ import time  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
-from discord.ext import commands  # noqa: E402
+from discord.ext.commands import Bot, Cog  # noqa: E402
 
 # Heartbeat interval in seconds
 _HEARTBEAT_INTERVAL = 300  # 5 minutes
 
 
-class HealthCog(commands.Cog):
+class HealthCog(Cog):
     """Monitors bot health and logs periodic heartbeats."""
 
-    def __init__(self, bot: commands.Bot) -> None:
+    def __init__(self, bot: Bot) -> None:
         """Initialize the HealthCog.
 
         Args:
@@ -28,7 +28,7 @@ class HealthCog(commands.Cog):
         self._start_time: float = 0.0
         self._heartbeat_task: asyncio.Task[Any] | None = None
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self) -> None:
         """Start heartbeat loop when the bot is ready."""
         self._start_time = time.monotonic()
@@ -109,7 +109,7 @@ class HealthCog(commands.Cog):
             self._heartbeat_task.cancel()
 
 
-async def setup(bot: commands.Bot) -> None:
+async def setup(bot: Bot) -> None:
     """Set up the HealthCog.
 
     Args:
