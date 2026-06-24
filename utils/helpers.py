@@ -37,9 +37,11 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
     current_user = await users_data.get_user(user_id=user.id)
     is_pro_status = 1 if is_pro_tamer(gradex_tool=gradex_tool, user=user) else 0
     if current_user:
-        if current_user[4] != is_pro_status:
+        if current_user["is_pro"] != is_pro_status:
             # update existing user's membership status
-            await users_data.update_user(user_id=current_user[0], is_pro=is_pro_status)
+            await users_data.update_user(
+                user_id=current_user["user_id"], is_pro=is_pro_status
+            )
             print("Existing User Updated!")
             return
     else:
