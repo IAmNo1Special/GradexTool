@@ -127,7 +127,7 @@ DISCORD_BOT_TOKEN=your_bot_token_here
 APPLICATION_ID=your_application_id_here
 ```
 
-2. **Configure guild settings** in `configs/config.yaml`:
+2. **Configure guild settings** in configs/configs.yaml:
 
 ```yaml
 GRA_GUILD_ID: 975120830193369088
