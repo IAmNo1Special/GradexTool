@@ -115,7 +115,7 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_spawn_background_task_success(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
-        async def my_task():
+        async def my_task() -> int:
             return 42
 
         task = cog._spawn_background_task(my_task())
@@ -125,7 +125,7 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_spawn_background_task_cancelled(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
-        async def my_task():
+        async def my_task() -> None:
             raise asyncio.CancelledError()
 
         task = cog._spawn_background_task(my_task())
@@ -134,7 +134,7 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_spawn_background_task_exception_no_handler(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
-        async def my_task():
+        async def my_task() -> None:
             raise Exception("Fail")
 
         with patch("mods.core.health.logger") as mock_logger:
@@ -145,7 +145,7 @@ class TestHealthCogLogic:
     @pytest.mark.asyncio
     async def test_spawn_background_task_exception_with_handler(self, mock_bot: Any) -> None:
         cog = HealthCog(mock_bot)
-        async def my_task():
+        async def my_task() -> None:
             raise Exception("Fail")
 
         mock_handler = AsyncMock()

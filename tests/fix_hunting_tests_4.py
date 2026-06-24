@@ -1,3 +1,4 @@
+from typing import Any
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
@@ -5,7 +6,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # 1. Restore `response.send_message` in all these tests
-def restore_send_message(test_names, t):
+def restore_send_message(test_names: Any, t: Any) -> Any:
     for name in test_names:
         pattern = r'(async def ' + name + r'\(.*?\):[\s\S]*?)mock_interaction\.edit_original_response\.assert_called_once\(\)'
         t = re.sub(pattern, r'\1mock_interaction.response.send_message.assert_called_once()', t)
@@ -33,7 +34,7 @@ tests_send_message = [
 text = restore_send_message(tests_send_message, text)
 
 # 2. Restore `followup.send` in these tests
-def restore_followup_send(test_names, t):
+def restore_followup_send(test_names: Any, t: Any) -> Any:
     for name in test_names:
         pattern = r'(async def ' + name + r'\(.*?\):[\s\S]*?)mock_interaction\.edit_original_response\.assert_called_once\(\)'
         t = re.sub(pattern, r'\1mock_interaction.followup.send.assert_called_once()', t)

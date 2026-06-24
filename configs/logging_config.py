@@ -27,7 +27,7 @@ def setup_logging(name: str = "GradexTool") -> logging.Logger:
 
         # Console handler
         try:
-            sys.stdout.reconfigure(errors="backslashreplace")
+            sys.stdout.reconfigure(errors="backslashreplace")  # type: ignore[union-attr]
         except Exception:
             pass
         console_handler = logging.StreamHandler(sys.stdout)

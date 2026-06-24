@@ -19,8 +19,8 @@ from scripts.gradexDB import set_guild_biome  # noqa: E402
 
 logger = logging.getLogger("discord_bot")
 
-class BiomeSelect(discord.ui.Select):
-    def __init__(self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild):
+class BiomeSelect(discord.ui.Select[discord.ui.View]):
+    def __init__(self, setup_cog: "SetupCog", user: discord.Member, guild: discord.Guild) -> None:
         self.setup_cog = setup_cog
         self.user = user
         self.guild = guild
@@ -39,7 +39,7 @@ class BiomeSelect(discord.ui.Select):
         ]
         super().__init__(placeholder="Select the Biome for your Server...", min_values=1, max_values=1, options=options)
 
-    async def callback(self, interaction: discord.Interaction):
+    async def callback(self, interaction: discord.Interaction) -> None:
         await interaction.response.defer()
         biome = self.values[0]
         await set_guild_biome(self.guild.id, biome)
@@ -172,7 +172,7 @@ class SetupCog(commands.Cog):
 
             async def ensure_text_channel(name: str, position: int) -> tuple[Any, bool]:
                 normalized_name = normalize_channel_name(name)
-                text_channel = discord.utils.get(guild.channels, name=normalized_name)
+                text_channel = discord.utils.get(guild.text_channels, name=normalized_name)
                 is_new = False
                 if not text_channel:
                     all_channels = await guild.fetch_channels()
@@ -195,7 +195,8 @@ class SetupCog(commands.Cog):
                         await text_channel.edit(position=position)
                     await text_channel.edit(category=revocord_category)
                     for target, overwrite in permission_overwrites.items():
-                        await text_channel.set_permissions(target, overwrite=overwrite)
+                        if isinstance(target, (discord.Role, discord.Member)):
+                            await text_channel.set_permissions(target, overwrite=overwrite)
                     logger.info(f"Core channel synced: {normalized_name}")
                 return text_channel, is_new
 

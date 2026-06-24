@@ -1,5 +1,6 @@
+from typing import Any
 
-def delete_blocks(path, blocks):
+def delete_blocks(path: Any, blocks: Any) -> None:
     with open(path, encoding="utf-8") as f:
         text = f.read()
 

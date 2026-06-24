@@ -1,9 +1,10 @@
+from typing import Any
 import asyncio
 from unittest.mock import AsyncMock
 
 
-async def test_async_mock():
-    def my_side_effect(**kwargs):
+async def test_async_mock() -> None:
+    def my_side_effect(**kwargs: Any) -> str:
         return "hello"
 
     m = AsyncMock(side_effect=my_side_effect)

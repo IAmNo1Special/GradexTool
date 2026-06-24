@@ -99,12 +99,13 @@ async def update_encounter_broadcast(
         # Update embed to reflect outcome
         embed.title = "📢 ENCOUNTER RESOLVED"
 
+        desc = embed.description or ""
         if outcome == "Caught":
-            embed.description = embed.description + "\n\n✅ **OUTCOME:** Captured successfully!"
+            embed.description = desc + "\n\n✅ **OUTCOME:** Captured successfully!"
         elif outcome == "Fled":
-            embed.description = embed.description + "\n\n💨 **OUTCOME:** The Revomon broke free and fled!"
+            embed.description = desc + "\n\n💨 **OUTCOME:** The Revomon broke free and fled!"
         elif outcome == "Ran":
-            embed.description = embed.description + "\n\n🏃 **OUTCOME:** The trainer ran away!"
+            embed.description = desc + "\n\n🏃 **OUTCOME:** The trainer ran away!"
 
         embed.color = color
 

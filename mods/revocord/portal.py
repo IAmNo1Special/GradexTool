@@ -1,5 +1,4 @@
-"""Cog for Portal session gateway login and ephemeral console deployment."""
-
+from typing import Any
 import logging
 
 import discord
@@ -13,7 +12,7 @@ from mods.revocord.shared import (
 
 logger = logging.getLogger("discord_bot")
 
-async def build_console_embed(account: dict, member: discord.Member) -> discord.Embed:
+async def build_console_embed(account: dict[str, Any], member: discord.Member | discord.User) -> discord.Embed:
     """Builds the ephemeral dashboard UI based on player data."""
     level = account.get("trainer_level", 1)
     xp = account.get("trainer_xp", 25)
@@ -73,15 +72,15 @@ class GameConsoleView(ui.View):
         self.user_id = user_id
 
     @ui.button(label="Bag", style=discord.ButtonStyle.secondary, emoji="🎒", custom_id="console_bag")
-    async def bag(self, interaction: discord.Interaction, button: ui.Button) -> None:
+    async def bag(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
         await interaction.response.defer()
 
     @ui.button(label="Heal", style=discord.ButtonStyle.danger, emoji="🏥", custom_id="console_heal")
-    async def heal(self, interaction: discord.Interaction, button: ui.Button) -> None:
+    async def heal(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
         await interaction.response.defer()
 
     @ui.button(label="TV", style=discord.ButtonStyle.primary, emoji="📺", custom_id="console_tv")
-    async def tv(self, interaction: discord.Interaction, button: ui.Button) -> None:
+    async def tv(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
         if interaction.user.id != self.user_id:
             await interaction.response.send_message("❌ You cannot access someone else's Console!", ephemeral=True)
             return
@@ -116,7 +115,7 @@ class PortalLoginView(ui.View):
         custom_id="persistent_portal_login",
         emoji="🎮"
     )
-    async def login(self, interaction: discord.Interaction, button: ui.Button) -> None:
+    async def login(self, interaction: discord.Interaction, button: ui.Button[Any]) -> None:
         """Handle the login button click."""
         await interaction.response.defer(ephemeral=True)
 

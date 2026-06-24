@@ -2,6 +2,7 @@ import json
 import logging
 import random
 import time
+from typing import Any
 from pathlib import Path
 
 import discord
@@ -19,12 +20,13 @@ logger = logging.getLogger("discord_bot")
 class WildsLoopCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.revomons = []
-        self.evolved_names = set()
+        self.revomons: list[dict[str, Any]] = []
+        self.evolved_names: set[str] = set()
+        self.natures: list[dict[str, Any]] = []
         self._load_data()
         self.wilds_spawn_loop.start()
 
-    def cog_unload(self) -> None:
+    async def cog_unload(self) -> None:
         self.wilds_spawn_loop.cancel()
 
     def _load_data(self) -> None:
@@ -58,7 +60,7 @@ class WildsLoopCog(commands.Cog):
             except Exception:
                 pass
 
-    def _get_revomon_image_path(self, revomon_data: dict, is_shiny: bool) -> Path:
+    def _get_revomon_image_path(self, revomon_data: dict[str, Any], is_shiny: bool) -> Path:
         id_revodex = revomon_data.get("dex_id", revomon_data.get("idRevodex"))
         suffix = "_shiny" if is_shiny else ""
         img_path = Path("data", "assets", "revomon", "raw", f"{id_revodex}{suffix}.png")
@@ -96,7 +98,8 @@ class WildsLoopCog(commands.Cog):
         embed = discord.Embed(title=title, color=embed_color)
 
         nature = random.choice(self.natures)["name"].title() if self.natures else "Hardy"
-        abilities = [chosen.get(k) for k in ["ability1", "ability2", "ability_hidden"] if chosen.get(k)]
+        raw_abilities = [chosen.get(k) for k in ["ability1", "ability2", "ability_hidden"] if chosen.get(k)]
+        abilities = [a for a in raw_abilities if isinstance(a, str)]
         ability = random.choice(abilities).title() if abilities else "Unknown"
         ivs = {k: random.randint(0, 31) for k in ["hp", "atk", "def", "spa", "spd", "spe"]}
 
@@ -114,7 +117,7 @@ class WildsLoopCog(commands.Cog):
         shiny_int = 1 if is_shiny else 0
 
         view = discord.ui.View(timeout=None)
-        battle_btn = discord.ui.Button(
+        battle_btn: discord.ui.Button[Any] = discord.ui.Button(
             label="Battle!", style=discord.ButtonStyle.danger, emoji="⚔️",
             custom_id=f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}"
         )
@@ -125,7 +128,7 @@ class WildsLoopCog(commands.Cog):
         else:
             msg = await wilds_channel.send(embed=embed, view=view)
 
-        view.children[0].custom_id = f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}:{msg.id}"
+        battle_btn.custom_id = f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}:{msg.id}"
         await msg.edit(view=view)
 
         await active_spawns_table.add_spawn(msg.id, guild.id, json.dumps(encounter_data))

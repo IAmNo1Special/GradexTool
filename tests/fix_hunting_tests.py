@@ -1,3 +1,4 @@
+from typing import Any
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_hunting.py"
 
@@ -5,7 +6,7 @@ with open(path, encoding="utf-8") as f:
     text = f.read()
 
 # Add get_guild_biome mock and fix the Bulbasaur type to neutral
-def fix_test(test_name, text):
+def fix_test(test_name: Any, text: Any) -> Any:
     r'(async def ' + test_name + r'\(self,.*?mock_interaction: Any\)[^\:]*:\n\s+mock_get_account\.return_value = \{"current_city": "drassius city"\}\n\s+cog\.revomons = \[\{"mon_id": 1, "dex_id": 1, "name": "Bulbasaur"\}\])'
 
     # We want to insert @patch("mods.revocord.hunting.get_guild_biome", return_value="Plains")

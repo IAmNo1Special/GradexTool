@@ -1,3 +1,4 @@
+from typing import Any
 import re
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
@@ -11,7 +12,7 @@ text = text.replace(
 )
 
 # 2. But we DO want test_setup_full_creation to use execute_setup.
-def replace_in_test(test_name, old, new, content):
+def replace_in_test(test_name: Any, old: Any, new: Any, content: Any) -> str:
     pattern = rf"(def {test_name}\(.*?\):.*?)({re.escape(old)})"
     return re.sub(pattern, r"\1" + new, content, flags=re.DOTALL)
 
@@ -34,7 +35,7 @@ for test_name in tests_to_execute_setup:
 
 # 3. Ensure test_setup_portal_fail uses a synchronous side_effect
 sync_mock = '''
-        def mock_create_text_channel(**kwargs):
+        def mock_create_text_channel(**kwargs: Any) -> None:
             if kwargs.get("name") == "portal":
                 return None
             channel = MagicMock(spec=discord.TextChannel)
@@ -62,7 +63,7 @@ text = text.replace(
 text = text.replace(
     'mock_guild.create_text_channel = AsyncMock(side_effect=[MagicMock(), MagicMock(), mock_portal, MagicMock()])',
     '''
-        def mock_create_ch(*args, **kwargs):
+        def mock_create_ch(*args: Any, **kwargs: Any) -> None:
             ch = MagicMock()
             ch.position = kwargs.get("position", 0)
             ch.edit = AsyncMock()

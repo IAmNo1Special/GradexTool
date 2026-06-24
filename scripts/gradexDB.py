@@ -1,7 +1,7 @@
 import json  # noqa: N999
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import aiosqlite
 import requests
@@ -2838,7 +2838,7 @@ async def set_guild_biome(guild_id: int, biome: str) -> None:
         )
         await conn.commit()
 
-async def get_guild_spawn_config(guild_id: int) -> dict:
+async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
     async with aiosqlite.connect(db_path) as conn:
         conn.row_factory = aiosqlite.Row
         cursor = await conn.cursor()
@@ -2875,7 +2875,7 @@ async def delete_guild_data(guild_id: int) -> None:
         await cursor.execute("DELETE FROM active_spawns WHERE guild_id = ?", (guild_id,))
         await conn.commit()
 
-async def update_guild_spawn_config(guild_id: int, **kwargs) -> None:
+async def update_guild_spawn_config(guild_id: int, **kwargs: Any) -> None:
     if not kwargs:
         return
     sets = ", ".join(f"{k} = ?" for k in kwargs.keys())
@@ -2928,17 +2928,17 @@ class ActiveSpawnsTable:
             await cursor.execute("DELETE FROM active_spawns WHERE message_id = ?", (message_id,))
             await conn.commit()
 
-    async def get_spawn(self, message_id: int) -> dict | None:
+    async def get_spawn(self, message_id: int) -> dict[str, Any] | None:
         import json
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute("SELECT spawn_data FROM active_spawns WHERE message_id = ?", (message_id,))
             row = await cursor.fetchone()
             if row:
-                return json.loads(row[0])
+                return cast(dict[str, Any], json.loads(row[0]))
             return None
 
-    async def get_guild_spawns(self, guild_id: int) -> list:
+    async def get_guild_spawns(self, guild_id: int) -> list[dict[str, Any]]:
         import json
         async with self._connect() as conn:
             cursor = await conn.cursor()

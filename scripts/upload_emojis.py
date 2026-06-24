@@ -1,5 +1,6 @@
 """Script to compress and upload Revomon assets as Discord Application Emojis."""
 
+from typing import Any
 import asyncio
 import json
 import logging
@@ -20,10 +21,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger("upload_emojis")
 
 class EmojiUploaderClient(discord.Client):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         logger.info(f"Logged in as {self.user}!")
         try:
             await self.process_emojis()
@@ -32,7 +33,7 @@ class EmojiUploaderClient(discord.Client):
         finally:
             await self.close()
 
-    async def process_emojis(self):
+    async def process_emojis(self) -> None:
         # 1. Fetch existing application emojis to avoid duplicates
         logger.info("Fetching existing application emojis...")
         existing_emojis = await self.fetch_application_emojis()
