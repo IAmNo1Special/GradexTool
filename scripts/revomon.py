@@ -132,7 +132,7 @@ def _retry_after_seconds(response: httpx.Response) -> float | None:
 
 
 def _is_downloaded(path: Path) -> bool:
-    return path.exists() and path.stat().st_size > 0
+    return path.is_file() and path.stat().st_size > 0
 
 
 def _load_download_manifest() -> dict[str, dict[str, str]]:
