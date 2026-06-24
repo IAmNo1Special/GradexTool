@@ -1,4 +1,8 @@
-from data.gradexDB import (
+import discord.embeds
+from discord import Color, Embed, Interaction, app_commands
+from discord.ext import commands
+
+from data import (
     AbilitiesTable,
     FruitysTable,
     ItemsTable,
@@ -7,46 +11,43 @@ from data.gradexDB import (
     RevomonMovesTable,
     RevomonTable,
 )
-from discord import Color, Embed, Interaction, app_commands
-from discord.ext import commands
-
 from utils.button_utils import Buttons
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes
 
 
 class SearchCommand(commands.Cog):
-    def __init__(self, gradex: commands.Bot):
+    def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Search Command) is ready!")
         print("---------------------------")
 
-    def ability_search_embed(self, ability_name):
-        ability_info = AbilitiesTable().get_info(ability_name.lower())[0]
+    async def ability_search_embed(self, ability_name: str) -> discord.embeds.Embed:
+        ability_info = (await AbilitiesTable().get_info(ability_name.lower()))[0]
         embed = Embed(
             title=ability_info[0].title(),
             description=f"*{ability_info[1].capitalize()}*",
             color=Color.red(),
         )
         learned_by = ""
-        for revomon in RevomonTable().get_names():
-            if RevomonTable().has_ability(
+        for revomon in await RevomonTable().get_names():
+            if await RevomonTable().has_ability(
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
-        embed.description += f"\n\n__**Learned By**__\n{learned_by}"
+        embed.description += f"\n\n__**Learned By**__\n{learned_by}"  # type: ignore[operator]
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def allabilities_embed(self):
+    async def allabilities_embed(self) -> discord.embeds.Embed:
         all_abilities_str = ""
-        for ability in sorted(AbilitiesTable().get_names()):
+        for ability in sorted(await AbilitiesTable().get_names()):
             all_abilities_str += f"- {ability.title()}\n"
         embed = Embed(
             title="All Abilities",
@@ -59,8 +60,8 @@ class SearchCommand(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def fruity_search_embed(self, fruity_name):
-        fruity_info = FruitysTable().get_info(fruity_name.lower())[0]
+    async def fruity_search_embed(self, fruity_name: str) -> discord.embeds.Embed:
+        fruity_info = (await FruitysTable().get_info(fruity_name.lower()))[0]
         embed = Embed(
             title=fruity_info[0].title(),
             description=f"*{fruity_info[1].capitalize()}*",
@@ -71,9 +72,9 @@ class SearchCommand(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def allfruitys_embed(self):
+    async def allfruitys_embed(self) -> discord.embeds.Embed:
         fruitys_str = ""
-        for fruity in sorted(FruitysTable().get_names()):
+        for fruity in sorted(await FruitysTable().get_names()):
             fruitys_str += f"- **{fruity.title()}** Fruity\n"
         embed = Embed(
             title="All Fruitys",
@@ -84,8 +85,8 @@ class SearchCommand(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def item_search_embed(self, item_name):
-        item_info = ItemsTable().get_info(item_name.lower())[0]
+    async def item_search_embed(self, item_name: str) -> discord.embeds.Embed:
+        item_info = (await ItemsTable().get_info(item_name.lower()))[0]
         embed = Embed(
             title=item_info[0].title(),
             description=f"*{item_info[1].capitalize()}*",
@@ -108,9 +109,9 @@ class SearchCommand(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def allitems_embed(self):
+    async def allitems_embed(self) -> discord.embeds.Embed:
         items_str = ""
-        for item in sorted(ItemsTable().get_names()):
+        for item in sorted(await ItemsTable().get_names()):
             items_str += f"- {item.title()}\n"
         embed = Embed(
             title="All Items",
@@ -124,8 +125,8 @@ class SearchCommand(commands.Cog):
 
         return embed
 
-    def move_search_embed(self, move_name):
-        move_info = MovesTable().get_info(move_name.lower())[0]
+    async def move_search_embed(self, move_name: str) -> discord.embeds.Embed:
+        move_info = (await MovesTable().get_info(move_name.lower()))[0]
         embed = Embed(
             title=move_info[2].title(),
             description=f"*{move_info[5].capitalize()}*",
@@ -157,7 +158,7 @@ class SearchCommand(commands.Cog):
             )
         learned_by = ""
         for revomon in sorted(
-            RevomonMovesTable().get_mons_for_move(move_name=move_info[2])
+            await RevomonMovesTable().get_mons_for_move(move_name=move_info[2])
         ):
             learned_by += f"- *{revomon.title()}*\n"
         embed.add_field(name="__**Learned By**__", value=learned_by, inline=False)
@@ -168,8 +169,8 @@ class SearchCommand(commands.Cog):
 
         return embed
 
-    def nature_search_embed(self, nature_name):
-        nature_info = NaturesTable().get_info(nature_name.lower())[0]
+    async def nature_search_embed(self, nature_name: str) -> discord.embeds.Embed:
+        nature_info = (await NaturesTable().get_info(nature_name.lower()))[0]
         embed = Embed(title=f"{nature_info[0].title()} Nature", color=Color.red())
         if nature_info[1] is None:
             embed.add_field(name="__**Stat Boosted**__", value="*None*", inline=False)
@@ -205,8 +206,8 @@ class SearchCommand(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    def allnatures_embed(self):
-        nature_info = NaturesTable().get_names()
+    async def allnatures_embed(self) -> discord.embeds.Embed:
+        nature_info = await NaturesTable().get_names()
         nature_str = ""
         for nature in sorted(nature_info):
             nature_str += f"- {nature.title()}\n"
@@ -239,13 +240,15 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(
         name="The name of the ability you'd like more info on. Enter 'all' for a list of all the ability names."
     )
-    async def abilities(self, interaction: Interaction, name: str = None):
+    async def abilities(
+        self, interaction: Interaction, name: str | None = None
+    ) -> None:
         try:
             if not name:
-                embed = self.allabilities_embed()
+                embed = await self.allabilities_embed()
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
-            embed = self.ability_search_embed(ability_name=name.lower())
+            embed = await self.ability_search_embed(ability_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
             print(f"Error during search_command(abilities subcommand): {e}")
@@ -256,13 +259,13 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(
         name="The name of the fruity you'd like more info on. Enter 'all' for a list of all the fruity names."
     )
-    async def fruitys(self, interaction: Interaction, name: str = None):
+    async def fruitys(self, interaction: Interaction, name: str | None = None) -> None:
         try:
             if not name:
-                embed = self.allfruitys_embed()
+                embed = await self.allfruitys_embed()
                 await interaction.response.send_message(embed=embed, ephemeral=True)
                 return
-            embed = self.fruity_search_embed(fruity_name=name.lower())
+            embed = await self.fruity_search_embed(fruity_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
             print(f"Error during search_command(fruitys subcommand): {e}")
@@ -273,21 +276,21 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(
         name="The name of the item you'd like more info on. Enter 'all' for a list of all the in-game item names."
     )
-    async def items(self, interaction: Interaction, name: str = None):
+    async def items(self, interaction: Interaction, name: str | None = None) -> None:
         if not name:
-            embed = self.allitems_embed()
+            embed = await self.allitems_embed()
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        embed = self.item_search_embed(name.lower())
+        embed = await self.item_search_embed(name.lower())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @search_group.command(
         name="moves", description="Search for info about any Revomon move."
     )
     @app_commands.describe(name="The name of the move you'd like more info on.")
-    async def moves(self, interaction: Interaction, name: str):
+    async def moves(self, interaction: Interaction, name: str) -> None:
         try:
-            embed = self.move_search_embed(name.lower())
+            embed = await self.move_search_embed(name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
             print(f"Error during search_command(moves subcommand): {e}")
@@ -296,19 +299,19 @@ class SearchCommand(commands.Cog):
         name="natures", description="Search for info about any Revomon nature."
     )
     @app_commands.describe(name="The name of the nature you'd like more info on.")
-    async def natures(self, interaction: Interaction, name: str = None):
+    async def natures(self, interaction: Interaction, name: str | None = None) -> None:
         if not name:
-            embed = self.allnatures_embed()
+            embed = await self.allnatures_embed()
             await interaction.response.send_message(embed=embed, ephemeral=True)
             return
-        embed = self.nature_search_embed(name.lower())
+        embed = await self.nature_search_embed(name.lower())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @search_group.command(
         name="revomon", description="Search for info about any Revomon."
     )
     @app_commands.describe(name="The name of the revomon you'd like more info on.")
-    async def revomon(self, interaction: Interaction, name: str = None):
+    async def revomon(self, interaction: Interaction, name: str | None = None) -> None:
         try:
             buttons = Buttons(self.gradex)
             if not name:
@@ -321,11 +324,11 @@ class SearchCommand(commands.Cog):
             if "&" in name:
                 revomon_name1, revomon_name2 = map(str.strip, name.split("&"))
                 if (
-                    revomon_name1.lower() in RevomonTable().get_names()
-                    and revomon_name2.lower() in RevomonTable().get_names()
+                    revomon_name1.lower() in await RevomonTable().get_names()
+                    and revomon_name2.lower() in await RevomonTable().get_names()
                 ):
-                    attributes = get_attributes(revomon_name=revomon_name1)
-                    attributes2 = get_attributes(revomon_name=revomon_name2)
+                    attributes = await get_attributes(revomon_name=revomon_name1)
+                    attributes2 = await get_attributes(revomon_name=revomon_name2)
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
@@ -336,9 +339,9 @@ class SearchCommand(commands.Cog):
                         embed=embed, view=buttons, ephemeral=True
                     )
             # Check if User's Prompt is a Revomon's Name
-            elif name.lower() in RevomonTable().get_names():
+            elif name.lower() in await RevomonTable().get_names():
                 # Load Data From Revomon Database
-                attributes = get_attributes(revomon_name=name)
+                attributes = await get_attributes(revomon_name=name)
                 embed = intro(attributes=attributes)
                 buttons = await buttons.intro_view(attributes=attributes)
                 await interaction.response.send_message(
@@ -426,9 +429,9 @@ class SearchCommand(commands.Cog):
         else:
             try:
                 # Build the response message dynamically
-                from data.gradexDB import OwnedLandsTable
+                from data import OwnedLandsTable
                 lands_data = OwnedLandsTable()
-                response_message = lands_data.get_info(token_id=token_id if token_id else None, id=None, owners_address=owners_address.lower() if owners_address else None, biome=biome.value if biome else None, land_type=land_type.value if land_type else None, rarity=rarity.value if rarity else None, size=size.value if size else None, img_url=None, asc=True, sale_status=int(sale_status.value) if sale_status else None)
+                response_message = lands_data.get_info(token_id=token_id if token_id else None, id=None, owners_address=owners_address.lower() if owners_address else None, biome=biome.value if biome else None, land_type=land_type.value if land_type else None, rarity=rarity.value if rarity else None, size=size.value if size else None, img_url=None, asc=True, sale_status=int(sale_status.value) if sale_status else None)  # type: ignore[attr-defined]
                 if response_message:
                     token_ids = [land[0] for land in response_message]
                     land_main_view = await buttons.land_view(token_ids=token_ids, user_id=interaction.user.id)
@@ -440,7 +443,7 @@ class SearchCommand(commands.Cog):
 """
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     try:
         await gradex.add_cog(SearchCommand(gradex))
     except Exception:

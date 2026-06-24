@@ -5,10 +5,12 @@ description = "A comprehensive Discord bot for the Revomon gaming community, pro
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aiosqlite>=0.22.1",
     "discord-py>=2.7.1",
     "httpx>=0.28.1",
     "pillow>=12.2.0",
     "plotly>=6.7.0",
+    "pytest-cov>=7.1.0",
     "python-dotenv>=1.2.2",
     "pytz>=2026.2",
     "pyyaml>=6.0.1",
@@ -18,6 +20,18 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ruff>=0.15.14",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.12.0",
+    "pytest-cov>=7.1.0",
+    "respx>=0.23.1",
+    "requests-mock>=1.12.1",
+    "httpx>=0.28.1",
+    "mypy>=2.1.0",
+    "types-requests>=2.33.0.20260518",
+    "types-pyyaml>=6.0.12.20260518",
+    "mdformat>=1.0.0",
+    "monkeytype>=23.3.0",
 ]
 
 [tool.ruff]
@@ -27,10 +41,11 @@ target-version = "py313"
 
 [tool.ruff.lint]
 select = ["E", "W", "F", "I", "B", "D", "C90", "UP", "N"]
-ignore = ["D100", "D104", "E501", "D107", "D103"]
+ignore = ["D100", "D104", "E501", "D107", "D103", "D101", "D102", "D105", "D106"]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+"tests/**/*.py" = ["B010"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -39,3 +54,10 @@ convention = "google"
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
+
+[tool.ruff.lint.mccabe]
+max-complexity = 55
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true

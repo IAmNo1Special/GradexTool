@@ -1,17 +1,19 @@
+from typing import Any
+
 from discord import ButtonStyle, Color, Embed, Interaction, app_commands, ui
 from discord.ext import commands
 
 
 class HelpCommand(commands.Cog):
-    def __init__(self, gradex: commands.Bot):
+    def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("Help Command is ready!")
         print("---------------------------")
 
-    def help_embed(self):
+    def help_embed(self) -> Any:
         help_embed = Embed(
             title="Help Menu",
             description="Gradex Tool commands",
@@ -62,13 +64,15 @@ class HelpCommand(commands.Cog):
         return help_embed
 
     class PublicButton(ui.View):
-        def __init__(self, embed: Embed):
+        def __init__(self, embed: Embed) -> None:
             self.embed = embed
 
             super().__init__(timeout=None)
 
         @ui.button(label="Make Public", style=ButtonStyle.green, custom_id="Save")
-        async def make_public_button(self, interaction: Interaction, Button: ui.Button):
+        async def make_public_button(
+            self, interaction: Interaction, button: ui.Button[Any]
+        ) -> None:
             try:
                 await interaction.response.defer(ephemeral=False, thinking=True)
                 embed = self.embed
@@ -82,7 +86,7 @@ class HelpCommand(commands.Cog):
         name="help", description="Displays the Gradex Tool help menu."
     )
     @app_commands.allowed_installs(guilds=True, users=True)
-    async def help(self, interaction: Interaction):
+    async def help(self, interaction: Interaction) -> None:
         embed = self.help_embed()
         buttons = self.PublicButton(embed=embed)
         await interaction.response.send_message(
@@ -90,7 +94,7 @@ class HelpCommand(commands.Cog):
         )
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     try:
         await gradex.add_cog(HelpCommand(gradex))
     except Exception:

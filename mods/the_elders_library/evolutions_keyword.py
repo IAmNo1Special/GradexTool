@@ -1,14 +1,16 @@
+from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class evolutions(commands.Cog):
-    def __init__(self, gradex):
+class evolutions(commands.Cog):  # noqa: N801
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evolutions_embed():
+    def evolutions_embed() -> Any:  # type: ignore[misc]
         embed = discord.Embed(
             title="Full Evolutions List Pt.1",
             description="""__**Revomon**__->__**Evolution**__->__**At Lvl**__
@@ -88,8 +90,8 @@ class evolutions(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class evolutions_buttons(discord.ui.View):
-        def __init__(self):
+    class evolutions_buttons(discord.ui.View):  # noqa: N801
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(
@@ -98,8 +100,10 @@ class evolutions(commands.Cog):
             custom_id="Evolution Page 2",
         )
         async def page2(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             page2_embed = discord.Embed(
                 title="Full Evolutions List Pt.2",
                 description="""__**Revomon**__->__**Evolution**__->__**At Lvl**__
@@ -185,8 +189,10 @@ Azuroon	(Final Evolution)""",
             custom_id="Evolution Page 3",
         )
         async def page3(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             page3_embed = discord.Embed(
                 title="Full Evolutions List Pt.3",
                 description="""__**Revomon**__-> __**Evolution**__->__**At Lvl**__
@@ -212,17 +218,20 @@ Azuroon	(Final Evolution)""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
+            if interaction.message:
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Evolutions Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -230,7 +239,7 @@ Azuroon	(Final Evolution)""",
         try:
             prompt = message.content.lower().strip()
             if prompt == "all evolutions" or prompt == "evolutions":
-                embed = self.evolutions_embed()
+                embed = self.evolutions_embed()  # type: ignore[misc]
                 buttons = self.evolutions_buttons()
                 await respond(
                     self.gradex, message=message, embed=embed, buttons=buttons
@@ -239,5 +248,5 @@ Azuroon	(Final Evolution)""",
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(evolutions(gradex))

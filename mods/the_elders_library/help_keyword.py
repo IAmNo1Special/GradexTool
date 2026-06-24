@@ -1,14 +1,16 @@
+from typing import Any
+
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
 
 
-class help_keyword(commands.Cog):
-    def __init__(self, gradex):
+class help_keyword(commands.Cog):  # noqa: N801
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def help_embed(self):
+    def help_embed(self) -> Any:
         embed = discord.Embed(
             title="Help Menu",
             description="*How can I help you?*",
@@ -20,8 +22,8 @@ class help_keyword(commands.Cog):
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
-    class gdex_help_buttons(discord.ui.View):
-        def __init__(self):
+    class gdex_help_buttons(discord.ui.View):  # noqa: N801
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(
@@ -30,8 +32,10 @@ class help_keyword(commands.Cog):
             custom_id="Mon Search Help",
         )
         async def mon_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             mon_search_help_embed = discord.Embed(
                 title="Revomon search",
                 description="""Type the name of the Revomon you would like more information about. Includes everything you"ll need to know, even Counterdex PvP Builds. Type **All Revomon** for a list of all the Revomon in my library.""",
@@ -52,8 +56,10 @@ class help_keyword(commands.Cog):
             custom_id="Move Search Help",
         )
         async def move_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             move_search_help_embed = discord.Embed(
                 title="Move search",
                 description="""Type the name of the move you would like more information about. Type **All Moves** for a list of all the moves in my library.""",
@@ -76,8 +82,10 @@ class help_keyword(commands.Cog):
             custom_id="PriMove Search Help",
         )
         async def primove_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             primove_search_help_embed = discord.Embed(
                 title="Priority Move search",
                 description="""Type the name of the Priority Move you would like more information about. Type **All Priority Moves** for a list of all the priority moves in my library.""",
@@ -100,8 +108,10 @@ class help_keyword(commands.Cog):
             custom_id="Ability Search Help",
         )
         async def ability_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             ability_search_help_embed = discord.Embed(
                 title="Ability search",
                 description="""Type the name of the Ability you would like more information about. Type **All Abilities** for a list of all the abilities in my library.""",
@@ -124,8 +134,10 @@ class help_keyword(commands.Cog):
             custom_id="Nature Search Help",
         )
         async def nature_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             nature_search_help_embed = discord.Embed(
                 title="Nature search",
                 description="""Type the name of the Nature you would like more information about. Type **All Natures** for a list of all the natures in my library.""",
@@ -148,8 +160,10 @@ class help_keyword(commands.Cog):
             custom_id="Item Search Help",
         )
         async def item_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             item_search_help_embed = discord.Embed(
                 title="Item search",
                 description="""Type the name of the item you would like more information about. Type **All Items** for a list of all the items in my library.""",
@@ -172,8 +186,10 @@ class help_keyword(commands.Cog):
             custom_id="Fruity Search Help",
         )
         async def fruity_search_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             fruity_search_help_embed = discord.Embed(
                 title="Fruity search",
                 description="""Type the name of the Fruity you would like more information about. Type **All Fruitys** for a list of all the fruitys in my library.""",
@@ -196,8 +212,10 @@ class help_keyword(commands.Cog):
             custom_id="Tier List Help",
         )
         async def tier_list_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             tier_list_help_embed = discord.Embed(
                 title="Tier List",
                 description="""Type **Tier List** to see the current meta tier list.""",
@@ -218,8 +236,10 @@ class help_keyword(commands.Cog):
             custom_id="EV Chart Help",
         )
         async def ev_chart_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             ev_chart_help_embed = discord.Embed(
                 title="EV Training Chart",
                 description="""Type **EV Chart** to find out ev_chartwhat EVs a Revomon gives once you defeat it.""",
@@ -240,8 +260,10 @@ class help_keyword(commands.Cog):
             custom_id="Spawn Locations Help",
         )
         async def spawn_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             spawn_help_embed = discord.Embed(
                 title="Spawn Locations",
                 description="""Type **Spawn** to see when & where all Revomon spawn.""",
@@ -262,8 +284,10 @@ class help_keyword(commands.Cog):
             custom_id="Pmon Help",
         )
         async def pmon_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             pmon_help_embed = discord.Embed(
                 title="Pokemon Counterparts",
                 description="""Type **Pokémon** for a list of Revomon and their Pokémon counterpart.""",
@@ -277,8 +301,8 @@ class help_keyword(commands.Cog):
             )
             await interaction.followup.send(embed=pmon_help_embed, ephemeral=True)
 
-    class help_buttons(discord.ui.View):
-        def __init__(self):
+    class help_buttons(discord.ui.View):  # noqa: N801
+        def __init__(self) -> None:
             super().__init__(timeout=None)
 
         @discord.ui.button(
@@ -287,15 +311,17 @@ class help_keyword(commands.Cog):
             custom_id="Gdex Help",
         )
         async def gdex_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             gdex_help_embed = discord.Embed(
                 title="Features & Instructions",
                 description=""">>> 1 | *The Gradex Tool combines the knowledge of The Elder & his vast library of books about the world of Revomon with the added convenience & power of Discord.*
 
 2 | **Owning Gradex Tool(Pro) or (Pro+) unlocks numerous Gradex Tool features.**
 
-    3 | *Gain Pro+ membership by purchasing the NFT version of a tool. Pro+ grants you an ad free experience for as long as you own the NFT & the ability to use the Gradex Tool from your DMs.* 
+    3 | *Gain Pro+ membership by purchasing the NFT version of a tool. Pro+ grants you an ad free experience for as long as you own the NFT & the ability to use the Gradex Tool from your DMs.*
 
 4 | *Gain  Pro membership by purchasing a Gradex Tool (Pro) subscription. Pro grants you an ad free experience & the ability to use the Gradex Tool from your DMs for 30 days. Use the keyword `$store` to purchase a subscription.*
 
@@ -324,8 +350,10 @@ class help_keyword(commands.Cog):
             custom_id="TTS Help",
         )
         async def tts_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             tts_help_embed = discord.Embed(
                 title="Tiptop's Top-up Shop",
                 description="""Type **Tiptop** for access to Tiptop's Top-up Shop. This is where you can purchase and/or redeem your Global Revomon NFTs like the Gradex Tool(Pro+), In-Game Currency(IGC) and more!!""",
@@ -349,8 +377,10 @@ class help_keyword(commands.Cog):
             custom_id="EED Help",
         )
         async def eed_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             eed_help_embed = discord.Embed(
                 title="Eazy's EV Daycare",
                 description="""Type **Eazy** for access to Eazy's EV Daycare. This is where you can purchase and/or redeem your EV Training NFTs to have your Revomon EV trained by Eazy.""",
@@ -374,8 +404,10 @@ class help_keyword(commands.Cog):
             custom_id="EA Help",
         )
         async def ea_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             ea_help_embed = discord.Embed(
                 title="Eleven's Arena",
                 description="""Type **Eleven** for access to Eleven's Arena. This is where you can find out more info about PvP and PvE events hosted by GRA.""",
@@ -397,8 +429,10 @@ class help_keyword(commands.Cog):
             custom_id="Titles Help",
         )
         async def titles_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             titles_help_embed = discord.Embed(
                 title="How to gain your NFT Titles",
                 description="""Follow the instructions in the {#collabland-join} channel to be awarded Titles that come with owning G.R.A. NFTs.""",
@@ -419,8 +453,10 @@ class help_keyword(commands.Cog):
             custom_id="OP Help",
         )
         async def op_help(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
             op_help_embed = discord.Embed(
                 title="GRA Online Presence",
                 description="""🔥 💯[OFFICIAL DAPP](https://www.globalrevomon.com/)
@@ -446,17 +482,20 @@ TheGlobalRevomonAssociation@Gmail.com""",
 
         @discord.ui.button(label="❌", style=discord.ButtonStyle.red, custom_id="exit")
         async def exit_embed(
-            self, interaction: discord.Interaction, Button: discord.ui.Button
-        ):
-            await interaction.message.delete()
+            self,
+            interaction: discord.Interaction,
+            Button: discord.ui.Button[Any],  # noqa: N803
+        ) -> None:
+            if interaction.message:
+                await interaction.message.delete()
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print("The Elder's Library(Help Keyword) is ready!")
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return
@@ -475,5 +514,5 @@ TheGlobalRevomonAssociation@Gmail.com""",
             print(f"An error occurred during on_message: {e}")
 
 
-async def setup(gradex: commands.Bot):
+async def setup(gradex: commands.Bot) -> None:
     await gradex.add_cog(help_keyword(gradex))

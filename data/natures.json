@@ -1,0 +1,177 @@
+[
+    {
+        "name": "adamant",
+        "buffs": "atk",
+        "debuffs": "spa",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "bashful",
+        "buffs": null,
+        "debuffs": null,
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "bold",
+        "buffs": "def",
+        "debuffs": "atk",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "brave",
+        "buffs": "atk",
+        "debuffs": "spe",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "calm",
+        "buffs": "spd",
+        "debuffs": "atk",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "careful",
+        "buffs": "spd",
+        "debuffs": "spa",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "docile",
+        "buffs": null,
+        "debuffs": null,
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "gentle",
+        "buffs": "spd",
+        "debuffs": "def",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "hardy",
+        "buffs": null,
+        "debuffs": null,
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "hasty",
+        "buffs": "spe",
+        "debuffs": "def",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "impish",
+        "buffs": "def",
+        "debuffs": "spa",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "jolly",
+        "buffs": "spe",
+        "debuffs": "spa",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "lax",
+        "buffs": "def",
+        "debuffs": "spd",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "lonely",
+        "buffs": "atk",
+        "debuffs": "def",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "mild",
+        "buffs": "spa",
+        "debuffs": "def",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "modest",
+        "buffs": "spa",
+        "debuffs": "atk",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "naive",
+        "buffs": "spe",
+        "debuffs": "spd",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "naughty",
+        "buffs": "atk",
+        "debuffs": "spd",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "quiet",
+        "buffs": "spa",
+        "debuffs": "spe",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "quirky",
+        "buffs": null,
+        "debuffs": null,
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "rash",
+        "buffs": "spa",
+        "debuffs": "spd",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "relaxed",
+        "buffs": "def",
+        "debuffs": "spe",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "sassy",
+        "buffs": "spd",
+        "debuffs": "spe",
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "serious",
+        "buffs": null,
+        "debuffs": null,
+        "likes": null,
+        "dislikes": null
+    },
+    {
+        "name": "timid",
+        "buffs": "spe",
+        "debuffs": "atk",
+        "likes": null,
+        "dislikes": null
+    }
+]

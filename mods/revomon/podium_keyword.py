@@ -2,9 +2,11 @@ import asyncio
 import datetime
 import random
 from io import BytesIO
+from typing import Any
 
 import discord
 import requests
+from discord.embeds import Embed
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
@@ -14,17 +16,17 @@ from utils.helpers import respond
 class Podium(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
-        self.rankings = {}
-        self.weekly_podium_img = {}
-        self.current_podium_img = {}
+        self.rankings: dict[str, dict[str, str]] = {}
+        self.weekly_podium_img: dict[str, Any] = {}
+        self.current_podium_img: dict[str, Any] = {}
 
-    def convert_time(self, total_seconds):
+    def convert_time(self, total_seconds: int) -> str:
         hours, remainder = divmod(total_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         formatted_time = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         return formatted_time
 
-    def get_weekly_podium_data(self):
+    def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
         weekly_podium_url = "https://api.revomon.io/leaderboard/weekly_podium"
         response = requests.get(weekly_podium_url)
         response = response.json()
@@ -57,7 +59,7 @@ class Podium(commands.Cog):
         }
         return self.rankings
 
-    def get_current_podium_data(self):
+    def get_current_podium_data(self) -> dict[str, dict[str, str]]:
         current_podium_url = "https://api.revomon.io/leaderboard/current_podium"
         response = requests.get(current_podium_url)
         response = response.json()
@@ -72,13 +74,13 @@ class Podium(commands.Cog):
         self.rankings["third"] = {"user": third_user, "img": third_img}
         return self.rankings
 
-    def get_text_size(self, draw, text, font):
+    def get_text_size(self, draw: Any, text: str, font: Any) -> tuple[int, int]:
         bbox = draw.textbbox((0, 0), text, font=font)
         width = bbox[2] - bbox[0]
         height = bbox[3] - bbox[1]
         return width, height
 
-    def podium_img(self, podium_type):
+    def podium_img(self, podium_type: str) -> None:
         # Define the image size and background color
         image_width, image_height = 800, 450
         background_color = (36, 36, 36)  # Dark background
@@ -187,7 +189,7 @@ class Podium(commands.Cog):
             new_image.save(self.current_podium_img["image_bytes"], format="PNG")
             self.current_podium_img["image_bytes"].seek(0)
 
-    def current_podium_embed(self):
+    def current_podium_embed(self) -> Embed:
         self.podium_img(podium_type="current")
         embed = discord.Embed(
             title=None,
@@ -199,7 +201,7 @@ class Podium(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    def weekly_podium_embed(self):
+    def weekly_podium_embed(self) -> Embed:
         self.podium_img(podium_type="weekly")
         embed = discord.Embed(
             title=None,
@@ -211,10 +213,14 @@ class Podium(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    async def update_rankings(self):
+    async def update_rankings(self) -> None:
         try:
-            podium_channel = await self.gradex.get_channel(1251022667935387740)
-            old_leaderboards = [message for message in podium_channel.history(limit=2)]
+            podium_channel = await self.gradex.fetch_channel(1251022667935387740)
+            if not isinstance(podium_channel, discord.TextChannel):
+                return
+            old_leaderboards = [
+                message async for message in podium_channel.history(limit=2)
+            ]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
             current_leaderboard = await podium_channel.send(content="Loading...")
@@ -244,19 +250,19 @@ class Podium(commands.Cog):
                 )
                 await asyncio.sleep(random.randint(600, 900))
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"Podium Tracker Error: {e}")
 
     @commands.Cog.listener()
-    async def on_ready(self):
-        buttons = []
-        for button in buttons:
-            self.gradex.add_view(button)
+    async def on_ready(self) -> None:
+        # buttons = []
+        # for button in buttons:
+        #     self.gradex.add_view(button)
         print("Revomon Mod(Podium Leaderboard Tracker) is ready!")
         print("---------------------------")
         await self.update_rankings()
 
     @commands.Cog.listener()
-    async def on_message(self, message: discord.Message):
+    async def on_message(self, message: discord.Message) -> None:
         # Ignore messages from bots (including self)
         if message.author.bot:
             return

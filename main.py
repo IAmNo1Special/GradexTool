@@ -8,7 +8,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from configs.logging_config import setup_logging
-from data.gradexDB import update_gradex_db
+from data import update_gradex_db
 from mods import load_mods
 
 load_dotenv()
@@ -25,13 +25,13 @@ gradex_tool: commands.Bot = commands.Bot(command_prefix="/", intents=intents)
 gradex_tool.remove_command("help")
 
 
-async def entrypoint(rebase: bool = False):
+async def entrypoint(rebase: bool = False) -> None:
     logger.info(f"Starting Gradex Tool...\n{'-' * 50}")
     if rebase:
         logger.info(f"Rebasing Gradex DB...\n{'-' * 50}")
         await update_gradex_db()
 
-    await load_mods()
+    await load_mods(gradex_tool)
 
     discord_bot_token = getenv("DISCORD_BOT_TOKEN", "")
     if not discord_bot_token:
@@ -49,7 +49,7 @@ async def entrypoint(rebase: bool = False):
 
 
 @gradex_tool.event
-async def on_ready():
+async def on_ready() -> None:
     logger.info(f"Gradex Tool is online.\n{'-' * 50}")
     synced_commands = await gradex_tool.tree.sync()
     logger.info(f"Synced {len(synced_commands)} commands\n{'-' * 50}")
@@ -58,4 +58,4 @@ async def on_ready():
 if __name__ == "__main__":
     import asyncio
 
-    asyncio.run(entrypoint(rebase=True))
+    asyncio.run(entrypoint(rebase=False))

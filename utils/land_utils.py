@@ -1,7 +1,9 @@
+from typing import Any
+
 import aiohttp
 
 
-async def get_land_info_for_ids(token_ids: list) -> list:
+async def get_land_info_for_ids(token_ids: list[Any]) -> list[dict[str, Any]]:
     if len(token_ids) > 30:
         token_ids_list = [token_ids[i : i + 30] for i in range(0, len(token_ids), 30)]
     else:
@@ -60,7 +62,7 @@ async def get_land_info_for_ids(token_ids: list) -> list:
     return land_info
 
 
-async def get_land_owners_and_ids() -> list:
+async def get_land_owners_and_ids() -> list[dict[str, Any]]:
     print("Retrieving land owner with land ids data...")
     print("Retrieving raw land owner with land ids data...")
     base_url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/collections/0x5c40eb1eaad2a96e383e3b0a986a5377fc1ee239/owners"
@@ -125,7 +127,7 @@ async def get_land_owners_and_ids() -> list:
     return final_data
 
 
-async def get_land_data() -> list:
+async def get_land_data() -> list[dict[str, Any]]:
     print("Retrieving land data...")
     land_data = []
     owner_objs = await get_land_owners_and_ids()
@@ -148,22 +150,22 @@ async def get_land_data() -> list:
     return land_data
 
 
-async def get_lands_for_sale():
+async def get_lands_for_sale() -> list[dict[str, Any]]:
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
         ) as response:
             for_sale_land_objs = await response.json()
-            return for_sale_land_objs["result"]
+            return for_sale_land_objs["result"]  # type: ignore[no-any-return]
 
 
-async def get_zkevm_token_data(token_address: str):
+async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
     async with aiohttp.ClientSession() as session:
         url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"
         async with session.get(url) as response:
             if response.status == 200:
                 token_obj = await response.json()
-                return token_obj
+                return token_obj  # type: ignore[no-any-return]
             else:
                 # Log the error and return None or a default dict
                 print(
@@ -172,7 +174,7 @@ async def get_zkevm_token_data(token_address: str):
                 return None
 
 
-async def get_lands_for_sale_amount():
+async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:
     print("Fetching lands for sale amount...")
     for_sale_lands_data = await get_lands_for_sale()
     for_sale_lands_data_dict = {}
