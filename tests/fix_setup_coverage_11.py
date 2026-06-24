@@ -1,5 +1,5 @@
-from typing import Any
 import re
+from typing import Any
 
 path = r"f:\projects\Revomon\GradexTool\tests\mods\revocord\test_setup.py"
 with open(path, encoding="utf-8") as f:

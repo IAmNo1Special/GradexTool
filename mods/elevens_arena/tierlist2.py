@@ -71,15 +71,14 @@ class BcTierPoll(commands.Cog):
             tier_vote_forum = await cdex_category.create_forum_channel(
                 name="tierlist-polls", topic="Tier List"
             )
-            )
 
         # Check if Tier List Forum already exists, if not create them
         tier_results_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-results"
+            cdex_category.forum_channels, name="tierlist-results"
         )
-        while tier_results_forum is None:
-            tier_results_forum = discord.utils.get(
-                cdex_category.forums, name="tierlist-results"
+        if tier_results_forum is None:
+            tier_results_forum = await cdex_category.create_forum_channel(
+                name="tierlist-results", topic="Tier List Results"
             )
 
         bc_vote_thread = discord.utils.get(
@@ -167,7 +166,7 @@ class BcTierPoll(commands.Cog):
         cdex_category: Any = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
         if cdex_category is None:
             return
-        voting_forum: Any = discord.utils.get(cdex_category.forums, name="tierlist-polls")
+        voting_forum: Any = discord.utils.get(cdex_category.forum_channels, name="tierlist-polls")
         if voting_forum is None:
             print("Creating new tier list voting forum")
             await self.create_polls(gra_server=gra_server)

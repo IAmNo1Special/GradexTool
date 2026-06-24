@@ -2,8 +2,8 @@ import json
 import logging
 import random
 import time
-from typing import Any
 from pathlib import Path
+from typing import Any
 
 import discord
 from discord.ext import commands, tasks

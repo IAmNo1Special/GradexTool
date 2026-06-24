@@ -1,5 +1,5 @@
-from typing import Any
 import math
+from typing import Any
 
 import discord
 from discord import ui

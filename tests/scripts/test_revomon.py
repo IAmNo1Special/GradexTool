@@ -434,7 +434,7 @@ async def test_revomon_table_rebuild(mock_db_path: Any) -> None:
                         with patch.dict('sys.modules', {}):
                             import builtins
                             original_table = getattr(builtins, "TypesTable", None)
-                            setattr(builtins, "TypesTable", MockTypesTable)
+                            builtins.TypesTable = MockTypesTable
                             try:
                                 await table.rebuild()
                             except Exception as e:
@@ -443,7 +443,7 @@ async def test_revomon_table_rebuild(mock_db_path: Any) -> None:
                                 raise e
                             finally:
                                 if original_table is not None:
-                                    setattr(builtins, "TypesTable", original_table)
+                                    builtins.TypesTable = original_table
                                 else:
                                     delattr(builtins, "TypesTable")
 

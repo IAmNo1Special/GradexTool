@@ -73,21 +73,14 @@ class GsTierPoll(commands.Cog):
             tier_vote_forum = await cdex_category.create_forum_channel(
                 name="tierlist-polls", topic="Tier List"
             )
-            )
-            tier_vote_forum = discord.utils.get(
-                cdex_category.forums, name="tierlist-polls"
-            )
 
         # Check if Tier List Forum already exists, if not create them
         tier_results_forum = discord.utils.get(
-            cdex_category.forums, name="tierlist-results"
+            cdex_category.forum_channels, name="tierlist-results"
         )
-        while tier_results_forum is None:
-            tier_results_forum = await cdex_category.create_forum(
+        if tier_results_forum is None:
+            tier_results_forum = await cdex_category.create_forum_channel(
                 name="tierlist-results", topic="Tier List Results"
-            )
-            tier_results_forum = discord.utils.get(
-                cdex_category.forums, name="tierlist-results"
             )
 
         gs_vote_thread = discord.utils.get(
@@ -173,7 +166,7 @@ class GsTierPoll(commands.Cog):
         cdex_category: Any = discord.utils.get(gra_server.categories, name="𝐂𝐨𝐮𝐧𝐭𝐞𝐫𝐝𝐞𝐱")
         if cdex_category is None:
             return
-        voting_forum: Any = discord.utils.get(cdex_category.forums, name="tierlist-polls")
+        voting_forum: Any = discord.utils.get(cdex_category.forum_channels, name="tierlist-polls")
         if voting_forum is None:
             print("Creating new gs tier list voting")
             await self.create_polls()
