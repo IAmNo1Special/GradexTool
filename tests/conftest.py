@@ -31,7 +31,7 @@ def mock_guild() -> Any:
     guild.name = "Test Server"
     guild.categories = []
     guild.roles = []
-    guild.forums = []
+    guild.forum_channels = []
     guild.threads = []
     return guild
 

@@ -1,5 +1,5 @@
-from typing import Any
 import time
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import discord
@@ -37,7 +37,7 @@ class TestHuntingCogInitPart2:
         with patch("pathlib.Path.exists", return_value=True), \
              patch("builtins.open", side_effect=Exception("Test Error")):
             cog = HuntingCog(mock_bot)
-            setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+            cog._cleanup_wilds_spawn = AsyncMock()
             assert not cog.evolved_names
             assert not cog.revomons
             assert not cog.natures
@@ -57,14 +57,14 @@ class TestHuntingCogInitPart2:
                  [{"name": "hardy"}]
              ]):
             cog = HuntingCog(mock_bot)
-            setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+            cog._cleanup_wilds_spawn = AsyncMock()
             assert "evo2" in cog.evolved_names
             assert cog.revomons == [{"mon_id": 1}]
             assert cog.natures == [{"name": "hardy"}]
 
     def test_get_revomon_image_path_shiny_fallback(self, mock_bot: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         revomon_data = {"dex_id": 1}
         with patch("pathlib.Path.exists", return_value=False):
             path = cog._get_revomon_image_path(revomon_data, True)
@@ -80,7 +80,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_on_interaction_bad_data(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
 
         mock_interaction.data = None
@@ -108,7 +108,7 @@ class TestOnInteractionPart2:
         mock_embed.return_value = discord.Embed()
         mock_bcast.side_effect = Exception("Test")
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time()) - 400
         mock_interaction.data = {"custom_id": f"spawn_fight:123:1:0:{timestamp}:100"}
@@ -126,7 +126,7 @@ class TestOnInteractionPart2:
         mock_embed.return_value = discord.Embed()
         mock_bcast.side_effect = Exception("Test")
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
         mock_interaction.data = {"custom_id": f"spawn_run:123:1:0:{timestamp}:100"}
@@ -137,7 +137,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_spawn_fight(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         mock_interaction.data = {"custom_id": f"spawn_fight:123:1:0:{int(time.time())}:456"}
         mock_interaction.user.id = 123
@@ -148,7 +148,7 @@ class TestOnInteractionPart2:
     @patch("mods.revocord.hunting.broadcast_encounter", new_callable=AsyncMock)
     async def test_spawn_share(self, mock_broadcast: Any, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         mock_interaction.data = {"custom_id": f"spawn_share:123:1:0:{int(time.time())}"}
@@ -163,7 +163,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_spawn_share_no_message(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         mock_interaction.data = {"custom_id": f"spawn_share:123:1:0:{int(time.time())}"}
         mock_interaction.user.id = 123
@@ -174,7 +174,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_spawn_throw_orb_bad_data(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
         base_id = f"spawn_throw_orb:123:1:0:{timestamp}:100"
@@ -194,7 +194,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_spawn_throw_orb_no_embeds(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
         mock_interaction.data = {"custom_id": f"spawn_throw_orb:123:1:0:{timestamp}:100", "values": ["159"]}
@@ -208,7 +208,7 @@ class TestOnInteractionPart2:
     async def test_spawn_throw_orb_empty_orb(self, mock_get_acc: Any, mock_bot: Any, mock_interaction: Any) -> None:
         mock_get_acc.return_value = {"inventory": {"159": 0}}
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
         mock_interaction.data = {"custom_id": f"spawn_throw_orb:123:1:0:{timestamp}:100", "values": ["159"]}
@@ -223,7 +223,7 @@ class TestOnInteractionPart2:
     async def test_spawn_throw_orb_no_data(self, mock_get_acc: Any, mock_bot: Any, mock_interaction: Any) -> None:
         mock_get_acc.return_value = {"inventory": {"159": 1}}
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = []
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -247,7 +247,7 @@ class TestOnInteractionPart2:
         mock_rc_id.return_value = 1000
 
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -275,7 +275,7 @@ class TestOnInteractionPart2:
         mock_rc_id.return_value = 1000
 
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -299,7 +299,7 @@ class TestOnInteractionPart2:
         mock_bcast.side_effect = [Exception("Test"), None]
 
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -322,7 +322,7 @@ class TestOnInteractionPart2:
         mock_get_acc.return_value = {"inventory": {"159": 1}, "caught_revomon": []}
 
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -350,7 +350,7 @@ class TestOnInteractionPart2:
         mock_rc_id.return_value = 1000
 
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur"}]
         mock_interaction.type = discord.InteractionType.component
         timestamp = int(time.time())
@@ -368,7 +368,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_spawn_throw_orb_property_mock_data(self, mock_bot: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction = MagicMock(spec=discord.Interaction)
         mock_interaction.type = discord.InteractionType.component
         mock_interaction.user = MagicMock()
@@ -415,7 +415,7 @@ class TestOnInteractionPart2:
     @patch("scripts.gradexDB.active_spawns_table.get_spawn", new_callable=AsyncMock)
     async def test_handle_wilds_claim_branches(self, mock_get_spawn: Any, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_interaction.type = discord.InteractionType.component
 
         # < 6 parts
@@ -455,7 +455,7 @@ class TestOnInteractionPart2:
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     async def test_spawn_wild_no_revomons(self, mock_get_acc: Any, mock_biome: Any, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = []
         await cog.spawn_wild_revomon(mock_interaction)
         mock_interaction.followup.send.assert_called_once()
@@ -465,7 +465,7 @@ class TestOnInteractionPart2:
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     async def test_spawn_wild_no_guild(self, mock_get_acc: Any, mock_biome: Any, mock_bot: Any, mock_interaction: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1}]
         mock_interaction.guild_id = None
         await cog.spawn_wild_revomon(mock_interaction)
@@ -479,7 +479,7 @@ class TestOnInteractionPart2:
     async def test_spawn_wild_abilities(self, mock_bcast: Any, mock_save: Any, mock_get_acc: Any, mock_biome: Any, mock_bot: Any, mock_interaction: Any) -> None:
         mock_biome.return_value = "Plains"
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         cog.revomons = [{"idRevomon": 1, "name": "Bulbasaur", "type1": "neutral", "ability1": "overgrow"}]
         mock_interaction.guild_id = 456
         with patch("pathlib.Path.exists", return_value=False):
@@ -489,7 +489,7 @@ class TestOnInteractionPart2:
     @pytest.mark.asyncio
     async def test_cleanup_encounters_exception(self, mock_bot: Any) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
+        cog._cleanup_wilds_spawn = AsyncMock()
         mock_channel = MagicMock()
         async def mock_history(*args: Any, **kwargs: Any) -> Any:
             yield MagicMock()

@@ -1,5 +1,4 @@
 import asyncio
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 # We need to import the class
@@ -16,7 +15,7 @@ async def main() -> None:
     mock_message.embeds = [embed]
     mock_message.edit = AsyncMock()
 
-    setattr(view, "message", mock_message)
+    view.message = mock_message
 
     try:
         msg = getattr(view, "message", None)

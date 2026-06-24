@@ -1,12 +1,12 @@
 """Script to compress and upload Revomon assets as Discord Application Emojis."""
 
-from typing import Any
 import asyncio
 import json
 import logging
 import os
 import sys
 from io import BytesIO
+from typing import Any
 
 import discord
 from dotenv import load_dotenv
