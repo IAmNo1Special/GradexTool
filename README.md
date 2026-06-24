@@ -12,19 +12,23 @@ Providing game data lookup, competitive analysis tools, leaderboards, and real-t
 
 </div>
 
----
+______________________________________________________________________
 
 ## ✨ Features
 
 ### 📚 The Elder's Library
+
 Extensive search commands for Revomon game data
+
 - **Ability, item, move, nature, and Revomon lookups** - Instant data retrieval
 - **Evolution trees and spawn information** - Complete evolution chains
 - **Type charts and tier lists** - Competitive analysis tools
 - **Keyword triggers** - Quick lookups by typing ability/item/move names
 
 ### 🏆 Grappraisal
+
 Competitive grading system for Revomon
+
 - **IV/EV analysis with role-based stat weights** - Smart stat evaluation
 - **Grade letter and percentage calculations** - A+ to F- grading scale
 - **Visual grade breakdowns** - Interactive charts with Plotly
@@ -32,14 +36,18 @@ Competitive grading system for Revomon
 - **Save & Flex features** - Share your graded Revomon
 
 ### 🏅 Leaderboards
+
 Real-time podium and PvP rankings
+
 - **Current podium leaderboard** - Live top 3 players
 - **Weekly podium tracking** - Weekly competition results
 - **PvP rankings display** - Elo, wins, losses, win rates
 - **Auto-generated podium images** - Visual leaderboard displays
 
 ### 🎯 RevoCord RPG System
+
 In-game Discord integration
+
 - **Wild spawn system** - Biome-based Revomon encounters
 - **Travel system** - Move between cities with energy management
 - **Account tracking** - Trainer level, XP, coins, inventory
@@ -47,13 +55,16 @@ In-game Discord integration
 - **Activity dashboard** - User statistics and progress
 
 ### 🛡️ Core Bot Features
+
 Essential bot infrastructure
+
 - **Channel enforcement** - Automatic channel layout protection
 - **Health monitoring** - Periodic heartbeat logging (5-minute intervals)
 - **User management** - Pro Tamer role verification
 - **DM restrictions** - Access control for non-Pro users
 
 ### 🌐 External Integrations
+
 - **Revomon API** - Game data and leaderboards
 - **PokeAPI** - Abilities, natures, items data
 - **Immutable X** - Land NFT ownership and sales data
@@ -64,7 +75,7 @@ Essential bot infrastructure
 - **Discord Bot Token**
 - **Discord Application ID**
 
----
+______________________________________________________________________
 
 ## 🚀 Installation
 
@@ -128,7 +139,7 @@ PRO_TAMER_ROLE_IDS:
   - 990783815771385896
 ```
 
----
+______________________________________________________________________
 
 ## 💻 Usage
 
@@ -147,10 +158,11 @@ python main.py
 ```
 
 The bot will:
+
 1. Rebuild the Gradex database from JSON sources and APIs
-2. Load all mods dynamically
-3. Start the Discord bot
-4. Sync slash commands
+1. Load all mods dynamically
+1. Start the Discord bot
+1. Sync slash commands
 
 ### Skipping Database Rebase
 
@@ -174,7 +186,7 @@ uv run python scripts/main.py
 python scripts/main.py
 ```
 
----
+______________________________________________________________________
 
 ## 📁 Project Structure
 
@@ -238,7 +250,7 @@ GradexTool/
 └── requirements.txt      # Python dependencies
 ```
 
----
+______________________________________________________________________
 
 ## 🗄️ Database Tables
 
@@ -263,7 +275,7 @@ The SQLite database (`data/gradex.db`) contains 14+ tables:
 | `eventBoardLogs` | Event board logging |
 | `activeSpawns` | Active wild spawn tracking |
 
----
+______________________________________________________________________
 
 ## 🎮 Available Commands
 
@@ -292,7 +304,7 @@ The bot responds to keywords in messages for quick lookups:
 - **Type combinations** (e.g., "fire dragonic")
 - **"grade" / "appraise"** - Opens grading modal
 
----
+______________________________________________________________________
 
 ## 🛠️ Development
 
@@ -353,9 +365,9 @@ pytest --cov=.
 ### Adding a New Mod
 
 1. Create a new directory in `mods/` or add a file directly
-2. Create a cog class inheriting from `commands.Cog`
-3. Implement the `async def setup(gradex_bot)` function
-4. The mod loader will automatically discover and load it
+1. Create a cog class inheriting from `commands.Cog`
+1. Implement the `async def setup(gradex_bot)` function
+1. The mod loader will automatically discover and load it
 
 **Example**:
 
@@ -375,19 +387,20 @@ async def setup(gradex: commands.Bot):
 ```
 
 **Note**: The mod loader skips:
+
 - Directories: `example_mod`, `elevens_arena`
 - Files: `base_cog.py`, `shared.py`, `broadcaster.py`, `tv.py`
 
 ### Adding a Database Table
 
 1. Create a new table class in `scripts/gradexDB.py`
-2. Implement required methods:
+1. Implement required methods:
    - `create()` - Drops and recreates table
    - `rebuild()` - Fetches data and inserts
    - `export_to_json()` - Exports to JSON
    - `count_entries()` - Returns row count
-3. Add it to the `update_gradex_db()` function
-4. Follow the pattern from existing tables
+1. Add it to the `update_gradex_db()` function
+1. Follow the pattern from existing tables
 
 **Example pattern**:
 
@@ -416,7 +429,7 @@ class MyTable:
         pass
 ```
 
----
+______________________________________________________________________
 
 ## 🔧 Configuration
 
@@ -438,7 +451,7 @@ class MyTable:
 | `GRADEX_DB_PATH` | Path to SQLite database |
 | File paths | Paths to JSON data files and asset directories |
 
----
+______________________________________________________________________
 
 ## 🐛 Known Issues
 
@@ -446,19 +459,19 @@ class MyTable:
 - **Fragile data indexing** with hardcoded indices
 - **Command syncing rate limiting** on bot ready
 
----
+______________________________________________________________________
 
 ## 📝 License
 
 This project is part of the **Global Revomon Association**.
 
----
+______________________________________________________________________
 
 ## 🤝 Support
 
 For issues or questions, contact the Global Revomon Association community.
 
----
+______________________________________________________________________
 
 <div align="center">
 
