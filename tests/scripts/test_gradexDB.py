@@ -484,7 +484,7 @@ async def test_users_table(mock_db: Any) -> None:
 
     await table.update_user(1, username="updated")
     user = await table.get_user(1)
-    assert user[1] == "updated"
+    assert user["username"] == "updated"
 
     with pytest.raises(ValueError):
         await table.update_user(None)
