@@ -161,7 +161,7 @@ class PvpLeaderboard(commands.Cog):
             current_leaderboard = await pvp_channel.send(content="Loading...") # type: ignore
             while True:
                 try:
-                    self.get_current_pvp_data()
+                    await self.gradex.loop.run_in_executor(None, self.get_current_pvp_data)
                 except Exception as e:
                     print(f"Error during update_rankings(get_current_pvp_data): {e}")
                 try:
