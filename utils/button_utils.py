@@ -1,9 +1,17 @@
 from typing import Any
+<<<<<<< HEAD
 
 from discord import ButtonStyle, Interaction, SelectOption
 from discord.ext import commands
 from discord.ui import Button, Select, View
 
+=======
+
+from discord import ButtonStyle, Interaction
+from discord.ext import commands
+from discord.ui import Button, View
+
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 from data import OwnedLandsTable, RevomonTable
 from utils.embed_utils import (
     compare_counterdexs,
@@ -38,11 +46,15 @@ class Buttons(commands.Cog):
         self.book_of_land_ids = None
         self.book_of_land_current_page = {}  # type: ignore[var-annotated]
         self.land_attributes = {}  # type: ignore[var-annotated]
+<<<<<<< HEAD
         self.group_by_evo = True
+=======
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
     async def mon_button(self, name: str, row: Any) -> Any:
         print("Mon button is being created...")
         mon_info = (await RevomonTable().get_info(name))[0]
+<<<<<<< HEAD
         
         # Safely load and cache application emojis from Discord API
         if not hasattr(self, "app_emojis") or self.app_emojis is None:
@@ -64,6 +76,9 @@ class Buttons(commands.Cog):
             emoji_id = mon_info[-10]
 
         mon_emoji = f"<:{emoji_name}:{emoji_id}>" if emoji_id else None
+=======
+        mon_emoji = f"<:{name}:{mon_info[-10]}>".replace(" ", "_").replace("-", "_")
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
         dex_num = mon_info[0]
         mon_button = Button(  # type: ignore[var-annotated]
             label=f"{dex_num}. {name.title()}",
@@ -350,6 +365,7 @@ class Buttons(commands.Cog):
         for name in curr_page_content:
             button = await self.mon_button(name=name, row=row)
             view.add_item(button)
+<<<<<<< HEAD
             items_in_row += 1
             
             if self.group_by_evo:
@@ -367,6 +383,10 @@ class Buttons(commands.Cog):
             if should_increment:
                 row += 1
                 items_in_row = 0
+=======
+            if (await RevomonTable().get_info(name))[0][8] is None:
+                row += 1
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
             if row == 4 or name == self.book_of_names[-1][-1]:  # type: ignore[index]
                 first_page_button = self.first_page_button(row=row)
                 prev_button = self.previous_button(row=row)
@@ -597,7 +617,10 @@ class Buttons(commands.Cog):
                 print("Land View has been created!")
                 return view
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     async def intro_view(self, attributes: dict = None) -> Any:  # type: ignore[assignment, type-arg]
         print("Intro buttons are being created...")
         if attributes is not None:

@@ -479,7 +479,11 @@ async def test_users_table(mock_db: Any) -> None:
     table = UsersTable()
     await table.build()
 
+<<<<<<< HEAD
     await table.add_user(1, "user1", 0, 0, 100, 50, 10, 5, 2, 1)
+=======
+    await table.add_user(1, "user1", 1, "0x", 0, 0, 100, 50, 10, 5, 2, 1)
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     assert await table.count_entries() == 1
 
     await table.update_user(1, username="updated")
@@ -515,5 +519,9 @@ async def test_update_gradex_db(
         m_land.return_value = []
         m_emojis.return_value = []
 
+<<<<<<< HEAD
         OwnedLandsTable.rebuild() # uses mocked empty land data
+=======
+        # Avoid running OwnedLandsTable in the test because it is commented out in gradexDB.py
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
         await update_gradex_db()

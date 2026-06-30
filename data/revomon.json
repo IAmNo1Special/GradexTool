@@ -17,6 +17,7 @@
         "spe": 45,
         "evolution": "desuke",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -24,6 +25,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 2,
@@ -43,6 +47,7 @@
         "spe": 60,
         "evolution": "deksciple",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -50,6 +55,9 @@
         "ev_spa": 1,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 3,
@@ -69,6 +77,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -76,6 +85,9 @@
         "ev_spa": 2,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 4,
@@ -95,6 +107,7 @@
         "spe": 65,
         "evolution": "gorox",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -102,6 +115,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 5,
@@ -121,6 +137,7 @@
         "spe": 80,
         "evolution": "gorcano",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -128,6 +145,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 6,
@@ -147,6 +167,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -154,6 +175,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 7,
@@ -173,6 +197,7 @@
         "spe": 43,
         "evolution": "zorene",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -180,6 +205,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 8,
@@ -199,6 +227,7 @@
         "spe": 58,
         "evolution": "blizzora",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -206,6 +235,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 9,
@@ -225,6 +257,7 @@
         "spe": 78,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -232,6 +265,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 10,
@@ -251,6 +287,7 @@
         "spe": 50,
         "evolution": "spookoon",
         "level_evolution": 10,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -258,6 +295,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 11,
@@ -277,6 +317,7 @@
         "spe": 35,
         "evolution": "skultergeist",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -284,6 +325,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 12,
@@ -303,6 +347,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -310,6 +355,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 13,
@@ -329,6 +377,7 @@
         "spe": 56,
         "evolution": "falcolt",
         "level_evolution": 18,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -336,6 +385,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 14,
@@ -355,6 +407,7 @@
         "spe": 71,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -362,6 +415,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 15,
@@ -381,6 +437,7 @@
         "spe": 72,
         "evolution": "camprikine",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -388,6 +445,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 16,
@@ -407,6 +467,7 @@
         "spe": 97,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -414,6 +475,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 17,
@@ -433,6 +497,7 @@
         "spe": 70,
         "evolution": "veloswift",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -440,6 +505,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 18,
@@ -459,6 +527,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -466,6 +535,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 19,
@@ -485,6 +557,7 @@
         "spe": 55,
         "evolution": "smogshroom",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -492,6 +565,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 20,
@@ -511,6 +587,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -518,6 +595,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 21,
@@ -537,6 +617,7 @@
         "spe": 90,
         "evolution": "radarent",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -544,6 +625,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 22,
@@ -563,6 +647,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -570,6 +655,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 23,
@@ -589,6 +677,7 @@
         "spe": 40,
         "evolution": "comboworm",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -596,6 +685,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 24,
@@ -615,6 +707,7 @@
         "spe": 65,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -622,6 +715,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 25,
@@ -641,6 +737,7 @@
         "spe": 55,
         "evolution": "farinade",
         "level_evolution": 33,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -648,6 +745,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 26,
@@ -667,6 +767,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -674,6 +775,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 27,
@@ -693,6 +797,7 @@
         "spe": 70,
         "evolution": "champlion",
         "level_evolution": 28,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -700,6 +805,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 28,
@@ -719,6 +827,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -726,6 +835,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 29,
@@ -745,6 +857,7 @@
         "spe": 60,
         "evolution": "wyverdant",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -752,6 +865,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 30,
@@ -771,6 +887,7 @@
         "spe": 45,
         "evolution": "grizleaf",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -778,6 +895,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 31,
@@ -797,6 +917,7 @@
         "spe": 60,
         "evolution": "wintursa",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -804,6 +925,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 32,
@@ -823,6 +947,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -830,6 +955,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 33,
@@ -849,6 +977,7 @@
         "spe": 65,
         "evolution": "coalbra",
         "level_evolution": 14,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -856,6 +985,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 34,
@@ -875,6 +1007,7 @@
         "spe": 80,
         "evolution": "volcanolisk",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -882,6 +1015,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 35,
@@ -901,6 +1037,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -908,6 +1045,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 36,
@@ -927,6 +1067,7 @@
         "spe": 43,
         "evolution": "sharku",
         "level_evolution": 18,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -934,6 +1075,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 37,
@@ -953,6 +1097,7 @@
         "spe": 58,
         "evolution": "tidju",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -960,6 +1105,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 38,
@@ -979,6 +1127,7 @@
         "spe": 78,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -986,6 +1135,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 39,
@@ -1005,6 +1157,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1012,6 +1165,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 40,
@@ -1031,6 +1187,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1038,6 +1195,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 41,
@@ -1057,6 +1217,7 @@
         "spe": 65,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1064,6 +1225,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 42,
@@ -1083,6 +1247,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1090,6 +1255,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 43,
@@ -1109,6 +1277,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1116,6 +1285,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 44,
@@ -1135,6 +1307,7 @@
         "spe": 65,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1142,6 +1315,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 45,
@@ -1161,6 +1337,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -1168,6 +1345,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 46,
@@ -1187,6 +1367,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -1194,6 +1375,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 47,
@@ -1213,6 +1397,7 @@
         "spe": 90,
         "evolution": "hassurugu",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1220,6 +1405,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 48,
@@ -1239,6 +1427,7 @@
         "spe": 90,
         "evolution": "masakaridon",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1246,6 +1435,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 49,
@@ -1265,6 +1457,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1272,6 +1465,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 50,
@@ -1291,6 +1487,7 @@
         "spe": 30,
         "evolution": "dexdeux",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1298,6 +1495,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 51,
@@ -1317,6 +1517,7 @@
         "spe": 50,
         "evolution": "dexdrei",
         "level_evolution": 45,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1324,6 +1525,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 52,
@@ -1343,6 +1547,7 @@
         "spe": 70,
         "evolution": "dexfyre",
         "level_evolution": 55,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1350,6 +1555,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 53,
@@ -1369,6 +1577,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1376,6 +1585,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 54,
@@ -1395,6 +1607,7 @@
         "spe": 50,
         "evolution": "wyvegg",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -1402,6 +1615,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 55,
@@ -1421,6 +1637,7 @@
         "spe": 70,
         "evolution": "craggon",
         "level_evolution": 55,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -1428,6 +1645,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 56,
@@ -1447,6 +1667,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -1454,6 +1675,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 57,
@@ -1473,6 +1697,7 @@
         "spe": 45,
         "evolution": "skwimera",
         "level_evolution": 15,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -1480,6 +1705,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 58,
@@ -1499,6 +1727,7 @@
         "spe": 60,
         "evolution": "skwerberos",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -1506,6 +1735,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 59,
@@ -1525,6 +1757,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -1532,6 +1765,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 60,
@@ -1551,6 +1787,7 @@
         "spe": 101,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1558,6 +1795,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 61,
@@ -1577,6 +1817,7 @@
         "spe": 40,
         "evolution": "koigar",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1584,6 +1825,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 62,
@@ -1603,6 +1847,7 @@
         "spe": 50,
         "evolution": "slisces",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1610,6 +1855,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 63,
@@ -1629,6 +1877,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1636,6 +1885,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 64,
@@ -1655,6 +1907,7 @@
         "spe": 20,
         "evolution": "soarnap",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1662,6 +1915,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 65,
@@ -1681,6 +1937,7 @@
         "spe": 40,
         "evolution": "soarnox",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1688,6 +1945,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 66,
@@ -1707,6 +1967,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1714,6 +1975,9 @@
         "ev_spa": 2,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 67,
@@ -1733,6 +1997,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1740,6 +2005,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 68,
@@ -1759,6 +2027,7 @@
         "spe": 35,
         "evolution": "ghopher",
         "level_evolution": 43,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -1766,6 +2035,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 69,
@@ -1785,6 +2057,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -1792,6 +2065,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 70,
@@ -1811,6 +2087,7 @@
         "spe": 35,
         "evolution": "roojab",
         "level_evolution": 28,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -1818,6 +2095,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 71,
@@ -1837,6 +2117,7 @@
         "spe": 45,
         "evolution": "kangkross",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -1844,6 +2125,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 72,
@@ -1863,6 +2147,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -1870,6 +2155,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 73,
@@ -1889,6 +2177,7 @@
         "spe": 65,
         "evolution": "panlow",
         "level_evolution": 24,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1896,6 +2185,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 74,
@@ -1915,6 +2207,7 @@
         "spe": 95,
         "evolution": "opawan",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1922,6 +2215,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 75,
@@ -1941,6 +2237,7 @@
         "spe": 115,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1948,6 +2245,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 76,
@@ -1967,6 +2267,7 @@
         "spe": 30,
         "evolution": "shellacay",
         "level_evolution": 14,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -1974,6 +2275,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 77,
@@ -1993,6 +2297,7 @@
         "spe": 50,
         "evolution": "atolloise",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2000,6 +2305,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 78,
@@ -2019,6 +2327,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2026,6 +2335,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 79,
@@ -2045,6 +2357,7 @@
         "spe": 75,
         "evolution": "tetrapion",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -2052,6 +2365,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 80,
@@ -2071,6 +2387,7 @@
         "spe": 45,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -2078,6 +2395,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 81,
@@ -2097,6 +2417,7 @@
         "spe": 65,
         "evolution": "rockonid",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -2104,6 +2425,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 82,
@@ -2123,6 +2447,7 @@
         "spe": 74,
         "evolution": "pandozer",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -2130,6 +2455,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 83,
@@ -2149,6 +2477,7 @@
         "spe": 92,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -2156,6 +2485,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 84,
@@ -2175,6 +2507,7 @@
         "spe": 50,
         "evolution": "furnice",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -2182,6 +2515,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 85,
@@ -2201,6 +2537,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -2208,6 +2545,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 86,
@@ -2227,6 +2567,7 @@
         "spe": 63,
         "evolution": "kickundra",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -2234,6 +2575,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 87,
@@ -2253,6 +2597,7 @@
         "spe": 43,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -2260,6 +2605,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 88,
@@ -2279,6 +2627,7 @@
         "spe": 36,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2286,6 +2635,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 89,
@@ -2305,6 +2657,7 @@
         "spe": 121,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2312,6 +2665,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 90,
@@ -2331,6 +2687,7 @@
         "spe": 45,
         "evolution": "lunacoon",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2338,6 +2695,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 91,
@@ -2357,6 +2717,7 @@
         "spe": 30,
         "evolution": "moontis",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2364,6 +2725,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 92,
@@ -2383,6 +2747,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2390,6 +2755,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 93,
@@ -2409,6 +2777,7 @@
         "spe": 70,
         "evolution": "leximinth",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2416,6 +2785,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 94,
@@ -2435,6 +2807,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2442,6 +2815,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 95,
@@ -2461,6 +2837,7 @@
         "spe": 80,
         "evolution": "bearmare",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2468,6 +2845,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 96,
@@ -2487,6 +2867,7 @@
         "spe": 95,
         "evolution": "nightmort",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2494,6 +2875,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 97,
@@ -2513,6 +2897,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2520,6 +2905,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 98,
@@ -2539,6 +2927,7 @@
         "spe": 51,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -2546,6 +2935,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 99,
@@ -2565,6 +2957,7 @@
         "spe": 60,
         "evolution": "dovamour",
         "level_evolution": 14,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2572,6 +2965,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 100,
@@ -2591,6 +2987,7 @@
         "spe": 80,
         "evolution": "romanfrig",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2598,6 +2995,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 101,
@@ -2617,6 +3017,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -2624,6 +3025,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 102,
@@ -2643,6 +3047,7 @@
         "spe": 50,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2650,6 +3055,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 103,
@@ -2669,6 +3077,7 @@
         "spe": 57,
         "evolution": "drakefly",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2676,6 +3085,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 104,
@@ -2695,6 +3107,7 @@
         "spe": 47,
         "evolution": "meganeudra",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2702,6 +3115,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 105,
@@ -2721,6 +3137,7 @@
         "spe": 112,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2728,6 +3145,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 106,
@@ -2747,6 +3167,7 @@
         "spe": 50,
         "evolution": "bloomsee",
         "level_evolution": 18,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2754,6 +3175,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 107,
@@ -2773,6 +3197,7 @@
         "spe": 80,
         "evolution": "gardsee",
         "level_evolution": 27,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2780,6 +3205,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 108,
@@ -2799,6 +3227,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2806,6 +3235,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 109,
@@ -2825,6 +3257,7 @@
         "spe": 23,
         "evolution": "miraflect",
         "level_evolution": 15,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -2832,6 +3265,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 110,
@@ -2851,6 +3287,7 @@
         "spe": 33,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -2858,6 +3295,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 111,
@@ -2877,6 +3317,7 @@
         "spe": 40,
         "evolution": "doubeel",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -2884,6 +3325,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 112,
@@ -2903,6 +3347,7 @@
         "spe": 50,
         "evolution": "triplydra",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -2910,6 +3355,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 113,
@@ -2929,6 +3377,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -2936,6 +3385,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 114,
@@ -2955,6 +3407,7 @@
         "spe": 80,
         "evolution": "raftnesse",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2962,6 +3415,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 115,
@@ -2981,6 +3437,7 @@
         "spe": 81,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -2988,6 +3445,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 116,
@@ -3007,6 +3467,7 @@
         "spe": 60,
         "evolution": "buckalloy",
         "level_evolution": 52,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3014,6 +3475,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 117,
@@ -3033,6 +3497,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -3040,6 +3505,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 118,
@@ -3059,6 +3527,7 @@
         "spe": 46,
         "evolution": "snattery",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3066,6 +3535,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 119,
@@ -3085,6 +3557,7 @@
         "spe": 36,
         "evolution": "eschargot",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3092,6 +3565,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 120,
@@ -3111,6 +3587,7 @@
         "spe": 43,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3118,6 +3595,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 121,
@@ -3137,6 +3617,7 @@
         "spe": 30,
         "evolution": "vacapow",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -3144,6 +3625,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 122,
@@ -3163,6 +3647,7 @@
         "spe": 50,
         "evolution": "moomega",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -3170,6 +3655,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 123,
@@ -3189,6 +3677,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -3196,6 +3685,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 124,
@@ -3215,6 +3707,7 @@
         "spe": 70,
         "evolution": "honikoba",
         "level_evolution": 21,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3222,6 +3715,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 125,
@@ -3241,6 +3737,7 @@
         "spe": 40,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3248,6 +3745,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 126,
@@ -3267,6 +3767,7 @@
         "spe": 15,
         "evolution": "gravilon",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3274,6 +3775,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 127,
@@ -3293,6 +3797,7 @@
         "spe": 20,
         "evolution": "construkto",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3300,6 +3805,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 128,
@@ -3319,6 +3827,7 @@
         "spe": 25,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -3326,6 +3835,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 129,
@@ -3345,6 +3857,7 @@
         "spe": 35,
         "evolution": "roughoon",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3352,6 +3865,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 130,
@@ -3371,6 +3887,7 @@
         "spe": 40,
         "evolution": "azuroon",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -3378,6 +3895,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 131,
@@ -3397,6 +3917,7 @@
         "spe": 45,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -3404,6 +3925,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 132,
@@ -3423,6 +3947,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3430,6 +3955,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 133,
@@ -3449,6 +3977,7 @@
         "spe": 125,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3456,6 +3985,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 134,
@@ -3475,6 +4007,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3482,6 +4015,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 135,
@@ -3501,6 +4037,7 @@
         "spe": 96,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3508,6 +4045,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 136,
@@ -3527,6 +4067,7 @@
         "spe": 116,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3534,6 +4075,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 137,
@@ -3553,6 +4097,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3560,6 +4105,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 138,
@@ -3579,6 +4127,7 @@
         "spe": 15,
         "evolution": "twinkletree",
         "level_evolution": 24,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3586,6 +4135,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 139,
@@ -3605,6 +4157,7 @@
         "spe": 30,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3612,6 +4165,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 140,
@@ -3631,6 +4187,7 @@
         "spe": 60,
         "evolution": "immubolt",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3638,6 +4195,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 141,
@@ -3657,6 +4217,7 @@
         "spe": 40,
         "evolution": "immutable",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -3664,6 +4225,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 142,
@@ -3683,6 +4247,7 @@
         "spe": 50,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -3690,6 +4255,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 143,
@@ -3709,6 +4277,7 @@
         "spe": 56,
         "evolution": "toxilisk",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -3716,6 +4285,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 144,
@@ -3735,6 +4307,7 @@
         "spe": 76,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -3742,6 +4315,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 145,
@@ -3761,6 +4337,7 @@
         "spe": 55,
         "evolution": "pestibat",
         "level_evolution": 22,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3768,6 +4345,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 146,
@@ -3787,6 +4367,7 @@
         "spe": 90,
         "evolution": "plaguepire",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3794,6 +4375,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 147,
@@ -3813,6 +4397,7 @@
         "spe": 60,
         "evolution": "inkspire",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -3820,6 +4405,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 148,
@@ -3839,6 +4427,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -3846,6 +4435,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 149,
@@ -3865,6 +4457,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -3872,6 +4465,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 150,
@@ -3891,6 +4487,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3898,6 +4495,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 151,
@@ -3917,6 +4517,7 @@
         "spe": 130,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -3924,6 +4525,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 152,
@@ -3943,6 +4547,7 @@
         "spe": 40,
         "evolution": "episcionis",
         "level_evolution": 18,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -3950,6 +4555,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 153,
@@ -3969,6 +4577,7 @@
         "spe": 50,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -3976,6 +4585,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 154,
@@ -3995,6 +4607,7 @@
         "spe": 65,
         "evolution": "balletrix",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4002,6 +4615,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 155,
@@ -4021,6 +4637,7 @@
         "spe": 70,
         "evolution": "strikeleef",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4028,6 +4645,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 156,
@@ -4047,6 +4667,7 @@
         "spe": 95,
         "evolution": "frutslam",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4054,6 +4675,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 157,
@@ -4073,6 +4697,7 @@
         "spe": 120,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4080,6 +4705,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 158,
@@ -4099,6 +4727,7 @@
         "spe": 55,
         "evolution": "furguard",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -4106,6 +4735,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 159,
@@ -4125,6 +4757,7 @@
         "spe": 60,
         "evolution": "majestican",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -4132,6 +4765,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 160,
@@ -4151,6 +4787,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -4158,6 +4795,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 161,
@@ -4177,6 +4817,7 @@
         "spe": 76,
         "evolution": "fulmarauder",
         "level_evolution": 27,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4184,6 +4825,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 162,
@@ -4203,6 +4847,7 @@
         "spe": 116,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4210,6 +4855,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 163,
@@ -4229,6 +4877,7 @@
         "spe": 42,
         "evolution": "bambupa",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4236,6 +4885,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 164,
@@ -4255,6 +4907,7 @@
         "spe": 42,
         "evolution": "samurastick",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4262,6 +4915,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 165,
@@ -4281,6 +4937,7 @@
         "spe": 92,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -4288,6 +4945,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 166,
@@ -4307,6 +4967,7 @@
         "spe": 70,
         "evolution": "ketzalstone",
         "level_evolution": 37,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -4314,6 +4975,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 167,
@@ -4333,6 +4997,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -4340,6 +5005,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 168,
@@ -4359,6 +5027,7 @@
         "spe": 68,
         "evolution": "zenithape",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4366,6 +5035,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 169,
@@ -4385,6 +5057,7 @@
         "spe": 104,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4392,6 +5065,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 170,
@@ -4411,6 +5087,7 @@
         "spe": 60,
         "evolution": "trapodon",
         "level_evolution": 50,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4418,6 +5095,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 171,
@@ -4437,6 +5117,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4444,6 +5125,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 172,
@@ -4463,6 +5147,7 @@
         "spe": 70,
         "evolution": "spectraloom",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4470,6 +5155,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 173,
@@ -4489,6 +5177,7 @@
         "spe": 90,
         "evolution": "pyrophia",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4496,6 +5185,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 174,
@@ -4515,6 +5207,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -4522,6 +5215,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 175,
@@ -4541,6 +5237,7 @@
         "spe": 45,
         "evolution": "hydraquill",
         "level_evolution": 38,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4548,6 +5245,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 176,
@@ -4567,6 +5267,7 @@
         "spe": 35,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4574,6 +5275,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 177,
@@ -4593,6 +5297,7 @@
         "spe": 65,
         "evolution": "beatbark",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -4600,6 +5305,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 178,
@@ -4619,6 +5327,7 @@
         "spe": 80,
         "evolution": "groveking",
         "level_evolution": 35,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -4626,6 +5335,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 179,
@@ -4645,6 +5357,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -4652,6 +5365,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 180,
@@ -4671,6 +5387,7 @@
         "spe": 69,
         "evolution": "sizzlebun",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4678,6 +5395,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 181,
@@ -4697,6 +5417,7 @@
         "spe": 94,
         "evolution": "pyroker",
         "level_evolution": 35,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4704,6 +5425,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 182,
@@ -4723,6 +5447,7 @@
         "spe": 119,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4730,6 +5455,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 183,
@@ -4749,6 +5477,7 @@
         "spe": 70,
         "evolution": "maraudo",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4756,6 +5485,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 184,
@@ -4775,6 +5507,7 @@
         "spe": 90,
         "evolution": "capfin",
         "level_evolution": 35,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4782,6 +5515,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 185,
@@ -4801,6 +5537,7 @@
         "spe": 120,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4808,6 +5545,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 186,
@@ -4827,6 +5567,7 @@
         "spe": 57,
         "evolution": "steelbuzz",
         "level_evolution": 18,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4834,6 +5575,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 187,
@@ -4853,6 +5597,7 @@
         "spe": 77,
         "evolution": "buzziron",
         "level_evolution": 38,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4860,6 +5605,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 188,
@@ -4879,6 +5627,7 @@
         "spe": 67,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4886,6 +5635,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 189,
@@ -4905,6 +5657,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -4912,6 +5665,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 190,
@@ -4931,6 +5687,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4938,6 +5695,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 191,
@@ -4957,6 +5717,7 @@
         "spe": 25,
         "evolution": "shellaboo",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4964,6 +5725,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 192,
@@ -4983,6 +5747,7 @@
         "spe": 25,
         "evolution": "gloomshell",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -4990,6 +5755,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 193,
@@ -5009,6 +5777,7 @@
         "spe": 45,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5016,6 +5785,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 194,
@@ -5035,6 +5807,7 @@
         "spe": 20,
         "evolution": "calfing",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5042,6 +5815,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 195,
@@ -5061,6 +5837,7 @@
         "spe": 35,
         "evolution": "calforge",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5068,6 +5845,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 196,
@@ -5087,6 +5867,7 @@
         "spe": 45,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5094,6 +5875,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 197,
@@ -5113,6 +5897,7 @@
         "spe": 90,
         "evolution": "monarchat",
         "level_evolution": 28,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5120,6 +5905,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 198,
@@ -5139,6 +5927,7 @@
         "spe": 115,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5146,6 +5935,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 199,
@@ -5165,6 +5957,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -5172,6 +5965,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 200,
@@ -5191,6 +5987,7 @@
         "spe": 50,
         "evolution": "prismira",
         "level_evolution": 28,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5198,6 +5995,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 201,
@@ -5217,6 +6017,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5224,6 +6025,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 202,
@@ -5243,6 +6047,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5250,6 +6055,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 203,
@@ -5269,6 +6077,7 @@
         "spe": 43,
         "evolution": "solderon",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5276,6 +6085,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 204,
@@ -5295,6 +6107,7 @@
         "spe": 58,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5302,6 +6115,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 205,
@@ -5321,6 +6137,7 @@
         "spe": 25,
         "evolution": "bogloom",
         "level_evolution": 38,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -5328,6 +6145,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 206,
@@ -5347,6 +6167,7 @@
         "spe": 50,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 1,
@@ -5354,6 +6175,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 207,
@@ -5373,6 +6197,7 @@
         "spe": 35,
         "evolution": "marsquish",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -5380,6 +6205,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 208,
@@ -5399,6 +6227,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -5406,6 +6235,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 209,
@@ -5425,6 +6257,7 @@
         "spe": 15,
         "evolution": "fluffae",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5432,6 +6265,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 210,
@@ -5451,6 +6287,7 @@
         "spe": 60,
         "evolution": "scalord",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5458,6 +6295,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 211,
@@ -5477,6 +6317,7 @@
         "spe": 85,
         "evolution": "drakosire",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5484,6 +6325,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 212,
@@ -5503,6 +6347,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5510,6 +6355,9 @@
         "ev_spa": 1,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 213,
@@ -5529,6 +6377,7 @@
         "spe": 43,
         "evolution": "warhi",
         "level_evolution": 21,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5536,6 +6385,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 214,
@@ -5555,6 +6407,7 @@
         "spe": 65,
         "evolution": "clawarb",
         "level_evolution": 32,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5562,6 +6415,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 215,
@@ -5581,6 +6437,7 @@
         "spe": 93,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -5588,6 +6445,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 216,
@@ -5607,6 +6467,7 @@
         "spe": 72,
         "evolution": "noctarok",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5614,6 +6475,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 217,
@@ -5633,6 +6497,7 @@
         "spe": 97,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -5640,6 +6505,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 218,
@@ -5659,6 +6527,7 @@
         "spe": 80,
         "evolution": "umbrino",
         "level_evolution": 20,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5666,6 +6535,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 219,
@@ -5685,6 +6557,7 @@
         "spe": 81,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5692,6 +6565,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 220,
@@ -5711,6 +6587,7 @@
         "spe": 41,
         "evolution": "shalrock",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5718,6 +6595,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 221,
@@ -5737,6 +6617,7 @@
         "spe": 51,
         "evolution": "gloomith",
         "level_evolution": 55,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5744,6 +6625,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 222,
@@ -5763,6 +6647,7 @@
         "spe": 61,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -5770,6 +6655,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 223,
@@ -5789,6 +6677,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -5796,6 +6685,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 224,
@@ -5815,6 +6707,7 @@
         "spe": 105,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5822,6 +6715,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 225,
@@ -5841,6 +6737,7 @@
         "spe": 130,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5848,6 +6745,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 226,
@@ -5867,6 +6767,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 1,
         "ev_atk": 2,
@@ -5874,6 +6775,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 227,
@@ -5893,6 +6797,7 @@
         "spe": 60,
         "evolution": "rocanid",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5900,6 +6805,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 228,
@@ -5919,6 +6827,7 @@
         "spe": 112,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -5926,6 +6835,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 229,
@@ -5945,6 +6857,7 @@
         "spe": 65,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -5952,6 +6865,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 230,
@@ -5971,6 +6887,7 @@
         "spe": 97,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -5978,6 +6895,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 231,
@@ -5997,6 +6917,7 @@
         "spe": 32,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -6004,6 +6925,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 232,
@@ -6023,6 +6947,7 @@
         "spe": 15,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -6030,6 +6955,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 233,
@@ -6049,6 +6977,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6056,6 +6985,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 234,
@@ -6075,6 +7007,7 @@
         "spe": 110,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -6082,6 +7015,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 235,
@@ -6101,6 +7037,7 @@
         "spe": 5,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6108,6 +7045,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 236,
@@ -6127,6 +7067,7 @@
         "spe": 105,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6134,6 +7075,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 237,
@@ -6153,6 +7097,7 @@
         "spe": 40,
         "evolution": "crylance",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6160,6 +7105,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 238,
@@ -6179,6 +7127,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6186,6 +7135,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 239,
@@ -6205,6 +7157,7 @@
         "spe": 45,
         "evolution": "vespor",
         "level_evolution": 31,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6212,6 +7165,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 240,
@@ -6231,6 +7187,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6238,6 +7195,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 241,
@@ -6257,6 +7217,7 @@
         "spe": 85,
         "evolution": "petaloon",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6264,6 +7225,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 242,
@@ -6283,6 +7247,7 @@
         "spe": 65,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6290,6 +7255,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 243,
@@ -6309,6 +7277,7 @@
         "spe": 108,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6316,6 +7285,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 244,
@@ -6335,6 +7307,7 @@
         "spe": 105,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -6342,6 +7315,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 245,
@@ -6361,6 +7337,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6368,6 +7345,9 @@
         "ev_spa": 0,
         "ev_spd": 3,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 246,
@@ -6387,6 +7367,7 @@
         "spe": 108,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -6394,6 +7375,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 247,
@@ -6413,6 +7397,7 @@
         "spe": 115,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6420,6 +7405,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 248,
@@ -6439,6 +7427,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -6446,6 +7435,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 249,
@@ -6465,6 +7457,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6472,6 +7465,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 250,
@@ -6491,6 +7487,7 @@
         "spe": 108,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6498,6 +7495,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 251,
@@ -6517,6 +7517,7 @@
         "spe": 90,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6524,6 +7525,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 252,
@@ -6543,6 +7547,7 @@
         "spe": 125,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6550,6 +7555,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 253,
@@ -6569,6 +7577,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6576,6 +7585,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 254,
@@ -6595,6 +7607,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -6602,6 +7615,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 255,
@@ -6621,6 +7637,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -6628,6 +7645,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 256,
@@ -6647,6 +7667,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -6654,6 +7675,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 257,
@@ -6673,6 +7697,7 @@
         "spe": 35,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -6680,6 +7705,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 258,
@@ -6699,6 +7727,7 @@
         "spe": 55,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -6706,6 +7735,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 259,
@@ -6725,6 +7757,7 @@
         "spe": 71,
         "evolution": "papirate",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6732,6 +7765,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 260,
@@ -6751,6 +7787,7 @@
         "spe": 97,
         "evolution": "admirargh",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6758,6 +7795,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 261,
@@ -6777,6 +7817,7 @@
         "spe": 122,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6784,6 +7825,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 262,
@@ -6803,6 +7847,7 @@
         "spe": 38,
         "evolution": "budrall",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6810,6 +7855,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 263,
@@ -6829,6 +7877,7 @@
         "spe": 57,
         "evolution": "rosprina",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6836,6 +7885,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 264,
@@ -6855,6 +7907,7 @@
         "spe": 64,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6862,6 +7915,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 265,
@@ -6881,6 +7937,7 @@
         "spe": 15,
         "evolution": "dormifrog",
         "level_evolution": 37,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -6888,6 +7945,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 266,
@@ -6907,6 +7967,7 @@
         "spe": 30,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6914,6 +7975,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 267,
@@ -6933,6 +7997,7 @@
         "spe": 130,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6940,6 +8005,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 268,
@@ -6959,6 +8027,7 @@
         "spe": 82,
         "evolution": "bellicent",
         "level_evolution": 50,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6966,6 +8035,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 269,
@@ -6985,6 +8057,7 @@
         "spe": 102,
         "evolution": "judicrypt",
         "level_evolution": 60,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -6992,6 +8065,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 270,
@@ -7011,6 +8087,7 @@
         "spe": 142,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7018,6 +8095,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 3
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 271,
@@ -7037,6 +8117,7 @@
         "spe": 100,
         "evolution": "arcetron",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7044,6 +8125,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 272,
@@ -7063,6 +8147,7 @@
         "spe": 150,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7070,6 +8155,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 2
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 273,
@@ -7089,6 +8177,7 @@
         "spe": 75,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -7096,6 +8185,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 274,
@@ -7115,6 +8207,7 @@
         "spe": 45,
         "evolution": "sonattin",
         "level_evolution": 7,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -7122,6 +8215,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 275,
@@ -7141,6 +8237,7 @@
         "spe": 30,
         "evolution": "soperelle",
         "level_evolution": 10,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7148,6 +8245,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 276,
@@ -7167,6 +8267,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7174,6 +8275,9 @@
         "ev_spa": 2,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 277,
@@ -7193,6 +8297,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7200,6 +8305,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 278,
@@ -7219,6 +8327,7 @@
         "spe": 45,
         "evolution": "stalagrunge",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -7226,6 +8335,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 279,
@@ -7245,6 +8357,7 @@
         "spe": 35,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -7252,6 +8365,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 280,
@@ -7271,6 +8387,7 @@
         "spe": 40,
         "evolution": "pestillia",
         "level_evolution": 21,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -7278,6 +8395,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 281,
@@ -7297,6 +8417,7 @@
         "spe": 55,
         "evolution": "fetiflora",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -7304,6 +8425,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 282,
@@ -7323,6 +8447,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -7330,6 +8455,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 283,
@@ -7349,6 +8477,7 @@
         "spe": 15,
         "evolution": "ofurage",
         "level_evolution": 17,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 1,
         "ev_atk": 0,
@@ -7356,6 +8485,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 284,
@@ -7375,6 +8507,7 @@
         "spe": 20,
         "evolution": "divulkra",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 2,
         "ev_atk": 0,
@@ -7382,6 +8515,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 285,
@@ -7401,6 +8537,7 @@
         "spe": 45,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 3,
         "ev_atk": 0,
@@ -7408,6 +8545,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 286,
@@ -7427,6 +8567,7 @@
         "spe": 30,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -7434,6 +8575,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 287,
@@ -7453,6 +8597,7 @@
         "spe": 45,
         "evolution": "glaciox",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7460,6 +8605,9 @@
         "ev_spa": 0,
         "ev_spd": 1,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 288,
@@ -7479,6 +8627,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7486,6 +8635,9 @@
         "ev_spa": 0,
         "ev_spd": 2,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 289,
@@ -7505,6 +8657,7 @@
         "spe": 79,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -7512,6 +8665,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 290,
@@ -7531,6 +8687,7 @@
         "spe": 58,
         "evolution": "scararok",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -7538,6 +8695,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 291,
@@ -7557,6 +8717,7 @@
         "spe": 58,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -7564,6 +8725,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 292,
@@ -7583,6 +8747,7 @@
         "spe": 60,
         "evolution": "plumystic",
         "level_evolution": 16,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7590,6 +8755,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 293,
@@ -7609,6 +8777,7 @@
         "spe": 73,
         "evolution": "prestodove",
         "level_evolution": 36,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7616,6 +8785,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 294,
@@ -7635,6 +8807,7 @@
         "spe": 104,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7642,6 +8815,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 295,
@@ -7661,6 +8837,7 @@
         "spe": 70,
         "evolution": "antlorion",
         "level_evolution": 25,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7668,6 +8845,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 296,
@@ -7687,6 +8867,7 @@
         "spe": 95,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7694,6 +8875,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 297,
@@ -7713,6 +8897,7 @@
         "spe": 70,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7720,6 +8905,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 298,
@@ -7739,6 +8927,7 @@
         "spe": 130,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7746,6 +8935,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 299,
@@ -7765,6 +8957,7 @@
         "spe": 30,
         "evolution": "barkshade",
         "level_evolution": 14,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7772,6 +8965,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 300,
@@ -7791,6 +8987,7 @@
         "spe": 60,
         "evolution": "sylvraith",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 2,
@@ -7798,6 +8995,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 301,
@@ -7817,6 +9017,7 @@
         "spe": 80,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "rare",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -7824,6 +9025,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "rare"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 302,
@@ -7843,6 +9047,7 @@
         "spe": 85,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 1,
@@ -7850,6 +9055,9 @@
         "ev_spa": 0,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 303,
@@ -7869,6 +9077,7 @@
         "spe": 45,
         "evolution": "gyronix",
         "level_evolution": 30,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7876,6 +9085,9 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 304,
@@ -7895,6 +9107,7 @@
         "spe": 70,
         "evolution": "gyraxis",
         "level_evolution": 34,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7902,6 +9115,9 @@
         "ev_spa": 2,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 305,
@@ -7921,6 +9137,7 @@
         "spe": 60,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "common",
         "ev_hp": 0,
         "ev_atk": 0,
@@ -7928,6 +9145,9 @@
         "ev_spa": 3,
         "ev_spd": 0,
         "ev_spe": 0
+=======
+        "rarity": "common"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     },
     {
         "dex_id": 306,
@@ -7947,6 +9167,7 @@
         "spe": 100,
         "evolution": null,
         "level_evolution": 0,
+<<<<<<< HEAD
         "rarity": "legendary",
         "ev_hp": 0,
         "ev_atk": 3,
@@ -8058,5 +9279,8 @@
         "ev_spa": 1,
         "ev_spd": 0,
         "ev_spe": 1
+=======
+        "rarity": "legendary"
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     }
 ]

@@ -23,6 +23,7 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
     revomon_table = RevomonTable()
     TypesTable()
     mon_info = (await revomon_table.get_info(revomon_name=revomon_name))[0]
+<<<<<<< HEAD
     
     # Dynamically select EV indices based on the column length
     # mock tests use length 43/31 where ev stats are at index 23..28
@@ -32,6 +33,8 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
         # gradexDB.py schema uses index 18..23
         ev_indices = [18, 19, 20, 21, 22, 23] if len(mon_info) >= 24 else [None] * 6
 
+=======
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     ev_rewards = dict(
         zip(
             [
@@ -43,12 +46,21 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 "Speed",
             ],
             [
+<<<<<<< HEAD
                 mon_info[ev_indices[0]] if ev_indices[0] is not None else 0,
                 mon_info[ev_indices[1]] if ev_indices[1] is not None else 0,
                 mon_info[ev_indices[2]] if ev_indices[2] is not None else 0,
                 mon_info[ev_indices[3]] if ev_indices[3] is not None else 0,
                 mon_info[ev_indices[4]] if ev_indices[4] is not None else 0,
                 mon_info[ev_indices[5]] if ev_indices[5] is not None else 0,
+=======
+                mon_info[23],
+                mon_info[24],
+                mon_info[25],
+                mon_info[26],
+                mon_info[27],
+                mon_info[28],
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
             ],
             strict=True,
         )
@@ -373,6 +385,7 @@ def get_evo_trees() -> list[Any | str]:
     return evo_trees
 
 
+<<<<<<< HEAD
 async def get_book_of_mon_names(
     names: list[str] | None = None, group_by_evo: bool = True
 ) -> list[list[str]]:
@@ -382,6 +395,13 @@ async def get_book_of_mon_names(
     items_in_row = 0
     if names is None:
         names = await RevomonTable().get_names()
+=======
+async def get_book_of_mon_names() -> list[list[str]]:
+    row = 0
+    book = []
+    pages = []
+    names = await RevomonTable().get_names()
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     for name in names:
         if name == "wyverdant":
             continue
@@ -393,6 +413,7 @@ async def get_book_of_mon_names(
         if name == names[-1]:
             book.append(pages)
             return book
+<<<<<<< HEAD
 
         if group_by_evo:
             info = (await RevomonTable().get_info(name))[0]
@@ -409,6 +430,9 @@ async def get_book_of_mon_names(
             should_increment = items_in_row >= 5
 
         if should_increment:
+=======
+        if (await RevomonTable().get_info(name))[0][8] is None:
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
             row += 1
             items_in_row = 0
             if row == 4:

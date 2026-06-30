@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import asyncio
+=======
+from typing import Any
+
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 import aiohttp
 from typing import Any
 
@@ -193,6 +198,7 @@ async def get_land_data() -> list[dict[str, Any]]:
 
 async def get_lands_for_sale() -> list[dict[str, Any]]:
     async with aiohttp.ClientSession() as session:
+<<<<<<< HEAD
         url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
         for_sale_land_objs = await fetch_json_with_retry(session, url)
         if for_sale_land_objs and "result" in for_sale_land_objs:
@@ -209,6 +215,28 @@ async def get_zkevm_token_data(
             return await fetch_json_with_retry(new_session, url)
     else:
         return await fetch_json_with_retry(session, url)
+=======
+        async with session.get(
+            "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
+        ) as response:
+            for_sale_land_objs = await response.json()
+            return for_sale_land_objs["result"]  # type: ignore[no-any-return]
+
+
+async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
+    async with aiohttp.ClientSession() as session:
+        url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"
+        async with session.get(url) as response:
+            if response.status == 200:
+                token_obj = await response.json()
+                return token_obj  # type: ignore[no-any-return]
+            else:
+                # Log the error and return None or a default dict
+                print(
+                    f"Error fetching token data for {token_address}: {response.status} {await response.text()}"
+                )
+                return None
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
 
 async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:

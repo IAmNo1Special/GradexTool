@@ -435,7 +435,26 @@ async def test_on_button_click_land_pagination(
         )
 
 
+<<<<<<< HEAD
 
+=======
+@pytest.mark.asyncio
+@patch("utils.button_utils.RevomonTable")
+async def test_on_button_click_search_settings_land(
+    mock_revo_table: Any, buttons_cog: Any
+) -> None:
+    mock_revo_table.return_value.get_names = AsyncMock(return_value=[])
+    interaction = MagicMock()
+    interaction.user.bot = False
+    interaction.data = {"custom_id": "search_settings_land"}
+    interaction.response.defer = AsyncMock()
+    interaction.followup.send = AsyncMock()
+
+    await buttons_cog.on_button_click(interaction)
+
+    interaction.response.defer.assert_called_once()
+    interaction.followup.send.assert_called_once()
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
 
 @pytest.mark.asyncio

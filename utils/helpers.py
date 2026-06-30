@@ -60,6 +60,11 @@ async def user_check(gradex_tool: commands.Bot, user: discord.Member) -> None:
         await users_data.add_user(
             user_id=user.id,
             username=user.name,
+<<<<<<< HEAD
+=======
+            wallet_connected=0,
+            wallet_address="",
+>>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
             is_pro=is_pro_status,
             is_certified=0,
             experience_points=0,
