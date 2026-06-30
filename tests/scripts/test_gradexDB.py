@@ -515,5 +515,5 @@ async def test_update_gradex_db(
         m_land.return_value = []
         m_emojis.return_value = []
 
-        # Avoid running OwnedLandsTable in the test because it is commented out in gradexDB.py
+        OwnedLandsTable.rebuild() # uses mocked empty land data
         await update_gradex_db()

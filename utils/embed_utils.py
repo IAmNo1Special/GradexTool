@@ -80,7 +80,10 @@ def land_intro(attributes: dict[str, Any]) -> Embed:
     embed.add_field(name="__For Sale__", value=attributes["for_sale"], inline=False)
     embed.add_field(
         name="__Price__",
-        value=f"{round(attributes['for_sale_token'], 4)} {attributes['token_symbol']} · (${attributes['for_sale_usd']})",
+        value=(
+            f"{round(attributes['for_sale_token'], 4)} {attributes['token_symbol']} · (${attributes['for_sale_usd']})\n"
+            f"*Note: Direct on-chain price. TokenTrove web may add a 1% taker fee.*"
+        ),
         inline=False,
     ) if attributes["for_sale"] else None
     embed.add_field(name="__Token ID__", value=attributes["token_id"], inline=False)

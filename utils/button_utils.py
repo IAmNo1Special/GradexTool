@@ -1,8 +1,8 @@
 from typing import Any
 
-from discord import ButtonStyle, Interaction
+from discord import ButtonStyle, Interaction, SelectOption
 from discord.ext import commands
-from discord.ui import Button, View
+from discord.ui import Button, Select, View
 
 from data import OwnedLandsTable, RevomonTable
 from utils.embed_utils import (
@@ -363,15 +363,107 @@ class Buttons(commands.Cog):
             if row == 4 or token_id == self.book_of_land_ids[-1][-1]:  # type: ignore[index]
                 first_page_button = self.first_page_button_land(row=row)
                 prev_button = self.previous_button_land(row=row)
+                search_button = Button(
+                    label="",
+                    emoji="🔍",
+                    style=ButtonStyle.secondary,
+                    custom_id="search_sort_land",
+                    row=row,
+                )
+
+                # Attach sort callback directly so the View handles it
+                buttons_self = self
+
+                async def search_callback(search_interaction: Interaction) -> None:
+                    sort_by_menu = Select(
+                        placeholder="Sort by...",
+                        custom_id="land_sort_by_select",
+                        row=0,
+                        options=[
+                            SelectOption(label="Biome", value="biome", description="Sort by biome"),
+                            SelectOption(label="Land Type", value="land_type", description="Sort by land type"),
+                            SelectOption(label="Rarity", value="rarity", description="Sort by rarity"),
+                            SelectOption(label="Price", value="for_sale_usd", description="Sort by price"),
+                            SelectOption(label="Size", value="size", description="Sort by size"),
+                            SelectOption(label="Owner's Address", value="owners_address", description="Sort by owner"),
+                        ],
+                    )
+
+                    sort_order_menu = Select(
+                        placeholder="Sort order...",
+                        custom_id="land_sort_order_select",
+                        row=1,
+                        options=[
+                            SelectOption(label="Ascending", value="asc", emoji="⬆️", description="A → Z, lowest → highest"),
+                            SelectOption(label="Descending", value="desc", emoji="⬇️", description="Z → A, highest → lowest"),
+                        ],
+                    )
+
+                    apply_button = Button(
+                        label="Apply Sort",
+                        emoji="✅",
+                        style=ButtonStyle.success,
+                        custom_id="apply_land_sort",
+                        row=2,
+                    )
+
+                    cancel_button = Button(
+                        label="Cancel",
+                        style=ButtonStyle.secondary,
+                        custom_id="cancel_land_sort",
+                        row=2,
+                    )
+
+                    sort_view = View(timeout=None)
+                    sort_view.add_item(sort_by_menu)
+                    sort_view.add_item(sort_order_menu)
+                    sort_view.add_item(apply_button)
+                    sort_view.add_item(cancel_button)
+
+                    async def sort_by_callback(select_interaction: Interaction) -> None:
+                        await select_interaction.response.defer()
+
+                    async def sort_order_callback(select_interaction: Interaction) -> None:
+                        await select_interaction.response.defer()
+
+                    async def apply_sort_callback(apply_interaction: Interaction) -> None:
+                        sort_by_value = sort_by_menu.values[0] if sort_by_menu.values else "token_id"
+                        asc = True
+                        if sort_order_menu.values:
+                            asc = sort_order_menu.values[0] == "asc"
+                        sorted_lands = await OwnedLandsTable().get_info(sort_by=sort_by_value, asc=asc)
+                        if sorted_lands:
+                            sorted_token_ids = [land[0] for land in sorted_lands]
+                            buttons_self.book_of_land_ids = await get_book_of_land_ids(token_ids=sorted_token_ids)
+                            buttons_self.book_of_land_current_page[apply_interaction.user.id] = 1
+                        new_view = await buttons_self.land_view(user_id=apply_interaction.user.id)
+                        await apply_interaction.response.edit_message(view=new_view)
+
+                    async def cancel_sort_callback(cancel_interaction: Interaction) -> None:
+                        # Restore the land view without changing sort
+                        restored_view = await buttons_self.land_view(user_id=cancel_interaction.user.id)
+                        await cancel_interaction.response.edit_message(view=restored_view)
+
+                    sort_by_menu.callback = sort_by_callback
+                    sort_order_menu.callback = sort_order_callback
+                    apply_button.callback = apply_sort_callback
+                    cancel_button.callback = cancel_sort_callback
+
+                    # Replace the land view with the sort options on the same message
+                    await search_interaction.response.edit_message(view=sort_view)
+
+                search_button.callback = search_callback
+
                 next_button = self.next_button_land(row=row)
                 last_page_button = self.last_page_button_land(row=row)
                 view.add_item(first_page_button)
                 view.add_item(prev_button)
+                view.add_item(search_button)
                 view.add_item(next_button)
                 view.add_item(last_page_button)
-                # view.add_item(await self.search_settings_button_land(row=row))
                 print("Land View has been created!")
                 return view
+
 
     async def intro_view(self, attributes: dict = None) -> Any:  # type: ignore[assignment, type-arg]
         print("Intro buttons are being created...")
@@ -549,13 +641,6 @@ class Buttons(commands.Cog):
                     view=view,
                 )
 
-            if custom_id == "search_settings_land":
-                await interaction.response.defer()
-                view = View(timeout=None)
-                view.add_item(await self.sort_by_button_land(row=1))
-                view.add_item(await self.search_button_land(row=1))
-                view.add_item(await self.filter_button_land(row=1))
-                await interaction.followup.send(view=view, ephemeral=True)
 
             try:
                 if custom_id == "stats":

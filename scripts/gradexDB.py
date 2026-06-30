@@ -3246,9 +3246,9 @@ async def update_gradex_db() -> None:
     await counterdex_table.build()
 
     # Initialize the owned Lands Table
-    # owned_lands_table = OwnedLandsTable()
+    owned_lands_table = OwnedLandsTable()
     # Build the owned lands table
-    # await owned_lands_table.build()
+    await owned_lands_table.build()
 
     # Initialize the users table
     users_table = UsersTable()

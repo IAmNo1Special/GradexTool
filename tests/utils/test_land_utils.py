@@ -68,20 +68,20 @@ async def test_get_land_info_for_ids(mock_session: Any) -> None:
                     "token_id": "1",
                     "image": "http://image1.png",
                     "attributes": [
-                        {"value": "Forest"},  # biome
-                        {"value": "ignore"},
-                        {"value": "Land"},  # entity_type
-                        {"value": "ID1"},  # id
-                        {"value": "Common"},  # rarity
-                        {"value": "Small"},  # size
+                        {"trait_type": "Biome", "value": "Forest"},
+                        {"trait_type": "DbId", "value": "1"},
+                        {"trait_type": "Entity", "value": "Land"},
+                        {"trait_type": "Id", "value": "ID1"},
+                        {"trait_type": "Scarcity", "value": "Common"},
+                        {"trait_type": "Size", "value": "Small"},
                     ],
                 },
                 {
                     "token_id": "2",
                     "image": "http://image2.png",
                     "attributes": [
-                        {"value": "Desert"}  # biome
-                    ],  # test len <= 2
+                        {"trait_type": "Biome", "value": "Desert"}
+                    ],  # test missing traits
                 },
             ]
         }
@@ -116,12 +116,12 @@ async def test_get_land_info_for_ids_short(mock_session: Any) -> None:
                     "token_id": "1",
                     "image": "http://image1.png",
                     "attributes": [
-                        {"value": "Forest"},
-                        {"value": "ignore"},
-                        {"value": "Land"},
-                        {"value": "ID1"},
-                        {"value": "Common"},
-                        {"value": "Small"},
+                        {"trait_type": "Biome", "value": "Forest"},
+                        {"trait_type": "DbId", "value": "1"},
+                        {"trait_type": "Entity", "value": "Land"},
+                        {"trait_type": "Id", "value": "ID1"},
+                        {"trait_type": "Scarcity", "value": "Common"},
+                        {"trait_type": "Size", "value": "Small"},
                     ],
                 }
             ]

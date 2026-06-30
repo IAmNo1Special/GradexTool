@@ -1,6 +1,51 @@
+import asyncio
+import aiohttp
 from typing import Any
 
-import aiohttp
+async def fetch_json_with_retry(
+    session: aiohttp.ClientSession,
+    url: str,
+    retries: int = 5,
+    backoff_factor: float = 1.0,
+) -> Any:
+    """Fetch JSON from a URL with retries, backoff, and 429 Retry-After handling."""
+    for attempt in range(1, retries + 1):
+        try:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    return await response.json()
+
+                if response.status == 429:
+                    retry_after = response.headers.get("Retry-After")
+                    wait_time = 5.0
+                    if retry_after:
+                        try:
+                            wait_time = max(1.0, float(retry_after))
+                        except ValueError:
+                            pass
+                    print(f"Rate limited (429) on {url}. Waiting for {wait_time} seconds (attempt {attempt}/{retries})...")
+                    await asyncio.sleep(wait_time)
+                    continue
+
+                if response.status == 404:
+                    return None
+
+                if 500 <= response.status < 600:
+                    wait_time = backoff_factor * (2 ** (attempt - 1))
+                    print(f"Server error {response.status} on {url}. Retrying in {wait_time}s (attempt {attempt}/{retries})...")
+                    await asyncio.sleep(wait_time)
+                    continue
+
+                body_text = await response.text()
+                print(f"HTTP error {response.status} on {url}: {body_text[:200]}")
+                return None
+
+        except Exception as e:
+            wait_time = backoff_factor * (2 ** (attempt - 1))
+            print(f"Request exception on {url}: {e}. Retrying in {wait_time}s (attempt {attempt}/{retries})...")
+            await asyncio.sleep(wait_time)
+
+    raise Exception(f"Failed to fetch {url} after {retries} attempts.")
 
 
 async def get_land_info_for_ids(token_ids: list[Any]) -> list[dict[str, Any]]:
@@ -10,55 +55,47 @@ async def get_land_info_for_ids(token_ids: list[Any]) -> list[dict[str, Any]]:
         token_ids_list = [token_ids]
 
     land_info = []
-    for token_ids in token_ids_list:
-        token_ids_str = ""
+    async with aiohttp.ClientSession() as session:
+        for token_ids in token_ids_list:
+            token_ids_str = ""
 
-        for token_id in token_ids:
-            if token_ids.index(token_id) == 0:
-                token_ids_str += f"?token_id={token_id}"
-            else:
-                token_ids_str += f"&token_id={token_id}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                f"https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/collections/0x5c40eb1eaad2a96e383e3b0a986a5377fc1ee239/nfts{token_ids_str}&page_size=200"
-            ) as response:
-                nft_objs = await response.json()
+            for token_id in token_ids:
+                if token_ids.index(token_id) == 0:
+                    token_ids_str += f"?token_id={token_id}"
+                else:
+                    token_ids_str += f"&token_id={token_id}"
+            
+            url = f"https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/collections/0x5c40eb1eaad2a96e383e3b0a986a5377fc1ee239/nfts{token_ids_str}&page_size=200"
+            nft_objs = await fetch_json_with_retry(session, url)
 
-        for nft_obj in nft_objs["result"]:
-            biome = nft_obj["attributes"][0]["value"].lower()
-            token_id = nft_obj["token_id"]
-            entity_type = (
-                nft_obj["attributes"][2]["value"].lower()
-                if len(nft_obj["attributes"]) > 2
-                else None
-            )
-            id = (
-                nft_obj["attributes"][3]["value"]
-                if len(nft_obj["attributes"]) > 2
-                else None
-            )
-            rarity = (
-                nft_obj["attributes"][4]["value"].lower()
-                if len(nft_obj["attributes"]) > 2
-                else None
-            )
-            size = (
-                nft_obj["attributes"][5]["value"]
-                if len(nft_obj["attributes"]) > 2
-                else None
-            )
-            img_url = nft_obj["image"]
-            land_info.append(
-                {
-                    "id": id,
-                    "token_id": token_id,
-                    "biome": biome,
-                    "land_type": entity_type,
-                    "rarity": rarity,
-                    "size": size,
-                    "img_url": img_url,
-                }
-            )
+            if nft_objs and "result" in nft_objs:
+                for nft_obj in nft_objs["result"]:
+                    # Build a dict keyed by trait_type for robust attribute lookup
+                    traits = {
+                        attr["trait_type"]: attr["value"]
+                        for attr in nft_obj.get("attributes", [])
+                        if "trait_type" in attr
+                    }
+                    biome = traits.get("Biome", "").lower() or None
+                    token_id = nft_obj["token_id"]
+                    entity_type = traits.get("Entity", "").lower() or None
+                    id = traits.get("Id")
+                    rarity = traits.get("Scarcity", "").lower() or None
+                    size = traits.get("Size")
+                    img_url = nft_obj["image"]
+                    land_info.append(
+                        {
+                            "id": id,
+                            "token_id": token_id,
+                            "biome": biome,
+                            "land_type": entity_type,
+                            "rarity": rarity,
+                            "size": size,
+                            "img_url": img_url,
+                        }
+                    )
+            # Add a small delay between requests to be nice to the API
+            await asyncio.sleep(0.2)
     return land_info
 
 
@@ -75,8 +112,9 @@ async def get_land_owners_and_ids() -> list[dict[str, Any]]:
                 if page_cursor
                 else f"{base_url}?page_size=200"
             )
-            async with session.get(url) as response:
-                results = await response.json()
+            results = await fetch_json_with_retry(session, url)
+            if not results or "result" not in results:
+                break
 
             for result in results["result"]:
                 if (
@@ -87,15 +125,18 @@ async def get_land_owners_and_ids() -> list[dict[str, Any]]:
                 ):
                     continue
                 else:
-                    raw_data.extend(results["result"])
+                    raw_data.append(result)
 
             page_cursor = (
                 results["page"]["next_cursor"]
-                if results["page"]["next_cursor"]
+                if results.get("page") and results["page"].get("next_cursor")
                 else None
             )
             if not page_cursor:
                 break
+            
+            # Pacing: wait 0.5s between pages to prevent rate limits
+            await asyncio.sleep(0.5)
         print("finished retrieving raw land owner with land ids data")
 
     print("Cleaning raw land owner with land ids data...")
@@ -152,70 +193,80 @@ async def get_land_data() -> list[dict[str, Any]]:
 
 async def get_lands_for_sale() -> list[dict[str, Any]]:
     async with aiohttp.ClientSession() as session:
-        async with session.get(
-            "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
-        ) as response:
-            for_sale_land_objs = await response.json()
+        url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
+        for_sale_land_objs = await fetch_json_with_retry(session, url)
+        if for_sale_land_objs and "result" in for_sale_land_objs:
             return for_sale_land_objs["result"]  # type: ignore[no-any-return]
+        return []
 
 
-async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
-    async with aiohttp.ClientSession() as session:
-        url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"
-        async with session.get(url) as response:
-            if response.status == 200:
-                token_obj = await response.json()
-                return token_obj  # type: ignore[no-any-return]
-            else:
-                # Log the error and return None or a default dict
-                print(
-                    f"Error fetching token data for {token_address}: {response.status} {await response.text()}"
-                )
-                return None
+async def get_zkevm_token_data(
+    token_address: str, session: aiohttp.ClientSession | None = None
+) -> dict[str, Any] | None:
+    url = f"https://explorer.immutable.com/api/v2/tokens/{token_address}"
+    if session is None:
+        async with aiohttp.ClientSession() as new_session:
+            return await fetch_json_with_retry(new_session, url)
+    else:
+        return await fetch_json_with_retry(session, url)
 
 
 async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:
     print("Fetching lands for sale amount...")
     for_sale_lands_data = await get_lands_for_sale()
     for_sale_lands_data_dict = {}
-    for for_sale_land_data in for_sale_lands_data:
-        token_id = for_sale_land_data["sell"][0]["token_id"]
-        owners_address = for_sale_land_data["account_address"]
-        try:
-            token_address = for_sale_land_data["buy"][0]["contract_address"]
-        except KeyError as e:
-            if for_sale_land_data["buy"][0]["type"] == "NATIVE":
-                token_address = "0x3a0c2ba54d6cbd3121f01b96dfd20e99d1696c9d"
+    
+    # Token cache to prevent repeated Blockscout API queries
+    token_cache = {}
+
+    async with aiohttp.ClientSession() as session:
+        for for_sale_land_data in for_sale_lands_data:
+            token_id = for_sale_land_data["sell"][0]["token_id"]
+            owners_address = for_sale_land_data["account_address"]
+            try:
+                token_address = for_sale_land_data["buy"][0]["contract_address"]
+            except KeyError as e:
+                if for_sale_land_data["buy"][0]["type"] == "NATIVE":
+                    token_address = "0x3a0c2ba54d6cbd3121f01b96dfd20e99d1696c9d"
+                else:
+                    print(f"{for_sale_land_data}")
+                    raise e
+
+            # Retrieve from cache or request API
+            if token_address in token_cache:
+                token_data = token_cache[token_address]
             else:
-                print(f"{for_sale_land_data}")
-                raise e
+                token_data = await get_zkevm_token_data(token_address=token_address, session=session)
+                token_cache[token_address] = token_data
 
-        for_sale_amount_smallest = int(for_sale_land_data["buy"][0]["amount"])
-        for fee in for_sale_land_data["fees"]:
-            for_sale_amount_smallest += int(fee["amount"])
+            for_sale_amount_smallest = int(for_sale_land_data["buy"][0]["amount"])
+            for fee in for_sale_land_data["fees"]:
+                for_sale_amount_smallest += int(fee["amount"])
 
-        token_data = await get_zkevm_token_data(token_address=token_address)
-        if token_data is None:
-            # Handle missing token data gracefully
-            decimals = 18  # default
-            token_symbol = "UNKNOWN"
-            exchange_rate = 0.0
-        else:
-            decimals = token_data.get("decimals", 18)
-            token_symbol = token_data.get("symbol", "UNKNOWN")
-            if token_symbol == "WIMX":
-                token_symbol = "IMX"
-            exchange_rate = float(token_data.get("exchange_rate", 0.0))
+            if token_data is None:
+                # Handle missing token data gracefully
+                decimals = 18  # default
+                token_symbol = "UNKNOWN"
+                exchange_rate = 0.0
+            else:
+                decimals = token_data.get("decimals", 18)
+                token_symbol = token_data.get("symbol", "UNKNOWN")
+                if token_symbol == "WIMX":
+                    token_symbol = "IMX"
+                exchange_rate = float(token_data.get("exchange_rate", 0.0))
 
-        for_sale_amount = for_sale_amount_smallest / (10 ** int(decimals))
-        for_sale_amount_usd = round(exchange_rate * for_sale_amount, 2)
+            for_sale_amount = for_sale_amount_smallest / (10 ** int(decimals))
+            for_sale_amount_usd = round(exchange_rate * for_sale_amount, 2)
 
-        for_sale_lands_data_dict[token_id] = {
-            "owners_address": owners_address,
-            "for_sale_token": for_sale_amount,
-            "token_symbol": token_symbol,
-            "for_sale_usd": for_sale_amount_usd,
-        }
+            for_sale_lands_data_dict[token_id] = {
+                "owners_address": owners_address,
+                "for_sale_token": for_sale_amount,
+                "token_symbol": token_symbol,
+                "for_sale_usd": for_sale_amount_usd,
+            }
+            # Small delay to throttle token lookups (if cache misses occur)
+            await asyncio.sleep(0.1)
+
     print("Fetched lands for sale amount")
     return for_sale_lands_data_dict
 

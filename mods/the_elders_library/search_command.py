@@ -8,6 +8,7 @@ from data import (
     ItemsTable,
     MovesTable,
     NaturesTable,
+    OwnedLandsTable,
     RevomonMovesTable,
     RevomonTable,
 )
@@ -350,8 +351,7 @@ class SearchCommand(commands.Cog):
         except Exception as e:
             print(f"An error occurred during search_command(revomon subcommand): {e}")
 
-    # create a subcommand in the search_group comands with the name of "Lands". the subcommand has an option called "type" which is a choice of "gym", "clinic"
-    """@search_group.command(name="land-nfts", description="Search for info about any Revomon Novus land. Leave all options blank to view all lands.")
+    @search_group.command(name="land-nfts", description="Search for info about any Revomon Novus land. Leave all options blank to view all lands.")
     @app_commands.choices(biome=[
         app_commands.Choice(name="Beach", value="beach"),
         app_commands.Choice(name="Caves", value="caves"),
@@ -397,29 +397,8 @@ class SearchCommand(commands.Cog):
                            sale_status="The sale status of the land.",
                            size="The size of the land."
                            )
-    async def Land_nfts(self, interaction: Interaction, biome: app_commands.Choice[str] = None, land_type: app_commands.Choice[str] = None, owners_address: str = None, rarity: app_commands.Choice[str] = None, sale_status: app_commands.Choice[str] = None, size: app_commands.Choice[str] = None, token_id: int = None):
+    async def Land_nfts(self, interaction: Interaction, biome: app_commands.Choice[str] = None, land_type: app_commands.Choice[str] = None, owners_address: str = None, rarity: app_commands.Choice[str] = None, sale_status: app_commands.Choice[str] = None, size: app_commands.Choice[str] = None, token_id: int = None):  # type: ignore[assignment]
         await interaction.response.defer(ephemeral=True)
-
-        # Create a dropdown menu (select menu)
-        select_menu = ui.Select(placeholder="Sort by...",
-            options=[
-                SelectOption(label="Biome", value="name", description="Sort by name"),
-                SelectOption(label="Land Type", value="distance", description="Sort by distance"),
-                SelectOption(label="Rarity", value="rating", description="Sort by rating"),
-                SelectOption(label="Price", value="price", description="Sort by price"),
-                SelectOption(label="Size", value="size", description="Sort by size"),
-                SelectOption(label="Owner's Address", value="sale_status", description="Sort by sale status"),
-                ]
-            )
-
-        # Define the callback for the dropdown menu
-        async def select_callback(interaction: Interaction):
-            await interaction.response.defer(ephemeral=True)
-            selected_value = select_menu.values[0]  # Get the selected value
-            await interaction.followup.send(f"You selected to sort by: {selected_value}", ephemeral=True)
-
-        # Attach the callback to the dropdown menu
-        select_menu.callback = select_callback
 
         buttons = Buttons(self.gradex)
         if not token_id and not owners_address and not land_type and not biome and not rarity and not size and not sale_status:
@@ -429,9 +408,8 @@ class SearchCommand(commands.Cog):
         else:
             try:
                 # Build the response message dynamically
-                from data import OwnedLandsTable
                 lands_data = OwnedLandsTable()
-                response_message = lands_data.get_info(token_id=token_id if token_id else None, id=None, owners_address=owners_address.lower() if owners_address else None, biome=biome.value if biome else None, land_type=land_type.value if land_type else None, rarity=rarity.value if rarity else None, size=size.value if size else None, img_url=None, asc=True, sale_status=int(sale_status.value) if sale_status else None)  # type: ignore[attr-defined]
+                response_message = await lands_data.get_info(token_id=token_id if token_id else None, id=None, owners_address=owners_address.lower() if owners_address else None, biome=biome.value if biome else None, land_type=land_type.value if land_type else None, rarity=rarity.value if rarity else None, size=size.value if size else None, img_url=None, asc=True, sale_status=int(sale_status.value) if sale_status else None)  # type: ignore[attr-defined]
                 if response_message:
                     token_ids = [land[0] for land in response_message]
                     land_main_view = await buttons.land_view(token_ids=token_ids, user_id=interaction.user.id)
@@ -440,7 +418,6 @@ class SearchCommand(commands.Cog):
                     await interaction.followup.send("No lands found that match your criteria.", ephemeral=True)
             except Exception as e:
                 print(f"An error occurred during search_command(lands subcommand): {e}")
-"""
 
 
 async def setup(gradex: commands.Bot) -> None:
