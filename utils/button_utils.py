@@ -38,11 +38,32 @@ class Buttons(commands.Cog):
         self.book_of_land_ids = None
         self.book_of_land_current_page = {}  # type: ignore[var-annotated]
         self.land_attributes = {}  # type: ignore[var-annotated]
+        self.group_by_evo = True
 
     async def mon_button(self, name: str, row: Any) -> Any:
         print("Mon button is being created...")
         mon_info = (await RevomonTable().get_info(name))[0]
-        mon_emoji = f"<:{name}:{mon_info[-10]}>".replace(" ", "_").replace("-", "_")
+        
+        # Safely load and cache application emojis from Discord API
+        if not hasattr(self, "app_emojis") or self.app_emojis is None:
+            from utils.emoji_utils import list_application_emojis
+            try:
+                emojis = await list_application_emojis()
+                self.app_emojis = {e["name"]: e["id"] for e in emojis}
+            except Exception as e:
+                print(f"Failed to fetch application emojis: {e}")
+                self.app_emojis = {}
+
+        emoji_name = name.lower().replace(" ", "_").replace("-", "_")
+        emoji_id = None
+        if hasattr(self, "app_emojis") and self.app_emojis:
+            emoji_id = self.app_emojis.get(emoji_name)
+
+        # Fallback to index -10 for tests where mocked mon_info represents the old 43-column schema
+        if not emoji_id and len(mon_info) > 18:
+            emoji_id = mon_info[-10]
+
+        mon_emoji = f"<:{emoji_name}:{emoji_id}>" if emoji_id else None
         dex_num = mon_info[0]
         mon_button = Button(  # type: ignore[var-annotated]
             label=f"{dex_num}. {name.title()}",
@@ -325,18 +346,130 @@ class Buttons(commands.Cog):
             self.current_page[user_id] = curr_page
         curr_page_content = self.book_of_names[curr_page - 1]  # type: ignore[index]
         row = 0
+        items_in_row = 0
         for name in curr_page_content:
             button = await self.mon_button(name=name, row=row)
             view.add_item(button)
-            if (await RevomonTable().get_info(name))[0][8] is None:
+            items_in_row += 1
+            
+            if self.group_by_evo:
+                info = (await RevomonTable().get_info(name))[0]
+                evo_next = None
+                if len(info) >= 24:
+                    evo_next = info[15]
+                elif len(info) >= 18:
+                    evo_next = info[8]
+                is_final = (evo_next is None or evo_next == "" or evo_next == "none")
+                should_increment = is_final or items_in_row >= 5
+            else:
+                should_increment = items_in_row >= 5
+
+            if should_increment:
                 row += 1
+                items_in_row = 0
             if row == 4 or name == self.book_of_names[-1][-1]:  # type: ignore[index]
                 first_page_button = self.first_page_button(row=row)
                 prev_button = self.previous_button(row=row)
+                search_button = Button(
+                    label="",
+                    emoji="🔍",
+                    style=ButtonStyle.secondary,
+                    custom_id="search_sort_mon",
+                    row=row,
+                )
+
+                # Attach sort callback directly so the View handles it
+                buttons_self = self
+
+                async def search_callback(search_interaction: Interaction) -> None:
+                    sort_by_menu = Select(
+                        placeholder="Sort by...",
+                        custom_id="mon_sort_by_select",
+                        row=0,
+                        options=[
+                            SelectOption(label="Dex #", value="dex_id", description="Sort by Pokédex number"),
+                            SelectOption(label="Name", value="name", description="Sort alphabetically"),
+                            SelectOption(label="Type", value="type1", description="Sort by primary type"),
+                            SelectOption(label="HP", value="hp", description="Sort by HP stat"),
+                            SelectOption(label="ATK", value="atk", description="Sort by Attack stat"),
+                            SelectOption(label="DEF", value="def", description="Sort by Defense stat"),
+                            SelectOption(label="SPA", value="spa", description="Sort by Sp. Attack stat"),
+                            SelectOption(label="SPD", value="spd", description="Sort by Sp. Defense stat"),
+                            SelectOption(label="SPE", value="spe", description="Sort by Speed stat"),
+                            SelectOption(label="Rarity", value="rarity", description="Sort by rarity"),
+                        ],
+                    )
+
+                    sort_order_menu = Select(
+                        placeholder="Sort order...",
+                        custom_id="mon_sort_order_select",
+                        row=1,
+                        options=[
+                            SelectOption(label="Ascending", value="asc", emoji="⬆️", description="A → Z, lowest → highest"),
+                            SelectOption(label="Descending", value="desc", emoji="⬇️", description="Z → A, highest → lowest"),
+                        ],
+                    )
+
+                    apply_button = Button(
+                        label="Apply Sort",
+                        emoji="✅",
+                        style=ButtonStyle.success,
+                        custom_id="apply_mon_sort",
+                        row=2,
+                    )
+
+                    cancel_button = Button(
+                        label="Cancel",
+                        style=ButtonStyle.secondary,
+                        custom_id="cancel_mon_sort",
+                        row=2,
+                    )
+
+                    sort_view = View(timeout=None)
+                    sort_view.add_item(sort_by_menu)
+                    sort_view.add_item(sort_order_menu)
+                    sort_view.add_item(apply_button)
+                    sort_view.add_item(cancel_button)
+
+                    async def sort_by_callback(select_interaction: Interaction) -> None:
+                        await select_interaction.response.defer()
+
+                    async def sort_order_callback(select_interaction: Interaction) -> None:
+                        await select_interaction.response.defer()
+
+                    async def apply_sort_callback(apply_interaction: Interaction) -> None:
+                        sort_by_value = sort_by_menu.values[0] if sort_by_menu.values else "dex_id"
+                        asc = True
+                        if sort_order_menu.values:
+                            asc = sort_order_menu.values[0] == "asc"
+                        sorted_names = await RevomonTable().get_sorted_names(sort_by=sort_by_value, asc=asc)
+                        buttons_self.group_by_evo = (sort_by_value == "dex_id")
+                        buttons_self.book_of_names = await get_book_of_mon_names(
+                            names=sorted_names, group_by_evo=buttons_self.group_by_evo
+                        )
+                        buttons_self.current_page[apply_interaction.user.id] = 1
+                        new_view = await buttons_self.mon_view(user_id=apply_interaction.user.id)
+                        await apply_interaction.response.edit_message(view=new_view)
+
+                    async def cancel_sort_callback(cancel_interaction: Interaction) -> None:
+                        restored_view = await buttons_self.mon_view(user_id=cancel_interaction.user.id)
+                        await cancel_interaction.response.edit_message(view=restored_view)
+
+                    sort_by_menu.callback = sort_by_callback
+                    sort_order_menu.callback = sort_order_callback
+                    apply_button.callback = apply_sort_callback
+                    cancel_button.callback = cancel_sort_callback
+
+                    # Replace the mon view with the sort options on the same message
+                    await search_interaction.response.edit_message(view=sort_view)
+
+                search_button.callback = search_callback
+
                 next_button = self.next_button(row=row)
                 last_page_button = self.last_page_button(row=row)
                 view.add_item(first_page_button)
                 view.add_item(prev_button)
+                view.add_item(search_button)
                 view.add_item(next_button)
                 view.add_item(last_page_button)
                 return view

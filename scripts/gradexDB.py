@@ -1755,6 +1755,12 @@ class RevomonTable:
                     "evolution" TEXT,
                     "level_evolution" INTEGER,
                     "rarity" TEXT,
+                    "ev_hp" INTEGER,
+                    "ev_atk" INTEGER,
+                    "ev_def" INTEGER,
+                    "ev_spa" INTEGER,
+                    "ev_spd" INTEGER,
+                    "ev_spe" INTEGER,
                     PRIMARY KEY("dex_id")
                 ) STRICT;
                 """
@@ -1774,11 +1780,14 @@ class RevomonTable:
                 revomon_data = json.load(file)
 
             # Insert data into the database
-            for revomon in sorted(revomon_data, key=lambda x: x["dex_id"]):
+            for revomon in sorted(
+                revomon_data,
+                key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
+            ):
                 # Prepare data for insertion
-                dex_id = revomon["dex_id"]
-                mon_id = revomon["mon_id"]
-                name = revomon["name"].lower()
+                dex_id = revomon.get("dex_id", revomon.get("idRevodex"))
+                mon_id = revomon.get("mon_id", revomon.get("idRevomon"))
+                name = revomon.get("name", "").lower()
                 description = (
                     revomon.get("description", "").lower()
                     if revomon.get("description")
@@ -1801,8 +1810,8 @@ class RevomonTable:
                     else None
                 )
                 ability_hidden = (
-                    revomon.get("ability_hidden", "").lower()
-                    if revomon.get("ability_hidden")
+                    revomon.get("ability_hidden", revomon.get("abilityHidden", revomon.get("abilityh", ""))).lower()
+                    if revomon.get("ability_hidden") or revomon.get("abilityHidden") or revomon.get("abilityh")
                     else None
                 )
                 hp = revomon.get("hp")
@@ -1816,17 +1825,25 @@ class RevomonTable:
                     if revomon.get("evolution")
                     else None
                 )
-                level_evolution = revomon.get("level_evolution")
+                level_evolution = revomon.get("level_evolution", revomon.get("levelEvolution", revomon.get("evo_lvl", 0)))
                 rarity = (
                     revomon.get("rarity", "").lower() if revomon.get("rarity") else None
                 )
+                
+                # EV fields
+                ev_hp = revomon.get("evhp", revomon.get("ev_hp", 0))
+                ev_atk = revomon.get("evatk", revomon.get("ev_atk", 0))
+                ev_def = revomon.get("evdef", revomon.get("ev_def", 0))
+                ev_spa = revomon.get("evspa", revomon.get("ev_spa", 0))
+                ev_spd = revomon.get("evspd", revomon.get("ev_spd", 0))
+                ev_spe = revomon.get("evspe", revomon.get("ev_spe", 0))
 
                 # Execute the insert query
                 await cursor.execute(
                     """
                     INSERT OR REPLACE INTO revomon
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                     """,
                     (
                         dex_id,
@@ -1847,6 +1864,12 @@ class RevomonTable:
                         evolution,
                         level_evolution,
                         rarity,
+                        ev_hp,
+                        ev_atk,
+                        ev_def,
+                        ev_spa,
+                        ev_spd,
+                        ev_spe,
                     ),
                 )
 
@@ -1926,6 +1949,22 @@ class RevomonTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute("SELECT name FROM revomon ORDER BY dex_id;")
+            names = [row[0].lower() for row in await cursor.fetchall()]
+            return names
+
+    async def get_sorted_names(self, sort_by: str = "dex_id", asc: bool = True) -> Any:
+        """Returns a list of revomon names sorted by the specified column."""
+        valid_columns = {
+            "dex_id", "name", "type1", "hp", "atk", "def", "spa", "spd", "spe", "rarity",
+        }
+        if sort_by not in valid_columns:
+            sort_by = "dex_id"
+        order = "ASC" if asc else "DESC"
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
+                f'SELECT name FROM revomon ORDER BY "{sort_by}" {order};'  # noqa: S608
+            )
             names = [row[0].lower() for row in await cursor.fetchall()]
             return names
 
