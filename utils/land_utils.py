@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 import asyncio
-=======
 from typing import Any
 
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 import aiohttp
-from typing import Any
+
 
 async def fetch_json_with_retry(
     session: aiohttp.ClientSession,
@@ -28,7 +25,9 @@ async def fetch_json_with_retry(
                             wait_time = max(1.0, float(retry_after))
                         except ValueError:
                             pass
-                    print(f"Rate limited (429) on {url}. Waiting for {wait_time} seconds (attempt {attempt}/{retries})...")
+                    print(
+                        f"Rate limited (429) on {url}. Waiting for {wait_time} seconds (attempt {attempt}/{retries})..."
+                    )
                     await asyncio.sleep(wait_time)
                     continue
 
@@ -37,7 +36,9 @@ async def fetch_json_with_retry(
 
                 if 500 <= response.status < 600:
                     wait_time = backoff_factor * (2 ** (attempt - 1))
-                    print(f"Server error {response.status} on {url}. Retrying in {wait_time}s (attempt {attempt}/{retries})...")
+                    print(
+                        f"Server error {response.status} on {url}. Retrying in {wait_time}s (attempt {attempt}/{retries})..."
+                    )
                     await asyncio.sleep(wait_time)
                     continue
 
@@ -47,7 +48,9 @@ async def fetch_json_with_retry(
 
         except Exception as e:
             wait_time = backoff_factor * (2 ** (attempt - 1))
-            print(f"Request exception on {url}: {e}. Retrying in {wait_time}s (attempt {attempt}/{retries})...")
+            print(
+                f"Request exception on {url}: {e}. Retrying in {wait_time}s (attempt {attempt}/{retries})..."
+            )
             await asyncio.sleep(wait_time)
 
     raise Exception(f"Failed to fetch {url} after {retries} attempts.")
@@ -69,7 +72,7 @@ async def get_land_info_for_ids(token_ids: list[Any]) -> list[dict[str, Any]]:
                     token_ids_str += f"?token_id={token_id}"
                 else:
                     token_ids_str += f"&token_id={token_id}"
-            
+
             url = f"https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/collections/0x5c40eb1eaad2a96e383e3b0a986a5377fc1ee239/nfts{token_ids_str}&page_size=200"
             nft_objs = await fetch_json_with_retry(session, url)
 
@@ -139,7 +142,7 @@ async def get_land_owners_and_ids() -> list[dict[str, Any]]:
             )
             if not page_cursor:
                 break
-            
+
             # Pacing: wait 0.5s between pages to prevent rate limits
             await asyncio.sleep(0.5)
         print("finished retrieving raw land owner with land ids data")
@@ -198,7 +201,6 @@ async def get_land_data() -> list[dict[str, Any]]:
 
 async def get_lands_for_sale() -> list[dict[str, Any]]:
     async with aiohttp.ClientSession() as session:
-<<<<<<< HEAD
         url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
         for_sale_land_objs = await fetch_json_with_retry(session, url)
         if for_sale_land_objs and "result" in for_sale_land_objs:
@@ -212,40 +214,18 @@ async def get_zkevm_token_data(
     url = f"https://explorer.immutable.com/api/v2/tokens/{token_address}"
     if session is None:
         async with aiohttp.ClientSession() as new_session:
-            return await fetch_json_with_retry(new_session, url)
+            return await fetch_json_with_retry(new_session, url)  # type: ignore[no-any-return]
     else:
-        return await fetch_json_with_retry(session, url)
-=======
-        async with session.get(
-            "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
-        ) as response:
-            for_sale_land_objs = await response.json()
-            return for_sale_land_objs["result"]  # type: ignore[no-any-return]
-
-
-async def get_zkevm_token_data(token_address: str) -> dict[str, Any] | None:
-    async with aiohttp.ClientSession() as session:
-        url = f"https://immutable-mainnet.blockscout.com/api/v2/tokens/{token_address}"
-        async with session.get(url) as response:
-            if response.status == 200:
-                token_obj = await response.json()
-                return token_obj  # type: ignore[no-any-return]
-            else:
-                # Log the error and return None or a default dict
-                print(
-                    f"Error fetching token data for {token_address}: {response.status} {await response.text()}"
-                )
-                return None
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
+        return await fetch_json_with_retry(session, url)  # type: ignore[no-any-return]
 
 
 async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:
     print("Fetching lands for sale amount...")
     for_sale_lands_data = await get_lands_for_sale()
     for_sale_lands_data_dict = {}
-    
+
     # Token cache to prevent repeated Blockscout API queries
-    token_cache = {}
+    token_cache: dict[str, Any] = {}
 
     async with aiohttp.ClientSession() as session:
         for for_sale_land_data in for_sale_lands_data:
@@ -264,7 +244,9 @@ async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:
             if token_address in token_cache:
                 token_data = token_cache[token_address]
             else:
-                token_data = await get_zkevm_token_data(token_address=token_address, session=session)
+                token_data = await get_zkevm_token_data(
+                    token_address=token_address, session=session
+                )
                 token_cache[token_address] = token_data
 
             for_sale_amount_smallest = int(for_sale_land_data["buy"][0]["amount"])

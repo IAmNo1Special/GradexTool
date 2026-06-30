@@ -1613,11 +1613,10 @@ class OwnedLandsTable:
                     result = sorted(result, key=lambda land: land[7])
                 elif sort_by == "sale_status":
                     result = sorted(result, key=lambda land: land[9])
-<<<<<<< HEAD
                 elif sort_by == "for_sale_usd":
-                    result = sorted(result, key=lambda land: land[11] if land[11] is not None else 0)
-=======
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
+                    result = sorted(
+                        result, key=lambda land: land[11] if land[11] is not None else 0
+                    )
                 else:
                     result = sorted(result, key=lambda land: land[0])
             # sort the result in descending order if asc is Flase
@@ -1758,15 +1757,12 @@ class RevomonTable:
                     "evolution" TEXT,
                     "level_evolution" INTEGER,
                     "rarity" TEXT,
-<<<<<<< HEAD
                     "ev_hp" INTEGER,
                     "ev_atk" INTEGER,
                     "ev_def" INTEGER,
                     "ev_spa" INTEGER,
                     "ev_spd" INTEGER,
                     "ev_spe" INTEGER,
-=======
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                     PRIMARY KEY("dex_id")
                 ) STRICT;
                 """
@@ -1786,22 +1782,13 @@ class RevomonTable:
                 revomon_data = json.load(file)
 
             # Insert data into the database
-<<<<<<< HEAD
             for revomon in sorted(
-                revomon_data,
-                key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
+                revomon_data, key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
             ):
                 # Prepare data for insertion
                 dex_id = revomon.get("dex_id", revomon.get("idRevodex"))
                 mon_id = revomon.get("mon_id", revomon.get("idRevomon"))
                 name = revomon.get("name", "").lower()
-=======
-            for revomon in sorted(revomon_data, key=lambda x: x["dex_id"]):
-                # Prepare data for insertion
-                dex_id = revomon["dex_id"]
-                mon_id = revomon["mon_id"]
-                name = revomon["name"].lower()
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                 description = (
                     revomon.get("description", "").lower()
                     if revomon.get("description")
@@ -1824,13 +1811,13 @@ class RevomonTable:
                     else None
                 )
                 ability_hidden = (
-<<<<<<< HEAD
-                    revomon.get("ability_hidden", revomon.get("abilityHidden", revomon.get("abilityh", ""))).lower()
-                    if revomon.get("ability_hidden") or revomon.get("abilityHidden") or revomon.get("abilityh")
-=======
-                    revomon.get("ability_hidden", "").lower()
+                    revomon.get(
+                        "ability_hidden",
+                        revomon.get("abilityHidden", revomon.get("abilityh", "")),
+                    ).lower()
                     if revomon.get("ability_hidden")
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
+                    or revomon.get("abilityHidden")
+                    or revomon.get("abilityh")
                     else None
                 )
                 hp = revomon.get("hp")
@@ -1844,12 +1831,14 @@ class RevomonTable:
                     if revomon.get("evolution")
                     else None
                 )
-<<<<<<< HEAD
-                level_evolution = revomon.get("level_evolution", revomon.get("levelEvolution", revomon.get("evo_lvl", 0)))
+                level_evolution = revomon.get(
+                    "level_evolution",
+                    revomon.get("levelEvolution", revomon.get("evo_lvl", 0)),
+                )
                 rarity = (
                     revomon.get("rarity", "").lower() if revomon.get("rarity") else None
                 )
-                
+
                 # EV fields
                 ev_hp = revomon.get("evhp", revomon.get("ev_hp", 0))
                 ev_atk = revomon.get("evatk", revomon.get("ev_atk", 0))
@@ -1857,24 +1846,13 @@ class RevomonTable:
                 ev_spa = revomon.get("evspa", revomon.get("ev_spa", 0))
                 ev_spd = revomon.get("evspd", revomon.get("ev_spd", 0))
                 ev_spe = revomon.get("evspe", revomon.get("ev_spe", 0))
-=======
-                level_evolution = revomon.get("level_evolution")
-                rarity = (
-                    revomon.get("rarity", "").lower() if revomon.get("rarity") else None
-                )
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
                 # Execute the insert query
                 await cursor.execute(
                     """
                     INSERT OR REPLACE INTO revomon
-<<<<<<< HEAD
                     (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-=======
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                     """,
                     (
                         dex_id,
@@ -1895,15 +1873,12 @@ class RevomonTable:
                         evolution,
                         level_evolution,
                         rarity,
-<<<<<<< HEAD
                         ev_hp,
                         ev_atk,
                         ev_def,
                         ev_spa,
                         ev_spd,
                         ev_spe,
-=======
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                     ),
                 )
 
@@ -1986,11 +1961,19 @@ class RevomonTable:
             names = [row[0].lower() for row in await cursor.fetchall()]
             return names
 
-<<<<<<< HEAD
     async def get_sorted_names(self, sort_by: str = "dex_id", asc: bool = True) -> Any:
         """Returns a list of revomon names sorted by the specified column."""
         valid_columns = {
-            "dex_id", "name", "type1", "hp", "atk", "def", "spa", "spd", "spe", "rarity",
+            "dex_id",
+            "name",
+            "type1",
+            "hp",
+            "atk",
+            "def",
+            "spa",
+            "spd",
+            "spe",
+            "rarity",
         }
         if sort_by not in valid_columns:
             sort_by = "dex_id"
@@ -2003,8 +1986,6 @@ class RevomonTable:
             names = [row[0].lower() for row in await cursor.fetchall()]
             return names
 
-=======
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
     async def get_info(self, revomon_name: str) -> Any:
         """Method to search the revomon table by name and return the info of the matching entry."""
         async with self._connect() as conn:
@@ -2735,11 +2716,6 @@ class UsersTable:
                 CREATE TABLE IF NOT EXISTS "users" (
                     "user_id" INTEGER NOT NULL UNIQUE,
                     "username" TEXT NOT NULL,
-<<<<<<< HEAD
-=======
-                    "wallet_connected" INTEGER NOT NULL,
-                    "wallet_address" TEXT,
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                     "is_pro" INTEGER NOT NULL,
                     "is_certified" INTEGER NOT NULL,
                     "experience_points" INTEGER NOT NULL,
@@ -2804,11 +2780,6 @@ class UsersTable:
         self,
         user_id: int,
         username: str,
-<<<<<<< HEAD
-=======
-        wallet_connected: int,
-        wallet_address: str,
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
         is_pro: int,
         is_certified: int,
         experience_points: int,
@@ -2821,21 +2792,12 @@ class UsersTable:
         """Add a user to the users table."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-<<<<<<< HEAD
             query = "INSERT INTO users (user_id, username, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
-=======
-            query = "INSERT INTO users (user_id, username, wallet_connected, wallet_address, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
             await cursor.execute(
                 query,
                 (
                     user_id,
                     username,
-<<<<<<< HEAD
-=======
-                    wallet_connected,
-                    wallet_address,
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
                     is_pro,
                     is_certified,
                     experience_points,
@@ -3343,15 +3305,9 @@ async def update_gradex_db() -> None:
     await counterdex_table.build()
 
     # Initialize the owned Lands Table
-<<<<<<< HEAD
     owned_lands_table = OwnedLandsTable()
     # Build the owned lands table
     await owned_lands_table.build()
-=======
-    # owned_lands_table = OwnedLandsTable()
-    # Build the owned lands table
-    # await owned_lands_table.build()
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
     # Initialize the users table
     users_table = UsersTable()

@@ -435,9 +435,6 @@ async def test_on_button_click_land_pagination(
         )
 
 
-<<<<<<< HEAD
-
-=======
 @pytest.mark.asyncio
 @patch("utils.button_utils.RevomonTable")
 async def test_on_button_click_search_settings_land(
@@ -454,7 +451,6 @@ async def test_on_button_click_search_settings_land(
 
     interaction.response.defer.assert_called_once()
     interaction.followup.send.assert_called_once()
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 
 
 @pytest.mark.asyncio
