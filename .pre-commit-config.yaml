@@ -1,0 +1,39 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff Linter
+        entry: uv run ruff check .
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: ruff-format
+        name: Ruff Formatter
+        entry: uv run ruff format --check .
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: mypy
+        name: Mypy Type Checker
+        entry: uv run mypy .
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: mdformat
+        name: Markdown Formatter
+        entry: uvx --python 3.13 mdformat --check .
+        language: system
+        types: [markdown]
+        pass_filenames: false
+
+      - id: pytest
+        name: Pytest Unit Tests
+        entry: uv run pytest --cov=. --cov-report=xml
+        language: system
+        pass_filenames: false
+        always_run: true

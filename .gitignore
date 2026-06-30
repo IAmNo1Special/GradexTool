@@ -7,7 +7,6 @@ wheels/
 .venv
 .env
 experimental/
-<<<<<<< HEAD
 data/accounts.json
 data/users.json
 data/caught_revomon_scan_state.json
@@ -15,11 +14,6 @@ data/caught_revomon.json
 data/*.db
 data/assets/*
 !data/assets/fonts/
-=======
-data/assets/*
-!data/assets/fonts/
-data/gradex.db
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
 logs/
 .ruff_cache/
 .mypy_cache/
@@ -27,9 +21,6 @@ logs/
 .coverage
 coverage.xml
 htmlcov/
-<<<<<<< HEAD
 .vscode/
 .claude
-=======
-.vscode/
->>>>>>> de733c415448a6db7eb45eb4a06a6462f48833b2
+
