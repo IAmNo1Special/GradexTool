@@ -1613,6 +1613,8 @@ class OwnedLandsTable:
                     result = sorted(result, key=lambda land: land[7])
                 elif sort_by == "sale_status":
                     result = sorted(result, key=lambda land: land[9])
+                elif sort_by == "for_sale_usd":
+                    result = sorted(result, key=lambda land: land[11] if land[11] is not None else 0)
                 else:
                     result = sorted(result, key=lambda land: land[0])
             # sort the result in descending order if asc is Flase
