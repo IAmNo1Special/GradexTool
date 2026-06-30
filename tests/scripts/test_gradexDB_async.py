@@ -496,7 +496,7 @@ async def test_users_table(mock_db: Any) -> None:
     table = UsersTable()
     await table.build()
 
-    await table.add_user(1, "user1", 1, "0x", 0, 0, 100, 50, 10, 5, 2, 1)
+    await table.add_user(1, "user1", 0, 0, 100, 50, 10, 5, 2, 1)
     assert await table.count_entries() == 1
 
     await table.update_user(1, username="updated")

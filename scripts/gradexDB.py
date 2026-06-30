@@ -2657,8 +2657,6 @@ class UsersTable:
                 CREATE TABLE IF NOT EXISTS "users" (
                     "user_id" INTEGER NOT NULL UNIQUE,
                     "username" TEXT NOT NULL,
-                    "wallet_connected" INTEGER NOT NULL,
-                    "wallet_address" TEXT,
                     "is_pro" INTEGER NOT NULL,
                     "is_certified" INTEGER NOT NULL,
                     "experience_points" INTEGER NOT NULL,
@@ -2723,8 +2721,6 @@ class UsersTable:
         self,
         user_id: int,
         username: str,
-        wallet_connected: int,
-        wallet_address: str,
         is_pro: int,
         is_certified: int,
         experience_points: int,
@@ -2737,14 +2733,12 @@ class UsersTable:
         """Add a user to the users table."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            query = "INSERT INTO users (user_id, username, wallet_connected, wallet_address, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+            query = "INSERT INTO users (user_id, username, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
             await cursor.execute(
                 query,
                 (
                     user_id,
                     username,
-                    wallet_connected,
-                    wallet_address,
                     is_pro,
                     is_certified,
                     experience_points,

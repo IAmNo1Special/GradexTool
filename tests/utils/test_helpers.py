@@ -241,8 +241,6 @@ class TestUserCheck:
 
                 # Verify all default values were set
                 call_args = mock_users_table.add_user.call_args
-                assert call_args[1]["wallet_connected"] == 0
-                assert call_args[1]["wallet_address"] == ""
                 assert call_args[1]["is_certified"] == 0
                 assert call_args[1]["experience_points"] == 0
                 assert call_args[1]["battle_points"] == 0
