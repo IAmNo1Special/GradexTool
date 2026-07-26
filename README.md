@@ -161,6 +161,7 @@ To start the bot without rebuilding the database, modify `main.py`:
 ```python
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(entrypoint(rebase=False))  # Set to False to skip rebase
 ```
 
@@ -373,6 +374,7 @@ pytest --cov=.
 ```python
 from discord.ext import commands
 
+
 class MyMod(commands.Cog):
     def __init__(self, gradex: commands.Bot):
         self.gradex = gradex
@@ -380,6 +382,7 @@ class MyMod(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print("MyMod is ready!")
+
 
 async def setup(gradex: commands.Bot):
     await gradex.add_cog(MyMod(gradex))

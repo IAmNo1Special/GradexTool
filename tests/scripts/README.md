@@ -188,7 +188,7 @@ async def test_async_function(self):
 Use unittest.mock to mock external dependencies:
 
 ```python
-@patch('scripts.module.function_name')
+@patch("scripts.module.function_name")
 def test_with_mock(self, mock_function):
     """Test with mocked function."""
     mock_function.return_value = sample_data
@@ -204,7 +204,7 @@ Use the `temp_data_dir` fixture for temporary file operations:
 def test_with_temp_file(self, temp_data_dir):
     """Test using temporary directory."""
     test_file = temp_data_dir / "test.json"
-    with open(test_file, 'w') as f:
+    with open(test_file, "w") as f:
         json.dump(test_data, f)
     assert test_file.exists()
 ```
