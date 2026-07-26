@@ -77,6 +77,7 @@ class TestWildsLoopSpawning:
         cog.revomons = [
             {
                 "name": "Pikachu",
+                "mon_id": 25,
                 "type1": "neutral",
                 "dex_id": "25",
                 "ability1": "static",
@@ -87,101 +88,42 @@ class TestWildsLoopSpawning:
         return cog
 
     @pytest.mark.asyncio
-    async def test_do_spawn_no_channel(self, cog: Any) -> None:
+    @patch("mods.revocord.wilds_loop.get_guild_biome")
+    @patch("mods.revocord.wilds_loop.active_spawns_table")
+    async def test_do_spawn_success(
+        self, mock_table: Any, mock_biome: Any, cog: Any
+    ) -> None:
+        mock_biome.return_value = "unknown"  # defaults to {"neutral"} allowed_types
+        mock_table.add_spawn = AsyncMock()
         guild = MagicMock()
-        guild.text_channels = []
+        guild.id = 123
+
         await cog._do_spawn(guild)
+
+        mock_table.add_spawn.assert_called_once()
+        args = mock_table.add_spawn.call_args[0]
+        assert args[1] == 123
+        spawn_data = json.loads(args[2])
+        assert spawn_data["name"] == "Pikachu"
+        assert spawn_data["mon_id"] == 25
+        assert "is_shiny" in spawn_data
+        assert "nature" in spawn_data
+        assert "ability" in spawn_data
+        assert "ivs" in spawn_data
 
     @pytest.mark.asyncio
     @patch("mods.revocord.wilds_loop.get_guild_biome")
     async def test_do_spawn_no_eligible(self, mock_biome: Any, cog: Any) -> None:
-        mock_biome.return_value = (
-            "water"  # Pikachu is neutral, but we will make allowed_types NOT neutral
-        )
+        mock_biome.return_value = "water"
         cog.revomons = [{"name": "Pikachu", "type1": "fire"}]
-        # water biome doesn't allow fire
-        guild = MagicMock()
-        guild.text_channels = [MagicMock(name="wilds")]
-        guild.text_channels[0].name = "wilds"
-
-        with patch("mods.revocord.wilds_loop.BIOME_TYPES", {"water": {"water"}}):
-            await cog._do_spawn(guild)
-        guild.text_channels[0].send.assert_not_called()
-
-    @pytest.mark.asyncio
-    @patch("mods.revocord.wilds_loop.get_guild_biome")
-    @patch("mods.revocord.wilds_loop.active_spawns_table")
-    @patch("pathlib.Path.exists")
-    async def test_do_spawn_success_no_image(
-        self, mock_exists: Any, mock_table: Any, mock_biome: Any, cog: Any
-    ) -> None:
-        mock_biome.return_value = "unknown"  # defaults to {"neutral"} allowed_types
-        mock_exists.return_value = False
-
         guild = MagicMock()
         guild.id = 123
-        wilds = MagicMock()
-        wilds.name = "wilds"
-        guild.text_channels = [wilds]
 
-        msg = MagicMock()
-        msg.id = 999
-        msg.edit = AsyncMock()
-        wilds.send = AsyncMock(return_value=msg)
-        mock_table.add_spawn = AsyncMock()
-
-        await cog._do_spawn(guild)
-
-        wilds.send.assert_called_once()
-        kwargs = wilds.send.call_args[1]
-        assert "embed" in kwargs
-        assert "view" in kwargs
-        assert kwargs["embed"].description == "*Image sprite not found*"
-
-        msg.edit.assert_called_once()
-        mock_table.add_spawn.assert_called_once()
-
-    @pytest.mark.asyncio
-    @patch("random.random")
-    @patch("mods.revocord.wilds_loop.get_guild_biome")
-    @patch("mods.revocord.wilds_loop.active_spawns_table")
-    @patch("pathlib.Path.exists")
-    async def test_do_spawn_success_with_image(
-        self,
-        mock_exists: Any,
-        mock_table: Any,
-        mock_biome: Any,
-        mock_rand: Any,
-        cog: Any,
-    ) -> None:
-        mock_rand.return_value = 0.0  # Force shiny
-        mock_exists.side_effect = [
-            False,
-            True,
-        ]  # Shiny image doesn't exist, fallback does!
-        mock_biome.return_value = "unknown"  # defaults to {"neutral"} allowed_types
-        mock_exists.return_value = True
-
-        guild = MagicMock()
-        guild.id = 123
-        wilds = MagicMock()
-        wilds.name = "wilds"
-        guild.text_channels = [wilds]
-
-        msg = MagicMock()
-        msg.id = 999
-        msg.edit = AsyncMock()
-        wilds.send = AsyncMock(return_value=msg)
-        mock_table.add_spawn = AsyncMock()
-
-        with patch("discord.File"):
-            await cog._do_spawn(guild)
-
-        wilds.send.assert_called_once()
-        kwargs = wilds.send.call_args[1]
-        assert "file" in kwargs
-        assert "view" in kwargs
-        assert kwargs["embed"].image.url == "attachment://revomon.png"
+        with patch("mods.revocord.wilds_loop.active_spawns_table") as mock_table:
+            mock_table.add_spawn = AsyncMock()
+            with patch("mods.revocord.wilds_loop.BIOME_TYPES", {"water": {"water"}}):
+                await cog._do_spawn(guild)
+            mock_table.add_spawn.assert_not_called()
 
 
 class TestWildsLoopTasks:

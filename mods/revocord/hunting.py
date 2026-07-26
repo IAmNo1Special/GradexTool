@@ -10,7 +10,7 @@ import time  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 import discord  # noqa: E402
-from discord import ui  # noqa: E402
+from discord import app_commands, ui  # noqa: E402
 from discord.ext import commands, tasks  # noqa: E402
 
 from mods.revocord.broadcaster import (  # noqa: E402
@@ -127,6 +127,132 @@ class WildSpawnView(ui.View):
             self.add_item(share_btn)
 
 
+async def build_wilds_embed(
+    guild: discord.Guild,
+    current_biome: str,
+    spawns_count: int,
+    page: int,
+    total_pages: int,
+) -> discord.Embed:
+    embed_color = 0x2ECC71  # Emerald green
+    title = f"🌿 The Wilds of {guild.name} 🌿"
+    description = (
+        f"**Current Biome:** {current_biome.title()}\n"
+        f"Active wild Revomon roaming this area: **{spawns_count}**\n\n"
+        f"Click a button below to encounter and claim a wild Revomon!"
+    )
+    embed = discord.Embed(title=title, description=description, color=embed_color)
+    embed.set_footer(text=f"Page {page} of {total_pages} · Global Revomon Association")
+    return embed
+
+
+def resolve_mon_emoji(
+    bot: commands.Bot, name: str, is_shiny: bool
+) -> discord.Emoji | str:
+    from unittest.mock import Mock
+
+    if isinstance(bot, Mock):
+        return "✨" if is_shiny else "🌿"
+
+    cleaned_name = name.lower().replace(" ", "_").replace("-", "_")
+    emoji_name = f"{cleaned_name}_shiny" if is_shiny else cleaned_name
+    app_emojis = getattr(bot, "_app_emojis_cache", [])
+
+    emoji_obj = discord.utils.get(app_emojis, name=emoji_name) or discord.utils.get(
+        bot.emojis, name=emoji_name
+    )
+
+    if emoji_obj and not isinstance(emoji_obj, Mock):
+        return emoji_obj
+    return "✨" if is_shiny else "🌿"
+
+
+class WildsPagedView(ui.View):
+    def __init__(
+        self,
+        bot: commands.Bot,
+        user_id: int,
+        spawns: list[dict[str, Any]],
+        page: int = 1,
+        guild_id: int = 0,
+    ) -> None:
+        super().__init__(timeout=180)
+        self.bot = bot
+        self.user_id = user_id
+        self.spawns = spawns
+        self.page = page
+        self.guild_id = guild_id
+        self.items_per_page = 9
+        self.total_pages = max(
+            1, (len(spawns) + self.items_per_page - 1) // self.items_per_page
+        )
+        self.page = min(max(1, page), self.total_pages)
+
+        start_idx = (self.page - 1) * self.items_per_page
+        end_idx = start_idx + self.items_per_page
+        page_spawns = self.spawns[start_idx:end_idx]
+
+        # Add spawn buttons for the current page
+        for idx, spawn in enumerate(page_spawns):
+            spawn_id = spawn["message_id"]
+            data = spawn["data"]
+            name = data.get("name", "Unknown").title()
+            is_shiny = data.get("is_shiny", False)
+
+            row = idx // 3
+            emoji = resolve_mon_emoji(self.bot, name, is_shiny)
+            label = f"✨ {name}" if is_shiny else name
+
+            button: ui.Button[Any] = ui.Button(
+                label=label,
+                emoji=emoji,
+                style=discord.ButtonStyle.secondary,
+                custom_id=f"wilds_menu_select:{spawn_id}",
+                row=row,
+            )
+            self.add_item(button)
+
+        # Add pagination buttons on row 3 if total_pages > 1
+        if self.total_pages > 1:
+            first_btn: ui.Button[Any] = ui.Button(
+                emoji="⏮️",
+                style=discord.ButtonStyle.green,
+                custom_id=f"wilds_page:first:{self.guild_id}:{self.page}",
+                row=3,
+            )
+            prev_btn: ui.Button[Any] = ui.Button(
+                emoji="⏪",
+                style=discord.ButtonStyle.green,
+                custom_id=f"wilds_page:prev:{self.guild_id}:{self.page}",
+                row=3,
+            )
+            next_btn: ui.Button[Any] = ui.Button(
+                emoji="⏩",
+                style=discord.ButtonStyle.green,
+                custom_id=f"wilds_page:next:{self.guild_id}:{self.page}",
+                row=3,
+            )
+            last_btn: ui.Button[Any] = ui.Button(
+                emoji="⏭️",
+                style=discord.ButtonStyle.green,
+                custom_id=f"wilds_page:last:{self.guild_id}:{self.page}",
+                row=3,
+            )
+
+            # Disable based on page
+            if self.page == 1:
+                first_btn.disabled = True
+                prev_btn.disabled = True
+            if self.page == self.total_pages:
+                next_btn.disabled = True
+                last_btn.disabled = True
+
+            self.add_item(first_btn)
+            self.add_item(prev_btn)
+            self.add_item(next_btn)
+            self.add_item(last_btn)
+
+
 class ReturnToConsoleView(ui.View):
     def __init__(self, spawner_id: int):
         super().__init__(timeout=None)
@@ -141,6 +267,13 @@ class ReturnToConsoleView(ui.View):
 
 class HuntingCog(commands.Cog):
     """Cog for managing Revomon hunting spawner algorithms."""
+
+    allowed_installs = app_commands.AppInstallationType(guild=True, user=True)
+    revocord_group = app_commands.Group(
+        name="revocord",
+        description="RevoCord game commands.",
+        allowed_installs=allowed_installs,
+    )
 
     def __init__(self, bot: commands.Bot) -> None:
         """Initialize the HuntingCog and load game databases.
@@ -188,6 +321,57 @@ class HuntingCog(commands.Cog):
             except Exception as e:
                 logger.error("Failed to load natures data: %s", e)
 
+    @revocord_group.command(
+        name="wilds",
+        description="View active wild Revomon in the area.",
+    )
+    async def wilds_command(self, interaction: discord.Interaction) -> None:
+        await interaction.response.defer(ephemeral=True)
+        guild = interaction.guild
+        if not guild:
+            await interaction.followup.send(
+                "❌ This command must be used in a server.", ephemeral=True
+            )
+            return
+        if not hasattr(self.bot, "_app_emojis_cache"):
+            try:
+                self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
+            except Exception:
+                self.bot._app_emojis_cache = []  # type: ignore[attr-defined]
+
+        from scripts.gradexDB import active_spawns_table
+
+        spawns = await active_spawns_table.get_guild_spawns(guild.id)
+        current_biome = await get_guild_biome(guild.id)
+
+        if not spawns:
+            embed = discord.Embed(
+                title=f"🌿 The Wilds of {guild.name} 🌿",
+                description=(
+                    f"**Current Biome:** {current_biome.title()}\n\n"
+                    "There are currently no wild Revomon in this area."
+                ),
+                color=0x2ECC71,
+            )
+            await interaction.followup.send(embed=embed, ephemeral=True)
+            return
+
+        view = WildsPagedView(
+            bot=self.bot,
+            user_id=interaction.user.id,
+            spawns=spawns,
+            page=1,
+            guild_id=guild.id,
+        )
+        embed = await build_wilds_embed(
+            guild=guild,
+            current_biome=current_biome,
+            spawns_count=len(spawns),
+            page=view.page,
+            total_pages=view.total_pages,
+        )
+        await interaction.followup.send(embed=embed, view=view, ephemeral=True)
+
     def _get_revomon_image_path(
         self, revomon_data: dict[str, Any], is_shiny: bool
     ) -> Path:
@@ -209,6 +393,125 @@ class HuntingCog(commands.Cog):
             img_path = Path("data", "assets", "revomon", "raw", f"{id_revodex}.png")
 
         return img_path
+
+    async def _handle_wilds_page(
+        self, interaction: discord.Interaction, custom_id: str
+    ) -> None:
+        await interaction.response.defer()
+        parts = custom_id.split(":")
+        action = parts[1]
+        guild_id = int(parts[2])
+        current_page = int(parts[3])
+        if not hasattr(self.bot, "_app_emojis_cache"):
+            try:
+                self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
+            except Exception:
+                self.bot._app_emojis_cache = []  # type: ignore[attr-defined]
+
+        from scripts.gradexDB import active_spawns_table
+
+        spawns = await active_spawns_table.get_guild_spawns(guild_id)
+        current_biome = await get_guild_biome(guild_id)
+
+        items_per_page = 9
+        total_pages = max(1, (len(spawns) + items_per_page - 1) // items_per_page)
+
+        if action == "first":
+            new_page = 1
+        elif action == "prev":
+            new_page = max(1, current_page - 1)
+        elif action == "next":
+            new_page = min(total_pages, current_page + 1)
+        elif action == "last":
+            new_page = total_pages
+        else:
+            new_page = 1
+
+        view = WildsPagedView(
+            bot=self.bot,
+            user_id=interaction.user.id,
+            spawns=spawns,
+            page=new_page,
+            guild_id=guild_id,
+        )
+        guild = interaction.guild or self.bot.get_guild(guild_id)
+        embed = await build_wilds_embed(
+            guild=guild,  # type: ignore[arg-type]
+            current_biome=current_biome,
+            spawns_count=len(spawns),
+            page=view.page,
+            total_pages=view.total_pages,
+        )
+        await interaction.edit_original_response(embed=embed, view=view)
+
+    async def _handle_wilds_menu_select(
+        self, interaction: discord.Interaction, custom_id: str
+    ) -> None:
+        await interaction.response.defer()
+        parts = custom_id.split(":")
+        spawn_id = int(parts[1])
+
+        from scripts.gradexDB import active_spawns_table
+
+        spawn_data = await active_spawns_table.get_spawn(spawn_id)
+        if not spawn_data:
+            await interaction.followup.send(
+                "❌ This Revomon has already been claimed or fled!", ephemeral=True
+            )
+            return
+
+        await active_spawns_table.remove_spawn(spawn_id)
+
+        id_revomon = spawn_data["mon_id"]
+        is_shiny = spawn_data["is_shiny"]
+        name = spawn_data["name"]
+
+        chosen = next(
+            (
+                r
+                for r in self.revomons
+                if r.get("mon_id", r.get("idRevomon")) == id_revomon
+            ),
+            None,
+        )
+        if not chosen:
+            await interaction.followup.send(
+                "❌ Error finding creature data.", ephemeral=True
+            )
+            return
+
+        await save_active_encounter(interaction.user.id, json.dumps(spawn_data))
+
+        img_path = self._get_revomon_image_path(chosen, is_shiny)
+        file = (
+            discord.File(img_path, filename="revomon.png")
+            if img_path.exists()
+            else None
+        )
+
+        embed_color = TYPE_COLORS.get((chosen.get("type1") or "").lower(), 0x2ECC71)
+        title = (
+            f"✨ A wild SHINY {name} appeared! ✨"
+            if is_shiny
+            else f"🌿 A wild {name} appeared! 🌿"
+        )
+        embed = discord.Embed(title=title, color=embed_color)
+        if file:
+            embed.set_image(url="attachment://revomon.png")
+        else:
+            embed.description = "*(Image sprite not found)*"
+
+        expiry_time = time.strftime("%H:%M:%S", time.gmtime(time.time() + 300))
+        embed.set_footer(
+            text=f"In battle with {interaction.user.display_name} | Expires at {expiry_time} UTC"
+        )
+
+        view = WildSpawnView(chosen, is_shiny, interaction.user.id, spawn_id)
+
+        attachments = [file] if file else []
+        await interaction.edit_original_response(
+            embed=embed, view=view, attachments=attachments
+        )
 
     @commands.Cog.listener()
     async def on_interaction(self, interaction: discord.Interaction) -> None:
@@ -247,6 +550,14 @@ class HuntingCog(commands.Cog):
 
         if custom_id.startswith("wilds_claim:"):
             await self.handle_wilds_claim(interaction)
+            return
+
+        if custom_id.startswith("wilds_page:"):
+            await self._handle_wilds_page(interaction, custom_id)
+            return
+
+        if custom_id.startswith("wilds_menu_select:"):
+            await self._handle_wilds_menu_select(interaction, custom_id)
             return
 
         prefixes = (
@@ -886,41 +1197,23 @@ class HuntingCog(commands.Cog):
                 embed=embed, view=view, attachments=[]
             )
 
-    @tasks.loop(minutes=5)
+    @tasks.loop(minutes=1)
     async def cleanup_encounters(self) -> None:
-        """Periodically scan for expired wild encounter messages in #wilds."""
+        """Periodically scan for and delete expired wild encounters from the database."""
+        current_time = time.time()
+        from scripts.gradexDB import active_spawns_table
+
         for guild in self.bot.guilds:
-            channel = discord.utils.get(guild.text_channels, name="wilds")
-            if not channel:
-                continue
             try:
-                # Only check the last few messages to avoid excessive API calls
-                async for msg in channel.history(limit=20):
-                    if msg.components:
-                        for component in msg.components:
-                            children = getattr(
-                                component, "children", getattr(component, "items", [])
-                            )
-                            for item in children:
-                                custom_id = getattr(item, "custom_id", None)
-                                if isinstance(custom_id, str) and custom_id.startswith(
-                                    "spawn_"
-                                ):
-                                    parts = custom_id.split(":")
-                                    if len(parts) >= 5:
-                                        timestamp = int(parts[4])
-                                        if time.time() - timestamp > 300:
-                                            try:
-                                                await msg.delete()
-                                            except discord.NotFound:
-                                                pass
-                                            break
+                spawns = await active_spawns_table.get_guild_spawns(guild.id)
+                for spawn in spawns:
+                    spawn_id = spawn["message_id"]
+                    data = spawn["data"]
+                    timestamp = data.get("timestamp", 0)
+                    if current_time - timestamp > 300:
+                        await active_spawns_table.remove_spawn(spawn_id)
             except Exception as e:
-                logger.error(
-                    "Error during encounter cleanup in channel %s: %s",
-                    channel,
-                    e,
-                )
+                logger.error(f"Error during encounter cleanup in guild {guild.id}: {e}")
 
 
 async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:

@@ -137,7 +137,7 @@ class TestSetupCogCommand:
         )
 
         mock_guild.create_category.assert_called_once()
-        assert mock_guild.create_text_channel.call_count == 4
+        assert mock_guild.create_text_channel.call_count == 3
         mock_interaction.followup.send.assert_called_once()
 
     @pytest.mark.asyncio
