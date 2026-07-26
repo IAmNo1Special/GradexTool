@@ -5,21 +5,21 @@ repos:
     hooks:
       - id: ruff-check
         name: Ruff Linter
-        entry: uv run ruff check .
+        entry: uvx ruff check .
         language: system
         types: [python]
         pass_filenames: false
 
       - id: ruff-format
         name: Ruff Formatter
-        entry: uv run ruff format --check .
+        entry: uvx ruff format --check .
         language: system
         types: [python]
         pass_filenames: false
 
       - id: mypy
         name: Mypy Type Checker
-        entry: uv run mypy .
+        entry: uvx mypy .
         language: system
         types: [python]
         pass_filenames: false
@@ -33,7 +33,7 @@ repos:
 
       - id: pytest
         name: Pytest Unit Tests
-        entry: uv run pytest --cov=. --cov-report=xml
+        entry: uv run -m pytest tests/ --cov=. --cov-report=xml -v
         language: system
         pass_filenames: false
         always_run: true
