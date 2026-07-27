@@ -32,6 +32,7 @@ WeeklyPodiumTable = gradexDB.WeeklyPodiumTable  # type: ignore
 TypesTable = gradexDB.TypesTable  # type: ignore
 UsersTable = gradexDB.UsersTable  # type: ignore
 EventBoardLogsTable = gradexDB.EventBoardLogsTable  # type: ignore
+AccountsTable = gradexDB.AccountsTable  # type: ignore
 
 
 # Add placeholders for classes that may be expected but don't exist in scripts/gradexDB.py
@@ -66,4 +67,5 @@ __all__ = [
     "EventBoardLogsTable",
     "LandsTable",
     "CaughtRevomonTable",
+    "AccountsTable",
 ]

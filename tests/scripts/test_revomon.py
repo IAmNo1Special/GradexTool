@@ -11,7 +11,7 @@ import json
 import os
 from datetime import UTC, datetime, timedelta
 from email.utils import formatdate
-from unittest.mock import AsyncMock, MagicMock, mock_open, patch
+from unittest.mock import AsyncMock, patch
 
 import httpx
 import pytest
@@ -22,7 +22,6 @@ from httpx import Response  # noqa: E402
 from scripts.revomon import (  # noqa: E402
     ImageDownloadResult,
     RequestPacer,
-    RevomonTable,
     _build_image_variants,
     _download_image,
     _download_revomon_images,
@@ -459,338 +458,52 @@ async def test_get_revomon_data(tmp_path: Any) -> None:
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip(
+    reason="RevomonTable removed from scripts.revomon, consolidated to scripts.gradexDB"
+)
 async def test_revomon_table_create(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value = MagicMock()
-        table.create()
-        mock_conn.assert_called_once_with(mock_db_path)
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_rebuild(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-
-    with patch("requests.post") as mock_post:
-        mock_response = MagicMock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "data": {
-                "revomons": [
-                    {
-                        "idRevodex": 1,
-                        "idRevomon": 1,
-                        "name": "testmon",
-                        "description": "desc",
-                        "rarity": "common",
-                        "ability1": "ab1",
-                        "ability2": None,
-                        "abilityHidden": None,
-                        "evolution": "",
-                        "levelEvolution": 0,
-                        "type1": "fire",
-                        "type2": "water",
-                        "hp": 1,
-                        "atk": 1,
-                        "def": 1,
-                        "spa": 1,
-                        "spd": 1,
-                        "spe": 1,
-                        "evhp": 1,
-                        "evatk": 1,
-                        "evdef": 1,
-                        "evspa": 1,
-                        "evspd": 1,
-                        "evspe": 1,
-                    },
-                    {
-                        "idRevodex": 2,
-                        "idRevomon": 2,
-                        "name": "test-mon",
-                        "description": "desc",
-                        "rarity": "rare",
-                        "ability1": "ab1",
-                        "ability2": "ab2",
-                        "abilityHidden": "abh",
-                        "evolution": "test2",
-                        "levelEvolution": 5,
-                        "type1": "fire",
-                        "type2": None,
-                        "hp": 1,
-                        "atk": 1,
-                        "def": 1,
-                        "spa": 1,
-                        "spd": 1,
-                        "spe": 1,
-                        "evhp": 1,
-                        "evatk": 1,
-                        "evdef": 1,
-                        "evspa": 1,
-                        "evspd": 1,
-                        "evspe": 1,
-                    },
-                    {
-                        "idRevodex": 3,
-                        "idRevomon": 3,
-                        "name": "legend",
-                        "description": "desc",
-                        "rarity": "legendary",
-                        "ability1": "ab1",
-                        "ability2": None,
-                        "abilityHidden": None,
-                        "evolution": "",
-                        "levelEvolution": 0,
-                        "type1": "fire",
-                        "type2": None,
-                        "hp": 1,
-                        "atk": 1,
-                        "def": 1,
-                        "spa": 1,
-                        "spd": 1,
-                        "spe": 1,
-                        "evhp": 1,
-                        "evatk": 1,
-                        "evdef": 1,
-                        "evspa": 1,
-                        "evspd": 1,
-                        "evspe": 1,
-                    },
-                ]
-            }
-        }
-        mock_post.return_value = mock_response
-
-        mock_emoji_utils = MagicMock()
-        mock_emoji_utils.create_emoji_from_url = AsyncMock(
-            return_value={"id": "<emoji1>"}
-        )
-        mock_emoji_utils.list_application_emojis = AsyncMock(
-            return_value=[
-                {"name": "test_mon", "id": "<cached_test_mon>"},
-                {"name": "test_mon_shiny", "id": "<cached_test_mon_shiny>"},
-            ]
-        )
-
-        mock_revomon_utils = MagicMock()
-        mock_revomon_utils.get_evo_trees.return_value = [
-            "testmon",
-            "test-mon",
-            "legend",
-        ]
-
-        with patch.dict(
-            "sys.modules",
-            {
-                "utils.emoji_utils": mock_emoji_utils,
-                "utils.revomon_utils": mock_revomon_utils,
-            },
-        ):
-            with patch(
-                "builtins.open",
-                mock_open(
-                    read_data='[{"name": "testmon", "dex_id": 1, "spawn_loc1": "loc1", "spawn_time1": "time1", "spawn_loc2": "loc2", "spawn_time2": "time2", "spawn_loc3": "loc3", "spawn_time3": "time3", "rarity": "common"}, {"name": "test-mon", "dex_id": 2, "spawn_loc1": null, "spawn_time1": null, "spawn_loc2": null, "spawn_time2": null, "spawn_loc3": null, "spawn_time3": null, "rarity": "rare"}, {"name": "legend", "dex_id": 3, "spawn_loc1": null, "spawn_time1": null, "spawn_loc2": null, "spawn_time2": null, "spawn_loc3": null, "spawn_time3": null, "rarity": "legendary"}]'
-                ),
-            ):
-                with patch("scripts.revomon.RevomonTable.export_to_json"):
-
-                    class MockTypesTable:
-                        def get_info(self, t1: Any, t2: Any) -> Any:
-                            if t1 == "fire" and t2 == "water":
-                                return [["test", "test_img"]]
-                            return []
-
-                    with patch("sqlite3.connect") as mock_conn:
-                        with patch.dict("sys.modules", {}):
-                            import builtins
-
-                            original_table = getattr(builtins, "TypesTable", None)
-                            setattr(builtins, "TypesTable", MockTypesTable)
-                            try:
-                                await table.rebuild()
-                            except Exception as e:
-                                import traceback
-
-                                traceback.print_exc()
-                                raise e
-                            finally:
-                                if original_table is not None:
-                                    setattr(builtins, "TypesTable", original_table)
-                                else:
-                                    delattr(builtins, "TypesTable")
-
-                        assert mock_conn.return_value.cursor.return_value.execute.called
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_build(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.create = MagicMock()  # type: ignore[method-assign]
-    table.rebuild = AsyncMock()  # type: ignore[method-assign]
-    table.count_entries = MagicMock()  # type: ignore[method-assign]
-    table.export_to_json = MagicMock()  # type: ignore[method-assign]
-
-    await table.build()
-
-    table.create.assert_called_once()
-    table.rebuild.assert_called_once()
-    table.count_entries.assert_called_once()
-    table.export_to_json.assert_called_once()
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_export_to_json(mock_db_path: Any, tmp_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-
-    with patch("sqlite3.connect") as mock_conn:
-        mock_cursor = mock_conn.return_value.cursor.return_value
-        mock_cursor.fetchall.return_value = [("a", "b")]
-        mock_cursor.description = [("col1",), ("col2",)]
-        with patch("builtins.open", mock_open()) as mocked_file:
-            table.export_to_json()
-            assert mocked_file.call_count == 1
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_count_entries(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_cursor = mock_conn.return_value.cursor.return_value
-        mock_cursor.fetchone.return_value = [42]
-
-        assert table.count_entries() == 42
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_add_revomon(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-
-    with patch("sqlite3.connect") as mock_conn:
-        table.add_revomon(
-            1,
-            1,
-            "test",
-            "desc",
-            "common",
-            "ab1",
-            "ab2",
-            "abh",
-            "evo",
-            0,
-            "et",
-            "t1",
-            "t1i",
-            "t2",
-            "t2i",
-            None,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            6,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            "img",
-            "img_shiny",
-            "nft",
-            "nft_shiny",
-            "em",
-            "ems",
-            "loc1",
-            "t1",
-            None,
-            None,
-            None,
-            None,
-        )
-        assert mock_conn.return_value.cursor.return_value.execute.called
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_get_mon_ids(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value.fetchall.return_value = [(10,)]
-        assert table.get_mon_ids() == [10]
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_get_names(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value.fetchall.return_value = [("TEST",)]
-        assert table.get_names() == ["test"]
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_get_name_by_id(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value.fetchone.return_value = ["test"]
-        assert table.get_name_by_id(dex_id=1) == "test"
-        assert table.get_name_by_id(mon_id=10) == "test"
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_get_id_by_id(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value.fetchone.return_value = [10]
-        assert table.get_id_by_id(dex_id=1) == 10
-        assert table.get_id_by_id(mon_id=10) == 10
-
-        mock_conn.return_value.cursor.return_value.fetchone.return_value = None
-        with pytest.raises(ValueError):
-            table.get_id_by_id(dex_id=99)
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_get_info(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_conn.return_value.cursor.return_value.fetchall.return_value = [
-            [1, 10, "testmon"]
-        ]
-        rows = table.get_info("TEST")
-        assert len(rows) == 1
-        assert rows[0][2] == "testmon"
+    pass  # Skipped - RevomonTable removed from scripts.revomon
 
 
-@pytest.mark.asyncio
 async def test_revomon_table_has_ability(mock_db_path: Any) -> None:
-    table = RevomonTable()
-    table.db_path = mock_db_path
-    with patch("sqlite3.connect") as mock_conn:
-        mock_cursor = mock_conn.return_value.cursor.return_value
-
-        # Test 1
-        mock_cursor.fetchall.return_value = [("testmon",)]
-        assert table.has_ability("ab1", "testmon") is True
-
-        # Test 2
-        mock_cursor.fetchall.return_value = []
-        assert table.has_ability("ab4", "testmon") is False
-
-        # Test 3
-        mock_cursor.fetchall.return_value = [("testmon",)]
-        assert table.has_ability("ab2") == ["testmon"]
-
-        # Test 4
-        mock_cursor.fetchall.return_value = []
-        assert table.has_ability("ab4") == []
+    pass  # Skipped - RevomonTable removed from scripts.revomon

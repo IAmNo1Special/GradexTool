@@ -36,14 +36,16 @@ def mock_db(tmp_path: Any) -> Generator[str]:
 @pytest.fixture
 def mock_requests() -> Generator[tuple[MagicMock, MagicMock]]:
     with (
-        patch("scripts.gradexDB.requests.get") as mock_get,
-        patch("scripts.gradexDB.requests.post") as mock_post,
+        patch("scripts.gradexDB.safe_get", new_callable=AsyncMock) as mock_get,
+        patch("scripts.gradexDB.safe_post", new_callable=AsyncMock) as mock_post,
     ):
+        mock_post.return_value = MagicMock()
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {
             "data": {"revomons": [{"idRevodex": 1, "idRevomon": 1, "name": "TestMon"}]}
         }
 
+        mock_get.return_value = MagicMock()
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "data": {
