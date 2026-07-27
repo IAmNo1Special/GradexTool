@@ -1,8 +1,8 @@
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import discord
 import pytest
+from discord import Interaction
 from discord.ext import commands
 
 from mods.the_elders_library.search_command import SearchCommand, setup
@@ -107,7 +107,9 @@ class TestSearchCommand:
 
     @patch("mods.the_elders_library.search_command.ItemsTable")
     @pytest.mark.asyncio
-    async def test_allitems_embed(self, mock_items_table: Any, search_cog: Any) -> None:
+    async def test_allitems_embed(
+        self, mock_items_table: Any, search_cog: Any
+    ) -> None:
         mock_items_instance = mock_items_table.return_value
         mock_items_instance.get_names = AsyncMock(return_value=["Potion", "Pokeball"])
 
@@ -205,7 +207,7 @@ class TestSearchCommand:
         mock_allabilities_embed: Any,
         search_cog: Any,
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
 
         mock_allabilities_embed.return_value = "all_embed"
@@ -227,7 +229,7 @@ class TestSearchCommand:
     async def test_abilities_command_exception(
         self, search_cog: Any, capsys: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.abilities.callback(search_cog, interaction, name=None)
@@ -240,7 +242,7 @@ class TestSearchCommand:
     async def test_fruitys_command(
         self, mock_fruity_search_embed: Any, mock_allfruitys_embed: Any, search_cog: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
 
         mock_allfruitys_embed.return_value = "all_embed"
@@ -260,7 +262,7 @@ class TestSearchCommand:
     async def test_fruitys_command_exception(
         self, search_cog: Any, capsys: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.fruitys.callback(search_cog, interaction, name=None)
@@ -273,7 +275,7 @@ class TestSearchCommand:
     async def test_items_command(
         self, mock_item_search_embed: Any, mock_allitems_embed: Any, search_cog: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
 
         mock_allitems_embed.return_value = "all_embed"
@@ -294,7 +296,7 @@ class TestSearchCommand:
     async def test_moves_command(
         self, mock_move_search_embed: Any, search_cog: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
 
         mock_move_search_embed.return_value = "search_embed"
@@ -306,7 +308,7 @@ class TestSearchCommand:
 
     @pytest.mark.asyncio
     async def test_moves_command_exception(self, search_cog: Any, capsys: Any) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.moves.callback(search_cog, interaction, name="Flamethrower")
@@ -317,9 +319,12 @@ class TestSearchCommand:
     @patch.object(SearchCommand, "nature_search_embed")
     @pytest.mark.asyncio
     async def test_natures_command(
-        self, mock_nature_search_embed: Any, mock_allnatures_embed: Any, search_cog: Any
+        self,
+        mock_nature_search_embed: Any,
+        mock_allnatures_embed: Any,
+        search_cog: Any,
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
 
         mock_allnatures_embed.return_value = "all_embed"
@@ -335,38 +340,45 @@ class TestSearchCommand:
             embed="search_embed", ephemeral=True
         )
 
-    @patch("mods.the_elders_library.search_command.Buttons")
     @patch("mods.the_elders_library.search_command.RevomonTable")
     @patch("mods.the_elders_library.search_command.get_attributes")
     @patch("mods.the_elders_library.search_command.compare_intros")
     @patch("mods.the_elders_library.search_command.intro")
+    @patch("mods.the_elders_library.search_command.MonPaginationView")
+    @patch("mods.the_elders_library.search_command.CompareIntroView")
+    @patch("mods.the_elders_library.search_command.IntroView")
+    @patch("mods.the_elders_library.search_command.get_book_of_mon_names")
     @pytest.mark.asyncio
     async def test_revomon_command(
         self,
+        mock_get_book_of_mon_names: Any,
+        mock_intro_view: Any,
+        mock_compare_intro_view: Any,
+        mock_mon_pagination_view: Any,
         mock_intro: Any,
         mock_compare_intros: Any,
         mock_get_attributes: Any,
         mock_revomon_table: Any,
-        mock_buttons_class: Any,
         search_cog: Any,
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response = AsyncMock()
         interaction.user.id = 123
 
-        mock_buttons_instance = AsyncMock()
-        mock_buttons_instance.mon_view = AsyncMock(return_value="mon_view")
-        mock_buttons_instance.compare_intros_view = AsyncMock(
-            return_value="compare_view"
+        mock_revomon_table.return_value.get_names = AsyncMock(
+            return_value=["mon1", "mon2"]
         )
-        mock_buttons_instance.intro_view = AsyncMock(return_value="intro_view")
-        mock_buttons_class.return_value = mock_buttons_instance
+        mock_get_book_of_mon_names.return_value = [["mon1", "mon2"]]
+        mock_mon_pagination_view.return_value = "mon_view"
+        mock_intro_view.return_value = "intro_view"
+        mock_compare_intro_view.return_value = "compare_view"
 
         # Test no name
         await search_cog.revomon.callback(search_cog, interaction, name=None)
         interaction.response.send_message.assert_called_with(
             view="mon_view", ephemeral=True
         )
+        mock_mon_pagination_view.assert_called_once()
 
         # Test compare mode
         mock_revomon_table.return_value.get_names = AsyncMock(
@@ -374,27 +386,33 @@ class TestSearchCommand:
         )
         mock_get_attributes.side_effect = ["attrs1", "attrs2"]
         mock_compare_intros.return_value = "compare_embed"
+        mock_compare_intro_view.return_value = "compare_view"
 
         await search_cog.revomon.callback(search_cog, interaction, name="mon1 & mon2")
         interaction.response.send_message.assert_called_with(
             embed="compare_embed", view="compare_view", ephemeral=True
+        )
+        mock_compare_intro_view.assert_called_once_with(
+            attributes="attrs1", attributes2="attrs2"
         )
 
         # Reset side_effect for single mon test
         mock_get_attributes.side_effect = None
         mock_get_attributes.return_value = "attrs1"
         mock_intro.return_value = "intro_embed"
+        mock_intro_view.return_value = "intro_view"
 
         await search_cog.revomon.callback(search_cog, interaction, name="mon1")
         interaction.response.send_message.assert_called_with(
             embed="intro_embed", view="intro_view", ephemeral=True
         )
+        mock_intro_view.assert_called_once_with(attributes="attrs1")
 
     @pytest.mark.asyncio
     async def test_revomon_command_exception(
         self, search_cog: Any, capsys: Any
     ) -> None:
-        interaction = AsyncMock(spec=discord.Interaction)
+        interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.revomon.callback(search_cog, interaction, name=None)
@@ -403,6 +421,84 @@ class TestSearchCommand:
             "An error occurred during search_command(revomon subcommand):"
             in captured.out
         )
+
+    @patch("mods.the_elders_library.search_command.OwnedLandsTable")
+    @patch("mods.the_elders_library.search_command.LandPaginationView")
+    @patch("mods.the_elders_library.search_command.get_book_of_land_ids")
+    @pytest.mark.asyncio
+    async def test_land_nfts_command_no_filters(
+        self,
+        mock_get_book_of_land_ids: Any,
+        mock_land_pagination_view: Any,
+        mock_owned_lands_table: Any,
+        search_cog: Any,
+    ) -> None:
+        interaction = AsyncMock(spec=Interaction)
+        interaction.response = AsyncMock()
+        interaction.user.id = 123
+        interaction.followup.send = AsyncMock()
+
+        mock_get_book_of_land_ids.return_value = [[1, 2, 3]]
+        mock_land_view = MagicMock()
+        mock_land_pagination_view.return_value = mock_land_view
+
+        await search_cog.land_nfts.callback(
+            search_cog,
+            interaction,
+            biome=None,
+            land_type=None,
+            owners_address=None,
+            rarity=None,
+            sale_status=None,
+            size=None,
+            token_id=None,
+        )
+
+        interaction.response.defer.assert_called_once_with(ephemeral=True)
+        mock_land_pagination_view.assert_called_once_with(
+            user_id=123, book_of_land_ids=[[1, 2, 3]], current_page=1
+        )
+        interaction.followup.send.assert_called_with(view=mock_land_view, ephemeral=True)
+
+    @patch("mods.the_elders_library.search_command.OwnedLandsTable")
+    @patch("mods.the_elders_library.search_command.LandPaginationView")
+    @patch("mods.the_elders_library.search_command.get_book_of_land_ids")
+    @pytest.mark.asyncio
+    async def test_land_nfts_command_with_filters(
+        self,
+        mock_get_book_of_land_ids: Any,
+        mock_land_pagination_view: Any,
+        mock_owned_lands_table: Any,
+        search_cog: Any,
+    ) -> None:
+        interaction = AsyncMock(spec=Interaction)
+        interaction.response = AsyncMock()
+
+        mock_lands_instance = mock_owned_lands_table.return_value
+        mock_lands_instance.get_info = AsyncMock(
+            return_value=[
+                (1, 1, "0x1", "forest", "base", "common", "small", "url", "emoji", 0)
+            ]
+        )
+        mock_get_book_of_land_ids.return_value = [[1]]
+        mock_land_pagination_view.return_value = "land_view"
+
+        await search_cog.land_nfts.callback(
+            search_cog,
+            interaction,
+            biome=None,
+            land_type=None,
+            owners_address="0x1",
+            rarity=None,
+            sale_status=None,
+            size=None,
+            token_id=None,
+        )
+
+        interaction.response.defer.assert_called_once_with(ephemeral=True)
+        mock_lands_instance.get_info.assert_called_once()
+        mock_land_pagination_view.assert_called_once()
+        interaction.followup.send.assert_called_with(view="land_view", ephemeral=True)
 
 
 @pytest.mark.asyncio

@@ -12,7 +12,14 @@ from data import (
     RevomonMovesTable,
     RevomonTable,
 )
-from utils.button_utils import Buttons
+from utils.button_utils import (
+    CompareIntroView,
+    IntroView,
+    LandPaginationView,
+    MonPaginationView,
+    get_book_of_land_ids,
+    get_book_of_mon_names,
+)
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes
 
@@ -39,7 +46,7 @@ class SearchCommand(commands.Cog):
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
-        embed.description += f"\n\n__**Learned By**__\n{learned_by}"  # type: ignore[operator]
+        embed.description += f"\n\n__**Learned By**__\n{learned_by}"
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
@@ -69,7 +76,6 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         embed.add_field(name="__**Type**__", value=fruity_info[2].title(), inline=True)
-        # embed.set_thumbnail(url="") PLACEHOLDER FOR FRUITY IMAGE
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
@@ -123,7 +129,6 @@ class SearchCommand(commands.Cog):
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
-
         return embed
 
     async def move_search_embed(self, move_name: str) -> discord.embeds.Embed:
@@ -314,12 +319,17 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(name="The name of the revomon you'd like more info on.")
     async def revomon(self, interaction: Interaction, name: str | None = None) -> None:
         try:
-            buttons = Buttons(self.gradex)
             if not name:
-                mon_main_view = await buttons.mon_view(user_id=interaction.user.id)
-                await interaction.response.send_message(
-                    view=mon_main_view, ephemeral=True
+                book_of_names = await get_book_of_mon_names()
+                view = MonPaginationView(
+                    bot=interaction.client,
+                    user_id=interaction.user.id,
+                    book_of_names=book_of_names,
+                    current_page=1,
+                    group_by_evo=True,
+                    app_emojis={},
                 )
+                await interaction.response.send_message(view=view, ephemeral=True)
                 return
 
             if "&" in name:
@@ -333,20 +343,18 @@ class SearchCommand(commands.Cog):
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
-                    buttons = await buttons.compare_intros_view(
-                        attributes=attributes, attributes2=attributes2
-                    )
+                    view = CompareIntroView(attributes=attributes, attributes2=attributes2)
                     await interaction.response.send_message(
-                        embed=embed, view=buttons, ephemeral=True
+                        embed=embed, view=view, ephemeral=True
                     )
             # Check if User's Prompt is a Revomon's Name
             elif name.lower() in await RevomonTable().get_names():
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=name)
                 embed = intro(attributes=attributes)
-                buttons = await buttons.intro_view(attributes=attributes)
+                view = IntroView(attributes=attributes)
                 await interaction.response.send_message(
-                    embed=embed, view=buttons, ephemeral=True
+                    embed=embed, view=view, ephemeral=True
                 )
         except Exception as e:
             print(f"An error occurred during search_command(revomon subcommand): {e}")
@@ -425,7 +433,6 @@ class SearchCommand(commands.Cog):
     ) -> None:
         await interaction.response.defer(ephemeral=True)
 
-        buttons = Buttons(self.gradex)
         if (
             not token_id
             and not owners_address
@@ -435,12 +442,16 @@ class SearchCommand(commands.Cog):
             and not size
             and not sale_status
         ):
-            land_main_view = await buttons.land_view(user_id=interaction.user.id)
-            await interaction.followup.send(view=land_main_view, ephemeral=True)
+            book_of_land_ids = await get_book_of_land_ids()
+            view = LandPaginationView(
+                user_id=interaction.user.id,
+                book_of_land_ids=book_of_land_ids,
+                current_page=1,
+            )
+            await interaction.followup.send(view=view, ephemeral=True)
             return
         else:
             try:
-                # Build the response message dynamically
                 lands_data = OwnedLandsTable()
                 response_message = await lands_data.get_info(
                     token_id=token_id if token_id else None,
@@ -456,10 +467,13 @@ class SearchCommand(commands.Cog):
                 )
                 if response_message:
                     token_ids = [land[0] for land in response_message]
-                    land_main_view = await buttons.land_view(
-                        token_ids=token_ids, user_id=interaction.user.id
+                    book_of_land_ids = await get_book_of_land_ids(token_ids=token_ids)
+                    view = LandPaginationView(
+                        user_id=interaction.user.id,
+                        book_of_land_ids=book_of_land_ids,
+                        current_page=1,
                     )
-                    await interaction.followup.send(view=land_main_view, ephemeral=True)
+                    await interaction.followup.send(view=view, ephemeral=True)
                 else:
                     await interaction.followup.send(
                         "No lands found that match your criteria.", ephemeral=True

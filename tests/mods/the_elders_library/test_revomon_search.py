@@ -6,6 +6,10 @@ from discord import Message
 from discord.ext import commands
 
 from mods.the_elders_library.revomon_search import revomon_search, setup
+from utils.button_utils import (
+    CompareIntroView,
+    IntroView,
+)
 
 
 class TestRevomonSearch:
@@ -27,10 +31,7 @@ class TestRevomonSearch:
         assert "---------------------------" in captured.out
 
     @patch("mods.the_elders_library.revomon_search.RevomonTable")
-    @patch("mods.the_elders_library.revomon_search.Buttons")
-    @patch(
-        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
-    )
+    @patch("mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock)
     @patch("mods.the_elders_library.revomon_search.compare_intros")
     @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
@@ -39,7 +40,6 @@ class TestRevomonSearch:
         mock_respond: Any,
         mock_compare_intros: Any,
         mock_get_attributes: Any,
-        mock_buttons_class: Any,
         mock_revomon_table: Any,
         revomon_search_cog: Any,
     ) -> None:
@@ -49,12 +49,6 @@ class TestRevomonSearch:
 
         mock_revomon_table_instance = mock_revomon_table.return_value
         mock_revomon_table_instance.get_names = AsyncMock(return_value=["mon1", "mon2"])
-
-        mock_buttons_instance = AsyncMock()
-        mock_buttons_instance.compare_intros_view = AsyncMock(
-            return_value="mock_compare_buttons"
-        )
-        mock_buttons_class.return_value = mock_buttons_instance
 
         mock_get_attributes.side_effect = ["attrs1", "attrs2"]
         mock_compare_intros.return_value = "mock_compare_embed"
@@ -66,21 +60,19 @@ class TestRevomonSearch:
         mock_compare_intros.assert_called_once_with(
             attributes="attrs1", attributes2="attrs2"
         )
-        mock_buttons_instance.compare_intros_view.assert_called_once_with(
-            attributes="attrs1", attributes2="attrs2"
-        )
         mock_respond.assert_called_once_with(
             revomon_search_cog.gradex,
             message,
             "mock_compare_embed",
-            "mock_compare_buttons",
+            mock_respond.call_args[0][3],  # The view instance
         )
+        # Verify the view is a CompareIntroView
+        call_args = mock_respond.call_args
+        view = call_args[0][3]
+        assert isinstance(view, CompareIntroView)
 
     @patch("mods.the_elders_library.revomon_search.RevomonTable")
-    @patch("mods.the_elders_library.revomon_search.Buttons")
-    @patch(
-        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
-    )
+    @patch("mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock)
     @patch("mods.the_elders_library.revomon_search.intro")
     @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
@@ -89,7 +81,6 @@ class TestRevomonSearch:
         mock_respond: Any,
         mock_intro: Any,
         mock_get_attributes: Any,
-        mock_buttons_class: Any,
         mock_revomon_table: Any,
         revomon_search_cog: Any,
     ) -> None:
@@ -100,10 +91,6 @@ class TestRevomonSearch:
         mock_revomon_table_instance = mock_revomon_table.return_value
         mock_revomon_table_instance.get_names = AsyncMock(return_value=["mon1", "mon2"])
 
-        mock_buttons_instance = AsyncMock()
-        mock_buttons_instance.intro_view = AsyncMock(return_value="mock_intro_buttons")
-        mock_buttons_class.return_value = mock_buttons_instance
-
         mock_get_attributes.return_value = "attrs1"
         mock_intro.return_value = "mock_intro_embed"
 
@@ -111,10 +98,13 @@ class TestRevomonSearch:
 
         mock_get_attributes.assert_called_once_with(revomon_name="mon1")
         mock_intro.assert_called_once_with(attributes="attrs1")
-        mock_buttons_instance.intro_view.assert_called_once_with(attributes="attrs1")
         mock_respond.assert_called_once_with(
-            revomon_search_cog.gradex, message, "mock_intro_embed", "mock_intro_buttons"
+            revomon_search_cog.gradex, message, "mock_intro_embed", mock_respond.call_args[0][3]
         )
+        # Verify the view is an IntroView
+        call_args = mock_respond.call_args
+        view = call_args[0][3]
+        assert isinstance(view, IntroView)
 
     @pytest.mark.asyncio
     async def test_on_message_bot(self, revomon_search_cog: Any) -> None:

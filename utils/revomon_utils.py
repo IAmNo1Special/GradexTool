@@ -109,25 +109,39 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
             )
         ],
         "cdex_tier": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][4],
         "cdex_description": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][3],
         "weakness": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][9],
         "meta_build": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][6],
         "meta_moves": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][5],
-        "tips": (await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower()))[0][
-            7
-        ],
+        "tips": (
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
+        )[0][7],
         "counters": (
-            await CounterdexTable().get_info(revomon_name=mon_info.get("name", "").lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][8],
     }
     return attributes

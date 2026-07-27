@@ -167,88 +167,112 @@ class CompareIntroView(View):
 # Action Buttons - these read attributes from their parent view
 class StatsButton(Button):
     def __init__(self):
-        super().__init__(label="Stats", style=ButtonStyle.green, custom_id="action:stats")
+        super().__init__(
+            label="Stats", style=ButtonStyle.green, custom_id="action:stats"
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes'):
+        if hasattr(view, "attributes"):
             embed = stats(view.attributes)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class CompareStatsButton(Button):
     def __init__(self):
-        super().__init__(label="Compare Stats", style=ButtonStyle.green, custom_id="action:compare_stats")
+        super().__init__(
+            label="Compare Stats",
+            style=ButtonStyle.green,
+            custom_id="action:compare_stats",
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes') and hasattr(view, 'attributes2'):
+        if hasattr(view, "attributes") and hasattr(view, "attributes2"):
             embed = compare_stats(view.attributes, view.attributes2)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class SpawnsButton(Button):
     def __init__(self):
-        super().__init__(label="Spawns", style=ButtonStyle.green, custom_id="action:spawns")
+        super().__init__(
+            label="Spawns", style=ButtonStyle.green, custom_id="action:spawns"
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes'):
+        if hasattr(view, "attributes"):
             embed = spawns(view.attributes)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class CompareSpawnsButton(Button):
     def __init__(self):
-        super().__init__(label="Compare Spawns", style=ButtonStyle.green, custom_id="action:compare_spawns")
+        super().__init__(
+            label="Compare Spawns",
+            style=ButtonStyle.green,
+            custom_id="action:compare_spawns",
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes') and hasattr(view, 'attributes2'):
+        if hasattr(view, "attributes") and hasattr(view, "attributes2"):
             embed = compare_spawns(view.attributes, view.attributes2)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class MovesButton(Button):
     def __init__(self):
-        super().__init__(label="Moves", style=ButtonStyle.green, custom_id="action:moves")
+        super().__init__(
+            label="Moves", style=ButtonStyle.green, custom_id="action:moves"
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes'):
+        if hasattr(view, "attributes"):
             embed = moves(view.attributes)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class CompareMovesButton(Button):
     def __init__(self):
-        super().__init__(label="Compare Moves", style=ButtonStyle.green, custom_id="action:compare_moves")
+        super().__init__(
+            label="Compare Moves",
+            style=ButtonStyle.green,
+            custom_id="action:compare_moves",
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes') and hasattr(view, 'attributes2'):
+        if hasattr(view, "attributes") and hasattr(view, "attributes2"):
             embed = compare_moves(view.attributes, view.attributes2)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class TypesButton(Button):
     def __init__(self):
-        super().__init__(label="Types", style=ButtonStyle.green, custom_id="action:types")
+        super().__init__(
+            label="Types", style=ButtonStyle.green, custom_id="action:types"
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes'):
+        if hasattr(view, "attributes"):
             embed = types(view.attributes)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class CompareTypesButton(Button):
     def __init__(self):
-        super().__init__(label="Compare Types", style=ButtonStyle.green, custom_id="action:compare_types")
+        super().__init__(
+            label="Compare Types",
+            style=ButtonStyle.green,
+            custom_id="action:compare_types",
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes') and hasattr(view, 'attributes2'):
+        if hasattr(view, "attributes") and hasattr(view, "attributes2"):
             embed, embed2 = compare_types(view.attributes, view.attributes2)
             await interaction.response.send_message(embed=embed, ephemeral=True)
             await interaction.followup.send(embed=embed2, ephemeral=True)
@@ -256,22 +280,28 @@ class CompareTypesButton(Button):
 
 class CounterdexButton(Button):
     def __init__(self):
-        super().__init__(label="Counterdex", style=ButtonStyle.green, custom_id="action:counterdex")
+        super().__init__(
+            label="Counterdex", style=ButtonStyle.green, custom_id="action:counterdex"
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes'):
+        if hasattr(view, "attributes"):
             embed = counterdex(view.attributes)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 class CompareCounterdexsButton(Button):
     def __init__(self):
-        super().__init__(label="Compare Counterdexs", style=ButtonStyle.green, custom_id="action:compare_counterdexs")
+        super().__init__(
+            label="Compare Counterdexs",
+            style=ButtonStyle.green,
+            custom_id="action:compare_counterdexs",
+        )
 
     async def callback(self, interaction: Interaction):
         view = self.view
-        if hasattr(view, 'attributes') and hasattr(view, 'attributes2'):
+        if hasattr(view, "attributes") and hasattr(view, "attributes2"):
             embed = compare_counterdexs(view.attributes, view.attributes2)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -279,7 +309,12 @@ class CompareCounterdexsButton(Button):
 # Pagination Buttons for Mon
 class FirstPageButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ee\ufe0f", style=ButtonStyle.green, row=row, custom_id="page:first")
+        super().__init__(
+            emoji="\u23ee\ufe0f",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="page:first",
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -287,7 +322,9 @@ class FirstPageButton(Button):
 
 class PreviousPageButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="page:prev")
+        super().__init__(
+            emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="page:prev"
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -295,7 +332,9 @@ class PreviousPageButton(Button):
 
 class NextPageButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="page:next")
+        super().__init__(
+            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="page:next"
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -303,7 +342,12 @@ class NextPageButton(Button):
 
 class LastPageButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ef\ufe0f", style=ButtonStyle.green, row=row, custom_id="page:last")
+        super().__init__(
+            emoji="\u23ef\ufe0f",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="page:last",
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -312,7 +356,12 @@ class LastPageButton(Button):
 # Pagination Buttons for Land
 class FirstPageLandButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ee\ufe0f", style=ButtonStyle.green, row=row, custom_id="land_page:first")
+        super().__init__(
+            emoji="\u23ee\ufe0f",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="land_page:first",
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -320,7 +369,9 @@ class FirstPageLandButton(Button):
 
 class PreviousPageLandButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="land_page:prev")
+        super().__init__(
+            emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="land_page:prev"
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -328,7 +379,9 @@ class PreviousPageLandButton(Button):
 
 class NextPageLandButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="land_page:next")
+        super().__init__(
+            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="land_page:next"
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -336,7 +389,12 @@ class NextPageLandButton(Button):
 
 class LastPageLandButton(Button):
     def __init__(self, row: int):
-        super().__init__(emoji="\u23ef\ufe0f", style=ButtonStyle.green, row=row, custom_id="land_page:last")
+        super().__init__(
+            emoji="\u23ef\ufe0f",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="land_page:last",
+        )
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
@@ -360,16 +418,36 @@ class SearchSortButton(Button):
             custom_id="mon_sort_by_select",
             row=0,
             options=[
-                SelectOption(label="Dex #", value="dex_id", description="Sort by Pok\u00e9dex number"),
-                SelectOption(label="Name", value="name", description="Sort alphabetically"),
-                SelectOption(label="Type", value="type1", description="Sort by primary type"),
+                SelectOption(
+                    label="Dex #",
+                    value="dex_id",
+                    description="Sort by Pok\u00e9dex number",
+                ),
+                SelectOption(
+                    label="Name", value="name", description="Sort alphabetically"
+                ),
+                SelectOption(
+                    label="Type", value="type1", description="Sort by primary type"
+                ),
                 SelectOption(label="HP", value="hp", description="Sort by HP stat"),
-                SelectOption(label="ATK", value="atk", description="Sort by Attack stat"),
-                SelectOption(label="DEF", value="def", description="Sort by Defense stat"),
-                SelectOption(label="SPA", value="spa", description="Sort by Sp. Attack stat"),
-                SelectOption(label="SPD", value="spd", description="Sort by Sp. Defense stat"),
-                SelectOption(label="SPE", value="spe", description="Sort by Speed stat"),
-                SelectOption(label="Rarity", value="rarity", description="Sort by rarity"),
+                SelectOption(
+                    label="ATK", value="atk", description="Sort by Attack stat"
+                ),
+                SelectOption(
+                    label="DEF", value="def", description="Sort by Defense stat"
+                ),
+                SelectOption(
+                    label="SPA", value="spa", description="Sort by Sp. Attack stat"
+                ),
+                SelectOption(
+                    label="SPD", value="spd", description="Sort by Sp. Defense stat"
+                ),
+                SelectOption(
+                    label="SPE", value="spe", description="Sort by Speed stat"
+                ),
+                SelectOption(
+                    label="Rarity", value="rarity", description="Sort by rarity"
+                ),
             ],
         )
 
@@ -378,8 +456,18 @@ class SearchSortButton(Button):
             custom_id="mon_sort_order_select",
             row=1,
             options=[
-                SelectOption(label="Ascending", value="asc", emoji="\u2b06\ufe0f", description="A \u2192 Z, lowest \u2192 highest"),
-                SelectOption(label="Descending", value="desc", emoji="\u2b07\ufe0f", description="Z \u2192 A, highest \u2192 lowest"),
+                SelectOption(
+                    label="Ascending",
+                    value="asc",
+                    emoji="\u2b06\ufe0f",
+                    description="A \u2192 Z, lowest \u2192 highest",
+                ),
+                SelectOption(
+                    label="Descending",
+                    value="desc",
+                    emoji="\u2b07\ufe0f",
+                    description="Z \u2192 A, highest \u2192 lowest",
+                ),
             ],
         )
 
@@ -415,9 +503,13 @@ class SearchSortButton(Button):
             asc = True
             if sort_order_menu.values:
                 asc = sort_order_menu.values[0] == "asc"
-            sorted_names = await RevomonTable().get_sorted_names(sort_by=sort_by_value, asc=asc)
+            sorted_names = await RevomonTable().get_sorted_names(
+                sort_by=sort_by_value, asc=asc
+            )
             group_by_evo = sort_by_value == "dex_id"
-            book_of_names = await get_book_of_mon_names(names=sorted_names, group_by_evo=group_by_evo)
+            book_of_names = await get_book_of_mon_names(
+                names=sorted_names, group_by_evo=group_by_evo
+            )
 
             new_view = MonPaginationView(
                 bot=apply_interaction.client,
@@ -459,11 +551,23 @@ class SearchSortLandButton(Button):
             row=0,
             options=[
                 SelectOption(label="Biome", value="biome", description="Sort by biome"),
-                SelectOption(label="Land Type", value="land_type", description="Sort by land type"),
-                SelectOption(label="Rarity", value="rarity", description="Sort by rarity"),
-                SelectOption(label="Price", value="for_sale_usd", description="Sort by price"),
+                SelectOption(
+                    label="Land Type",
+                    value="land_type",
+                    description="Sort by land type",
+                ),
+                SelectOption(
+                    label="Rarity", value="rarity", description="Sort by rarity"
+                ),
+                SelectOption(
+                    label="Price", value="for_sale_usd", description="Sort by price"
+                ),
                 SelectOption(label="Size", value="size", description="Sort by size"),
-                SelectOption(label="Owner's Address", value="owners_address", description="Sort by owner"),
+                SelectOption(
+                    label="Owner's Address",
+                    value="owners_address",
+                    description="Sort by owner",
+                ),
             ],
         )
 
@@ -472,8 +576,18 @@ class SearchSortLandButton(Button):
             custom_id="land_sort_order_select",
             row=1,
             options=[
-                SelectOption(label="Ascending", value="asc", emoji="\u2b06\ufe0f", description="A \u2192 Z, lowest \u2192 highest"),
-                SelectOption(label="Descending", value="desc", emoji="\u2b07\ufe0f", description="Z \u2192 A, highest \u2192 lowest"),
+                SelectOption(
+                    label="Ascending",
+                    value="asc",
+                    emoji="\u2b06\ufe0f",
+                    description="A \u2192 Z, lowest \u2192 highest",
+                ),
+                SelectOption(
+                    label="Descending",
+                    value="desc",
+                    emoji="\u2b07\ufe0f",
+                    description="Z \u2192 A, highest \u2192 lowest",
+                ),
             ],
         )
 
@@ -505,14 +619,20 @@ class SearchSortLandButton(Button):
             await select_interaction.response.defer()
 
         async def apply_sort_callback(apply_interaction: Interaction):
-            sort_by_value = sort_by_menu.values[0] if sort_by_menu.values else "token_id"
+            sort_by_value = (
+                sort_by_menu.values[0] if sort_by_menu.values else "token_id"
+            )
             asc = True
             if sort_order_menu.values:
                 asc = sort_order_menu.values[0] == "asc"
-            sorted_lands = await OwnedLandsTable().get_info(sort_by=sort_by_value, asc=asc)
+            sorted_lands = await OwnedLandsTable().get_info(
+                sort_by=sort_by_value, asc=asc
+            )
             if sorted_lands:
                 sorted_token_ids = [land[0] for land in sorted_lands]
-                book_of_land_ids = await get_book_of_land_ids(token_ids=sorted_token_ids)
+                book_of_land_ids = await get_book_of_land_ids(
+                    token_ids=sorted_token_ids
+                )
 
                 new_view = LandPaginationView(
                     user_id=apply_interaction.user.id,
@@ -562,6 +682,7 @@ class Buttons(commands.Cog):
                 # Load and cache application emojis
                 if self.app_emojis is None:
                     from utils.emoji_utils import list_application_emojis
+
                     try:
                         emojis = await list_application_emojis()
                         self.app_emojis = {e["name"]: e["id"] for e in emojis}
@@ -582,7 +703,9 @@ class Buttons(commands.Cog):
                 # Show intro first
                 intro_view = IntroView(attributes)
                 embed = intro(attributes)
-                await interaction.followup.send(embed=embed, view=intro_view, ephemeral=True)
+                await interaction.followup.send(
+                    embed=embed, view=intro_view, ephemeral=True
+                )
                 print("Intro embed sent!")
 
             # Handle land buttons (format: land:token_id)
@@ -642,7 +765,7 @@ class Buttons(commands.Cog):
             elif custom_id == "cancel_land_sort":
                 pass  # Handled in cancel_sort_callback
 
-            # Handle action buttons (these read attributes from their parent view)
+# Handle action buttons (these read attributes from their parent view)
             elif custom_id.startswith("action:"):
                 _ = custom_id[7:]
                 await interaction.response.defer()
