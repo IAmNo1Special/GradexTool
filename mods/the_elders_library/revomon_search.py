@@ -43,15 +43,17 @@ class revomon_search(commands.Cog):  # noqa: N801
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
-                    view = CompareIntroView(attributes=attributes, attributes2=attributes2)
-                    await respond(self.gradex, message, embed, view)  # type: ignore[arg-type]
+                    compare_view = CompareIntroView(
+                        attributes=attributes, attributes2=attributes2
+                    )
+                    await respond(self.gradex, message, embed, compare_view)
             # Check if User's Prompt is a Revomon's Name
             elif prompt in await RevomonTable().get_names():
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=prompt)
                 embed = intro(attributes=attributes)
-                view = IntroView(attributes=attributes)
-                await respond(self.gradex, message, embed, view)  # type: ignore[arg-type]
+                intro_view = IntroView(attributes=attributes)
+                await respond(self.gradex, message, embed, intro_view)
         except Exception as e:
             print(f"An error occurred during revomon_search on_message: {e}")
 

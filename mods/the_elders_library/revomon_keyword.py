@@ -1,4 +1,3 @@
-import asyncio
 from typing import Any
 
 import discord
@@ -27,7 +26,7 @@ class allrevomon(commands.Cog):  # noqa: N801
             prompt = message.content.lower().strip()
             if prompt == "all revomon":
                 book_of_names = await get_book_of_mon_names()
-                view = MonPaginationView(
+                mon_view = MonPaginationView(
                     bot=self.gradex,
                     user_id=message.author.id,
                     book_of_names=book_of_names,
@@ -35,9 +34,9 @@ class allrevomon(commands.Cog):  # noqa: N801
                     group_by_evo=True,
                     app_emojis={},
                 )
-                for page in view:
-                    await message.author.send(view=page)
-                    asyncio.sleep(1)  # type: ignore[unused-coroutine]
+                # MonPaginationView is a View, not iterable
+                # Send the view as a DM
+                await message.author.send(view=mon_view)
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 

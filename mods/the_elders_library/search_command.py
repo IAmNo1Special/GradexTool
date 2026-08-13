@@ -46,6 +46,8 @@ class SearchCommand(commands.Cog):
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
+        if embed.description is None:
+            embed.description = ""
         embed.description += f"\n\n__**Learned By**__\n{learned_by}"
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
@@ -321,15 +323,15 @@ class SearchCommand(commands.Cog):
         try:
             if not name:
                 book_of_names = await get_book_of_mon_names()
-                view = MonPaginationView(
-                    bot=interaction.client,
+                mon_view = MonPaginationView(
+                    bot=interaction.client,  # type: ignore[arg-type]
                     user_id=interaction.user.id,
                     book_of_names=book_of_names,
                     current_page=1,
                     group_by_evo=True,
                     app_emojis={},
                 )
-                await interaction.response.send_message(view=view, ephemeral=True)
+                await interaction.response.send_message(view=mon_view, ephemeral=True)
                 return
 
             if "&" in name:
@@ -343,18 +345,20 @@ class SearchCommand(commands.Cog):
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
-                    view = CompareIntroView(attributes=attributes, attributes2=attributes2)
+                    compare_view = CompareIntroView(
+                        attributes=attributes, attributes2=attributes2
+                    )
                     await interaction.response.send_message(
-                        embed=embed, view=view, ephemeral=True
+                        embed=embed, view=compare_view, ephemeral=True
                     )
             # Check if User's Prompt is a Revomon's Name
             elif name.lower() in await RevomonTable().get_names():
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=name)
                 embed = intro(attributes=attributes)
-                view = IntroView(attributes=attributes)
+                intro_view = IntroView(attributes=attributes)
                 await interaction.response.send_message(
-                    embed=embed, view=view, ephemeral=True
+                    embed=embed, view=intro_view, ephemeral=True
                 )
         except Exception as e:
             print(f"An error occurred during search_command(revomon subcommand): {e}")
