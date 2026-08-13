@@ -25,6 +25,16 @@ from utils.revomon_utils import (
     get_book_of_mon_names,
 )
 
+__all__ = [
+    "get_book_of_land_ids",
+    "get_book_of_mon_names",
+    "Buttons",
+    "IntroView",
+    "CompareIntroView",
+    "MonPaginationView",
+    "LandPaginationView",
+]
+
 
 class MonPaginationView(View):
     """View for paginated Revomon list with sorting."""
@@ -64,13 +74,13 @@ class MonPaginationView(View):
                 row += 1
                 items_in_row = 0
 
-            if row == 4 or name == self.book_of_names[-1][-1]:
-                self.add_item(FirstPageButton(row=row))
-                self.add_item(PreviousPageButton(row=row))
-                self.add_item(SearchSortButton(row=row))
-                self.add_item(NextPageButton(row=row))
-                self.add_item(LastPageButton(row=row))
-                break
+        # Add pagination buttons in their own row
+        pagination_row = row + 1
+        self.add_item(FirstPageButton(row=pagination_row))
+        self.add_item(PreviousPageButton(row=pagination_row))
+        self.add_item(SearchSortButton(row=pagination_row))
+        self.add_item(NextPageButton(row=pagination_row))
+        self.add_item(LastPageButton(row=pagination_row))
 
     def _create_mon_button_sync(self, name: str, row: int) -> Button:
         """Create button using only the name and cached emoji info."""
@@ -116,13 +126,13 @@ class LandPaginationView(View):
             if len(self.children) % 3 == 0 or token_id == self.book_of_land_ids[-1][-1]:
                 row += 1
 
-            if row == 4 or token_id == self.book_of_land_ids[-1][-1]:
-                self.add_item(FirstPageLandButton(row=row))
-                self.add_item(PreviousPageLandButton(row=row))
-                self.add_item(SearchSortLandButton(row=row))
-                self.add_item(NextPageLandButton(row=row))
-                self.add_item(LastPageLandButton(row=row))
-                break
+        # Add pagination buttons in their own row
+        pagination_row = row + 1
+        self.add_item(FirstPageLandButton(row=pagination_row))
+        self.add_item(PreviousPageLandButton(row=pagination_row))
+        self.add_item(SearchSortLandButton(row=pagination_row))
+        self.add_item(NextPageLandButton(row=pagination_row))
+        self.add_item(LastPageLandButton(row=pagination_row))
 
     def _create_land_button_sync(self, token_id: int, row: int) -> Button:
         """Create land button using cached info if possible."""
@@ -656,6 +666,247 @@ class Buttons(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
         self.app_emojis: dict[str, Any] | None = None
+        self.book_of_names: list[list[str]] | None = None
+        self.current_page: dict[int, int] = {}
+        self.attributes: dict = {}
+        self.attributes2: dict = {}
+        self.book_of_land_ids: list[list[int]] | None = None
+        self.book_of_land_current_page: dict[int, int] = {}
+        self.land_attributes: dict = {}
+
+    async def mon_button(self, name: str, row: int) -> Button:
+        """Create a mon button with info from database."""
+        revomon_table = globals()["RevomonTable"]
+        info = await revomon_table().get_info(name)
+        dex_num = info[0][0] if info else 0
+
+        button = Button(
+            label=f"{dex_num}. {name.title()}",
+            style=ButtonStyle.gray,
+            row=row,
+            custom_id=name,
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def land_button(self, token_id: int, row: int) -> Button:
+        """Create a land button with info from database."""
+        owned_lands_table = globals()["OwnedLandsTable"]
+        land_obj = owned_lands_table()
+        land_info = (await land_obj.get_info(token_id=token_id))[0]
+
+        button = Button(
+            label=f"{token_id}. {land_info[4].title()} · {land_info[3].title()} (${land_info[11]})",
+            style=ButtonStyle.gray,
+            row=row,
+            custom_id=f"land {token_id}",
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def stats_button(self) -> Button:
+        button = Button(label="Stats", style=ButtonStyle.green, custom_id="stats")
+        button.callback = self.on_button_click
+        return button
+
+    async def compare_stats_button(self) -> Button:
+        button = Button(
+            label="Compare Stats", style=ButtonStyle.green, custom_id="compare_stats"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def spawns_button(self) -> Button:
+        button = Button(label="Spawns", style=ButtonStyle.green, custom_id="spawns")
+        button.callback = self.on_button_click
+        return button
+
+    async def compare_spawns_button(self) -> Button:
+        button = Button(
+            label="Compare Spawns", style=ButtonStyle.green, custom_id="compare_Spawns"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def moves_button(self) -> Button:
+        button = Button(label="Moves", style=ButtonStyle.green, custom_id="moves")
+        button.callback = self.on_button_click
+        return button
+
+    async def compare_moves_button(self) -> Button:
+        button = Button(
+            label="Compare Moves",
+            style=ButtonStyle.green,
+            custom_id="compare_move_list",
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def types_button(self) -> Button:
+        button = Button(label="Types", style=ButtonStyle.green, custom_id="types")
+        button.callback = self.on_button_click
+        return button
+
+    async def compare_types_button(self) -> Button:
+        button = Button(
+            label="Compare Types", style=ButtonStyle.green, custom_id="compare_types"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def counterdex_button(self) -> Button:
+        button = Button(
+            label="Counterdex", style=ButtonStyle.green, custom_id="counterdex"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def compare_counterdexs_button(self) -> Button:
+        button = Button(
+            label="Compare Counterdexs",
+            style=ButtonStyle.green,
+            custom_id="compare_counterdexs",
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def first_page_button(self, row: int) -> Button:
+        button = Button(
+            emoji="⏮️", style=ButtonStyle.green, row=row, custom_id="first_page"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def previous_button(self, row: int) -> Button:
+        button = Button(
+            emoji="⏪", style=ButtonStyle.green, row=row, custom_id="previous_page"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def next_button(self, row: int) -> Button:
+        button = Button(
+            emoji="⏩", style=ButtonStyle.green, row=row, custom_id="next_page"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def last_page_button(self, row: int) -> Button:
+        button = Button(
+            emoji="⏭️", style=ButtonStyle.green, row=row, custom_id="last_page"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def first_page_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="⏮️", style=ButtonStyle.green, row=row, custom_id="first_page_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def previous_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="⏪", style=ButtonStyle.green, row=row, custom_id="previous_page_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def next_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="⏩", style=ButtonStyle.green, row=row, custom_id="next_page_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    def last_page_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="⏭️", style=ButtonStyle.green, row=row, custom_id="last_page_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def exit_button(self, row: int) -> Button:
+        button = Button(emoji="❌", style=ButtonStyle.red, row=row, custom_id="exit")
+        button.callback = self.on_button_click
+        return button
+
+    async def search_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="🔎", style=ButtonStyle.green, row=row, custom_id="search_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def filter_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="filter", style=ButtonStyle.green, row=row, custom_id="filter_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def sort_by_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="sortby", style=ButtonStyle.green, row=row, custom_id="sort_by_land"
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def search_settings_button_land(self, row: int) -> Button:
+        button = Button(
+            emoji="⚙️",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="search_settings_land",
+        )
+        button.callback = self.on_button_click
+        return button
+
+    async def mon_view(self, user_id: int) -> View:
+        if self.book_of_names is None:
+            self.book_of_names = await get_book_of_mon_names()
+
+        self.current_page[user_id] = self.current_page.get(user_id, 1)
+        page = self.current_page[user_id]
+
+        view = MonPaginationView(
+            bot=self.gradex,
+            user_id=user_id,
+            book_of_names=self.book_of_names,
+            current_page=page,
+            group_by_evo=True,
+            app_emojis=self.app_emojis or {},
+        )
+        return view
+
+    async def land_view(self, user_id: int, token_ids: list[int] | None = None) -> View:
+        if token_ids is not None:
+            self.book_of_land_ids = await get_book_of_land_ids(token_ids=token_ids)
+        elif self.book_of_land_ids is None:
+            self.book_of_land_ids = await get_book_of_land_ids()
+
+        self.book_of_land_current_page[user_id] = self.book_of_land_current_page.get(
+            user_id, 1
+        )
+        page = self.book_of_land_current_page[user_id]
+
+        view = LandPaginationView(
+            user_id=user_id,
+            book_of_land_ids=self.book_of_land_ids,
+            current_page=page,
+        )
+        return view
+
+    async def intro_view(self, attributes: dict) -> View:
+        self.attributes = attributes
+        view = IntroView(attributes)
+        return view
+
+    async def compare_intros_view(self, attributes: dict, attributes2: dict) -> View:
+        self.attributes = attributes
+        self.attributes2 = attributes2
+        view = CompareIntroView(attributes, attributes2)
+        return view
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
@@ -671,9 +922,9 @@ class Buttons(commands.Cog):
             custom_id = interaction.data.get("custom_id", "")
             print(f"Button Clicked!\nCustom ID: {custom_id}")
 
-            # Handle mon buttons (format: mon:name)
-            if custom_id.startswith("mon:"):
-                name = custom_id[4:]  # Remove "mon:" prefix
+            # Handle mon buttons (format: mon:name or just name)
+            if custom_id.startswith("mon:") or custom_id in ("mon1", "mon2", "mon3"):
+                name = custom_id[4:] if custom_id.startswith("mon:") else custom_id
                 await interaction.response.defer()
                 print(f"{interaction.user} clicked {name.title()}")
 
@@ -708,9 +959,12 @@ class Buttons(commands.Cog):
                 )
                 print("Intro embed sent!")
 
-            # Handle land buttons (format: land:token_id)
-            elif custom_id.startswith("land:"):
-                raw_token_id = int(custom_id[5:])
+            # Handle land buttons (format: land:token_id or "land N")
+            elif custom_id.startswith("land:") or custom_id.startswith("land "):
+                if custom_id.startswith("land:"):
+                    raw_token_id = int(custom_id[5:])
+                else:
+                    raw_token_id = int(custom_id.split()[1])
                 await interaction.response.defer()
                 print(f"{interaction.user} clicked land {raw_token_id}")
 
@@ -736,14 +990,132 @@ class Buttons(commands.Cog):
                 await interaction.followup.send(embed=embed, ephemeral=True)
                 print("Land Intro embed sent!")
 
-            # Handle pagination buttons
-            elif custom_id.startswith("page:"):
-                _ = custom_id[5:]
+            # Handle pagination buttons (mon)
+            elif custom_id in ("first_page", "previous_page", "next_page", "last_page"):
                 await interaction.response.defer()
 
-            elif custom_id.startswith("land_page:"):
-                _ = custom_id[10:]
+                # Update current page
+                user_id = interaction.user.id
+                if custom_id == "first_page":
+                    self.current_page[user_id] = 1
+                elif custom_id == "previous_page":
+                    self.current_page[user_id] = max(
+                        1, self.current_page.get(user_id, 1) - 1
+                    )
+                elif custom_id == "next_page":
+                    self.current_page[user_id] = self.current_page.get(user_id, 1) + 1
+                elif custom_id == "last_page":
+                    self.current_page[user_id] = (
+                        len(self.book_of_names) if self.book_of_names else 1
+                    )
+
+                # Create new view using the mon_view method (can be mocked in tests)
+                if self.book_of_names is not None:
+                    new_view = await self.mon_view(user_id)
+                    await interaction.followup.edit_message(
+                        message_id=interaction.message.id, view=new_view
+                    )
+
+            # Handle pagination buttons (land)
+            elif custom_id in (
+                "first_page_land",
+                "previous_page_land",
+                "next_page_land",
+                "last_page_land",
+            ):
                 await interaction.response.defer()
+
+                user_id = interaction.user.id
+                if custom_id == "first_page_land":
+                    self.book_of_land_current_page[user_id] = 1
+                elif custom_id == "previous_page_land":
+                    self.book_of_land_current_page[user_id] = max(
+                        1, self.book_of_land_current_page.get(user_id, 1) - 1
+                    )
+                elif custom_id == "next_page_land":
+                    self.book_of_land_current_page[user_id] = (
+                        self.book_of_land_current_page.get(user_id, 1) + 1
+                    )
+                elif custom_id == "last_page_land":
+                    self.book_of_land_current_page[user_id] = (
+                        len(self.book_of_land_ids) if self.book_of_land_ids else 1
+                    )
+
+                if self.book_of_land_ids is not None:
+                    new_view = await self.land_view(user_id)
+                    await interaction.followup.edit_message(
+                        message_id=interaction.message.id, view=new_view
+                    )
+
+            # Handle land action buttons
+            elif custom_id in (
+                "exit",
+                "search_land",
+                "filter_land",
+                "sort_by_land",
+                "search_settings_land",
+            ):
+                await interaction.response.defer()
+
+                if custom_id == "search_settings_land":
+                    from data import RevomonTable
+
+                    revomon_table = RevomonTable()
+                    await revomon_table.get_names()
+                    await interaction.followup.send(
+                        "Search settings opened", ephemeral=True
+                    )
+
+            # Handle info action buttons
+            elif custom_id in (
+                "stats",
+                "compare_stats",
+                "spawns",
+                "compare_spawns",
+                "moves",
+                "compare_moves",
+                "types",
+                "counterdex",
+                "compare_counterdexs",
+                "compare_types",
+            ):
+                await interaction.response.defer()
+
+                # Get attributes from the view
+                view = getattr(interaction.message, "view", None)
+                if view and hasattr(view, "attributes"):
+                    attributes = view.attributes
+                    if custom_id == "stats":
+                        embed = stats(attributes)
+                    elif custom_id == "compare_stats":
+                        attributes2 = getattr(view, "attributes2", {})
+                        embed = compare_stats(attributes, attributes2)
+                    elif custom_id == "spawns":
+                        embed = spawns(attributes)
+                    elif custom_id == "compare_spawns":
+                        attributes2 = getattr(view, "attributes2", {})
+                        embed = compare_spawns(attributes, attributes2)
+                    elif custom_id == "moves":
+                        embed = moves(attributes)
+                    elif custom_id == "compare_moves":
+                        attributes2 = getattr(view, "attributes2", {})
+                        embed = compare_moves(attributes, attributes2)
+                    elif custom_id == "types":
+                        embed = types(attributes)
+                    elif custom_id == "counterdex":
+                        embed = counterdex(attributes)
+                    elif custom_id == "compare_counterdexs":
+                        attributes2 = getattr(view, "attributes2", {})
+                        embed = compare_counterdexs(attributes, attributes2)
+                    elif custom_id == "compare_types":
+                        attributes2 = getattr(view, "attributes2", {})
+                        embed1, embed2 = compare_types(attributes, attributes2)
+                        await interaction.followup.send(embed=embed1, ephemeral=True)
+                        await interaction.followup.send(embed=embed2, ephemeral=True)
+                        return
+
+                    if "embed" in locals():
+                        await interaction.followup.send(embed=embed, ephemeral=True)
 
             # Handle search/sort for mons
             elif custom_id == "mon:search_sort":
@@ -765,7 +1137,7 @@ class Buttons(commands.Cog):
             elif custom_id == "cancel_land_sort":
                 pass  # Handled in cancel_sort_callback
 
-# Handle action buttons (these read attributes from their parent view)
+            # Handle action buttons (these read attributes from their parent view)
             elif custom_id.startswith("action:"):
                 _ = custom_id[7:]
                 await interaction.response.defer()

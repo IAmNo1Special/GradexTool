@@ -25,7 +25,6 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
     mon_info = await revomon_table.get_info_dict(revomon_name=revomon_name)
     if not mon_info:
         return {}
-
     # Use column names instead of indices for robustness
     ev_rewards = dict(
         zip(
