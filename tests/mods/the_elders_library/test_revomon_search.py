@@ -31,7 +31,9 @@ class TestRevomonSearch:
         assert "---------------------------" in captured.out
 
     @patch("mods.the_elders_library.revomon_search.RevomonTable")
-    @patch("mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock)
+    @patch(
+        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
+    )
     @patch("mods.the_elders_library.revomon_search.compare_intros")
     @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
@@ -72,7 +74,9 @@ class TestRevomonSearch:
         assert isinstance(view, CompareIntroView)
 
     @patch("mods.the_elders_library.revomon_search.RevomonTable")
-    @patch("mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock)
+    @patch(
+        "mods.the_elders_library.revomon_search.get_attributes", new_callable=AsyncMock
+    )
     @patch("mods.the_elders_library.revomon_search.intro")
     @patch("mods.the_elders_library.revomon_search.respond")
     @pytest.mark.asyncio
@@ -99,7 +103,10 @@ class TestRevomonSearch:
         mock_get_attributes.assert_called_once_with(revomon_name="mon1")
         mock_intro.assert_called_once_with(attributes="attrs1")
         mock_respond.assert_called_once_with(
-            revomon_search_cog.gradex, message, "mock_intro_embed", mock_respond.call_args[0][3]
+            revomon_search_cog.gradex,
+            message,
+            "mock_intro_embed",
+            mock_respond.call_args[0][3],
         )
         # Verify the view is an IntroView
         call_args = mock_respond.call_args

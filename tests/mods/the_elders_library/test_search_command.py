@@ -107,9 +107,7 @@ class TestSearchCommand:
 
     @patch("mods.the_elders_library.search_command.ItemsTable")
     @pytest.mark.asyncio
-    async def test_allitems_embed(
-        self, mock_items_table: Any, search_cog: Any
-    ) -> None:
+    async def test_allitems_embed(self, mock_items_table: Any, search_cog: Any) -> None:
         mock_items_instance = mock_items_table.return_value
         mock_items_instance.get_names = AsyncMock(return_value=["Potion", "Pokeball"])
 
@@ -458,7 +456,9 @@ class TestSearchCommand:
         mock_land_pagination_view.assert_called_once_with(
             user_id=123, book_of_land_ids=[[1, 2, 3]], current_page=1
         )
-        interaction.followup.send.assert_called_with(view=mock_land_view, ephemeral=True)
+        interaction.followup.send.assert_called_with(
+            view=mock_land_view, ephemeral=True
+        )
 
     @patch("mods.the_elders_library.search_command.OwnedLandsTable")
     @patch("mods.the_elders_library.search_command.LandPaginationView")
