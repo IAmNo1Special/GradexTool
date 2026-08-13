@@ -61,3 +61,14 @@ max-complexity = 55
 strict = true
 ignore_missing_imports = true
 python_executable = ".venv/Scripts/python.exe"
+
+[tool.mdformat]
+wrap = 80
+exclude = [
+    ".venv/**",
+    ".venv2/**",
+    ".kilo/**",
+    "node_modules/**",
+    "__pycache__/**",
+    ".pytest_cache/**",
+]
