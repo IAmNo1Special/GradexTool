@@ -191,7 +191,10 @@ async def create_land_emojis() -> list[dict[str, str]]:
     emoji_list = await list_application_emojis()
     lands_table = OwnedLandsTable()
     for land_id in await lands_table.get_ids():
-        land_info = (await OwnedLandsTable().get_info(token_id=land_id))[0]
+        land_info_list = await OwnedLandsTable().get_info(token_id=land_id)
+        if not land_info_list:
+            continue
+        land_info = land_info_list[0]
         emoji_name = f"{land_info[3]}_{land_info[4]}".replace(" ", "_")
         print("Attempting to create emoji for land: ", emoji_name)
         if emoji_name in [emoji["name"] for emoji in emoji_list]:
