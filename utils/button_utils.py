@@ -33,6 +33,7 @@ __all__ = [
     "CompareIntroView",
     "MonPaginationView",
     "LandPaginationView",
+    "ShareButton",
 ]
 
 
@@ -81,6 +82,7 @@ class MonPaginationView(View):
         self.add_item(SearchSortButton(row=pagination_row))
         self.add_item(NextPageButton(row=pagination_row))
         self.add_item(LastPageButton(row=pagination_row))
+        self.add_item(ShareButton(row=pagination_row + 1))
 
     def _create_mon_button_sync(self, name: str, row: int) -> Button:
         """Create button using only the name and cached emoji info."""
@@ -361,6 +363,30 @@ class LastPageButton(Button):
 
     async def callback(self, interaction: Interaction):
         await interaction.response.defer()
+
+
+class ShareButton(Button):
+    def __init__(self, row: int):
+        super().__init__(
+            emoji="\U0001f4e4",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="mon:share",
+        )
+
+    async def callback(self, interaction: Interaction):
+        view = self.view
+        if view is not None and hasattr(view, "book_of_names"):
+            new_view = MonPaginationView(
+                bot=view.bot,
+                user_id=view.user_id,
+                book_of_names=view.book_of_names,
+                current_page=view.current_page,
+                group_by_evo=view.group_by_evo,
+                app_emojis=view.app_emojis,
+            )
+            await interaction.response.defer()
+            await interaction.followup.send(view=new_view, ephemeral=False)
 
 
 # Pagination Buttons for Land
