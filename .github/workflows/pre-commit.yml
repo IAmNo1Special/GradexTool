@@ -41,4 +41,4 @@ jobs:
         run: uv run --dev mypy .
         
       - name: Check markdown formatting
-        run: uv run --python 3.13 --dev mdformat --check .
+        run: uv run --python 3.13 --dev mdformat --check --exclude '.venv/**' --exclude '.venv2/**' --exclude '.kilo/**' --exclude 'node_modules/**' --exclude '__pycache__/**' --exclude '.pytest_cache/**' .

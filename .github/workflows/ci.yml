@@ -37,10 +37,10 @@ jobs:
         run: uvx ruff format --check .
         
       - name: Type check with mypy
-        run: uvx mypy . --python-executable .venv/bin/python
+        run: uv run --dev mypy .
         
       - name: Check markdown formatting
-        run: uvx --python 3.13 mdformat --check .
+        run: uv run --python 3.13 --dev mdformat --check --exclude '.venv/**' --exclude '.venv2/**' --exclude '.kilo/**' --exclude 'node_modules/**' --exclude '__pycache__/**' --exclude '.pytest_cache/**' .
         
       - name: Test with pytest
         run: uv run pytest --cov=. --cov-report=xml
