@@ -1,5 +1,3 @@
-from typing import Any
-
 """Data module - redirects to scripts module for database access."""
 
 # This module exists to maintain compatibility with imports that expect data.gradexDB
@@ -13,29 +11,28 @@ parent_dir = Path(__file__).parent.parent
 if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
-from scripts import gradexDB  # noqa: E402
-from scripts.gradexDB import *  # noqa: E402,F403
+from scripts import gradexDB  # noqa: E402,F401
+from scripts.gradexDB import (  # noqa: E402
+    AbilitiesTable,
+    AccountsTable,
+    CapsulesTable,
+    CounterdexTable,
+    CurrentPodiumTable,
+    EventBoardLogsTable,
+    FruitysTable,
+    ItemsTable,
+    MovesTable,
+    NaturesTable,
+    OwnedLandsTable,
+    RevomonMovesTable,
+    RevomonTable,
+    TypesTable,
+    UsersTable,
+    WeeklyPodiumTable,
+    update_gradex_db,
+)  # noqa: E402
 
-# Make all gradexDB classes available at data module level
-CounterdexTable = gradexDB.CounterdexTable  # type: ignore
-AbilitiesTable = gradexDB.AbilitiesTable  # type: ignore
-CapsulesTable = gradexDB.CapsulesTable  # type: ignore
-FruitysTable = gradexDB.FruitysTable  # type: ignore
-ItemsTable = gradexDB.ItemsTable  # type: ignore
-MovesTable = gradexDB.MovesTable  # type: ignore
-NaturesTable = gradexDB.NaturesTable  # type: ignore
-OwnedLandsTable = gradexDB.OwnedLandsTable  # type: ignore
-RevomonTable = gradexDB.RevomonTable  # type: ignore
-RevomonMovesTable = gradexDB.RevomonMovesTable  # type: ignore
-CurrentPodiumTable = gradexDB.CurrentPodiumTable  # type: ignore
-WeeklyPodiumTable = gradexDB.WeeklyPodiumTable  # type: ignore
-TypesTable = gradexDB.TypesTable  # type: ignore
-UsersTable = gradexDB.UsersTable  # type: ignore
-EventBoardLogsTable = gradexDB.EventBoardLogsTable  # type: ignore
-AccountsTable = gradexDB.AccountsTable  # type: ignore
 
-
-# Add placeholders for classes that may be expected but don't exist in scripts/gradexDB.py
 class LandsTable:
     """Placeholder for LandsTable - implement if needed."""
 
@@ -68,4 +65,5 @@ __all__ = [
     "LandsTable",
     "CaughtRevomonTable",
     "AccountsTable",
+    "update_gradex_db",
 ]

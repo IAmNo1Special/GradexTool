@@ -3,13 +3,14 @@
 import json
 import logging
 import os
+from typing import Any
 
 from configs import EVOLUTIONS_FILE, REVOMON_FILE
 
 logger = logging.getLogger(__name__)
 
 
-def get_evolutions(save_to_file: bool = False) -> dict:  # type: ignore[type-arg]
+def get_evolutions(save_to_file: bool = False) -> dict[str, Any]:
     if not REVOMON_FILE.exists():
         logger.error(
             f"{REVOMON_FILE} not found. Please run 'scripts/revomon.py' script first."

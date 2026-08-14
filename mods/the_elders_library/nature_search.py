@@ -12,7 +12,9 @@ class nature_search(commands.Cog):  # noqa: N801
         self.gradex = gradex
 
     async def nature_search_embed(self, nature_name: Any) -> Any:
-        nature_info = await NaturesTable().get_info(nature_name=nature_name.lower())[0]  # type: ignore[index]
+        nature_info = (await NaturesTable().get_info(nature_name=nature_name.lower()))[
+            0
+        ]
         embed = discord.Embed(
             title=f"{nature_info[0].title()} Nature", color=discord.Color.red()
         )

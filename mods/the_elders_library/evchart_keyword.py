@@ -10,7 +10,8 @@ class evchart(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evchart_embed() -> Any:  # type: ignore[misc]
+    @staticmethod
+    def evchart_embed() -> Any:
         embed = discord.Embed(
             title="EV Training Chart",
             description="Effort Values",
@@ -52,7 +53,7 @@ class evchart(commands.Cog):  # noqa: N801
         try:
             prompt = message.content.lower().strip()
             if prompt == "ev chart" or prompt == "evs":
-                embed = self.evchart_embed()  # type: ignore[misc]
+                embed = evchart.evchart_embed()
                 buttons = self.evchart_buttons()
                 await respond(
                     self.gradex, message=message, embed=embed, buttons=buttons

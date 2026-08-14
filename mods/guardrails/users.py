@@ -1,6 +1,7 @@
 """Gradex Tool Guardrails for managing users."""
 
 import logging
+from typing import Any, cast
 
 from discord import Interaction, Member, Message, app_commands, utils
 from discord.ext import commands
@@ -41,7 +42,8 @@ class UsersGuardrail(commands.Cog):
             return
         try:
             logger.info(f"Running user check for {message.author}")
-            await user_check(gradex_tool=self.gradex_tool, user=message.author)  # type: ignore[arg-type]
+            if isinstance(message.author, Member):
+                await user_check(gradex_tool=self.gradex_tool, user=message.author)
         except Exception as e:
             logger.error(f"An error occurred during main(on_message): {e}")
 
@@ -70,7 +72,7 @@ class UsersGuardrail(commands.Cog):
     async def on_app_command_completion(
         self,
         interaction: Interaction,
-        command: app_commands.Command,  # type: ignore[type-arg]
+        command: app_commands.Command[Any, Any, Any],
     ) -> None:
         """Called when an app command is completed.
 
@@ -78,11 +80,20 @@ class UsersGuardrail(commands.Cog):
             interaction: The interaction that triggered the command.
             command: The command that was executed.
         """
-        logger.info(
-            f"Command '{command.name}' was executed by {interaction.user.name} in {interaction.guild.name} (ID: {interaction.guild.id})"  # type: ignore[union-attr]
-        )
+        guild = interaction.guild
+        if guild is None:
+            logger.info(
+                f"Command '{command.name}' was executed by {interaction.user.name} in DMs"
+            )
+        else:
+            logger.info(
+                f"Command '{command.name}' was executed by {interaction.user.name} in {guild.name} (ID: {guild.id})"
+            )
         try:
-            await user_check(gradex_tool=interaction.client, user=interaction.user)  # type: ignore[arg-type]
+            await user_check(
+                gradex_tool=cast(commands.Bot, interaction.client),
+                user=cast(Member, interaction.user),
+            )
         except Exception as e:
             logger.error(
                 f"An error occurred during {self.cog_name}(on_app_command_completion): {e}"

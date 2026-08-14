@@ -1,5 +1,4 @@
 from typing import Any
-from unittest.mock import MagicMock
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -14,7 +13,7 @@ def create_base_tier_list(
     font_path: str = "data/fonts/CabalBold.ttf",
     font_size: int = 20,
     image_paths: dict[str, list[str | Any]] | None = None,
-) -> MagicMock:
+) -> Image.Image:
     """Creates the base tier list image with colored headers and black rows.
 
     Args:
@@ -90,7 +89,7 @@ def create_base_tier_list(
         )
         y_offset += tier_height
 
-    return image  # type: ignore[return-value]
+    return image
 
 
 def create_tier_list_with_images(
@@ -100,7 +99,7 @@ def create_tier_list_with_images(
     row_gap: int = 10,
     font_path: str = "data/fonts/CabalBold.ttf",
     font_size: int = 20,
-) -> MagicMock:
+) -> Image.Image:
     """Creates a tier list image with the given Revomon images in their correct tiers.
 
     Args:
@@ -210,11 +209,11 @@ async def main() -> None:
     image_paths: dict[str, Any] = {"S": [], "A": [], "B": [], "C": [], "D": []}
 
     for name in await RevomonTable().get_names():
-        attribs = get_attributes(name)
-        if attribs["evolution"] == "None":  # type: ignore[index]
+        attribs = await get_attributes(name)
+        if attribs["evolution"] == "None":
             img_path = f"data/Images/Revomon/{name}.png"
 
-            tier = attribs["cdex_tier"]  # type: ignore[index]
+            tier = attribs["cdex_tier"]
             if tier == "S":
                 image_paths["S"].append(img_path)
             elif tier == "A":

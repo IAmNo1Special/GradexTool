@@ -1,3 +1,5 @@
+from typing import cast
+
 import discord.embeds
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
@@ -324,7 +326,7 @@ class SearchCommand(commands.Cog):
             if not name:
                 book_of_names = await get_book_of_mon_names()
                 mon_view = MonPaginationView(
-                    bot=interaction.client,  # type: ignore[arg-type]
+                    bot=cast(commands.Bot, interaction.client),
                     user_id=interaction.user.id,
                     book_of_names=book_of_names,
                     current_page=1,

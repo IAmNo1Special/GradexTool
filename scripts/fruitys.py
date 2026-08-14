@@ -289,7 +289,7 @@ FRUITYS = [
 
 
 def get_fruitys() -> None:
-    fruitys = FRUITYS.copy()
+    fruitys: list[dict[str, Any]] = FRUITYS.copy()
     logger.info(f"Found {len(fruitys)} fruitys. Processing...")
 
     # Process each fruity
@@ -310,7 +310,7 @@ def get_fruitys() -> None:
     # Assign sequential IDs and build dict
     fruitys_dict = {}
     for i, fruity in enumerate(fruitys, start=1):
-        fruity["idFruity"] = i  # type: ignore[assignment]
+        fruity["idFruity"] = i
         fruitys_dict[str(i)] = fruity
 
     logger.info(f"Saving {len(fruitys_dict)} fruitys to {OUTPUT_PATH}...")
@@ -465,15 +465,15 @@ class FruitysTable:
             )
             conn.commit()
 
-    def get_info(self, fruity_name: str) -> list:  # type: ignore[type-arg]
+    def get_info(self, fruity_name: str) -> list[dict[str, Any]]:
         """Method to search the fruitys table by name and return hhe info of the matching entry."""
         with closing(self._connect()) as conn, conn:
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT * FROM fruitys WHERE name LIKE ?", (f"%{fruity_name}%",)
             )
-            rows = cursor.fetchall()
-            return rows  # type: ignore[no-any-return]
+            rows: list[dict[str, Any]] = cursor.fetchall()
+            return rows
 
     def get_type(self, fruity_name: str) -> str:
         """Get the type of a fruity by name."""
@@ -484,9 +484,9 @@ class FruitysTable:
                 (f"%{fruity_name}%",),
             )
             rows = cursor.fetchall()
-            return rows[0][0]  # type: ignore[no-any-return]
+            return str(rows[0][0])
 
-    def get_names(self) -> list:  # type: ignore[type-arg]
+    def get_names(self) -> list[str]:
         """Method to get a list of all the names of the fruitys in the fruitys table."""
         with closing(self._connect()) as conn, conn:
             cursor = conn.cursor()

@@ -1,5 +1,5 @@
 import asyncio
-from typing import Any
+from typing import Any, cast
 
 import aiohttp
 
@@ -204,7 +204,7 @@ async def get_lands_for_sale() -> list[dict[str, Any]]:
         url = "https://api.immutable.com/v1/chains/imtbl-zkevm-mainnet/orders/listings?sell_item_contract_address=0x5C40Eb1Eaad2a96e383E3B0a986A5377fc1eE239&status=ACTIVE"
         for_sale_land_objs = await fetch_json_with_retry(session, url)
         if for_sale_land_objs and "result" in for_sale_land_objs:
-            return for_sale_land_objs["result"]  # type: ignore[no-any-return]
+            return cast(list[dict[str, Any]], for_sale_land_objs["result"])
         return []
 
 
@@ -214,9 +214,12 @@ async def get_zkevm_token_data(
     url = f"https://explorer.immutable.com/api/v2/tokens/{token_address}"
     if session is None:
         async with aiohttp.ClientSession() as new_session:
-            return await fetch_json_with_retry(new_session, url)  # type: ignore[no-any-return]
+            return cast(
+                "dict[str, Any] | None",
+                await fetch_json_with_retry(new_session, url),
+            )
     else:
-        return await fetch_json_with_retry(session, url)  # type: ignore[no-any-return]
+        return cast("dict[str, Any] | None", await fetch_json_with_retry(session, url))
 
 
 async def get_lands_for_sale_amount() -> dict[str, dict[str, str | float]]:

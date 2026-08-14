@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 """Comprehensive tests for health.py cog."""
 
@@ -204,7 +204,7 @@ class TestHealthCogLogic:
         mock_bot.guilds = [1, 2, 3]  # length 3
 
         # mock sleep
-        cog._sleep = AsyncMock()  # type: ignore[method-assign]
+        setattr(cog, "_sleep", AsyncMock())
 
         await cog._heartbeat_loop()
 
@@ -212,7 +212,7 @@ class TestHealthCogLogic:
         mock_logger.info.assert_called_once_with(
             "Heartbeat: uptime=%dh%dm%ds, guilds=%d, latency=%dms", 1, 1, 1, 3, 123
         )
-        cog._sleep.assert_called_once_with(300)
+        cast(Any, cog._sleep).assert_called_once_with(300)
 
     @pytest.mark.asyncio
     @patch("mods.core.health.asyncio.sleep")

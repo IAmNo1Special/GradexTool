@@ -1,5 +1,5 @@
 import math
-from typing import Any
+from typing import Any, cast
 
 import discord
 from discord import ui
@@ -133,9 +133,11 @@ class TVView(ui.View):
         page_items = sorted_list[start_idx : start_idx + 20]
 
         if not hasattr(self.bot, "_app_emojis_cache"):
-            self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
+            cast(
+                Any, self.bot
+            )._app_emojis_cache = await self.bot.fetch_application_emojis()
 
-        app_emojis = self.bot._app_emojis_cache  # type: ignore[attr-defined]
+        app_emojis: Any = cast(Any, self.bot)._app_emojis_cache
 
         for i, mon in enumerate(page_items):
             name = mon.get("name", "unknown").replace(" ", "_").replace("-", "_")

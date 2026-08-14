@@ -11,7 +11,7 @@ import time
 import typing
 from collections.abc import Callable, Coroutine
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import Any, TypeVar, cast
 from unittest.mock import MagicMock
 
 import discord
@@ -78,7 +78,7 @@ def load_accounts() -> dict[str, Any]:
         return {}
     with open(ACCOUNTS_FILE, encoding="utf-8") as f:
         try:
-            return json.load(f)  # type: ignore[no-any-return]
+            return cast("dict[str, Any]", json.load(f))
         except json.JSONDecodeError:
             return {}
 
@@ -143,7 +143,7 @@ async def get_or_create_account(user_id: int) -> dict[str, Any]:
             if modified:
                 save_accounts(accounts)
 
-        return accounts[str_id]  # type: ignore[no-any-return]
+        return cast("dict[str, Any]", accounts[str_id])
 
 
 async def update_account(user_id: int, **kwargs: Any) -> dict[str, Any]:
@@ -199,7 +199,7 @@ async def update_account(user_id: int, **kwargs: Any) -> dict[str, Any]:
             acc["last_energy_update"] = now
 
         save_accounts(accounts)
-        return accounts[str_id]  # type: ignore[no-any-return]
+        return cast("dict[str, Any]", accounts[str_id])
 
 
 def with_typing_indicator[T](

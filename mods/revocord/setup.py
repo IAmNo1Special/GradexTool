@@ -155,7 +155,8 @@ class SetupCog(commands.Cog):
         guild: discord.Guild,
     ) -> None:
         permission_overwrites: dict[
-            discord.Role | discord.Member | discord.Object, discord.PermissionOverwrite
+            discord.Role | discord.Member | discord.Object,
+            discord.PermissionOverwrite,
         ] = {
             guild.default_role: discord.PermissionOverwrite(
                 read_messages=True,
@@ -208,10 +209,11 @@ class SetupCog(commands.Cog):
             else:
                 # Sync privacy constraints if the category already existed
                 for target, overwrite in permission_overwrites.items():
-                    await revocord_category.set_permissions(
-                        target,  # type: ignore[arg-type]
-                        overwrite=overwrite,
-                    )
+                    if isinstance(target, discord.Role | discord.Member):
+                        await revocord_category.set_permissions(
+                            target,
+                            overwrite=overwrite,
+                        )
                 logger.info(f"Category located: {category_name}")
 
             # 2. Ensure Core Channels (News, Event Board, Portal)

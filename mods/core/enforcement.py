@@ -1,6 +1,7 @@
 """Cog for enforcing workspace layouts and preventing channel tampering."""
 
 import logging
+from typing import cast
 
 import discord
 from discord.ext import commands
@@ -70,6 +71,7 @@ class EnforcementCog(commands.Cog):
         if not isinstance(after, expected_type):
             return
 
+        channel = cast(discord.TextChannel, after)
         # Attempt to locate the anchor category in the server cache
         protected_category = discord.utils.get(
             after.guild.categories, name=self.category_name
@@ -81,9 +83,9 @@ class EnforcementCog(commands.Cog):
 
         # If the channel's parent category ID has drifted, drag it back
         expected_pos = self.expected_positions.get(after.name, 0)
-        if after.category_id != protected_category.id:
+        if channel.category_id != protected_category.id:
             try:
-                await after.edit(  # type: ignore[attr-defined]
+                await channel.edit(
                     category=protected_category,
                     position=expected_pos,
                     sync_permissions=False,

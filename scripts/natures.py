@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 """Script to fetch nature data from PokeAPI and save to natures.json."""
 
@@ -37,7 +37,7 @@ async def fetch_nature(client: httpx.AsyncClient, name: str) -> dict[str, Any] |
         url = f"{POKEAPI_NATURE_BASE}/{name}"
         response = await client.get(url, timeout=10)
         if response.status_code == 200:
-            return response.json()  # type: ignore[no-any-return]
+            return cast("dict[str, Any]", response.json())
         return None
     except httpx.HTTPError as e:
         logger.error(f"  HTTP error fetching nature '{name}': {e}")

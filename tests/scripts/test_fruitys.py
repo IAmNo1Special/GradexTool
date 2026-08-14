@@ -1,5 +1,6 @@
 import runpy
 import unittest.mock
+from collections.abc import Iterator
 from typing import Any
 from unittest.mock import MagicMock, mock_open, patch
 
@@ -48,7 +49,7 @@ def test_get_fruitys_missing_keys(
 
 class TestFruitysTable:
     @pytest.fixture
-    def mock_db(self) -> None:  # type: ignore[misc]
+    def mock_db(self) -> Iterator[Any]:
         with patch("scripts.fruitys.sqlite3.connect") as mock_connect:
             yield mock_connect
 

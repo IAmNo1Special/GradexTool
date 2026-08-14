@@ -86,8 +86,8 @@ async def test_get_raw_movepool_exception(mock_client: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_movepool_no_id() -> None:
     revomon: dict[str, Any] = {}
-    movepool_data: dict[str, Any] = {}
-    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)  # type: ignore[arg-type]
+    movepool_data: dict[Any, Any] = {}
+    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)
     assert movepool_data == {}
 
 
@@ -111,15 +111,15 @@ async def test_get_movepool_success(
         ]
     }
     revomon = {"idRevomon": 1, "name": "Bulbasaur"}
-    movepool_data: dict[str, Any] = {}
+    movepool_data: dict[Any, Any] = {}
 
-    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)  # type: ignore[arg-type]
+    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)
 
     assert revomon["movepool"] == [1, 2]
-    assert movepool_data[1][0]["category"] == "physical"  # type: ignore[index]
-    assert movepool_data[1][0]["name"] == "tackle"  # type: ignore[index]
-    assert movepool_data[1][0]["type"] == "normal"  # type: ignore[index]
-    assert movepool_data[1][0]["description"] == "A basic attack."  # type: ignore[index]
+    assert movepool_data[1][0]["category"] == "physical"
+    assert movepool_data[1][0]["name"] == "tackle"
+    assert movepool_data[1][0]["type"] == "normal"
+    assert movepool_data[1][0]["description"] == "A basic attack."
 
 
 @pytest.mark.asyncio
@@ -127,12 +127,12 @@ async def test_get_movepool_success(
 async def test_get_movepool_none(mock_get_raw: Any) -> None:
     mock_get_raw.return_value = None
     revomon = {"idRevomon": 1, "name": "Bulbasaur"}
-    movepool_data: dict[str, Any] = {}
+    movepool_data: dict[Any, Any] = {}
 
-    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)  # type: ignore[arg-type]
+    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)
 
     assert revomon["movepool"] == []
-    assert movepool_data[1] is None  # type: ignore[index]
+    assert movepool_data[1] is None
 
 
 @pytest.mark.asyncio
@@ -140,9 +140,9 @@ async def test_get_movepool_none(mock_get_raw: Any) -> None:
 async def test_get_movepool_empty_moves(mock_get_raw: Any) -> None:
     mock_get_raw.return_value = {}
     revomon = {"idRevomon": 1, "name": "Bulbasaur"}
-    movepool_data: dict[str, Any] = {}
+    movepool_data: dict[Any, Any] = {}
 
-    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)  # type: ignore[arg-type]
+    await get_movepool(asyncio.Semaphore(1), None, revomon, movepool_data)
 
     assert revomon["movepool"] == []
 
@@ -207,7 +207,7 @@ async def test_get_movepools_success_no_save(tmp_path: Any) -> None:
 
 
 def test_save_movepools_to_file(tmp_path: Any) -> None:
-    movepool_data: dict[str, Any] = {2: [], 1: []}  # type: ignore[dict-item]
+    movepool_data: dict[Any, Any] = {2: [], 1: []}
     target_file = tmp_path / "movepools.json"
     with patch("scripts.movepools.REVODEX_MOVEPOOLS_FILE", target_file):
         _save_movepools_to_file(movepool_data, sort=True)
@@ -217,7 +217,7 @@ def test_save_movepools_to_file(tmp_path: Any) -> None:
 
 
 def test_save_movepools_to_file_no_sort(tmp_path: Any) -> None:
-    movepool_data: dict[str, Any] = {2: [], 1: []}  # type: ignore[dict-item]
+    movepool_data: dict[Any, Any] = {2: [], 1: []}
     target_file = tmp_path / "movepools.json"
     with patch("scripts.movepools.REVODEX_MOVEPOOLS_FILE", target_file):
         _save_movepools_to_file(movepool_data, sort=False)

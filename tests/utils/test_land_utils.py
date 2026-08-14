@@ -1,4 +1,5 @@
 import unittest.mock
+from collections.abc import Iterator
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -52,7 +53,7 @@ class MockSessionContext:
 
 
 @pytest.fixture
-def mock_session() -> None:  # type: ignore[misc]
+def mock_session() -> Iterator[Any]:
     with patch("aiohttp.ClientSession") as mock_client_session:
         session_instance = MagicMock()
         mock_client_session.return_value = MockSessionContext(session_instance)

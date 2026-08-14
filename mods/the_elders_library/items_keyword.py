@@ -228,12 +228,12 @@ Yululu Fruity""",
             prompt = message.content.lower().strip()
             if prompt == "all items" or prompt == "items":
                 embed = self.allitems_embed()
-                buttons = self.allitems_buttons
+                buttons = self.allitems_buttons()
                 await respond(
                     self.gradex,
                     message=message,
                     embed=embed,
-                    buttons=buttons,  # type: ignore[arg-type]
+                    buttons=buttons,
                 )
         except Exception as e:
             print(f"An error occurred during on_message: {e}")

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 """Script to fetch medicine/potion data from PokeAPI and save to potions.json."""
 
@@ -28,7 +28,7 @@ async def fetch_url(client: httpx.AsyncClient, url: str) -> dict[str, Any] | Non
     try:
         response = await client.get(url, timeout=10)
         if response.status_code == 200:
-            return response.json()  # type: ignore[no-any-return]
+            return cast("dict[str, Any]", response.json())
         return None
     except httpx.HTTPError as e:
         logger.error(f"  HTTP error fetching {url}: {e}")
@@ -38,7 +38,7 @@ async def fetch_url(client: httpx.AsyncClient, url: str) -> dict[str, Any] | Non
         return None
 
 
-def process_string(text: str) -> str:
+def process_string(text: str | None) -> str | None:
     """Clean up a string: replace newlines with spaces, normalize quotes."""
     if not text:
         return text
@@ -95,8 +95,8 @@ async def process_item(
         short_effect = ""
         for entry in item_data.get("effect_entries", []):
             if entry.get("language", {}).get("name") == "en":
-                effect = process_string(entry.get("effect", ""))
-                short_effect = process_string(entry.get("short_effect", ""))
+                effect = process_string(entry.get("effect", "")) or ""
+                short_effect = process_string(entry.get("short_effect", "")) or ""
                 break
 
         flavor_text = ""
@@ -106,7 +106,7 @@ async def process_item(
             if ft.get("language", {}).get("name") == "en"
         ]
         if en_flavor_entries:
-            flavor_text = process_string(en_flavor_entries[-1].get("text", ""))
+            flavor_text = process_string(en_flavor_entries[-1].get("text", "")) or ""
 
         potion_entry = {
             "name": name.lower(),

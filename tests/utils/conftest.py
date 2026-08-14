@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from typing import Any
 
 """Pytest configuration and common fixtures for testing utils modules."""
@@ -331,7 +332,7 @@ def mock_users_table() -> Any:
 
 
 @pytest.fixture
-def mock_pil_image() -> None:  # type: ignore[misc]
+def mock_pil_image() -> Iterator[Any]:
     """Mock PIL Image."""
     with patch("PIL.Image.new") as mock_new:
         mock_image = MagicMock()
@@ -341,7 +342,7 @@ def mock_pil_image() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def mock_pil_image_draw() -> None:  # type: ignore[misc]
+def mock_pil_image_draw() -> Iterator[Any]:
     """Mock PIL ImageDraw."""
     with patch("PIL.ImageDraw.Draw") as mock_draw:
         draw_instance = MagicMock()
@@ -350,7 +351,7 @@ def mock_pil_image_draw() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def mock_pil_image_font() -> None:  # type: ignore[misc]
+def mock_pil_image_font() -> Iterator[Any]:
     """Mock PIL ImageFont."""
     with patch("PIL.ImageFont.truetype") as mock_font:
         font_instance = MagicMock()

@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -65,27 +65,27 @@ class TestPriceTracker:
     async def test_update_price_success(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=1.23)  # type: ignore[method-assign]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=1.23))
         mock_channel = AsyncMock()
-        tracker.gradex.get_channel.return_value = mock_channel  # type: ignore[attr-defined]
+        cast(Any, tracker.gradex).get_channel.return_value = mock_channel
         await tracker.update_price()
-        tracker.gradex.get_channel.assert_called_with(1254142506178838558)  # type: ignore[attr-defined]
+        cast(Any, tracker.gradex).get_channel.assert_called_with(1254142506178838558)
         mock_channel.edit.assert_called_with(name="Revo: $1.23000")
 
     @pytest.mark.asyncio
     async def test_update_price_no_price(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=None)  # type: ignore[method-assign]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=None))
         await tracker.update_price()
-        tracker.gradex.get_channel.assert_not_called()  # type: ignore[attr-defined]
+        cast(Any, tracker.gradex).get_channel.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_update_price_no_channel(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=1.23)  # type: ignore[method-assign]
-        tracker.gradex.get_channel.return_value = None  # type: ignore[attr-defined]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=1.23))
+        cast(Any, tracker.gradex).get_channel.return_value = None
         await tracker.update_price()
         # Should not raise exception
 
