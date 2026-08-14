@@ -1596,13 +1596,13 @@ class OwnedLandsTable:
         sort_by: str = "token_id",
         sale_status: Any = None,
         asc: bool = True,
-    ) -> Any:
+    ) -> list[tuple[Any, ...]] | None:
         """Get land information based on provided filters."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
             if True:
                 await cursor.execute("SELECT * FROM ownedLands ")
-            result = await cursor.fetchall()
+            result: list[tuple[Any, ...]] = await cursor.fetchall()
             # if any of the arguments are provided, filter the results
             if token_id:
                 result = [land for land in result if land[0] == token_id]
