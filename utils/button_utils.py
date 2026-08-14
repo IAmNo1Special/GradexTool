@@ -1138,8 +1138,6 @@ class Buttons(commands.Cog):
                 await interaction.response.defer()
 
                 if custom_id == "search_settings_land":
-                    from data import RevomonTable
-
                     revomon_table = RevomonTable()
                     await revomon_table.get_names()
                     await interaction.followup.send(

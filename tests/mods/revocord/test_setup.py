@@ -350,10 +350,16 @@ class TestSetupCogCommand:
     @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
+    @patch(
+        "scripts.gradexDB.active_spawns_table.count_guild_spawns",
+        new_callable=AsyncMock,
+        return_value=0,
+    )
     @patch("mods.revocord.setup.discord.utils.get")
     async def test_setup_portal_fail(
         self,
         mock_get: Any,
+        mock_count: Any,
         mock_spawn: Any,
         mock_sleep: Any,
         setup_cog: Any,
