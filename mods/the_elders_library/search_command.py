@@ -8,10 +8,18 @@ from data import (
     ItemsTable,
     MovesTable,
     NaturesTable,
+    OwnedLandsTable,
     RevomonMovesTable,
     RevomonTable,
 )
-from utils.button_utils import Buttons
+from utils.button_utils import (
+    CompareIntroView,
+    IntroView,
+    LandPaginationView,
+    MonPaginationView,
+    get_book_of_land_ids,
+    get_book_of_mon_names,
+)
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes
 
@@ -38,7 +46,9 @@ class SearchCommand(commands.Cog):
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
-        embed.description += f"\n\n__**Learned By**__\n{learned_by}"  # type: ignore[operator]
+        if embed.description is None:
+            embed.description = ""
+        embed.description += f"\n\n__**Learned By**__\n{learned_by}"
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
@@ -68,7 +78,6 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         embed.add_field(name="__**Type**__", value=fruity_info[2].title(), inline=True)
-        # embed.set_thumbnail(url="") PLACEHOLDER FOR FRUITY IMAGE
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
         return embed
 
@@ -122,7 +131,6 @@ class SearchCommand(commands.Cog):
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
         embed.set_footer(text="The Elder's Library · Global Revomon Association")
-
         return embed
 
     async def move_search_embed(self, move_name: str) -> discord.embeds.Embed:
@@ -313,12 +321,17 @@ class SearchCommand(commands.Cog):
     @app_commands.describe(name="The name of the revomon you'd like more info on.")
     async def revomon(self, interaction: Interaction, name: str | None = None) -> None:
         try:
-            buttons = Buttons(self.gradex)
             if not name:
-                mon_main_view = await buttons.mon_view(user_id=interaction.user.id)
-                await interaction.response.send_message(
-                    view=mon_main_view, ephemeral=True
+                book_of_names = await get_book_of_mon_names()
+                mon_view = MonPaginationView(
+                    bot=interaction.client,  # type: ignore[arg-type]
+                    user_id=interaction.user.id,
+                    book_of_names=book_of_names,
+                    current_page=1,
+                    group_by_evo=True,
+                    app_emojis={},
                 )
+                await interaction.response.send_message(view=mon_view, ephemeral=True)
                 return
 
             if "&" in name:
@@ -332,115 +345,145 @@ class SearchCommand(commands.Cog):
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
-                    buttons = await buttons.compare_intros_view(
+                    compare_view = CompareIntroView(
                         attributes=attributes, attributes2=attributes2
                     )
                     await interaction.response.send_message(
-                        embed=embed, view=buttons, ephemeral=True
+                        embed=embed, view=compare_view, ephemeral=True
                     )
             # Check if User's Prompt is a Revomon's Name
             elif name.lower() in await RevomonTable().get_names():
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=name)
                 embed = intro(attributes=attributes)
-                buttons = await buttons.intro_view(attributes=attributes)
+                intro_view = IntroView(attributes=attributes)
                 await interaction.response.send_message(
-                    embed=embed, view=buttons, ephemeral=True
+                    embed=embed, view=intro_view, ephemeral=True
                 )
         except Exception as e:
             print(f"An error occurred during search_command(revomon subcommand): {e}")
 
-    # create a subcommand in the search_group comands with the name of "Lands". the subcommand has an option called "type" which is a choice of "gym", "clinic"
-    """@search_group.command(name="land-nfts", description="Search for info about any Revomon Novus land. Leave all options blank to view all lands.")
-    @app_commands.choices(biome=[
-        app_commands.Choice(name="Beach", value="beach"),
-        app_commands.Choice(name="Caves", value="caves"),
-        app_commands.Choice(name="Crater", value="crater"),
-        app_commands.Choice(name="Desert", value="desert"),
-        app_commands.Choice(name="Forest", value="forest"),
-        app_commands.Choice(name="Jungle", value="jungle"),
-        app_commands.Choice(name="Plains", value="plains"),
-        app_commands.Choice(name="Swamp", value="swamp"),
-        app_commands.Choice(name="Tundra", value="tundra"),
-        app_commands.Choice(name="Underwater", value="underwater"),
-        app_commands.Choice(name="Urban", value="urban")
-        ])
-    @app_commands.choices(land_type=[
-        app_commands.Choice(name="Arena", value="arena"),
-        app_commands.Choice(name="Clinic", value="clinic"),
-        app_commands.Choice(name="Gym", value="gym"),
-        app_commands.Choice(name="Labs", value="labs"),
-        app_commands.Choice(name="Mine", value="mine"),
-        app_commands.Choice(name="Safari Park", value="safari park"),
-        app_commands.Choice(name="Shop", value="shop")
-        ])
-    @app_commands.choices(rarity=[
-        app_commands.Choice(name="Common", value="common"),
-        app_commands.Choice(name="Rare", value="Rare"),
-        app_commands.Choice(name="Legendary", value="legendary"),
-        app_commands.Choice(name="Mythic", value="mythic")
-        ])
-    @app_commands.choices(sale_status=[
-        app_commands.Choice(name="For Sale", value="1"),
-        app_commands.Choice(name="Not For Sale", value="0")
-        ])
-    @app_commands.choices(size=[
-        app_commands.Choice(name="1x1", value="1x1"),
-        app_commands.Choice(name="2x2", value="2x2"),
-        app_commands.Choice(name="3x3", value="3x3"),
-        app_commands.Choice(name="6x6", value="6x6")])
-    @app_commands.describe(owners_address="The wallet address of the owner of the land.",
-                           token_id="The token ID of the land.",
-                           land_type="The type of land.",
-                           biome="The biome of the land.",
-                           rarity="The rarity of the land.",
-                           sale_status="The sale status of the land.",
-                           size="The size of the land."
-                           )
-    async def Land_nfts(self, interaction: Interaction, biome: app_commands.Choice[str] = None, land_type: app_commands.Choice[str] = None, owners_address: str = None, rarity: app_commands.Choice[str] = None, sale_status: app_commands.Choice[str] = None, size: app_commands.Choice[str] = None, token_id: int = None):
+    @search_group.command(
+        name="land-nfts",
+        description="Search for info about any Revomon Novus land. Leave all options blank to view all lands.",
+    )
+    @app_commands.choices(
+        biome=[
+            app_commands.Choice(name="Beach", value="beach"),
+            app_commands.Choice(name="Caves", value="caves"),
+            app_commands.Choice(name="Crater", value="crater"),
+            app_commands.Choice(name="Desert", value="desert"),
+            app_commands.Choice(name="Forest", value="forest"),
+            app_commands.Choice(name="Jungle", value="jungle"),
+            app_commands.Choice(name="Plains", value="plains"),
+            app_commands.Choice(name="Swamp", value="swamp"),
+            app_commands.Choice(name="Tundra", value="tundra"),
+            app_commands.Choice(name="Underwater", value="underwater"),
+            app_commands.Choice(name="Urban", value="urban"),
+        ]
+    )
+    @app_commands.choices(
+        land_type=[
+            app_commands.Choice(name="Arena", value="arena"),
+            app_commands.Choice(name="Clinic", value="clinic"),
+            app_commands.Choice(name="Gym", value="gym"),
+            app_commands.Choice(name="Labs", value="labs"),
+            app_commands.Choice(name="Mine", value="mine"),
+            app_commands.Choice(name="Safari Park", value="safari park"),
+            app_commands.Choice(name="Shop", value="shop"),
+        ]
+    )
+    @app_commands.choices(
+        rarity=[
+            app_commands.Choice(name="Common", value="common"),
+            app_commands.Choice(name="Rare", value="Rare"),
+            app_commands.Choice(name="Legendary", value="legendary"),
+            app_commands.Choice(name="Mythic", value="mythic"),
+        ]
+    )
+    @app_commands.choices(
+        sale_status=[
+            app_commands.Choice(name="For Sale", value="1"),
+            app_commands.Choice(name="Not For Sale", value="0"),
+        ]
+    )
+    @app_commands.choices(
+        size=[
+            app_commands.Choice(name="1x1", value="1x1"),
+            app_commands.Choice(name="2x2", value="2x2"),
+            app_commands.Choice(name="3x3", value="3x3"),
+            app_commands.Choice(name="6x6", value="6x6"),
+        ]
+    )
+    @app_commands.describe(
+        owners_address="The wallet address of the owner of the land.",
+        token_id="The token ID of the land.",
+        land_type="The type of land.",
+        biome="The biome of the land.",
+        rarity="The rarity of the land.",
+        sale_status="The sale status of the land.",
+        size="The size of the land.",
+    )
+    async def land_nfts(
+        self,
+        interaction: Interaction,
+        biome: app_commands.Choice[str] | None = None,
+        land_type: app_commands.Choice[str] | None = None,
+        owners_address: str | None = None,
+        rarity: app_commands.Choice[str] | None = None,
+        sale_status: app_commands.Choice[str] | None = None,
+        size: app_commands.Choice[str] | None = None,
+        token_id: int | None = None,
+    ) -> None:
         await interaction.response.defer(ephemeral=True)
 
-        # Create a dropdown menu (select menu)
-        select_menu = ui.Select(placeholder="Sort by...",
-            options=[
-                SelectOption(label="Biome", value="name", description="Sort by name"),
-                SelectOption(label="Land Type", value="distance", description="Sort by distance"),
-                SelectOption(label="Rarity", value="rating", description="Sort by rating"),
-                SelectOption(label="Price", value="price", description="Sort by price"),
-                SelectOption(label="Size", value="size", description="Sort by size"),
-                SelectOption(label="Owner's Address", value="sale_status", description="Sort by sale status"),
-                ]
+        if (
+            not token_id
+            and not owners_address
+            and not land_type
+            and not biome
+            and not rarity
+            and not size
+            and not sale_status
+        ):
+            book_of_land_ids = await get_book_of_land_ids()
+            view = LandPaginationView(
+                user_id=interaction.user.id,
+                book_of_land_ids=book_of_land_ids,
+                current_page=1,
             )
-
-        # Define the callback for the dropdown menu
-        async def select_callback(interaction: Interaction):
-            await interaction.response.defer(ephemeral=True)
-            selected_value = select_menu.values[0]  # Get the selected value
-            await interaction.followup.send(f"You selected to sort by: {selected_value}", ephemeral=True)
-
-        # Attach the callback to the dropdown menu
-        select_menu.callback = select_callback
-
-        buttons = Buttons(self.gradex)
-        if not token_id and not owners_address and not land_type and not biome and not rarity and not size and not sale_status:
-            land_main_view = await buttons.land_view(user_id=interaction.user.id)
-            await interaction.followup.send(view=land_main_view, ephemeral=True)
+            await interaction.followup.send(view=view, ephemeral=True)
             return
         else:
             try:
-                # Build the response message dynamically
-                from data import OwnedLandsTable
                 lands_data = OwnedLandsTable()
-                response_message = lands_data.get_info(token_id=token_id if token_id else None, id=None, owners_address=owners_address.lower() if owners_address else None, biome=biome.value if biome else None, land_type=land_type.value if land_type else None, rarity=rarity.value if rarity else None, size=size.value if size else None, img_url=None, asc=True, sale_status=int(sale_status.value) if sale_status else None)  # type: ignore[attr-defined]
+                response_message = await lands_data.get_info(
+                    token_id=token_id if token_id else None,
+                    id=None,
+                    owners_address=owners_address.lower() if owners_address else None,
+                    biome=biome.value if biome else None,
+                    land_type=land_type.value if land_type else None,
+                    rarity=rarity.value if rarity else None,
+                    size=size.value if size else None,
+                    img_url=None,
+                    asc=True,
+                    sale_status=int(sale_status.value) if sale_status else None,
+                )
                 if response_message:
                     token_ids = [land[0] for land in response_message]
-                    land_main_view = await buttons.land_view(token_ids=token_ids, user_id=interaction.user.id)
-                    await interaction.followup.send(view=land_main_view, ephemeral=True)
+                    book_of_land_ids = await get_book_of_land_ids(token_ids=token_ids)
+                    view = LandPaginationView(
+                        user_id=interaction.user.id,
+                        book_of_land_ids=book_of_land_ids,
+                        current_page=1,
+                    )
+                    await interaction.followup.send(view=view, ephemeral=True)
                 else:
-                    await interaction.followup.send("No lands found that match your criteria.", ephemeral=True)
+                    await interaction.followup.send(
+                        "No lands found that match your criteria.", ephemeral=True
+                    )
             except Exception as e:
                 print(f"An error occurred during search_command(lands subcommand): {e}")
-"""
 
 
 async def setup(gradex: commands.Bot) -> None:

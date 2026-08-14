@@ -1,10 +1,9 @@
-import asyncio
 from typing import Any
 
 import discord
 from discord.ext import commands
 
-from utils.button_utils import Buttons
+from utils.button_utils import MonPaginationView, get_book_of_mon_names
 
 
 class allrevomon(commands.Cog):  # noqa: N801
@@ -26,11 +25,18 @@ class allrevomon(commands.Cog):  # noqa: N801
             # Save User's Cleaned Input As The Search Prompt
             prompt = message.content.lower().strip()
             if prompt == "all revomon":
-                buttons = Buttons(self.gradex)
-                mon_main_view = await buttons.mon_view()  # type: ignore[call-arg]
-                for page in mon_main_view:
-                    await message.author.send(view=page)
-                    asyncio.sleep(1)  # type: ignore[unused-coroutine]
+                book_of_names = await get_book_of_mon_names()
+                mon_view = MonPaginationView(
+                    bot=self.gradex,
+                    user_id=message.author.id,
+                    book_of_names=book_of_names,
+                    current_page=1,
+                    group_by_evo=True,
+                    app_emojis={},
+                )
+                # MonPaginationView is a View, not iterable
+                # Send the view as a DM
+                await message.author.send(view=mon_view)
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 

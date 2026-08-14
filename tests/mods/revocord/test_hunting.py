@@ -429,28 +429,20 @@ class TestSpawnWildRevomon:
 
 class TestCleanupTask:
     @pytest.mark.asyncio
-    async def test_cleanup_encounters(self, mock_bot: Any) -> None:
+    @patch(
+        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
+    )
+    @patch("scripts.gradexDB.active_spawns_table.remove_spawn", new_callable=AsyncMock)
+    async def test_cleanup_encounters(
+        self, mock_remove: Any, mock_get_spawns: Any, mock_bot: Any
+    ) -> None:
         cog = HuntingCog(mock_bot)
-        mock_msg = MagicMock()
-        mock_msg.delete = AsyncMock()
-
-        mock_item = MagicMock()
-        mock_item.custom_id = f"spawn_fight:123:1:0:{int(time.time() - 400)}"
-
-        mock_component = MagicMock()
-        mock_component.children = [mock_item]
-        mock_msg.components = [mock_component]
-
-        mock_channel = MagicMock()
-        mock_channel.name = "wilds"
-
-        async def mock_history(*args: Any, **kwargs: Any) -> Any:
-            yield mock_msg
-
-        mock_channel.history = mock_history
+        mock_get_spawns.return_value = [
+            {"message_id": 999, "data": {"timestamp": time.time() - 400}}
+        ]
         mock_guild = MagicMock()
-        mock_guild.text_channels = [mock_channel]
+        mock_guild.id = 123
         mock_bot.guilds = [mock_guild]
 
         await cog.cleanup_encounters()
-        mock_msg.delete.assert_called_once()
+        mock_remove.assert_called_once_with(999)

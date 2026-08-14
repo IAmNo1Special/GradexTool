@@ -7,8 +7,13 @@ wheels/
 .venv
 .env
 experimental/
-data/assets/
-data/gradex.db
+data/accounts.json
+data/users.json
+data/caught_revomon_scan_state.json
+data/caught_revomon.json
+data/*.db
+data/assets/*
+!data/assets/fonts/
 logs/
 .ruff_cache/
 .mypy_cache/
@@ -16,3 +21,6 @@ logs/
 .coverage
 coverage.xml
 htmlcov/
+.vscode/
+.claude
+.kilo/

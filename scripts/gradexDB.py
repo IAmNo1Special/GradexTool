@@ -4,61 +4,89 @@ from pathlib import Path
 from typing import Any, cast
 
 import aiosqlite
-import requests
+import httpx
 from aiosqlite.core import Connection
 
 
-def safe_get(
-    url: str, timeout: int = 10, retries: int = 5, backoff_factor: float = 1.0
-) -> Any:
+def get_db_connection() -> aiosqlite.Connection:
+    """Get a database connection."""
+    return aiosqlite.connect(db_path, isolation_level=None)
+
+
+async def safe_get(
+    url: str,
+    client: httpx.AsyncClient | None = None,
+    timeout: int = 10,
+    retries: int = 5,
+    backoff_factor: float = 1.0,
+) -> httpx.Response | None:
     """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff."""
-    for i in range(retries):
-        try:
-            response = requests.get(url, timeout=timeout)
-            if response.status_code == 200:
-                return response
+    should_close = client is None
+    if client is None:
+        client = httpx.AsyncClient(timeout=timeout)
 
-            # Handle rate limiting (429) specifically
-            if response.status_code == 429:
-                retry_after = int(response.headers.get("Retry-After", 5))
+    try:
+        for i in range(retries):
+            try:
+                response = await client.get(url)
+                if response.status_code == 200:
+                    return response
+
+                # Handle rate limiting (429) specifically
+                if response.status_code == 429:
+                    retry_after = int(response.headers.get("Retry-After", 5))
+                    print(
+                        f"Rate limited (429) on {url}. Sleeping for {retry_after} seconds..."
+                    )
+                    await asyncio.sleep(retry_after)
+                    continue
+
                 print(
-                    f"Rate limited (429) on {url}. Sleeping for {retry_after} seconds..."
+                    f"Failed to fetch {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
                 )
-                time.sleep(retry_after)
-                continue
-
-            print(
-                f"Failed to fetch {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-            )
-        except requests.RequestException as e:
-            print(f"Failed to fetch {url}: {e}. Retrying ({i + 1}/{retries})...")
-        if i < retries - 1:
-            time.sleep(backoff_factor * (2**i))
-    return None
+            except httpx.RequestError as e:
+                print(f"Failed to fetch {url}: {e}. Retrying ({i + 1}/{retries})...")
+            if i < retries - 1:
+                await asyncio.sleep(backoff_factor * (2**i))
+        return None
+    finally:
+        if should_close:
+            await client.aclose()
 
 
-def safe_post(
+async def safe_post(
     url: str,
     json_payload: dict[str, list[Any]],
+    client: httpx.AsyncClient | None = None,
     timeout: int = 15,
     retries: int = 3,
     backoff_factor: float = 1.0,
-) -> Any:
+) -> httpx.Response | None:
     """Post to a URL with timeout, retries, and exponential backoff."""
-    for i in range(retries):
-        try:
-            response = requests.post(url, json=json_payload, timeout=timeout)
-            if response.status_code == 200:
-                return response
-            print(
-                f"Failed to post to {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-            )
-        except requests.RequestException as e:
-            print(f"Failed to post to {url}: {e}. Retrying ({i + 1}/{retries})...")
-        if i < retries - 1:
-            time.sleep(backoff_factor * (2**i))
-    return None
+    should_close = client is None
+    if client is None:
+        client = httpx.AsyncClient(timeout=timeout)
 
+    try:
+        for i in range(retries):
+            try:
+                response = await client.post(url, json=json_payload)
+                if response.status_code == 200:
+                    return response
+                print(
+                    f"Failed to post to {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
+                )
+            except httpx.RequestError as e:
+                print(f"Failed to post to {url}: {e}. Retrying ({i + 1}/{retries})...")
+            if i < retries - 1:
+                await asyncio.sleep(backoff_factor * (2**i))
+        return None
+    finally:
+        if should_close:
+            await client.aclose()
+
+
+import asyncio  # noqa: E402
 
 from configs import GRADEX_DB_PATH  # noqa: E402
 from utils.land_utils import get_lands_for_sale_amount  # noqa: E402
@@ -82,9 +110,9 @@ class CounterdexTable:
         # Count the entries in the counterdex table
         await self.count_entries()
 
-    def _connect(self) -> Connection:
+    def _connect(self) -> aiosqlite.Connection:
         """Private method to establish a connection to the SQLite database."""
-        return aiosqlite.connect(self.db_path, isolation_level=None)
+        return get_db_connection()
 
     async def create(self) -> None:
         """Create the counterdex table if it does not already exist."""
@@ -126,7 +154,7 @@ class CounterdexTable:
         # Fetch data from the Revomon API
         url = "https://api.revomon.io/revomon/revodex"
         payload: Any = {"idsCatchedRevomon": []}
-        response = safe_post(url, payload)
+        response = await safe_post(url, payload)
 
         # Connect to the database and create a cursor
         async with self._connect() as conn:
@@ -1057,8 +1085,8 @@ class MovesTable:
                 mon_ids = await RevomonTable().get_mon_ids()
                 for mon_id in mon_ids:
                     url = f"https://api.revomon.io/revomon/moves/{mon_id}"
-                    response = safe_get(url)
-                    time.sleep(0.2)  # Delay to respect API rate limits
+                    response = await safe_get(url)
+                    await asyncio.sleep(0.2)  # Delay to respect API rate limits
 
                     if response and response.status_code == 200:
                         data = response.json()
@@ -1613,6 +1641,10 @@ class OwnedLandsTable:
                     result = sorted(result, key=lambda land: land[7])
                 elif sort_by == "sale_status":
                     result = sorted(result, key=lambda land: land[9])
+                elif sort_by == "for_sale_usd":
+                    result = sorted(
+                        result, key=lambda land: land[11] if land[11] is not None else 0
+                    )
                 else:
                     result = sorted(result, key=lambda land: land[0])
             # sort the result in descending order if asc is Flase
@@ -1753,9 +1785,28 @@ class RevomonTable:
                     "evolution" TEXT,
                     "level_evolution" INTEGER,
                     "rarity" TEXT,
+                    "ev_hp" INTEGER,
+                    "ev_atk" INTEGER,
+                    "ev_def" INTEGER,
+                    "ev_spa" INTEGER,
+                    "ev_spd" INTEGER,
+                    "ev_spe" INTEGER,
                     PRIMARY KEY("dex_id")
                 ) STRICT;
                 """
+            )
+            # Create indexes for common query patterns
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_revomon_name" ON revomon(name);'
+            )
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_revomon_type1" ON revomon(type1);'
+            )
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_revomon_type2" ON revomon(type2);'
+            )
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_revomon_rarity" ON revomon(rarity);'
             )
             print("Revomon table created successfully")
             await conn.commit()
@@ -1772,11 +1823,13 @@ class RevomonTable:
                 revomon_data = json.load(file)
 
             # Insert data into the database
-            for revomon in sorted(revomon_data, key=lambda x: x["dex_id"]):
+            for revomon in sorted(
+                revomon_data, key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
+            ):
                 # Prepare data for insertion
-                dex_id = revomon["dex_id"]
-                mon_id = revomon["mon_id"]
-                name = revomon["name"].lower()
+                dex_id = revomon.get("dex_id", revomon.get("idRevodex"))
+                mon_id = revomon.get("mon_id", revomon.get("idRevomon"))
+                name = revomon.get("name", "").lower()
                 description = (
                     revomon.get("description", "").lower()
                     if revomon.get("description")
@@ -1799,8 +1852,13 @@ class RevomonTable:
                     else None
                 )
                 ability_hidden = (
-                    revomon.get("ability_hidden", "").lower()
+                    revomon.get(
+                        "ability_hidden",
+                        revomon.get("abilityHidden", revomon.get("abilityh", "")),
+                    ).lower()
                     if revomon.get("ability_hidden")
+                    or revomon.get("abilityHidden")
+                    or revomon.get("abilityh")
                     else None
                 )
                 hp = revomon.get("hp")
@@ -1814,17 +1872,28 @@ class RevomonTable:
                     if revomon.get("evolution")
                     else None
                 )
-                level_evolution = revomon.get("level_evolution")
+                level_evolution = revomon.get(
+                    "level_evolution",
+                    revomon.get("levelEvolution", revomon.get("evo_lvl", 0)),
+                )
                 rarity = (
                     revomon.get("rarity", "").lower() if revomon.get("rarity") else None
                 )
+
+                # EV fields
+                ev_hp = revomon.get("evhp", revomon.get("ev_hp", 0))
+                ev_atk = revomon.get("evatk", revomon.get("ev_atk", 0))
+                ev_def = revomon.get("evdef", revomon.get("ev_def", 0))
+                ev_spa = revomon.get("evspa", revomon.get("ev_spa", 0))
+                ev_spd = revomon.get("evspd", revomon.get("ev_spd", 0))
+                ev_spe = revomon.get("evspe", revomon.get("ev_spe", 0))
 
                 # Execute the insert query
                 await cursor.execute(
                     """
                     INSERT OR REPLACE INTO revomon
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                     """,
                     (
                         dex_id,
@@ -1845,6 +1914,12 @@ class RevomonTable:
                         evolution,
                         level_evolution,
                         rarity,
+                        ev_hp,
+                        ev_atk,
+                        ev_def,
+                        ev_spa,
+                        ev_spd,
+                        ev_spe,
                     ),
                 )
 
@@ -1927,6 +2002,31 @@ class RevomonTable:
             names = [row[0].lower() for row in await cursor.fetchall()]
             return names
 
+    async def get_sorted_names(self, sort_by: str = "dex_id", asc: bool = True) -> Any:
+        """Returns a list of revomon names sorted by the specified column."""
+        valid_columns = {
+            "dex_id",
+            "name",
+            "type1",
+            "hp",
+            "atk",
+            "def",
+            "spa",
+            "spd",
+            "spe",
+            "rarity",
+        }
+        if sort_by not in valid_columns:
+            sort_by = "dex_id"
+        order = "ASC" if asc else "DESC"
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            # Column name is validated against allowlist above, safe to interpolate
+            query = f'SELECT name FROM revomon ORDER BY "{sort_by}" {order};'
+            await cursor.execute(query)
+            names = [row[0].lower() for row in await cursor.fetchall()]
+            return names
+
     async def get_info(self, revomon_name: str) -> Any:
         """Method to search the revomon table by name and return the info of the matching entry."""
         async with self._connect() as conn:
@@ -1936,6 +2036,19 @@ class RevomonTable:
             )
             rows = await cursor.fetchall()
             return rows
+
+    async def get_info_dict(self, revomon_name: str) -> dict[str, Any] | None:
+        """Method to search the revomon table by name and return the info as a dictionary."""
+        async with self._connect() as conn:
+            conn.row_factory = aiosqlite.Row
+            cursor = await conn.cursor()
+            await cursor.execute(
+                "SELECT * FROM revomon WHERE name LIKE ?;", (f"%{revomon_name}%",)
+            )
+            row = await cursor.fetchone()
+            if row is None:
+                return None
+            return dict(row)
 
     async def has_ability(self, ability_name: str, mon_name: str | None = None) -> Any:
         """Check if a given Revomon has a specified ability."""
@@ -2081,8 +2194,8 @@ class RevomonMovesTable:
                     dex_id = await RevomonTable().get_id_by_id(mon_id=mon_id)
                     mon_name = await RevomonTable().get_name_by_id(mon_id=mon_id)
                     url = f"https://api.revomon.io/revomon/moves/{mon_id}"
-                    response = safe_get(url)
-                    time.sleep(0.2)  # Delay to respect API rate limits
+                    response = await safe_get(url)
+                    await asyncio.sleep(0.2)  # Delay to respect API rate limits
 
                     if response and response.status_code == 200:
                         data = response.json()
@@ -2657,8 +2770,6 @@ class UsersTable:
                 CREATE TABLE IF NOT EXISTS "users" (
                     "user_id" INTEGER NOT NULL UNIQUE,
                     "username" TEXT NOT NULL,
-                    "wallet_connected" INTEGER NOT NULL,
-                    "wallet_address" TEXT,
                     "is_pro" INTEGER NOT NULL,
                     "is_certified" INTEGER NOT NULL,
                     "experience_points" INTEGER NOT NULL,
@@ -2723,8 +2834,6 @@ class UsersTable:
         self,
         user_id: int,
         username: str,
-        wallet_connected: int,
-        wallet_address: str,
         is_pro: int,
         is_certified: int,
         experience_points: int,
@@ -2737,14 +2846,12 @@ class UsersTable:
         """Add a user to the users table."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
-            query = "INSERT INTO users (user_id, username, wallet_connected, wallet_address, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
+            query = "INSERT INTO users (user_id, username, is_pro, is_certified, experience_points, battle_points, victory_points, wins, losses, draws) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"
             await cursor.execute(
                 query,
                 (
                     user_id,
                     username,
-                    wallet_connected,
-                    wallet_address,
                     is_pro,
                     is_certified,
                     experience_points,
@@ -2765,6 +2872,22 @@ class UsersTable:
         if not user_id:
             raise ValueError("user_id is a required argument")
 
+        # Validate column names against allowlist
+        valid_columns = {
+            "username",
+            "is_pro",
+            "is_certified",
+            "experience_points",
+            "battle_points",
+            "victory_points",
+            "wins",
+            "losses",
+            "draws",
+        }
+        for key in kwargs:
+            if key not in valid_columns:
+                raise ValueError(f"Invalid column name: {key}")
+
         async with self._connect() as conn:
             cursor = await conn.cursor()
             query = f"UPDATE users SET {', '.join([f'{key} = ?' for key in kwargs])}  WHERE user_id = ?;"
@@ -2783,14 +2906,18 @@ class UsersTable:
             return True
 
     async def get_user(self, user_id: int) -> Any:
-        """Get a user by user ID from the users table."""
+        """Get a user by user ID from the users table.
+
+        Returns a dictionary with column names as keys for robust schema access.
+        """
         async with self._connect() as conn:
+            conn.row_factory = aiosqlite.Row
             cursor = await conn.cursor()
             await cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
             user = await cursor.fetchone()
             if user is None:
                 return False
-            return user
+            return dict(user)
 
     async def get_users(self) -> Any:
         """Get all users from the users table."""
@@ -2799,6 +2926,194 @@ class UsersTable:
             await cursor.execute("SELECT * FROM users;")
             users = await cursor.fetchall()
             return users
+
+
+class AccountsTable:
+    """Class to interact with the accounts table for RevoCord game state."""
+
+    def __init__(self) -> None:
+        """Initialize with the path to the SQLite database."""
+        self.db_path = db_path
+
+    async def build(self) -> None:
+        """Build the accounts table in the Gradex SQLite database."""
+        await self.create()
+
+    def _connect(self) -> Connection:
+        """Private method to establish a connection to the SQLite database."""
+        return aiosqlite.connect(self.db_path, isolation_level=None)
+
+    async def create(self) -> None:
+        """Create the accounts table if it does not already exist."""
+        print("Creating accounts table...")
+
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+
+            await cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS "accounts" (
+                    "user_id" INTEGER PRIMARY KEY,
+                    "current_city" TEXT NOT NULL DEFAULT 'drassius city',
+                    "current_location" TEXT NOT NULL DEFAULT 'revocenter',
+                    "is_logged_in" INTEGER NOT NULL DEFAULT 0,
+                    "energy" INTEGER NOT NULL DEFAULT 100,
+                    "max_energy" INTEGER NOT NULL DEFAULT 100,
+                    "last_energy_update" REAL NOT NULL DEFAULT 0,
+                    "arrival_time" REAL NOT NULL DEFAULT 0,
+                    "destination_city" TEXT NOT NULL DEFAULT '',
+                    "destination_location" TEXT NOT NULL DEFAULT '',
+                    "trainer_level" INTEGER NOT NULL DEFAULT 1,
+                    "trainer_xp" INTEGER NOT NULL DEFAULT 25,
+                    "coins" INTEGER NOT NULL DEFAULT 500,
+                    "rank" TEXT NOT NULL DEFAULT 'Rookie',
+                    "battles_won" INTEGER NOT NULL DEFAULT 0,
+                    "battles_lost" INTEGER NOT NULL DEFAULT 0,
+                    "inventory" TEXT NOT NULL DEFAULT '{"159": 5, "4": 2, "31": 1}',
+                    "caught_revomon" TEXT NOT NULL DEFAULT '[]'
+                ) STRICT;
+                """
+            )
+            print("accounts table created successfully")
+            await conn.commit()
+
+    async def get_or_create_account(self, user_id: int) -> dict[str, Any]:
+        """Get an account by user ID, or create a new one with defaults."""
+        async with self._connect() as conn:
+            conn.row_factory = aiosqlite.Row
+            cursor = await conn.cursor()
+
+            # Try to get existing account
+            await cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (user_id,))
+            row = await cursor.fetchone()
+
+            if row:
+                account = dict(row)
+                # Process energy regeneration
+                now = time.time()
+                if account["energy"] < account["max_energy"]:
+                    time_passed = now - account["last_energy_update"]
+                    regen = int(time_passed / 60)
+                    if regen > 0:
+                        account["energy"] = min(
+                            account["max_energy"], account["energy"] + regen
+                        )
+                        account["last_energy_update"] = now - (time_passed % 60)
+                        await self._update_account_fields(
+                            conn,
+                            user_id,
+                            energy=account["energy"],
+                            last_energy_update=account["last_energy_update"],
+                        )
+                else:
+                    account["last_energy_update"] = now
+                    await self._update_account_fields(
+                        conn, user_id, last_energy_update=now
+                    )
+
+                # Parse JSON fields
+                account["inventory"] = json.loads(account["inventory"])
+                account["caught_revomon"] = json.loads(account["caught_revomon"])
+                return account
+
+            # Create new account
+            defaults: dict[str, Any] = {
+                "current_city": "drassius city",
+                "current_location": "revocenter",
+                "is_logged_in": 0,
+                "energy": 100,
+                "max_energy": 100,
+                "last_energy_update": now,
+                "arrival_time": 0.0,
+                "destination_city": "",
+                "destination_location": "",
+                "trainer_level": 1,
+                "trainer_xp": 25,
+                "coins": 500,
+                "rank": "Rookie",
+                "battles_won": 0,
+                "battles_lost": 0,
+                "inventory": json.dumps({"159": 5, "4": 2, "31": 1}),
+                "caught_revomon": json.dumps([]),
+            }
+
+            columns = ", ".join(defaults.keys())
+            placeholders = ", ".join(["?"] * len(defaults))
+            await cursor.execute(
+                f"INSERT INTO accounts (user_id, {columns}) VALUES (?, {placeholders})",
+                (user_id, *defaults.values()),
+            )
+            await conn.commit()
+
+            # Return the new account with parsed JSON
+            defaults["inventory"] = json.loads(defaults["inventory"])
+            defaults["caught_revomon"] = json.loads(defaults["caught_revomon"])
+            return defaults
+
+    async def _update_account_fields(
+        self, conn: aiosqlite.Connection, user_id: int, **kwargs: Any
+    ) -> None:
+        """Update specific fields of an account."""
+        if not kwargs:
+            return
+
+        # Handle JSON serialization for specific fields
+        for key, value in kwargs.items():
+            if key in ("inventory", "caught_revomon"):
+                kwargs[key] = json.dumps(value)
+
+        set_clause = ", ".join(f"{key} = ?" for key in kwargs)
+        values = list(kwargs.values()) + [user_id]
+
+        cursor = await conn.cursor()
+        await cursor.execute(
+            f"UPDATE accounts SET {set_clause} WHERE user_id = ?",
+            values,
+        )
+        await conn.commit()
+
+    async def update_account(self, user_id: int, **kwargs: Any) -> dict[str, Any]:
+        """Update specific fields of an account."""
+        async with self._connect() as conn:
+            conn.row_factory = aiosqlite.Row
+            cursor = await conn.cursor()
+
+            # Ensure account exists
+            await cursor.execute(
+                "SELECT user_id FROM accounts WHERE user_id = ?", (user_id,)
+            )
+            if not await cursor.fetchone():
+                # Create account first
+                await self.get_or_create_account(user_id)
+
+            # Process energy regeneration before update
+            await cursor.execute(
+                "SELECT energy, max_energy, last_energy_update FROM accounts WHERE user_id = ?",
+                (user_id,),
+            )
+            row = await cursor.fetchone()
+            if row:
+                now = time.time()
+                if row["energy"] < row["max_energy"]:
+                    time_passed = now - row["last_energy_update"]
+                    regen = int(time_passed / 60)
+                    if regen > 0:
+                        kwargs["energy"] = min(row["max_energy"], row["energy"] + regen)
+                        kwargs["last_energy_update"] = now - (time_passed % 60)
+                else:
+                    kwargs["last_energy_update"] = now
+
+            await self._update_account_fields(conn, user_id, **kwargs)
+
+            # Return updated account
+            await cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (user_id,))
+            row = await cursor.fetchone()
+            if row is None:
+                return {}
+            account: dict[str, Any] = dict(row)
+            account["inventory"] = json.loads(account["inventory"])
+            account["caught_revomon"] = json.loads(account["caught_revomon"])
+            return account
 
 
 class EventBoardLogsTable:
@@ -3006,6 +3321,19 @@ async def delete_guild_data(guild_id: int) -> None:
 async def update_guild_spawn_config(guild_id: int, **kwargs: Any) -> None:
     if not kwargs:
         return
+    # Whitelist of allowed column names for the guilds table
+    allowed_columns = {
+        "biome",
+        "max_spawn_limit",
+        "temp_spawn_limit",
+        "temp_limit_expires",
+        "next_spawn_time",
+        "spawn_multiplier",
+        "spawn_multiplier_expires",
+    }
+    for key in kwargs.keys():
+        if key not in allowed_columns:
+            raise ValueError(f"Invalid column name: {key}")
     sets = ", ".join(f"{k} = ?" for k in kwargs.keys())
     values = list(kwargs.values())
     values.append(guild_id)
@@ -3042,6 +3370,10 @@ class ActiveSpawnsTable:
                     "spawn_data" TEXT NOT NULL
                 ) STRICT;
                 """
+            )
+            # Add index for guild_id lookups
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_active_spawns_guild_id" ON "active_spawns" ("guild_id");'
             )
             print("active_spawns table created successfully")
             await conn.commit()
@@ -3119,7 +3451,8 @@ class ActiveEncountersTable:
                 """
                 CREATE TABLE IF NOT EXISTS "active_encounters" (
                     "spawner_id" INTEGER PRIMARY KEY,
-                    "encounter_data" TEXT NOT NULL
+                    "encounter_data" TEXT NOT NULL,
+                    "created_at" REAL NOT NULL
                 ) STRICT;
                 """
             )
@@ -3129,15 +3462,17 @@ class ActiveEncountersTable:
 
 async def save_active_encounter(spawner_id: int, encounter_data: str) -> None:
     """Saves the serialized encounter data for the specified spawner."""
+    import time
+
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
         await cursor.execute(
             """
-            INSERT INTO active_encounters (spawner_id, encounter_data)
-            VALUES (?, ?)
-            ON CONFLICT(spawner_id) DO UPDATE SET encounter_data = excluded.encounter_data
+            INSERT INTO active_encounters (spawner_id, encounter_data, created_at)
+            VALUES (?, ?, ?)
+            ON CONFLICT(spawner_id) DO UPDATE SET encounter_data = excluded.encounter_data, created_at = excluded.created_at
             """,
-            (spawner_id, encounter_data),
+            (spawner_id, encounter_data, time.time()),
         )
         await conn.commit()
 
@@ -3164,6 +3499,55 @@ async def delete_active_encounter(spawner_id: int) -> None:
         await conn.commit()
 
 
+async def cleanup_expired_encounters(max_age_seconds: int = 300) -> int:
+    """Clean up expired active encounters older than max_age_seconds.
+
+    Returns the number of encounters deleted.
+    """
+    import time
+
+    cutoff = time.time() - max_age_seconds
+    async with aiosqlite.connect(db_path, isolation_level=None) as conn:
+        cursor = await conn.cursor()
+        await cursor.execute(
+            "DELETE FROM active_encounters WHERE created_at < ?",
+            (cutoff,),
+        )
+        await conn.commit()
+        return cursor.rowcount
+
+
+async def cleanup_expired_spawns(max_age_seconds: int = 300) -> int:
+    """Clean up expired active spawns older than max_age_seconds.
+
+    Returns the number of spawns deleted.
+    """
+    import time
+
+    cutoff = time.time() - max_age_seconds
+    async with aiosqlite.connect(db_path, isolation_level=None) as conn:
+        cursor = await conn.cursor()
+        await cursor.execute(
+            "DELETE FROM active_spawns WHERE timestamp < ?",
+            (cutoff,),
+        )
+        await conn.commit()
+        return cursor.rowcount
+
+
+async def cleanup_all_expired(max_age_seconds: int = 300) -> dict[str, int]:
+    """Clean up both expired encounters and spawns.
+
+    Returns a dict with counts of deleted items.
+    """
+    encounters_deleted = await cleanup_expired_encounters(max_age_seconds)
+    spawns_deleted = await cleanup_expired_spawns(max_age_seconds)
+    return {
+        "encounters": encounters_deleted,
+        "spawns": spawns_deleted,
+    }
+
+
 active_spawns_table = ActiveSpawnsTable()
 
 
@@ -3171,6 +3555,10 @@ async def update_gradex_db() -> None:
     # Initialize the global settings table
     global_settings_table = GlobalSettingsTable()
     await global_settings_table.build()
+
+    # Initialize the accounts table
+    accounts_table = AccountsTable()
+    await accounts_table.build()
 
     # Initialize the guilds table
     guilds_table = GuildsTable()
@@ -3248,9 +3636,9 @@ async def update_gradex_db() -> None:
     await counterdex_table.build()
 
     # Initialize the owned Lands Table
-    # owned_lands_table = OwnedLandsTable()
+    owned_lands_table = OwnedLandsTable()
     # Build the owned lands table
-    # await owned_lands_table.build()
+    await owned_lands_table.build()
 
     # Initialize the users table
     users_table = UsersTable()

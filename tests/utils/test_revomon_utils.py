@@ -37,25 +37,31 @@ def mock_tables() -> None:  # type: ignore[misc]
 @pytest.mark.asyncio
 async def test_get_attributes(mock_tables: Any) -> None:
     rt, tt, rmt, ct, nt, olt = mock_tables
-    mock_mon_info: list[Any] = [0] * 43
-    mock_mon_info[0] = 1
-    mock_mon_info[2] = "Pikachu"
-    mock_mon_info[3] = "Desc"
-    mock_mon_info[4] = "Electric"
-    mock_mon_info[6] = "Ability1"
-    mock_mon_info[7] = "Ability2"
-    mock_mon_info[8] = "AbilityH"
-    mock_mon_info[9] = 35
-    mock_mon_info[10] = 55
-    mock_mon_info[11] = 40
-    mock_mon_info[12] = 50
-    mock_mon_info[13] = 50
-    mock_mon_info[14] = 90
-    mock_mon_info[15] = "Raichu"
-    mock_mon_info[16] = "Lvl 20"
-    mock_mon_info[17] = "Rare"
-    mock_mon_info[28] = 2
-    rt.return_value.get_info = AsyncMock(return_value=[mock_mon_info])
+    mock_mon_info = {
+        "dex_id": 1,
+        "name": "Pikachu",
+        "description": "Desc",
+        "type1": "Electric",
+        "ability1": "Ability1",
+        "ability2": "Ability2",
+        "ability_hidden": "AbilityH",
+        "hp": 35,
+        "atk": 55,
+        "def": 40,
+        "spa": 50,
+        "spd": 50,
+        "spe": 90,
+        "evolution": "Raichu",
+        "level_evolution": "Lvl 20",
+        "rarity": "Rare",
+        "ev_hp": 0,
+        "ev_atk": 0,
+        "ev_def": 0,
+        "ev_spa": 0,
+        "ev_spd": 0,
+        "ev_spe": 0,
+    }
+    rt.return_value.get_info_dict = AsyncMock(return_value=mock_mon_info)
     tt.return_value.get_info = AsyncMock(return_value=[["type1", "chart_img_url"]])
     rmt.return_value.get_moves_for_revomon = AsyncMock(return_value=[["Thunderbolt"]])
     ct.return_value.get_info = AsyncMock(
@@ -83,12 +89,31 @@ async def test_get_attributes(mock_tables: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_attributes_multiple_evs(mock_tables: Any) -> None:
     rt, tt, rmt, ct, nt, olt = mock_tables
-    mock_mon_info: list[Any] = [0] * 43
-    mock_mon_info[2] = "Bulbasaur"
-    mock_mon_info[23] = 1  # HP
-    mock_mon_info[25] = 1  # Def
-
-    rt.return_value.get_info = AsyncMock(return_value=[mock_mon_info])
+    mock_mon_info = {
+        "dex_id": 1,
+        "name": "Bulbasaur",
+        "description": "Desc",
+        "type1": "Grass",
+        "ability1": "Ability1",
+        "ability2": "Ability2",
+        "ability_hidden": "AbilityH",
+        "hp": 45,
+        "atk": 49,
+        "def": 49,
+        "spa": 65,
+        "spd": 65,
+        "spe": 45,
+        "evolution": "Ivysaur",
+        "level_evolution": "Lvl 16",
+        "rarity": "Common",
+        "ev_hp": 1,
+        "ev_atk": 0,
+        "ev_def": 1,
+        "ev_spa": 0,
+        "ev_spd": 0,
+        "ev_spe": 0,
+    }
+    rt.return_value.get_info_dict = AsyncMock(return_value=mock_mon_info)
     tt.return_value.get_info = AsyncMock(return_value=[["type1", "chart_img_url"]])
     rmt.return_value.get_moves_for_revomon = AsyncMock(return_value=[])
     ct.return_value.get_info = AsyncMock(return_value=[[0] * 10])

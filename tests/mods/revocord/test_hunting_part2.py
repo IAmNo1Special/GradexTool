@@ -642,18 +642,16 @@ class TestOnInteractionPart2:
         mock_interaction.edit_original_response.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_cleanup_encounters_exception(self, mock_bot: Any) -> None:
+    @patch(
+        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
+    )
+    async def test_cleanup_encounters_exception(
+        self, mock_get_spawns: Any, mock_bot: Any
+    ) -> None:
         cog = HuntingCog(mock_bot)
-        setattr(cog, "_cleanup_wilds_spawn", AsyncMock())
-        mock_channel = MagicMock()
-
-        async def mock_history(*args: Any, **kwargs: Any) -> Any:
-            yield MagicMock()
-            raise Exception("Test")
-
-        mock_channel.history = mock_history
+        mock_get_spawns.side_effect = Exception("Test")
         mock_guild = MagicMock()
-        mock_guild.text_channels = [mock_channel]
+        mock_guild.id = 123
         mock_bot.guilds = [mock_guild]
         await cog.cleanup_encounters()
         # Should not raise
@@ -695,3 +693,156 @@ class TestOnInteractionPart2:
         mock_guild = MagicMock()
         await initial_wilds_spawn(mock_bot, mock_guild)
         mock_wild_cog._do_spawn.assert_called_once()
+
+    @pytest.mark.asyncio
+    @patch(
+        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
+    )
+    @patch("mods.revocord.hunting.get_guild_biome", new_callable=AsyncMock)
+    async def test_wilds_command_no_spawns(
+        self, mock_biome: Any, mock_get_spawns: Any, mock_bot: Any
+    ) -> None:
+        cog = HuntingCog(mock_bot)
+        mock_get_spawns.return_value = []
+        mock_biome.return_value = "Forest"
+
+        mock_interaction = AsyncMock()
+        mock_interaction.guild = MagicMock()
+        mock_interaction.guild.id = 123
+        mock_interaction.guild.name = "Test Guild"
+
+        await cog.wilds_command.callback(cog, mock_interaction)  # type: ignore
+
+        mock_interaction.response.defer.assert_called_once()
+        mock_interaction.followup.send.assert_called_once()
+        kwargs = mock_interaction.followup.send.call_args[1]
+        assert (
+            "There are currently no wild Revomon in this area."
+            in kwargs["embed"].description
+        )
+
+    @pytest.mark.asyncio
+    @patch(
+        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
+    )
+    @patch("mods.revocord.hunting.get_guild_biome", new_callable=AsyncMock)
+    async def test_wilds_command_with_spawns(
+        self, mock_biome: Any, mock_get_spawns: Any, mock_bot: Any
+    ) -> None:
+        cog = HuntingCog(mock_bot)
+        mock_get_spawns.return_value = [
+            {
+                "message_id": 999,
+                "data": {
+                    "name": "Pikachu",
+                    "mon_id": 25,
+                    "is_shiny": False,
+                    "timestamp": int(time.time()),
+                },
+            }
+        ]
+        mock_biome.return_value = "Forest"
+
+        mock_interaction = AsyncMock()
+        mock_interaction.guild = MagicMock()
+        mock_interaction.guild.id = 123
+        mock_interaction.guild.name = "Test Guild"
+        mock_interaction.user = MagicMock()
+        mock_interaction.user.id = 456
+
+        await cog.wilds_command.callback(cog, mock_interaction)  # type: ignore
+
+        mock_interaction.response.defer.assert_called_once()
+        mock_interaction.followup.send.assert_called_once()
+        kwargs = mock_interaction.followup.send.call_args[1]
+        assert (
+            "Active wild Revomon roaming this area: **1**"
+            in kwargs["embed"].description
+        )
+        assert kwargs["view"] is not None
+
+    @pytest.mark.asyncio
+    @patch(
+        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
+    )
+    @patch("mods.revocord.hunting.get_guild_biome", new_callable=AsyncMock)
+    async def test_on_interaction_wilds_page(
+        self, mock_biome: Any, mock_get_spawns: Any, mock_bot: Any
+    ) -> None:
+        cog = HuntingCog(mock_bot)
+        mock_get_spawns.return_value = [
+            {
+                "message_id": 999,
+                "data": {
+                    "name": "Pikachu",
+                    "mon_id": 25,
+                    "is_shiny": False,
+                    "timestamp": int(time.time()),
+                },
+            }
+        ]
+        mock_biome.return_value = "Forest"
+
+        mock_interaction = AsyncMock()
+        mock_interaction.type = discord.InteractionType.component
+        mock_interaction.data = {"custom_id": "wilds_page:next:123:1"}
+        mock_interaction.user = MagicMock()
+        mock_interaction.user.id = 456
+
+        await cog.on_interaction(mock_interaction)
+
+        mock_interaction.response.defer.assert_called_once()
+        mock_interaction.edit_original_response.assert_called_once()
+
+    @pytest.mark.asyncio
+    @patch("scripts.gradexDB.active_spawns_table.get_spawn", new_callable=AsyncMock)
+    @patch("scripts.gradexDB.active_spawns_table.remove_spawn", new_callable=AsyncMock)
+    @patch("mods.revocord.hunting.save_active_encounter", new_callable=AsyncMock)
+    async def test_on_interaction_wilds_menu_select_success(
+        self, mock_save: Any, mock_remove: Any, mock_get_spawn: Any, mock_bot: Any
+    ) -> None:
+        cog = HuntingCog(mock_bot)
+        cog.revomons = [{"mon_id": 25, "name": "Pikachu", "type1": "electric"}]
+        mock_get_spawn.return_value = {
+            "mon_id": 25,
+            "is_shiny": False,
+            "name": "Pikachu",
+            "timestamp": int(time.time()),
+            "nature": "hardy",
+            "ability": "static",
+            "ivs": {"hp": 31},
+        }
+
+        mock_interaction = AsyncMock()
+        mock_interaction.type = discord.InteractionType.component
+        mock_interaction.data = {"custom_id": "wilds_menu_select:999"}
+        mock_interaction.user = MagicMock()
+        mock_interaction.user.id = 456
+
+        await cog.on_interaction(mock_interaction)
+
+        mock_interaction.response.defer.assert_called_once()
+        mock_remove.assert_called_once_with(999)
+        mock_save.assert_called_once()
+        mock_interaction.edit_original_response.assert_called_once()
+
+    @pytest.mark.asyncio
+    @patch("scripts.gradexDB.active_spawns_table.get_spawn", new_callable=AsyncMock)
+    async def test_on_interaction_wilds_menu_select_missing(
+        self, mock_get_spawn: Any, mock_bot: Any
+    ) -> None:
+        cog = HuntingCog(mock_bot)
+        mock_get_spawn.return_value = None
+
+        mock_interaction = AsyncMock()
+        mock_interaction.type = discord.InteractionType.component
+        mock_interaction.data = {"custom_id": "wilds_menu_select:999"}
+        mock_interaction.user = MagicMock()
+        mock_interaction.user.id = 456
+
+        await cog.on_interaction(mock_interaction)
+
+        mock_interaction.response.defer.assert_called_once()
+        mock_interaction.followup.send.assert_called_once_with(
+            "❌ This Revomon has already been claimed or fled!", ephemeral=True
+        )

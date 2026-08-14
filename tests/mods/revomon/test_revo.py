@@ -2,6 +2,7 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+import requests
 
 from mods.revomon.revo import PriceTracker, setup
 
@@ -50,6 +51,14 @@ class TestPriceTracker:
         mock_response = MagicMock()
         mock_response.status_code = 404
         with patch("requests.get", return_value=mock_response):
+            assert tracker.get_revo_price() is None
+
+    def test_get_revo_price_exception(self, mock_bot: Any) -> None:
+        with patch("discord.ext.tasks.Loop.start"):
+            tracker = PriceTracker(mock_bot)
+        with patch(
+            "requests.get", side_effect=requests.RequestException("Connection error")
+        ):
             assert tracker.get_revo_price() is None
 
     @pytest.mark.asyncio

@@ -1,15 +1,20 @@
-from discord import Client, Message
+from typing import Any
+
+import discord
 from discord.ext import commands
 
 from data import RevomonTable
-from utils.button_utils import Buttons
+from utils.button_utils import (
+    CompareIntroView,
+    IntroView,
+)
 from utils.embed_utils import compare_intros, intro
 from utils.helpers import respond
 from utils.revomon_utils import get_attributes
 
 
 class revomon_search(commands.Cog):  # noqa: N801
-    def __init__(self, gradex: Client) -> None:
+    def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
         self.selected_mon_message = None
 
@@ -19,7 +24,7 @@ class revomon_search(commands.Cog):  # noqa: N801
         print("---------------------------")
 
     @commands.Cog.listener()
-    async def on_message(self, message: Message) -> None:
+    async def on_message(self, message: discord.Message) -> None:
         try:
             # Ignore messages from bots (including self)
             if message.author.bot:
@@ -27,7 +32,6 @@ class revomon_search(commands.Cog):  # noqa: N801
 
             # Save User's Cleaned Input As The Search Prompt
             prompt = message.content.lower().strip()
-            buttons = Buttons(self.gradex)  # type: ignore[arg-type]
             if "&" in prompt:
                 prompt, prompt2 = map(str.strip, prompt.split("&"))
                 if (
@@ -39,17 +43,17 @@ class revomon_search(commands.Cog):  # noqa: N801
                     embed = compare_intros(
                         attributes=attributes, attributes2=attributes2
                     )
-                    buttons = await buttons.compare_intros_view(
+                    compare_view = CompareIntroView(
                         attributes=attributes, attributes2=attributes2
                     )
-                    await respond(self.gradex, message, embed, buttons)  # type: ignore[arg-type]
+                    await respond(self.gradex, message, embed, compare_view)
             # Check if User's Prompt is a Revomon's Name
             elif prompt in await RevomonTable().get_names():
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=prompt)
                 embed = intro(attributes=attributes)
-                buttons = await buttons.intro_view(attributes=attributes)
-                await respond(self.gradex, message, embed, buttons)  # type: ignore[arg-type]
+                intro_view = IntroView(attributes=attributes)
+                await respond(self.gradex, message, embed, intro_view)
         except Exception as e:
             print(f"An error occurred during revomon_search on_message: {e}")
 

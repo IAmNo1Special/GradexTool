@@ -6,10 +6,10 @@ from contextlib import closing
 from pathlib import Path
 from typing import Any
 
-import requests
-from revomon import RevomonTable
+import httpx
 
 from configs import GRADEX_DB_PATH
+from data import RevomonTable
 
 logger = logging.getLogger(__name__)
 
@@ -111,49 +111,50 @@ class CapsulesTable:
         print("Rebuilding capsules table...")
 
         # get a list of all the mon_ids in the revomon table
-        mon_ids = RevomonTable().get_mon_ids()
+        mon_ids = await RevomonTable().get_mon_ids()
 
         # Fetch data from the Revomon Moves API
-        for mon_id in mon_ids:
-            url = f"https://api.revomon.io/revomon/moves/{mon_id}"
-            response = requests.get(url)
+        async with httpx.AsyncClient(timeout=10) as client:
+            for mon_id in mon_ids:
+                url = f"https://api.revomon.io/revomon/moves/{mon_id}"
+                response = await client.get(url)
 
-            if response.status_code == 200:
-                data = response.json()
+                if response.status_code == 200:
+                    data = response.json()
 
-                # Connect to the database and create a cursor
-                with closing(self._connect()) as conn, conn:
-                    cursor = conn.cursor()
+                    # Connect to the database and create a cursor
+                    with closing(self._connect()) as conn, conn:
+                        cursor = conn.cursor()
 
-                    # Insert data into the database
-                    for move in sorted(
-                        data["data"]["moves"], key=lambda x: x["idMove"]
-                    ):
-                        if move["capsule"]:
-                            # Prepare data for insertion
-                            cap_num = move["capsule"]
-                            move_id = move["idMove"]
-                            move_name = move["name"].lower()
+                        # Insert data into the database
+                        for move in sorted(
+                            data["data"]["moves"], key=lambda x: x["idMove"]
+                        ):
+                            if move["capsule"]:
+                                # Prepare data for insertion
+                                cap_num = move["capsule"]
+                                move_id = move["idMove"]
+                                move_name = move["name"].lower()
 
-                            # Execute the insert query
-                            cursor.execute(
-                                """
-                                INSERT OR IGNORE INTO capsules
-                                    (cap_num, move_id, move_name)
-                                    VALUES (?, ?, ?);
-                                """,
-                                (cap_num, move_id, move_name),
-                            )
+                                # Execute the insert query
+                                cursor.execute(
+                                    """
+                                    INSERT OR IGNORE INTO capsules
+                                        (cap_num, move_id, move_name)
+                                        VALUES (?, ?, ?);
+                                    """,
+                                    (cap_num, move_id, move_name),
+                                )
 
-                            # Check if the row was inserted
-                            if (
-                                cursor.rowcount == 0
-                            ):  # If the row was not inserted, it means it already exists
-                                continue
+                                # Check if the row was inserted
+                                if (
+                                    cursor.rowcount == 0
+                                ):  # If the row was not inserted, it means it already exists
+                                    continue
+                                else:
+                                    print(f"Added capsule: {move['capsule']}")
                             else:
-                                print(f"Added capsule: {move['capsule']}")
-                        else:
-                            continue
+                                continue
 
                     # Commit the transaction
                     conn.commit()

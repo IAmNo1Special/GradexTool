@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from discord import ButtonStyle
 
-from utils.button_utils import Buttons, setup
+from utils.button_utils import Buttons, MonPaginationView, ShareButton, setup
 
 
 @pytest.fixture
@@ -556,3 +556,67 @@ async def test_setup(mock_get_book: Any, mock_bot: Any) -> None:
     mock_get_book.return_value = []
     await setup(mock_bot)
     mock_bot.add_cog.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_share_button_in_view() -> None:
+    view = MonPaginationView(
+        bot=MagicMock(),
+        user_id=123,
+        book_of_names=[["mon1", "mon2"]],
+        current_page=1,
+        group_by_evo=True,
+        app_emojis={},
+    )
+    share_buttons = [child for child in view.children if isinstance(child, ShareButton)]
+    assert len(share_buttons) == 1
+    assert share_buttons[0].custom_id == "mon:share"
+    assert share_buttons[0].style == ButtonStyle.green
+
+
+@pytest.mark.asyncio
+async def test_share_button_callback() -> None:
+    original_view = MonPaginationView(
+        bot=MagicMock(),
+        user_id=123,
+        book_of_names=[["mon1", "mon2"]],
+        current_page=1,
+        group_by_evo=True,
+        app_emojis={},
+    )
+    share_button = next(
+        child for child in original_view.children if isinstance(child, ShareButton)
+    )
+
+    interaction = MagicMock()
+    interaction.response.defer = AsyncMock()
+    interaction.followup.send = AsyncMock()
+
+    await share_button.callback(interaction)
+
+    interaction.response.defer.assert_awaited_once()
+    interaction.followup.send.assert_awaited_once()
+    assert interaction.followup.send.call_args[1]["ephemeral"] is False
+    new_view = interaction.followup.send.call_args[1]["view"]
+    assert isinstance(new_view, MonPaginationView)
+    assert new_view.current_page == original_view.current_page
+    assert new_view.book_of_names == original_view.book_of_names
+    assert new_view.group_by_evo == original_view.group_by_evo
+    assert new_view.app_emojis == original_view.app_emojis
+    assert new_view.user_id == original_view.user_id
+
+    assert new_view is not original_view
+
+
+@pytest.mark.asyncio
+async def test_share_button_callback_no_view() -> None:
+    button = ShareButton(row=0)
+
+    interaction = MagicMock()
+    interaction.response.defer = AsyncMock()
+    interaction.followup.send = AsyncMock()
+
+    await button.callback(interaction)
+
+    interaction.response.defer.assert_not_awaited()
+    interaction.followup.send.assert_not_awaited()

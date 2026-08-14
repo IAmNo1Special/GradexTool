@@ -4,8 +4,9 @@ import sys
 import unittest.mock
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, mock_open, patch
+from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
+import httpx
 import pytest
 
 scripts_dir = Path(__file__).parent.parent.parent / "scripts"
@@ -94,7 +95,7 @@ async def test_capsules_table_rebuild() -> None:
     table = CapsulesTable()
     mock_mon_ids = [1, 2]
     mock_revomon_table = MagicMock()
-    mock_revomon_table.get_mon_ids.return_value = mock_mon_ids
+    mock_revomon_table.get_mon_ids = AsyncMock(return_value=mock_mon_ids)
 
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -117,17 +118,22 @@ async def test_capsules_table_rebuild() -> None:
     mock_response_2 = MagicMock()
     mock_response_2.status_code = 404  # Skip this one
 
-    def mock_requests_get(url: Any) -> Any:
+    mock_client = AsyncMock(spec=httpx.AsyncClient)
+
+    async def mock_async_get(url: Any) -> Any:
         if url.endswith("1"):
             return mock_response_1
         return mock_response_2
 
+    mock_client.get = AsyncMock(side_effect=mock_async_get)
+
     with (
         patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table),
-        patch("requests.get", side_effect=mock_requests_get),
+        patch("scripts.capsules.httpx.AsyncClient") as mock_client_cls,
         patch.object(table, "_connect", return_value=mock_conn),
         patch.object(table, "export_to_json") as mock_export,
     ):
+        mock_client_cls.return_value.__aenter__.return_value = mock_client
         await table.rebuild()
 
         # 1 valid response with 2 capsule moves.
@@ -140,7 +146,7 @@ async def test_capsules_table_rebuild() -> None:
 async def test_capsules_table_rebuild_rowcount_zero() -> None:
     table = CapsulesTable()
     mock_revomon_table = MagicMock()
-    mock_revomon_table.get_mon_ids.return_value = [1]
+    mock_revomon_table.get_mon_ids = AsyncMock(return_value=[1])
 
     mock_conn = MagicMock()
     mock_cursor = MagicMock()
@@ -154,12 +160,16 @@ async def test_capsules_table_rebuild_rowcount_zero() -> None:
         "data": {"moves": [{"idMove": 10, "capsule": 1, "name": "Move 1"}]}
     }
 
+    mock_client = AsyncMock(spec=httpx.AsyncClient)
+    mock_client.get = AsyncMock(return_value=mock_response)
+
     with (
         patch("scripts.capsules.RevomonTable", return_value=mock_revomon_table),
-        patch("requests.get", return_value=mock_response),
+        patch("scripts.capsules.httpx.AsyncClient") as mock_client_cls,
         patch.object(table, "_connect", return_value=mock_conn),
         patch.object(table, "export_to_json"),
     ):
+        mock_client_cls.return_value.__aenter__.return_value = mock_client
         await table.rebuild()
         assert mock_cursor.execute.call_count == 1
 

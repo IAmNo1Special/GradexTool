@@ -22,7 +22,10 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
     revomon_name = revomon_name.lower()
     revomon_table = RevomonTable()
     TypesTable()
-    mon_info = (await revomon_table.get_info(revomon_name=revomon_name))[0]
+    mon_info = await revomon_table.get_info_dict(revomon_name=revomon_name)
+    if not mon_info:
+        return {}
+    # Use column names instead of indices for robustness
     ev_rewards = dict(
         zip(
             [
@@ -34,12 +37,12 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 "Speed",
             ],
             [
-                mon_info[23],
-                mon_info[24],
-                mon_info[25],
-                mon_info[26],
-                mon_info[27],
-                mon_info[28],
+                mon_info.get("ev_hp", 0),
+                mon_info.get("ev_atk", 0),
+                mon_info.get("ev_def", 0),
+                mon_info.get("ev_spa", 0),
+                mon_info.get("ev_spd", 0),
+                mon_info.get("ev_spe", 0),
             ],
             strict=True,
         )
@@ -48,45 +51,45 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
         f"+ {boost} {stat_name}" for stat_name, boost in ev_rewards.items() if boost > 0
     ]
     attributes = {
-        "name": mon_info[2],
-        "num": mon_info[0],
+        "name": mon_info.get("name"),
+        "num": mon_info.get("dex_id"),
         "profile_img": None,
         "shiny_profile_img": None,
         "nft_img": None,
         "shiny_nft_img": None,
         "shiny_emoji": None,
         "emoji": None,
-        "main_description": mon_info[3],
-        "type1": mon_info[4],
+        "main_description": mon_info.get("description"),
+        "type1": mon_info.get("type1"),
         "type1_img": None,
-        "type2": mon_info[5],
+        "type2": mon_info.get("type2"),
         "type2_img": None,
         "type_chart_img": None,
-        "rarity": mon_info[17],
-        "ability1": mon_info[6],
-        "ability2": mon_info[7],
-        "abilityh": mon_info[8],
-        "evolution": mon_info[15],
-        "evolution_lvl": mon_info[16],
+        "rarity": mon_info.get("rarity"),
+        "ability1": mon_info.get("ability1"),
+        "ability2": mon_info.get("ability2"),
+        "abilityh": mon_info.get("ability_hidden"),
+        "evolution": mon_info.get("evolution"),
+        "evolution_lvl": mon_info.get("level_evolution"),
         "evolution_tree": None,
         "ev_gains1": ev_rewards_list[0] if len(ev_rewards_list) > 0 else None,
         "ev_gains2": ev_rewards_list[1] if len(ev_rewards_list) > 1 else None,
-        "base_hp": mon_info[9],
-        "base_atk": mon_info[10],
-        "base_def": mon_info[11],
-        "base_spa": mon_info[12],
-        "base_spd": mon_info[13],
-        "base_spe": mon_info[14],
+        "base_hp": mon_info.get("hp"),
+        "base_atk": mon_info.get("atk"),
+        "base_def": mon_info.get("def"),
+        "base_spa": mon_info.get("spa"),
+        "base_spd": mon_info.get("spd"),
+        "base_spe": mon_info.get("spe"),
         "total_stats": sum(
             filter(
                 None,
                 [
-                    mon_info[9],
-                    mon_info[10],
-                    mon_info[11],
-                    mon_info[12],
-                    mon_info[13],
-                    mon_info[14],
+                    mon_info.get("hp"),
+                    mon_info.get("atk"),
+                    mon_info.get("def"),
+                    mon_info.get("spa"),
+                    mon_info.get("spd"),
+                    mon_info.get("spe"),
                 ],
             )
         ),
@@ -101,29 +104,43 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
         "move_list": [
             move_info[0]
             for move_info in await RevomonMovesTable().get_moves_for_revomon(
-                mon_dex_id=mon_info[0]
+                mon_dex_id=mon_info.get("dex_id") or 0
             )
         ],
         "cdex_tier": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][4],
         "cdex_description": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][3],
         "weakness": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][9],
         "meta_build": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][6],
         "meta_moves": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][5],
-        "tips": (await CounterdexTable().get_info(revomon_name=mon_info[2].lower()))[0][
-            7
-        ],
+        "tips": (
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
+        )[0][7],
         "counters": (
-            await CounterdexTable().get_info(revomon_name=mon_info[2].lower())
+            await CounterdexTable().get_info(
+                revomon_name=mon_info.get("name", "").lower()
+            )
         )[0][8],
     }
     return attributes
@@ -364,22 +381,49 @@ def get_evo_trees() -> list[Any | str]:
     return evo_trees
 
 
-async def get_book_of_mon_names() -> list[list[str]]:
+async def get_book_of_mon_names(
+    names: list[str] | None = None, group_by_evo: bool = True
+) -> list[list[str]]:
     row = 0
     book = []
     pages = []
-    names = await RevomonTable().get_names()
+    items_in_row = 0
+    if names is None:
+        names = await RevomonTable().get_names()
     for name in names:
         if name == "wyverdant":
             continue
         pages.append(name)
+        items_in_row += 1
         if name == "vyphern":
             pages.append("wyverdant")
+            items_in_row += 1
         if name == names[-1]:
             book.append(pages)
             return book
-        if (await RevomonTable().get_info(name))[0][8] is None:
+
+        if group_by_evo:
+            info = (await RevomonTable().get_info(name))[0]
+            # Safely get evolution next field across different schema versions (18 vs 24 vs 43 columns)
+            evo_next = None
+            if len(info) >= 24:
+                evo_next = info[15]
+            elif len(info) >= 18:
+                evo_next = info[8]
+
+            is_final = (
+                evo_next is None
+                or evo_next == ""
+                or evo_next == "none"
+                or name == "vyphern"
+            )
+            should_increment = is_final or items_in_row >= 5
+        else:
+            should_increment = items_in_row >= 5
+
+        if should_increment:
             row += 1
+            items_in_row = 0
             if row == 4:
                 book.append(pages)
                 pages = []

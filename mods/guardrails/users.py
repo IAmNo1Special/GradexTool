@@ -55,9 +55,9 @@ class UsersGuardrail(commands.Cog):
         logger.info(f"User {member.name} joined the {member.guild.name} server!")
         logger.info("-" * 50)
         if GRA_GUILD_ID is None:
-            logger.error("GRA_GUILD_ID not found in configuration!")
+            logger.error("GRA_GUILD_ID not found in environment variables!")
             return
-        if member.guild.id == int(GRA_GUILD_ID):
+        if member.guild.id == GRA_GUILD_ID:
             role_name = "Fresh Spawn"
             role = utils.get(member.guild.roles, name=role_name)
             if role:

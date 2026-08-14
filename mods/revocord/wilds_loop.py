@@ -8,7 +8,7 @@ from typing import Any
 import discord
 from discord.ext import commands, tasks
 
-from mods.revocord.hunting import BIOME_TYPES, TYPE_COLORS
+from mods.revocord.hunting import BIOME_TYPES
 from scripts.gradexDB import (
     active_spawns_table,
     get_guild_biome,
@@ -74,10 +74,6 @@ class WildsLoopCog(commands.Cog):
         return img_path
 
     async def _do_spawn(self, guild: discord.Guild) -> None:
-        wilds_channel = discord.utils.get(guild.text_channels, name="wilds")
-        if not wilds_channel:
-            return
-
         current_biome = await get_guild_biome(guild.id)
         allowed_types = BIOME_TYPES.get(current_biome, {"neutral"})
 
@@ -96,16 +92,7 @@ class WildsLoopCog(commands.Cog):
         chosen = random.choice(eligible)
         is_shiny = random.random() < 0.01
 
-        img_path = self._get_revomon_image_path(chosen, is_shiny)
         name = chosen.get("name", "Unknown").title()
-        embed_color = TYPE_COLORS.get((chosen.get("type1") or "").lower(), 0x2ECC71)
-
-        title = (
-            f"✨ A wild SHINY {name} appeared! ✨"
-            if is_shiny
-            else f"🌿 A wild {name} appeared! 🌿"
-        )
-        embed = discord.Embed(title=title, color=embed_color)
 
         nature = (
             random.choice(self.natures)["name"].title() if self.natures else "Hardy"
@@ -121,44 +108,24 @@ class WildsLoopCog(commands.Cog):
             k: random.randint(0, 31) for k in ["hp", "atk", "def", "spa", "spd", "spe"]
         }
 
+        timestamp = int(time.time())
+        id_revomon = chosen.get("mon_id", chosen.get("idRevomon", 0))
+
         encounter_data = {
             "nature": nature.lower(),
             "ability": ability.lower(),
             "ivs": ivs,
+            "mon_id": id_revomon,
+            "name": name,
+            "is_shiny": is_shiny,
+            "timestamp": timestamp,
         }
 
-        if img_path.exists():
-            file = discord.File(img_path, filename="revomon.png")
-            embed.set_image(url="attachment://revomon.png")
-        else:
-            file = None
-            embed.description = "*Image sprite not found*"
-
-        timestamp = int(time.time())
-        id_revomon = chosen.get("mon_id", chosen.get("idRevomon", 0))
-        shiny_int = 1 if is_shiny else 0
-
-        view = discord.ui.View(timeout=None)
-        battle_btn: discord.ui.Button[Any] = discord.ui.Button(
-            label="Battle!",
-            style=discord.ButtonStyle.danger,
-            emoji="⚔️",
-            custom_id=f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}",
-        )
-        view.add_item(battle_btn)
-
-        if file:
-            msg = await wilds_channel.send(embed=embed, view=view, file=file)
-        else:
-            msg = await wilds_channel.send(embed=embed, view=view)
-
-        battle_btn.custom_id = (
-            f"wilds_claim:{guild.id}:{id_revomon}:{shiny_int}:{timestamp}:{msg.id}"
-        )
-        await msg.edit(view=view)
+        # Generate a unique spawn ID (random 63-bit positive integer)
+        spawn_id = random.randint(1, 2**62)
 
         await active_spawns_table.add_spawn(
-            msg.id, guild.id, json.dumps(encounter_data)
+            spawn_id, guild.id, json.dumps(encounter_data)
         )
 
     @tasks.loop(seconds=15)

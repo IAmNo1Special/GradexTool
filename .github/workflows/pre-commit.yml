@@ -32,13 +32,13 @@ jobs:
         run: uv sync --all-extras --dev
         
       - name: Lint with Ruff
-        run: uvx ruff check .
+        run: uv run --dev ruff check .
         
       - name: Format with Ruff
-        run: uvx ruff format --check .
+        run: uv run --dev ruff format --check .
         
       - name: Type check with mypy
-        run: uvx mypy . || echo "mypy has strict errors remaining, passing for now during migration."
+        run: uv run --dev mypy .
         
       - name: Check markdown formatting
-        run: uvx --python 3.13 mdformat --check .
+        run: uv run --python 3.13 --dev mdformat --check .
