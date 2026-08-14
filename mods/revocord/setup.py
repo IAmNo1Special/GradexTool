@@ -214,8 +214,8 @@ class SetupCog(commands.Cog):
                     )
                 logger.info(f"Category located: {category_name}")
 
-            # 2. Ensure Core Channels (News, Event Board, Portal, Wilds)
-            core_channels = ["news", "event-board", "portal", "wilds"]
+            # 2. Ensure Core Channels (News, Event Board, Portal)
+            core_channels = ["news", "event-board", "portal"]
 
             async def ensure_text_channel(name: str, position: int) -> tuple[Any, bool]:
                 normalized_name = normalize_channel_name(name)
@@ -254,25 +254,17 @@ class SetupCog(commands.Cog):
                     logger.info(f"Core channel synced: {normalized_name}")
                 return text_channel, is_new
 
-            # Create the 4 core channels
+            # Create the core channels
             portal_channel = None
-            wilds_channel_new = False
             for idx, ch_name in enumerate(core_channels):
                 ch, is_new = await ensure_text_channel(ch_name, idx)
                 if ch_name == "portal":
                     portal_channel = ch
-                elif ch_name == "wilds":
-                    wilds_channel_new = is_new
 
-            trigger_initial_spawn = wilds_channel_new
-            if not trigger_initial_spawn:
-                from scripts.gradexDB import active_spawns_table
+            from scripts.gradexDB import active_spawns_table
 
-                current_spawns = await active_spawns_table.count_guild_spawns(guild.id)
-                if current_spawns == 0:
-                    trigger_initial_spawn = True
-
-            if trigger_initial_spawn:
+            current_spawns = await active_spawns_table.count_guild_spawns(guild.id)
+            if current_spawns == 0:
                 try:
                     from mods.revocord.hunting import initial_wilds_spawn
 

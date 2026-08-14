@@ -93,10 +93,10 @@ class TestUsersGuardrail:
         with patch("mods.guardrails.users.logger.error") as mock_error:
             await cog.on_member_join(mock_member)
             mock_error.assert_called_once_with(
-                "GRA_GUILD_ID not found in configuration!"
+                "GRA_GUILD_ID not found in environment variables!"
             )
 
-    @patch("mods.guardrails.users.GRA_GUILD_ID", new="12345")
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
     @pytest.mark.asyncio
     async def test_on_member_join_wrong_guild(self, mock_bot: Any) -> None:
         """Test on_member_join when guild ID doesn't match."""
@@ -109,7 +109,7 @@ class TestUsersGuardrail:
         await cog.on_member_join(mock_member)
         mock_member.add_roles.assert_not_called()
 
-    @patch("mods.guardrails.users.GRA_GUILD_ID", new="12345")
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
     @pytest.mark.asyncio
     async def test_on_member_join_role_found(self, mock_bot: Any) -> None:
         """Test on_member_join when role is found."""
@@ -132,7 +132,7 @@ class TestUsersGuardrail:
                 mock_member.add_roles.assert_called_once_with(mock_role)
                 assert mock_info.call_count >= 2
 
-    @patch("mods.guardrails.users.GRA_GUILD_ID", new="12345")
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
     @pytest.mark.asyncio
     async def test_on_member_join_role_not_found(self, mock_bot: Any) -> None:
         """Test on_member_join when role is not found."""

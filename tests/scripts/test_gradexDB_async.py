@@ -36,14 +36,16 @@ def mock_db(tmp_path: Any) -> Generator[str]:
 @pytest.fixture
 def mock_requests() -> Generator[tuple[MagicMock, MagicMock]]:
     with (
-        patch("scripts.gradexDB.requests.get") as mock_get,
-        patch("scripts.gradexDB.requests.post") as mock_post,
+        patch("scripts.gradexDB.safe_get", new_callable=AsyncMock) as mock_get,
+        patch("scripts.gradexDB.safe_post", new_callable=AsyncMock) as mock_post,
     ):
+        mock_post.return_value = MagicMock()
         mock_post.return_value.status_code = 200
         mock_post.return_value.json.return_value = {
             "data": {"revomons": [{"idRevodex": 1, "idRevomon": 1, "name": "TestMon"}]}
         }
 
+        mock_get.return_value = MagicMock()
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             "data": {
@@ -496,12 +498,12 @@ async def test_users_table(mock_db: Any) -> None:
     table = UsersTable()
     await table.build()
 
-    await table.add_user(1, "user1", 1, "0x", 0, 0, 100, 50, 10, 5, 2, 1)
+    await table.add_user(1, "user1", 0, 0, 100, 50, 10, 5, 2, 1)
     assert await table.count_entries() == 1
 
     await table.update_user(1, username="updated")
     user = await table.get_user(1)
-    assert user[1] == "updated"
+    assert user["username"] == "updated"
 
     with pytest.raises(ValueError):
         await table.update_user(None)
@@ -532,5 +534,4 @@ async def test_update_gradex_db(
         m_land.return_value = []
         m_emojis.return_value = []
 
-        # Avoid running OwnedLandsTable in the test because it is commented out in gradexDB.py
         await update_gradex_db()

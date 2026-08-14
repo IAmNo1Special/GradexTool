@@ -1,5 +1,9 @@
+import logging
+
 import requests
 from discord.ext import commands, tasks
+
+logger = logging.getLogger(__name__)
 
 
 class PriceTracker(commands.Cog):
@@ -10,11 +14,18 @@ class PriceTracker(commands.Cog):
         self.update_price.start()
 
     def get_revo_price(self) -> float | None:
-        response = requests.get(self.revo_url)
-        if response.status_code == 200:
-            data = response.json()
-            price = data["market_data"]["current_price"]["usd"]
-            return float(price)
+        try:
+            response = requests.get(self.revo_url, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                price = data["market_data"]["current_price"]["usd"]
+                return float(price)
+            else:
+                logger.warning(
+                    f"Failed to fetch REVO price, status code: {response.status_code}"
+                )
+        except requests.RequestException as e:
+            logger.error(f"Error fetching REVO price: {e}")
         return None
 
     @tasks.loop(minutes=3)
@@ -26,7 +37,7 @@ class PriceTracker(commands.Cog):
                 new_name = f"Revo: ${price:.5f}"
                 await channel.edit(name=new_name)  # type: ignore
         else:
-            print("Failed to fetch the price data.")
+            logger.warning("Failed to fetch the price data.")
 
     @update_price.before_loop
     async def before_update_price(self) -> None:

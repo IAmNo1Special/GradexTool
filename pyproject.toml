@@ -10,7 +10,6 @@ dependencies = [
     "httpx>=0.28.1",
     "pillow>=12.2.0",
     "plotly>=6.7.0",
-    "pytest-cov>=7.1.0",
     "python-dotenv>=1.2.2",
     "pytz>=2026.2",
     "pyyaml>=6.0.1",
@@ -27,11 +26,11 @@ dev = [
     "respx>=0.23.1",
     "requests-mock>=1.12.1",
     "httpx>=0.28.1",
-    "mypy>=2.1.0",
     "types-requests>=2.33.0.20260518",
     "types-pyyaml>=6.0.12.20260518",
     "mdformat>=1.0.0",
     "monkeytype>=23.3.0",
+    "mypy>=2.1.0",
 ]
 
 [tool.ruff]
@@ -61,3 +60,15 @@ max-complexity = 55
 [tool.mypy]
 strict = true
 ignore_missing_imports = true
+python_executable = ".venv/Scripts/python.exe"
+
+[tool.mdformat]
+wrap = 80
+exclude = [
+    ".venv/**",
+    ".venv2/**",
+    ".kilo/**",
+    "node_modules/**",
+    "__pycache__/**",
+    ".pytest_cache/**",
+]
