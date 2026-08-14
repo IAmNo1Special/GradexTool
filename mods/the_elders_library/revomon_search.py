@@ -32,12 +32,10 @@ class revomon_search(commands.Cog):  # noqa: N801
 
             # Save User's Cleaned Input As The Search Prompt
             prompt = message.content.lower().strip()
+            revomon_names = await RevomonTable().get_names()
             if "&" in prompt:
                 prompt, prompt2 = map(str.strip, prompt.split("&"))
-                if (
-                    prompt in await RevomonTable().get_names()
-                    and prompt2 in await RevomonTable().get_names()
-                ):
+                if prompt in revomon_names and prompt2 in revomon_names:
                     attributes = await get_attributes(revomon_name=prompt)
                     attributes2 = await get_attributes(revomon_name=prompt2)
                     embed = compare_intros(
@@ -48,7 +46,7 @@ class revomon_search(commands.Cog):  # noqa: N801
                     )
                     await respond(self.gradex, message, embed, compare_view)
             # Check if User's Prompt is a Revomon's Name
-            elif prompt in await RevomonTable().get_names():
+            elif prompt in revomon_names:
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=prompt)
                 embed = intro(attributes=attributes)
