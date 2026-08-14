@@ -31,7 +31,8 @@ class allprioritymoves(commands.Cog):  # noqa: N801
             interaction: discord.Interaction,
             Button: discord.ui.Button[Any],  # noqa: N803
         ) -> None:
-            await interaction.message.delete()  # type: ignore[union-attr]
+            if interaction.message:
+                await interaction.message.delete()
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:

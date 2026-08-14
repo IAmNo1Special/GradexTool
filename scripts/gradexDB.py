@@ -94,6 +94,12 @@ from utils.land_utils import get_lands_for_sale_amount  # noqa: E402
 db_path: Path = GRADEX_DB_PATH
 
 
+async def _fetch_count(cursor: aiosqlite.Cursor) -> int:
+    """Fetch a single integer count from a cursor, handling None."""
+    row = await cursor.fetchone()
+    return int(row[0]) if row else 0
+
+
 class CounterdexTable:
     """Class to interact with the counterdex table in the Gradex SQLite database."""
 
@@ -273,7 +279,7 @@ class CounterdexTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM counterdex;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the counterdex table: {count}")
@@ -476,7 +482,7 @@ class AbilitiesTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM abilities;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the abilities table: {count}")
@@ -617,7 +623,7 @@ class CapsulesTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM capsules;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the capsules table: {count}")
@@ -755,7 +761,7 @@ class FruitysTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM fruitys;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the fruitys table: {count}")
@@ -905,7 +911,7 @@ class ItemsTable:
 
             # Execute the query and fetch the result
             await cursor.execute(count_query)
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Close the connection
 
@@ -1156,7 +1162,7 @@ class MovesTable:
 
             # Execute the query and fetch the result
             await cursor.execute(count_query)
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Print the result
             print(f"Number of Moves in the moves table: {count}")
@@ -1372,7 +1378,7 @@ class NaturesTable:
 
             # Execute the query and fetch the result
             await cursor.execute(count_query)
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Close the connection
 
@@ -1573,7 +1579,7 @@ class OwnedLandsTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM ownedLands;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Close the connection
 
@@ -1958,7 +1964,7 @@ class RevomonTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM revomon;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the revomon table: {count}")
@@ -2260,7 +2266,7 @@ class RevomonMovesTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM revomon_moves;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Print the result
             print(f"Number of connections in the revomon_moves table: {count}")
@@ -2412,7 +2418,7 @@ class CurrentPodiumTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM current_podium;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the current_podium table: {count}")
@@ -2476,7 +2482,7 @@ class WeeklyPodiumTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM weekly_podium;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Entries in the weekly_podium table: {count}")
@@ -2640,7 +2646,7 @@ class TypesTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM types;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
             # Close the connection
 
@@ -2822,7 +2828,7 @@ class UsersTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM users;")
-            count = int((await cursor.fetchone())[0])  # type: ignore
+            count = await _fetch_count(cursor)
 
         # Print the result
         print(f"Number of Users in the users Table: {count}")

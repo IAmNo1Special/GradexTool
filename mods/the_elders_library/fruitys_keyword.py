@@ -10,7 +10,8 @@ class allfruitys(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def allfruitys_embed() -> Any:  # type: ignore[misc]
+    @staticmethod
+    def allfruitys_embed() -> Any:
         embed = discord.Embed(
             title="Full Fruity List",
             description="""__**Fruity Name**__

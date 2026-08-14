@@ -247,7 +247,7 @@ async def test_moves_table(
     # MovesTable.rebuild depends on RevomonTable
     rev_table = RevomonTable()
     await rev_table.create()
-    rev_table.rebuild = MagicMock()  # type: ignore[method-assign]
+    setattr(rev_table, "rebuild", MagicMock())
     # Add a dummy revomon so get_mon_ids returns something
     with closing(sqlite3.connect(mock_db)) as conn, conn:
         conn.execute(
@@ -330,7 +330,7 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
 
         table = OwnedLandsTable()
         # Mock update_lands_sale_data
-        table.update_lands_sale_data = AsyncMock()  # type: ignore[method-assign]
+        setattr(table, "update_lands_sale_data", AsyncMock())
         await table.build()
 
         assert await table.count_entries() == 2

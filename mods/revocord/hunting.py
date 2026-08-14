@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 """Cog for wild Revomon encounter hunting loop."""
 
@@ -335,9 +335,11 @@ class HuntingCog(commands.Cog):
             return
         if not hasattr(self.bot, "_app_emojis_cache"):
             try:
-                self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
+                cast(
+                    Any, self.bot
+                )._app_emojis_cache = await self.bot.fetch_application_emojis()
             except Exception:
-                self.bot._app_emojis_cache = []  # type: ignore[attr-defined]
+                cast(Any, self.bot)._app_emojis_cache = []
 
         from scripts.gradexDB import active_spawns_table
 
@@ -404,9 +406,11 @@ class HuntingCog(commands.Cog):
         current_page = int(parts[3])
         if not hasattr(self.bot, "_app_emojis_cache"):
             try:
-                self.bot._app_emojis_cache = await self.bot.fetch_application_emojis()  # type: ignore[attr-defined]
+                cast(
+                    Any, self.bot
+                )._app_emojis_cache = await self.bot.fetch_application_emojis()
             except Exception:
-                self.bot._app_emojis_cache = []  # type: ignore[attr-defined]
+                cast(Any, self.bot)._app_emojis_cache = []
 
         from scripts.gradexDB import active_spawns_table
 
@@ -435,8 +439,13 @@ class HuntingCog(commands.Cog):
             guild_id=guild_id,
         )
         guild = interaction.guild or self.bot.get_guild(guild_id)
+        if guild is None:
+            await interaction.followup.send(
+                "❌ Could not find the guild.", ephemeral=True
+            )
+            return
         embed = await build_wilds_embed(
-            guild=guild,  # type: ignore[arg-type]
+            guild=guild,
             current_biome=current_biome,
             spawns_count=len(spawns),
             page=view.page,

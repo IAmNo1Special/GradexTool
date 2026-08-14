@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -41,7 +41,7 @@ async def test_build_data_default_args(
     mock_get_items: Any,
     mock_update_gradex_db: Any,
 ) -> None:
-    await main.build_data()  # type: ignore[attr-defined]
+    await cast(Any, main).build_data()
 
     mock_get_revomon_data.assert_awaited_once_with(download_images=True)
     mock_get_evolutions.assert_called_once_with(save_to_file=True)
@@ -89,7 +89,7 @@ async def test_build_data_custom_args(
     mock_get_items: Any,
     mock_update_gradex_db: Any,
 ) -> None:
-    await main.build_data(  # type: ignore[attr-defined]
+    await cast(Any, main).build_data(
         save_to_file=False, download_images=False, process_caught_revomon=True
     )
 
@@ -112,11 +112,11 @@ async def test_build_data_custom_args(
 
 def test_main_execution() -> None:
     with patch.object(
-        main.asyncio,  # type: ignore[attr-defined]
+        cast(Any, main).asyncio,
         "run",
         side_effect=lambda coro: coro.close(),
     ) as mock_run:
-        with patch.object(main.logging, "basicConfig") as mock_config:  # type: ignore[attr-defined]
+        with patch.object(cast(Any, main).logging, "basicConfig") as mock_config:
             with open(main.__file__, encoding="utf-8") as f:
                 code = f.read()
 

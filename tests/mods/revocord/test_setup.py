@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
@@ -302,7 +302,7 @@ class TestSetupCogCommand:
 
         mock_guild.fetch_channels = AsyncMock(
             side_effect=discord.Forbidden(
-                FakeResponse(),  # type: ignore[arg-type]
+                cast(Any, FakeResponse()),
                 "Forbidden",
             )
         )
@@ -342,7 +342,7 @@ class TestSetupCogCommand:
         mock_user = MagicMock(spec=discord.User)
         mock_interaction.user = mock_user
 
-        await cog.setup_command.callback(cog, mock_interaction)  # type: ignore[arg-type]
+        await cast(Any, cog.setup_command).callback(cog, mock_interaction)
 
         mock_interaction.followup.send.assert_called_once()
         assert "server member" in mock_interaction.followup.send.call_args[0][0]
@@ -402,7 +402,7 @@ class TestSetupCogErrorHandling:
     async def test_check_failure(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = app_commands.CheckFailure()
-        await cog.setup_command_error(mock_interaction, error)  # type: ignore
+        await cast(Any, cog).setup_command_error(mock_interaction, error)
         mock_interaction.response.send_message.assert_called_once()
         assert "owner" in mock_interaction.response.send_message.call_args[0][0].lower()
 
@@ -410,7 +410,7 @@ class TestSetupCogErrorHandling:
     async def test_generic_error(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = Exception("Unexpected error")
-        await cog.setup_command_error(mock_interaction, error)  # type: ignore
+        await cast(Any, cog).setup_command_error(mock_interaction, error)
         mock_interaction.response.send_message.assert_not_called()
 
     @pytest.mark.asyncio
@@ -434,7 +434,7 @@ class TestBiomeSelect:
         self, mock_set_biome: Any, mock_bot: Any, mock_interaction: Any
     ) -> None:
         cog = SetupCog(mock_bot)
-        cog.execute_setup = AsyncMock()  # type: ignore
+        setattr(cog, "execute_setup", AsyncMock())
 
         select = BiomeSelect(cog, mock_interaction.user, mock_interaction.guild)
         select._values = ["Desert"]
@@ -447,6 +447,6 @@ class TestBiomeSelect:
         assert "Desert" in mock_interaction.edit_original_response.call_args[1].get(
             "content", ""
         )
-        cog.execute_setup.assert_called_once_with(
+        cast(Any, cog.execute_setup).assert_called_once_with(
             mock_interaction, mock_interaction.user, mock_interaction.guild
         )

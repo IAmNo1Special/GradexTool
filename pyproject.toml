@@ -62,6 +62,10 @@ strict = true
 ignore_missing_imports = true
 python_executable = ".venv/Scripts/python.exe"
 
+[[tool.mypy.overrides]]
+module = "main"
+follow_imports = "skip"
+
 [tool.mdformat]
 wrap = 80
 exclude = [

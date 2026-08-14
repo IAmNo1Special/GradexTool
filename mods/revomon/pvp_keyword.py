@@ -2,7 +2,7 @@ import asyncio
 import datetime
 import random
 from io import BytesIO
-from typing import Any
+from typing import Any, cast
 from unittest.mock import MagicMock
 
 import discord
@@ -155,14 +155,15 @@ class PvpLeaderboard(commands.Cog):
     async def update_rankings(self) -> None:
         try:
             pvp_channel = self.gradex.get_channel(1251368616662929529)
-            if pvp_channel is None or not hasattr(pvp_channel, "history"):
+            if pvp_channel is None:
                 return
+            pvp_channel = cast(discord.TextChannel | discord.Thread, pvp_channel)
             old_leaderboards = [
                 message async for message in pvp_channel.history(limit=2)
             ]
             for old_leaderboard in old_leaderboards:
                 await old_leaderboard.delete()
-            current_leaderboard = await pvp_channel.send(content="Loading...")  # type: ignore
+            current_leaderboard = await pvp_channel.send(content="Loading...")
             while True:
                 try:
                     await self.gradex.loop.run_in_executor(

@@ -1,5 +1,5 @@
 import time
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock, PropertyMock, patch
 
 import discord
@@ -519,7 +519,7 @@ class TestOnInteractionPart2:
     ) -> None:
         cog = HuntingCog(mock_bot)
         mock_remove.side_effect = Exception("Test")
-        await cog._cleanup_wilds_spawn(None, 100)  # type: ignore[arg-type]  # type: ignore[arg-type]
+        await cog._cleanup_wilds_spawn(cast(Any, None), 100)
         # Should not raise
 
     @pytest.mark.asyncio
@@ -711,7 +711,7 @@ class TestOnInteractionPart2:
         mock_interaction.guild.id = 123
         mock_interaction.guild.name = "Test Guild"
 
-        await cog.wilds_command.callback(cog, mock_interaction)  # type: ignore
+        await cast(Any, cog.wilds_command).callback(cog, mock_interaction)
 
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.followup.send.assert_called_once()
@@ -750,7 +750,7 @@ class TestOnInteractionPart2:
         mock_interaction.user = MagicMock()
         mock_interaction.user.id = 456
 
-        await cog.wilds_command.callback(cog, mock_interaction)  # type: ignore
+        await cast(Any, cog.wilds_command).callback(cog, mock_interaction)
 
         mock_interaction.response.defer.assert_called_once()
         mock_interaction.followup.send.assert_called_once()

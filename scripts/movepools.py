@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 """Script to get movepool data for all revomons from the API."""
 
@@ -31,7 +31,7 @@ async def get_raw_movepool(
         if response.status_code == 200:
             data = response.json()
             if data.get("error") is None and "data" in data:
-                return data["data"]  # type: ignore[no-any-return]
+                return cast("dict[str, Any]", data["data"])
         return None
     except httpx.HTTPError as e:
         logger.error(f"HTTP error getting movepool for ID {id_revomon}: {e}")
@@ -43,9 +43,9 @@ async def get_raw_movepool(
 
 async def get_movepool(
     semaphore: asyncio.Semaphore,
-    client: httpx.AsyncClient,
+    client: httpx.AsyncClient | None,
     revomon: dict[str, Any],
-    movepool_data: dict[str, Any],
+    movepool_data: dict[Any, Any],
 ) -> None:
     """Fetch and process a single revomon's movepool with concurrency limit."""
     id_revomon = revomon.get("idRevomon") or revomon.get("mon_id")
@@ -55,7 +55,7 @@ async def get_movepool(
         return
 
     async with semaphore:
-        movepool = await get_raw_movepool(client, id_revomon)
+        movepool = await get_raw_movepool(cast(httpx.AsyncClient, client), id_revomon)
 
         if movepool:
             # Process moves

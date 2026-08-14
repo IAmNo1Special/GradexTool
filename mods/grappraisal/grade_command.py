@@ -41,7 +41,8 @@ class GradeCommand(commands.Cog):
         embed.set_footer(text="Grappraisal · Global Revomon Association")
         return embed
 
-    def graded_mon_embed(self, user_id: Any) -> Any:
+    @staticmethod
+    def graded_mon_embed(user_id: Any) -> Any:
         mon = GradeCommand.mon_manager.mon_info[user_id]
         grade_image = create_graded_mon_img(mon, mon["grade_percent"])
         # Convert the PIL Image object to a BytesIO object
@@ -73,7 +74,8 @@ class GradeCommand(commands.Cog):
         embed.set_footer(text="Competitive Grade v2.0 · Global Revomon Association")
         return embed
 
-    def grade_breakdown_embed(self, user_id: Any) -> Any:
+    @staticmethod
+    def grade_breakdown_embed(user_id: Any) -> Any:
         mon = GradeCommand.mon_manager.mon_info[user_id]
 
         embed = Embed(
@@ -148,7 +150,10 @@ class GradeCommand(commands.Cog):
         ) -> None:
             try:
                 user_id = interaction.user.id
-                message_id = interaction.message.id  # type: ignore[union-attr]
+                message = interaction.message
+                if message is None:
+                    return
+                message_id = message.id
                 await interaction.response.defer()
                 await interaction.followup.edit_message(
                     message_id=message_id,
@@ -163,7 +168,7 @@ class GradeCommand(commands.Cog):
                 if appr:
                     GradeCommand.mon_manager.mon_info[user_id].update(appr)
 
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
+                embed = GradeCommand.graded_mon_embed(user_id=user_id)
                 await interaction.followup.edit_message(
                     message_id=message_id,
                     content=None,
@@ -203,7 +208,7 @@ class GradeCommand(commands.Cog):
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
+                embed = GradeCommand.graded_mon_embed(user_id=user_id)
                 if interaction.guild:
                     await interaction.followup.send(
                         content=f"{interaction.user.mention} Your Revomon has been saved!\nCheck your DMs.",
@@ -244,7 +249,7 @@ class GradeCommand(commands.Cog):
             try:
                 user_id = interaction.user.id
                 await interaction.response.defer()
-                embed = GradeCommand.graded_mon_embed(self, user_id=user_id)  # type: ignore[arg-type]
+                embed = GradeCommand.graded_mon_embed(user_id=user_id)
                 await interaction.followup.send(
                     files=[
                         File(
@@ -274,7 +279,7 @@ class GradeCommand(commands.Cog):
         ) -> None:
             try:
                 user_id = interaction.user.id
-                embed = GradeCommand.grade_breakdown_embed(self, user_id=user_id)  # type: ignore[arg-type]
+                embed = GradeCommand.grade_breakdown_embed(user_id=user_id)
                 # Respond with a new ephemeral message instead of editing
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:

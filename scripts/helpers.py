@@ -1,7 +1,7 @@
 """Helper functions for the 'scripts' directory."""
 
 
-def to_sentence_case(text: str) -> str:
+def to_sentence_case(text: str | None) -> str | None:
     """Capitalize the first letter of each sentence in a text while preserving internal capitalization.
 
     Args:

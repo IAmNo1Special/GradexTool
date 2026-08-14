@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 OUTPUT_PATH = Path("data/items.json")
-ITEMS = [
+ITEMS: list[dict[str, Any]] = [
     {
         "name": "accuracy up",
         "description": "raises accuracy by one stage in battle.",
@@ -1098,7 +1098,7 @@ ITEMS = [
 
 
 def get_items() -> None:
-    items: list[dict[str, Any]] = [dict(item) for item in ITEMS]  # type: ignore
+    items: list[dict[str, Any]] = [dict(item) for item in ITEMS]
     logger.info(f"Found {len(items)} items. Processing...")
 
     # Process each item

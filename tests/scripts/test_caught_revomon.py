@@ -363,7 +363,7 @@ def test_build_state_dict() -> None:
 
 def test_found_name() -> None:
     assert _found_name(None) == "Unknown"
-    assert _found_name([]) == "Unknown"  # type: ignore[arg-type]
+    assert _found_name([]) == "Unknown"
     assert _found_name({"name": "Pika"}) == "Pika"
     assert _found_name({}) == "Unknown"
 

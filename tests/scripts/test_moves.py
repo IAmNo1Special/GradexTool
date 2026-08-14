@@ -80,7 +80,9 @@ def test_retry_after_seconds() -> None:
         headers={"Retry-After": date_str},
         request=httpx.Request("GET", "http://test"),
     )
-    assert 9 <= moves._retry_after_seconds(response) <= 11  # type: ignore[operator]
+    seconds = moves._retry_after_seconds(response)
+    assert seconds is not None
+    assert 9 <= seconds <= 11
 
     # Header is valid date but missing tz
     date_str_naive = future.strftime("%a, %d %b %Y %H:%M:%S")
@@ -89,7 +91,9 @@ def test_retry_after_seconds() -> None:
         headers={"Retry-After": date_str_naive},
         request=httpx.Request("GET", "http://test"),
     )
-    assert 9 <= moves._retry_after_seconds(response) <= 11  # type: ignore[operator]
+    seconds = moves._retry_after_seconds(response)
+    assert seconds is not None
+    assert 9 <= seconds <= 11
 
     # Header is invalid date
     response = httpx.Response(
@@ -202,8 +206,8 @@ def test_save_movepools_cache(tmp_path: Any, monkeypatch: Any) -> None:
     file_path = tmp_path / "movepools.json"
     monkeypatch.setattr(moves, "GRADEX_MOVEPOOLS_FILE", file_path)
 
-    movepools: list[Any] = {"2": [], "1": None}  # type: ignore[assignment]
-    moves._save_movepools_cache(movepools)  # type: ignore[arg-type]
+    movepools: dict[str, Any] = {"2": [], "1": None}
+    moves._save_movepools_cache(movepools)
     saved = json.loads(file_path.read_text(encoding="utf-8"))
     assert list(saved.keys()) == ["1", "2"]
 

@@ -12,7 +12,7 @@ class item_search(commands.Cog):  # noqa: N801
         self.gradex = gradex
 
     async def item_search_embed(self, item_name: Any) -> Any:
-        item_info = await ItemsTable().get_info(item_name=item_name.lower())[0]  # type: ignore[index]
+        item_info = (await ItemsTable().get_info(item_name=item_name.lower()))[0]
         embed = discord.Embed(
             title=item_info[0].title(),
             description=f"*{item_info[1].capitalize()}*",
