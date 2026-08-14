@@ -748,7 +748,7 @@ class Buttons(commands.Cog):
             label=f"{token_id}. {land_info[4].title()} · {land_info[3].title()} (${land_info[11]})",
             style=ButtonStyle.gray,
             row=row,
-            custom_id=f"land {token_id}",
+            custom_id=f"land:{token_id}",
         )
         cast(Any, button).callback = self.on_button_click
         return button
