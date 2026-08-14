@@ -734,7 +734,7 @@ class Buttons(commands.Cog):
             label=f"{dex_num}. {name.title()}",
             style=ButtonStyle.gray,
             row=row,
-            custom_id=f"mon:{name}",
+            custom_id=f"mon:{name.lower()}",
         )
         cast(Any, button).callback = self.on_button_click
         return button
