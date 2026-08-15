@@ -67,11 +67,3 @@ follow_imports = "skip"
 
 [tool.mdformat]
 wrap = 80
-exclude = [
-    ".venv/**",
-    ".venv2/**",
-    ".kilo/**",
-    "node_modules/**",
-    "__pycache__/**",
-    ".pytest_cache/**",
-]
