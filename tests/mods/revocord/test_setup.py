@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
@@ -302,7 +302,7 @@ class TestSetupCogCommand:
 
         mock_guild.fetch_channels = AsyncMock(
             side_effect=discord.Forbidden(
-                cast(Any, FakeResponse()),
+                FakeResponse(),  # type: ignore[arg-type]
                 "Forbidden",
             )
         )
@@ -342,7 +342,7 @@ class TestSetupCogCommand:
         mock_user = MagicMock(spec=discord.User)
         mock_interaction.user = mock_user
 
-        await cast(Any, cog.setup_command).callback(cog, mock_interaction)
+        await cog.setup_command.callback(cog, mock_interaction)  # type: ignore[arg-type]
 
         mock_interaction.followup.send.assert_called_once()
         assert "server member" in mock_interaction.followup.send.call_args[0][0]
@@ -408,7 +408,7 @@ class TestSetupCogErrorHandling:
     async def test_check_failure(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = app_commands.CheckFailure()
-        await cast(Any, cog).setup_command_error(mock_interaction, error)
+        await cog.setup_command_error(mock_interaction, error)  # type: ignore[misc,call-arg]
         mock_interaction.response.send_message.assert_called_once()
         assert "owner" in mock_interaction.response.send_message.call_args[0][0].lower()
 
@@ -416,7 +416,7 @@ class TestSetupCogErrorHandling:
     async def test_generic_error(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = Exception("Unexpected error")
-        await cast(Any, cog).setup_command_error(mock_interaction, error)
+        await cog.setup_command_error(mock_interaction, error)  # type: ignore[misc,call-arg,arg-type]
         mock_interaction.response.send_message.assert_not_called()
 
     @pytest.mark.asyncio
@@ -453,6 +453,6 @@ class TestBiomeSelect:
         assert "Desert" in mock_interaction.edit_original_response.call_args[1].get(
             "content", ""
         )
-        cast(Any, cog.execute_setup).assert_called_once_with(
+        cog.execute_setup.assert_called_once_with(  # type: ignore[attr-defined]
             mock_interaction, mock_interaction.user, mock_interaction.guild
         )

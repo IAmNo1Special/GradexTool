@@ -474,7 +474,7 @@ class SearchCommand(commands.Cog):
                     asc=True,
                     sale_status=int(sale_status.value) if sale_status else None,
                 )
-                if response_message and isinstance(response_message, (list, tuple)):
+                if response_message:
                     token_ids = [land[0] for land in response_message]
                     book_of_land_ids = await get_book_of_land_ids(token_ids=token_ids)
                     view = LandPaginationView(

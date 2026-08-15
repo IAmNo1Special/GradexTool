@@ -1,4 +1,4 @@
-from typing import Any, cast
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -198,7 +198,7 @@ class TestPvpLeaderboard2:
             patch.object(cog, "current_pvp_embed", return_value=MagicMock()),
             patch("mods.revomon.pvp_command.File"),
         ):
-            await cast(Any, cog.pvp).callback(cog, mock_interaction)
+            await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
             mock_interaction.response.defer.assert_called_once_with(
                 thinking=True, ephemeral=True
             )
@@ -226,4 +226,4 @@ class TestPvpLeaderboard2:
             patch("mods.revomon.pvp_command.File"),
         ):
             with pytest.raises(UnboundLocalError):
-                await cast(Any, cog.pvp).callback(cog, mock_interaction)
+                await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
