@@ -36,7 +36,12 @@ class allrevomon(commands.Cog):  # noqa: N801
                 )
                 # MonPaginationView is a View, not iterable
                 # Send the view as a DM
-                await message.author.send(view=mon_view)
+                try:
+                    await message.author.send(view=mon_view)
+                except discord.Forbidden:
+                    await message.channel.send(
+                        f"{message.author.mention}, I couldn't DM you. Please enable DMs from server members."
+                    )
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 

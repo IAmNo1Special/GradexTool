@@ -1,7 +1,7 @@
 """Components V2 (LayoutView) utilities for modern Discord UI."""
 
 from collections.abc import Callable
-from typing import Any, cast
+from typing import Any
 
 from discord import ButtonStyle, SelectOption, ui
 from discord.ui import ActionRow, Button, Select
@@ -145,7 +145,7 @@ class PaginationView(ui.LayoutView):
 
 
 class SelectView(ui.LayoutView):
-    """A V2 LayoutView with a dropdown select menu."""
+    """A V2 LayoutView with a select menu."""
 
     def __init__(
         self,
@@ -156,7 +156,7 @@ class SelectView(ui.LayoutView):
         accent_color: int | None = None,
     ):
         super().__init__(timeout=None)
-        cast(Any, self).callback = callback
+        self._callback = callback
 
         select: Select[Any] = Select(
             placeholder=placeholder,
@@ -166,13 +166,13 @@ class SelectView(ui.LayoutView):
                 for label, value, desc in options
             ],
         )
-        cast(Any, select).callback = self._on_select
+        select.callback = self._on_select  # type: ignore[method-assign]
 
         container = ui.Container(select, accent_color=accent_color)
         self.add_item(container)
 
     async def _on_select(self, interaction: Any) -> None:
-        await cast(Any, self).callback(interaction, interaction.data["values"][0])
+        await self._callback(interaction, interaction.data["values"][0])
 
 
 class ConfirmView(ui.LayoutView):
@@ -229,7 +229,7 @@ class InteractiveView(ui.LayoutView):
                 btn: Button[Any] = Button(
                     label=label, style=ButtonStyle.primary, custom_id=custom_id
                 )
-                cast(Any, btn).callback = callback
+                btn.callback = callback  # type: ignore[method-assign]
                 action_row.add_item(btn)
             self.add_item(action_row)
 
@@ -243,7 +243,7 @@ class InteractiveView(ui.LayoutView):
                         for label, value, desc in options
                     ],
                 )
-                cast(Any, select).callback = callback
+                select.callback = callback  # type: ignore[method-assign]
                 self.add_item(ui.Container(select, accent_color=accent_color))
 
 

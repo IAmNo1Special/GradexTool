@@ -1,5 +1,6 @@
 from typing import Any, cast
 
+import discord
 from discord import ButtonStyle, Interaction, SelectOption
 from discord.ext import commands
 from discord.ui import Button, Select, View
@@ -75,14 +76,14 @@ class MonPaginationView(View):
                 row += 1
                 items_in_row = 0
 
-        # Add pagination buttons in their own row
-        pagination_row = row + 1
+        # Add pagination buttons in their own row, capped to avoid exceeding Discord's 5-row limit
+        pagination_row = min(row + 1, 3)
         self.add_item(FirstPageButton(row=pagination_row))
         self.add_item(PreviousPageButton(row=pagination_row))
         self.add_item(SearchSortButton(row=pagination_row))
         self.add_item(NextPageButton(row=pagination_row))
         self.add_item(LastPageButton(row=pagination_row))
-        self.add_item(ShareButton(row=pagination_row + 1))
+        self.add_item(ShareButton(row=min(pagination_row + 1, 4)))
 
     def _create_mon_button_sync(self, name: str, row: int) -> Button[View]:
         """Create button using only the name and cached emoji info."""
@@ -128,8 +129,8 @@ class LandPaginationView(View):
             if len(self.children) % 3 == 0 or token_id == self.book_of_land_ids[-1][-1]:
                 row += 1
 
-        # Add pagination buttons in their own row
-        pagination_row = row + 1
+        # Add pagination buttons in their own row (capped to avoid exceeding Discord's 5-row limit)
+        pagination_row = min(row + 1, 4)
         self.add_item(FirstPageLandButton(row=pagination_row))
         self.add_item(PreviousPageLandButton(row=pagination_row))
         self.add_item(SearchSortLandButton(row=pagination_row))
@@ -406,8 +407,11 @@ class ShareButton(Button[View]):
                 group_by_evo=mon_view.group_by_evo,
                 app_emojis=mon_view.app_emojis,
             )
-            await interaction.response.defer()
-            await interaction.followup.send(view=new_view, ephemeral=False)
+            try:
+                await interaction.response.defer()
+                await interaction.followup.send(view=new_view, ephemeral=False)
+            except (discord.HTTPException, discord.Forbidden) as e:
+                print(f"ShareButton callback error: {e}")
 
 
 # Pagination Buttons for Land
@@ -723,67 +727,69 @@ class Buttons(commands.Cog):
 
     async def mon_button(self, name: str, row: int) -> Button[View]:
         """Create a mon button with info from database."""
-        revomon_table = globals()["RevomonTable"]
-        info = await revomon_table().get_info(name)
+        revomon_table = RevomonTable()
+        info = await revomon_table.get_info(name)
         dex_num = info[0][0] if info else 0
 
         button: Button[View] = Button(
             label=f"{dex_num}. {name.title()}",
             style=ButtonStyle.gray,
             row=row,
-            custom_id=name,
+            custom_id=f"mon:{name.lower()}",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def land_button(self, token_id: int, row: int) -> Button[View]:
         """Create a land button with info from database."""
-        owned_lands_table = globals()["OwnedLandsTable"]
-        land_obj = owned_lands_table()
-        land_info = (await land_obj.get_info(token_id=token_id))[0]
+        owned_lands_table = OwnedLandsTable()
+        land_info_list = await owned_lands_table.get_info(token_id=token_id)
+        if land_info_list is None:
+            raise ValueError(f"Land with token_id {token_id} not found")
+        land_info = land_info_list[0]
 
         button: Button[View] = Button(
             label=f"{token_id}. {land_info[4].title()} · {land_info[3].title()} (${land_info[11]})",
             style=ButtonStyle.gray,
             row=row,
-            custom_id=f"land {token_id}",
+            custom_id=f"land:{token_id}",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def stats_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Stats", style=ButtonStyle.green, custom_id="stats"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def compare_stats_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Compare Stats", style=ButtonStyle.green, custom_id="compare_stats"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def spawns_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Spawns", style=ButtonStyle.green, custom_id="spawns"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def compare_spawns_button(self) -> Button[View]:
         button: Button[View] = Button(
-            label="Compare Spawns", style=ButtonStyle.green, custom_id="compare_Spawns"
+            label="Compare Spawns", style=ButtonStyle.green, custom_id="compare_spawns"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def moves_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Moves", style=ButtonStyle.green, custom_id="moves"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def compare_moves_button(self) -> Button[View]:
@@ -792,28 +798,28 @@ class Buttons(commands.Cog):
             style=ButtonStyle.green,
             custom_id="compare_move_list",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def types_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Types", style=ButtonStyle.green, custom_id="types"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def compare_types_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Compare Types", style=ButtonStyle.green, custom_id="compare_types"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def counterdex_button(self) -> Button[View]:
         button: Button[View] = Button(
             label="Counterdex", style=ButtonStyle.green, custom_id="counterdex"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def compare_counterdexs_button(self) -> Button[View]:
@@ -822,7 +828,7 @@ class Buttons(commands.Cog):
             style=ButtonStyle.green,
             custom_id="compare_counterdexs",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def first_page_button(self, row: int) -> Button[View]:
@@ -832,21 +838,21 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="first_page",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def previous_button(self, row: int) -> Button[View]:
         button: Button[View] = Button(
             emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="previous_page"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def next_button(self, row: int) -> Button[View]:
         button: Button[View] = Button(
             emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="next_page"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def last_page_button(self, row: int) -> Button[View]:
@@ -856,7 +862,7 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="last_page",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def first_page_button_land(self, row: int) -> Button[View]:
@@ -866,7 +872,7 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="first_page_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def previous_button_land(self, row: int) -> Button[View]:
@@ -876,14 +882,14 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="previous_page_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def next_button_land(self, row: int) -> Button[View]:
         button: Button[View] = Button(
             emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="next_page_land"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     def last_page_button_land(self, row: int) -> Button[View]:
@@ -893,14 +899,14 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="last_page_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def exit_button(self, row: int) -> Button[View]:
         button: Button[View] = Button(
             emoji="\u274c", style=ButtonStyle.red, row=row, custom_id="exit"
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def search_button_land(self, row: int) -> Button[View]:
@@ -910,21 +916,27 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="search_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def filter_button_land(self, row: int) -> Button[View]:
         button: Button[View] = Button(
-            emoji="filter", style=ButtonStyle.green, row=row, custom_id="filter_land"
+            emoji="\U0001f50d",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="filter_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def sort_by_button_land(self, row: int) -> Button[View]:
         button: Button[View] = Button(
-            emoji="sortby", style=ButtonStyle.green, row=row, custom_id="sort_by_land"
+            emoji="\U0001f504",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id="sort_by_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def search_settings_button_land(self, row: int) -> Button[View]:
@@ -934,7 +946,7 @@ class Buttons(commands.Cog):
             row=row,
             custom_id="search_settings_land",
         )
-        cast(Any, button).callback = self.on_button_click
+        button.callback = self.on_button_click  # type: ignore[method-assign]
         return button
 
     async def mon_view(self, user_id: int) -> View:
@@ -1023,16 +1035,6 @@ class Buttons(commands.Cog):
                         print(f"Failed to fetch application emojis: {e}")
                         self.app_emojis = {}
 
-                book_of_names = await get_book_of_mon_names()
-                _ = MonPaginationView(
-                    bot=self.gradex,
-                    user_id=interaction.user.id,
-                    book_of_names=book_of_names,
-                    current_page=1,
-                    group_by_evo=True,
-                    app_emojis=self.app_emojis,
-                )
-
                 # Show intro first
                 intro_view = IntroView(attributes)
                 embed = intro(attributes)
@@ -1051,7 +1053,13 @@ class Buttons(commands.Cog):
                 print(f"{interaction.user} clicked land {raw_token_id}")
 
                 land_obj = OwnedLandsTable()
-                land_info = (await land_obj.get_info(token_id=raw_token_id))[0]
+                land_info_list = await land_obj.get_info(token_id=raw_token_id)
+                if land_info_list is None:
+                    await interaction.followup.send(
+                        f"Land {raw_token_id} not found", ephemeral=True
+                    )
+                    return
+                land_info = land_info_list[0]
                 land_dict = {
                     "token_id": land_info[0],
                     "id": land_info[1],
@@ -1140,8 +1148,6 @@ class Buttons(commands.Cog):
                 await interaction.response.defer()
 
                 if custom_id == "search_settings_land":
-                    from data import RevomonTable
-
                     revomon_table = RevomonTable()
                     await revomon_table.get_names()
                     await interaction.followup.send(
@@ -1167,6 +1173,8 @@ class Buttons(commands.Cog):
                 view = getattr(interaction.message, "view", None)
                 if view and hasattr(view, "attributes"):
                     attributes = view.attributes
+                    embed = None
+                    attributes2 = getattr(view, "attributes2", {})
                     if custom_id == "stats":
                         embed = stats(attributes)
                     elif custom_id == "compare_stats":
@@ -1196,7 +1204,7 @@ class Buttons(commands.Cog):
                         await interaction.followup.send(embed=embed2, ephemeral=True)
                         return
 
-                    if "embed" in locals():
+                    if embed is not None:
                         await interaction.followup.send(embed=embed, ephemeral=True)
 
             # Handle search/sort for mons
@@ -1218,11 +1226,6 @@ class Buttons(commands.Cog):
 
             elif custom_id == "cancel_land_sort":
                 pass  # Handled in cancel_sort_callback
-
-            # Handle action buttons (these read attributes from their parent view)
-            elif custom_id.startswith("action:"):
-                _ = custom_id[7:]
-                await interaction.response.defer()
 
         except Exception as e:
             print(f"Error: {e}")
