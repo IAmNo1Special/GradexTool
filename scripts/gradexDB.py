@@ -1,4 +1,5 @@
 import json  # noqa: N999
+import sqlite3
 import time
 from pathlib import Path
 from typing import Any, cast
@@ -1602,13 +1603,13 @@ class OwnedLandsTable:
         sort_by: str = "token_id",
         sale_status: Any = None,
         asc: bool = True,
-    ) -> Any:
+    ) -> list[sqlite3.Row] | None:
         """Get land information based on provided filters."""
         async with self._connect() as conn:
             cursor = await conn.cursor()
             if True:
                 await cursor.execute("SELECT * FROM ownedLands ")
-            result = await cursor.fetchall()
+            result: list[sqlite3.Row] = list(await cursor.fetchall())
             # if any of the arguments are provided, filter the results
             if token_id:
                 result = [land for land in result if land[0] == token_id]
