@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, mock_open, patch
 
@@ -22,7 +23,7 @@ from utils.revomon_utils import (
 
 
 @pytest.fixture
-def mock_tables() -> None:  # type: ignore[misc]
+def mock_tables() -> Iterator[Any]:
     with (
         patch("utils.revomon_utils.RevomonTable") as rt,
         patch("utils.revomon_utils.TypesTable") as tt,
@@ -451,7 +452,8 @@ async def test_appraise_revomon(mock_get_attributes: Any) -> None:
         "spe_iv": 31,
     }
     res = await appraise_revomon(stats)
-    assert res["nature_quality"] == "Perfect"  # type: ignore[index]
+    assert res is not None
+    assert res["nature_quality"] == "Perfect"
 
 
 @patch("utils.revomon_utils.get_attributes", new_callable=AsyncMock)
@@ -474,7 +476,8 @@ async def test_appraise_revomon_poor_nature(mock_get_attributes: Any) -> None:
         "spe_iv": 31,
     }
     res = await appraise_revomon(stats)
-    assert res["nature_quality"] == "Poor"  # type: ignore[index]
+    assert res is not None
+    assert res["nature_quality"] == "Poor"
 
 
 @patch("utils.revomon_utils.get_attributes", new_callable=AsyncMock)
@@ -497,7 +500,8 @@ async def test_appraise_revomon_good_nature(mock_get_attributes: Any) -> None:
         "spe_iv": 31,
     }
     res = await appraise_revomon(stats)
-    assert res["nature_quality"] == "Good"  # type: ignore[index]
+    assert res is not None
+    assert res["nature_quality"] == "Good"
 
 
 @patch("utils.revomon_utils.get_attributes", new_callable=AsyncMock)

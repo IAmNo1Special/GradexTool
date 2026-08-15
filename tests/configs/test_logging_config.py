@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -10,7 +11,7 @@ from configs.logging_config import setup_logging
 
 
 @pytest.fixture(autouse=True)
-def cleanup_logging() -> None:  # type: ignore[misc]
+def cleanup_logging() -> Iterator[None]:
     """Cleanup logging handlers after each test to prevent ResourceWarnings."""
     yield
     for handler in logging.root.handlers[:]:
@@ -246,8 +247,9 @@ class TestFormatter:
 
         setup_logging()
         formatter = logging.root.handlers[0].formatter
+        assert formatter is not None
         expected_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        assert formatter._fmt == expected_format  # type: ignore[union-attr]
+        assert formatter._fmt == expected_format
 
 
 class TestLogFileCreation:

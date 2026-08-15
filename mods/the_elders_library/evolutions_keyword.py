@@ -10,7 +10,8 @@ class evolutions(commands.Cog):  # noqa: N801
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evolutions_embed() -> Any:  # type: ignore[misc]
+    @staticmethod
+    def evolutions_embed() -> Any:
         embed = discord.Embed(
             title="Full Evolutions List Pt.1",
             description="""__**Revomon**__->__**Evolution**__->__**At Lvl**__
@@ -239,7 +240,7 @@ Azuroon	(Final Evolution)""",
         try:
             prompt = message.content.lower().strip()
             if prompt == "all evolutions" or prompt == "evolutions":
-                embed = self.evolutions_embed()  # type: ignore[misc]
+                embed = evolutions.evolutions_embed()
                 buttons = self.evolutions_buttons()
                 await respond(
                     self.gradex, message=message, embed=embed, buttons=buttons

@@ -414,8 +414,8 @@ class AbilitiesTable:
                 "SELECT * FROM abilities WHERE name LIKE ?",
                 (f"%{ability_name}%",),
             )
-            rows = cursor.fetchall()
-            return rows  # type: ignore[no-any-return]
+            rows: list[Any] = cursor.fetchall()
+            return rows
 
     def get_names(self) -> list[str]:
         """Retrieve a list of all ability names from the abilities table."""

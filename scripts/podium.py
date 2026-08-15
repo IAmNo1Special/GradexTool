@@ -126,7 +126,8 @@ class WeeklyPodiumTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM weeklyPodium;")
-            count = (await cursor.fetchone())[0]  # type: ignore[index]
+            row = await cursor.fetchone()
+            count = int(row[0]) if row else 0
 
             # Close the connection
 
@@ -134,7 +135,7 @@ class WeeklyPodiumTable:
             print(f"Number of entries in the weekly podium table: {count}")
 
             # Return the count
-            return count  # type: ignore[no-any-return]
+            return count
 
     async def add_entry(
         self,
@@ -278,7 +279,8 @@ class CurrentPodiumTable:
 
             # Execute the query and fetch the result
             await cursor.execute("SELECT COUNT(*) FROM currentPodium;")
-            count = (await cursor.fetchone())[0]  # type: ignore[index]
+            row = await cursor.fetchone()
+            count = int(row[0]) if row else 0
 
             # Close the connection
 
@@ -286,7 +288,7 @@ class CurrentPodiumTable:
             print(f"Number of entries in the current podium table: {count}")
 
             # Return the count
-            return count  # type: ignore[no-any-return]
+            return count
 
     async def add_entry(self, rank: int, username: str, profile_picture: str) -> None:
         """Add a new entry to the current podium table in the SQLite database.

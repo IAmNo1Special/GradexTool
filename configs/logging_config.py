@@ -1,5 +1,6 @@
 """Centralized logging configuration."""
 
+import io
 import logging
 import sys
 from logging.handlers import RotatingFileHandler
@@ -26,7 +27,8 @@ def setup_logging(name: str = "GradexTool") -> logging.Logger:
 
         # Console handler
         try:
-            sys.stdout.reconfigure(errors="backslashreplace")  # type: ignore[union-attr]
+            if isinstance(sys.stdout, io.TextIOWrapper):
+                sys.stdout.reconfigure(errors="backslashreplace")
         except Exception:
             pass
         console_handler = logging.StreamHandler(sys.stdout)

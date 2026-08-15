@@ -151,7 +151,7 @@ class TestPodium2:
             patch.object(cog, "weekly_podium_embed", return_value=MagicMock()),
             patch("mods.revomon.podium_command.File"),
         ):
-            await cog.podium.callback(cog, mock_interaction)  # type: ignore
+            await cog.podium.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
             mock_interaction.response.defer.assert_called_once_with(
                 thinking=True, ephemeral=True
             )
@@ -167,5 +167,5 @@ class TestPodium2:
         with patch.object(
             cog, "current_podium_embed", side_effect=Exception("Test Exception")
         ):
-            await cog.podium.callback(cog, mock_interaction)  # type: ignore
+            await cog.podium.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
         # Exception is caught and printed

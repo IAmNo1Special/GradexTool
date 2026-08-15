@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from typing import Any
 
 """Pytest configuration and common fixtures for testing scripts."""
@@ -12,7 +13,7 @@ import pytest  # noqa: E402
 
 
 @pytest.fixture
-def temp_data_dir() -> None:  # type: ignore[misc]
+def temp_data_dir() -> Iterator[Any]:
     """Create a temporary directory for test data files."""
     with tempfile.TemporaryDirectory() as tmpdir:
         data_dir = Path(tmpdir) / "data"
@@ -21,14 +22,14 @@ def temp_data_dir() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def temp_db_path(temp_data_dir: Any) -> None:  # type: ignore[misc]
+def temp_db_path(temp_data_dir: Any) -> Iterator[Any]:
     """Create a temporary database path for testing."""
     db_path = temp_data_dir / "test_gradex.db"
     yield db_path
 
 
 @pytest.fixture
-def mock_db_connection(temp_db_path: Any) -> None:  # type: ignore[misc]
+def mock_db_connection(temp_db_path: Any) -> Iterator[Any]:
     """Create a mock database connection for testing."""
     conn = sqlite3.connect(temp_db_path)
     yield conn
@@ -277,7 +278,7 @@ def mock_api_response() -> Any:
 
 
 @pytest.fixture
-def scripts_mock_requests_get() -> None:  # type: ignore[misc]
+def scripts_mock_requests_get() -> Iterator[Any]:
     """Mock requests.get for API calls."""
     with patch("requests.get") as mock_get:
         mock_response = MagicMock()
@@ -288,7 +289,7 @@ def scripts_mock_requests_get() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def scripts_mock_requests_post() -> None:  # type: ignore[misc]
+def scripts_mock_requests_post() -> Iterator[Any]:
     """Mock requests.post for API calls."""
     with patch("requests.post") as mock_post:
         mock_response = MagicMock()
@@ -299,7 +300,7 @@ def scripts_mock_requests_post() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def mock_aiohttp_client() -> None:  # type: ignore[misc]
+def mock_aiohttp_client() -> Iterator[Any]:
     """Mock aiohttp client for async HTTP requests."""
     with patch("aiohttp.ClientSession") as mock_session:
         session = AsyncMock()
@@ -308,7 +309,9 @@ def mock_aiohttp_client() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def sample_json_file(temp_data_dir: Any, scripts_sample_revomon_data: Any) -> None:  # type: ignore[misc]
+def sample_json_file(
+    temp_data_dir: Any, scripts_sample_revomon_data: Any
+) -> Iterator[None]:
     """Create a sample JSON file for testing."""
     json_file = temp_data_dir / "revomon.json"
     with open(json_file, "w") as f:

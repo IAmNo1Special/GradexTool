@@ -1,3 +1,5 @@
+from typing import cast
+
 import discord.embeds
 from discord import Color, Embed, Interaction, app_commands
 from discord.ext import commands
@@ -41,14 +43,16 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         learned_by = ""
-        for revomon in await RevomonTable().get_names():
+        revomon_names = await RevomonTable().get_names()
+        for revomon in revomon_names:
             if await RevomonTable().has_ability(
                 mon_name=revomon, ability_name=ability_info[0]
             ):
                 learned_by += f"- *{revomon.title()}*\n"
-        if embed.description is None:
-            embed.description = ""
-        embed.description += f"\n\n__**Learned By**__\n{learned_by}"
+        if embed.description:
+            embed.description += f"\n\n__**Learned By**__\n{learned_by}"
+        else:
+            embed.description = f"\n\n__**Learned By**__\n{learned_by}"
         embed.set_thumbnail(
             url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
         )
@@ -324,7 +328,7 @@ class SearchCommand(commands.Cog):
             if not name:
                 book_of_names = await get_book_of_mon_names()
                 mon_view = MonPaginationView(
-                    bot=interaction.client,  # type: ignore[arg-type]
+                    bot=cast(commands.Bot, interaction.client),
                     user_id=interaction.user.id,
                     book_of_names=book_of_names,
                     current_page=1,
@@ -334,11 +338,12 @@ class SearchCommand(commands.Cog):
                 await interaction.response.send_message(view=mon_view, ephemeral=True)
                 return
 
+            revomon_names = await RevomonTable().get_names()
             if "&" in name:
                 revomon_name1, revomon_name2 = map(str.strip, name.split("&"))
                 if (
-                    revomon_name1.lower() in await RevomonTable().get_names()
-                    and revomon_name2.lower() in await RevomonTable().get_names()
+                    revomon_name1.lower() in revomon_names
+                    and revomon_name2.lower() in revomon_names
                 ):
                     attributes = await get_attributes(revomon_name=revomon_name1)
                     attributes2 = await get_attributes(revomon_name=revomon_name2)
@@ -352,7 +357,7 @@ class SearchCommand(commands.Cog):
                         embed=embed, view=compare_view, ephemeral=True
                     )
             # Check if User's Prompt is a Revomon's Name
-            elif name.lower() in await RevomonTable().get_names():
+            elif name.lower() in revomon_names:
                 # Load Data From Revomon Database
                 attributes = await get_attributes(revomon_name=name)
                 embed = intro(attributes=attributes)

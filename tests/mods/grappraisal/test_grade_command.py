@@ -45,7 +45,8 @@ def test_mon_info_embed1(grade_cog: Any, mock_mon_info: Any) -> None:
     GradeCommand.mon_manager.mon_info[user_id] = mock_mon_info
     embed = grade_cog.mon_info_embed1(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Testmon" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Testmon" in embed.title
 
 
 @patch("mods.grappraisal.grade_command.create_graded_mon_img")
@@ -60,7 +61,8 @@ def test_graded_mon_embed(
 
     embed = grade_cog.graded_mon_embed(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Grade:" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Grade:" in embed.title
     mock_img.save.assert_called_once()
 
 
@@ -70,7 +72,8 @@ def test_grade_breakdown_embed(grade_cog: Any, mock_mon_info: Any) -> None:
 
     embed = grade_cog.grade_breakdown_embed(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Breakdown:" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Breakdown:" in embed.title
 
     # Test alternative branches
     mock_mon_info["stat_weights"]["def"] = 0.1

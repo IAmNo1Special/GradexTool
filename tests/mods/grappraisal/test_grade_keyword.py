@@ -43,7 +43,8 @@ async def test_on_ready(grade_cog: Any) -> None:
 def test_grade_embed(grade_cog: Any) -> None:
     embed = grade_cog.grade_embed()
     assert isinstance(embed, discord.Embed)
-    assert "What do you need?" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "What do you need?" in embed.title
 
 
 def test_mon_info_embed1(grade_cog: Any, mock_mon_info: Any) -> None:
@@ -51,7 +52,8 @@ def test_mon_info_embed1(grade_cog: Any, mock_mon_info: Any) -> None:
     Grade.mon_manager.mon_info[user_id] = mock_mon_info
     embed = grade_cog.mon_info_embed1(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Testmon" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Testmon" in embed.title
 
 
 @patch("mods.grappraisal.grade_keyword.create_graded_mon_img")
@@ -66,7 +68,8 @@ def test_graded_mon_embed(
 
     embed = grade_cog.graded_mon_embed(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Grade:" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Grade:" in embed.title
     mock_img.save.assert_called_once()
 
 
@@ -76,7 +79,8 @@ def test_grade_breakdown_embed(grade_cog: Any, mock_mon_info: Any) -> None:
 
     embed = grade_cog.grade_breakdown_embed(user_id)
     assert isinstance(embed, discord.Embed)
-    assert "Breakdown:" in embed.title  # type: ignore[operator]
+    assert embed.title is not None
+    assert "Breakdown:" in embed.title
 
     # Test alternative branches
     mock_mon_info["stat_weights"]["def"] = 0.1
@@ -274,8 +278,7 @@ async def test_mon_info_modal_success(
         def __int__(self) -> Any:
             return int(self.value)
 
-    modal.mon_catch_id = DummyTextInput("1234")  # type: ignore[assignment]
-
+    setattr(modal, "mon_catch_id", DummyTextInput("1234"))
     await modal.on_submit(mock_interaction)
 
     mock_interaction.response.defer.assert_called_once()
@@ -302,7 +305,7 @@ async def test_mon_info_modal_invalid_id(mock_get: Any, mock_interaction: Any) -
         def __int__(self) -> Any:
             return int(self.value)
 
-    modal.mon_catch_id = DummyTextInput("9999")  # type: ignore[assignment]
+    setattr(modal, "mon_catch_id", DummyTextInput("9999"))
 
     await modal.on_submit(mock_interaction)
     mock_interaction.followup.send.assert_called_with(
@@ -324,7 +327,7 @@ async def test_mon_info_modal_exception(mock_interaction: Any) -> None:
         def __int__(self) -> Any:
             return int(self.value)
 
-    modal.mon_catch_id = DummyTextInput("1234")  # type: ignore[assignment]
+    setattr(modal, "mon_catch_id", DummyTextInput("1234"))
     mock_interaction.response.defer.side_effect = Exception("Boom")
     await modal.on_submit(mock_interaction)
 

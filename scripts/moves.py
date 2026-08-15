@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from email.utils import parsedate_to_datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import httpx
 from helpers import to_sentence_case
@@ -131,7 +131,7 @@ def _load_json_file(path: Path) -> dict[str, Any] | list[Any] | None:
 
     try:
         with open(path, encoding="utf-8") as f:
-            return json.load(f)  # type: ignore
+            return cast("dict[str, Any] | list[Any] | None", json.load(f))
     except (OSError, json.JSONDecodeError) as e:
         logger.warning("Could not read %s: %s", path, e)
         return None

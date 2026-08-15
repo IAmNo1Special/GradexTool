@@ -145,7 +145,7 @@ class PaginationView(ui.LayoutView):
 
 
 class SelectView(ui.LayoutView):
-    """A V2 LayoutView with a dropdown select menu."""
+    """A V2 LayoutView with a select menu."""
 
     def __init__(
         self,
@@ -156,7 +156,7 @@ class SelectView(ui.LayoutView):
         accent_color: int | None = None,
     ):
         super().__init__(timeout=None)
-        self.callback = callback
+        self._callback = callback
 
         select: Select[Any] = Select(
             placeholder=placeholder,
@@ -172,7 +172,7 @@ class SelectView(ui.LayoutView):
         self.add_item(container)
 
     async def _on_select(self, interaction: Any) -> None:
-        await self.callback(interaction, interaction.data["values"][0])
+        await self._callback(interaction, interaction.data["values"][0])
 
 
 class ConfirmView(ui.LayoutView):

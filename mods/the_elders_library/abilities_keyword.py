@@ -53,7 +53,7 @@ class allabilities(commands.Cog):  # noqa: N801
             if prompt == "all abilities" or prompt == "abilities":
                 embed = self.allabilities_embed()
                 buttons = self.allabilities_buttons()
-                await respond(self.gradex, message, embed=embed, view=buttons)  # type: ignore[call-arg]
+                await respond(self.gradex, message, embed=embed, buttons=buttons)
         except Exception as e:
             print(f"An error occurred during on_message: {e}")
 

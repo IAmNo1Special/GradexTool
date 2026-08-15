@@ -350,10 +350,16 @@ class TestSetupCogCommand:
     @pytest.mark.asyncio
     @patch("mods.revocord.setup.asyncio.sleep", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.initial_wilds_spawn", new_callable=AsyncMock)
+    @patch(
+        "scripts.gradexDB.active_spawns_table.count_guild_spawns",
+        new_callable=AsyncMock,
+        return_value=0,
+    )
     @patch("mods.revocord.setup.discord.utils.get")
     async def test_setup_portal_fail(
         self,
         mock_get: Any,
+        mock_count: Any,
         mock_spawn: Any,
         mock_sleep: Any,
         setup_cog: Any,
@@ -402,7 +408,7 @@ class TestSetupCogErrorHandling:
     async def test_check_failure(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = app_commands.CheckFailure()
-        await cog.setup_command_error(mock_interaction, error)  # type: ignore
+        await cog.setup_command_error(mock_interaction, error)  # type: ignore[misc,call-arg]
         mock_interaction.response.send_message.assert_called_once()
         assert "owner" in mock_interaction.response.send_message.call_args[0][0].lower()
 
@@ -410,7 +416,7 @@ class TestSetupCogErrorHandling:
     async def test_generic_error(self, mock_bot: Any, mock_interaction: Any) -> None:
         cog = SetupCog(mock_bot)
         error = Exception("Unexpected error")
-        await cog.setup_command_error(mock_interaction, error)  # type: ignore
+        await cog.setup_command_error(mock_interaction, error)  # type: ignore[misc,call-arg,arg-type]
         mock_interaction.response.send_message.assert_not_called()
 
     @pytest.mark.asyncio
@@ -434,7 +440,7 @@ class TestBiomeSelect:
         self, mock_set_biome: Any, mock_bot: Any, mock_interaction: Any
     ) -> None:
         cog = SetupCog(mock_bot)
-        cog.execute_setup = AsyncMock()  # type: ignore
+        setattr(cog, "execute_setup", AsyncMock())
 
         select = BiomeSelect(cog, mock_interaction.user, mock_interaction.guild)
         select._values = ["Desert"]
@@ -447,6 +453,6 @@ class TestBiomeSelect:
         assert "Desert" in mock_interaction.edit_original_response.call_args[1].get(
             "content", ""
         )
-        cog.execute_setup.assert_called_once_with(
+        cog.execute_setup.assert_called_once_with(  # type: ignore[attr-defined]
             mock_interaction, mock_interaction.user, mock_interaction.guild
         )

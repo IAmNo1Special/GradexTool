@@ -37,7 +37,7 @@ async def test_fetch_url() -> None:
 
 
 def test_process_string() -> None:
-    assert process_string(None) is None  # type: ignore[arg-type]
+    assert process_string(None) is None
     assert process_string("") == ""
     assert process_string("a\nb\rc") == "a b c"
     assert process_string("\u2018a\u2019 \u201ca\u201d") == "'a' \"a\""

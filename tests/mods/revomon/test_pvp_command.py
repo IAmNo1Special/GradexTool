@@ -92,7 +92,7 @@ class TestPvpLeaderboard2:
         mock_draw_instance = MagicMock()
         mock_draw.return_value = mock_draw_instance
 
-        data = [
+        data: list[dict[str, str | int]] = [
             {
                 "Rank": 1,
                 "Name": "u1",
@@ -130,7 +130,7 @@ class TestPvpLeaderboard2:
                 "Reward": "0 REVO",
             },
         ]
-        cog.update_pvp_image(data)  # type: ignore
+        cog.update_pvp_image(data)
         assert "image_bytes" in cog.pvp_img
         mock_image.save.assert_called_once()
 
@@ -198,7 +198,7 @@ class TestPvpLeaderboard2:
             patch.object(cog, "current_pvp_embed", return_value=MagicMock()),
             patch("mods.revomon.pvp_command.File"),
         ):
-            await cog.pvp.callback(cog, mock_interaction)  # type: ignore
+            await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
             mock_interaction.response.defer.assert_called_once_with(
                 thinking=True, ephemeral=True
             )
@@ -226,4 +226,4 @@ class TestPvpLeaderboard2:
             patch("mods.revomon.pvp_command.File"),
         ):
             with pytest.raises(UnboundLocalError):
-                await cog.pvp.callback(cog, mock_interaction)  # type: ignore
+                await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]

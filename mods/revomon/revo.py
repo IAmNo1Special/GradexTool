@@ -35,7 +35,7 @@ class PriceTracker(commands.Cog):
             channel = self.gradex.get_channel(self.price_channel_id)
             if channel is not None:
                 new_name = f"Revo: ${price:.5f}"
-                await channel.edit(name=new_name)  # type: ignore
+                await channel.edit(name=new_name)  # type: ignore[union-attr]
         else:
             logger.warning("Failed to fetch the price data.")
 

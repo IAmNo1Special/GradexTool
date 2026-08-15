@@ -121,7 +121,7 @@ def test_draw_icon_section() -> None:
 def test_save_type_chart_images(
     mock_draw: Any, mock_image_new: Any, mock_dir: Any
 ) -> None:
-    types_dict = {
+    types_dict: dict[str, dict[str, Any]] = {
         "fire": {"type1": "fire", "type2": None},
         "fire_water": {"type1": "fire", "type2": "water"},
     }
@@ -141,7 +141,7 @@ def test_save_type_chart_images(
 
     type_images = {"fire": fire_img, "water": water_img}
 
-    save_type_chart_images(types_dict, base_type_names, type_images)  # type: ignore[arg-type]
+    save_type_chart_images(types_dict, base_type_names, type_images)
     assert mock_dir.mkdir.called
     assert mock_image_new.called
 

@@ -15,7 +15,7 @@ text = text.replace(
             status = 403
             reason = "Forbidden"
 
-        mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))  # type: ignore
+        mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))
 
         await setup_cog.setup_command.callback(setup_cog, mock_interaction)""",
     """    @pytest.mark.asyncio
@@ -27,7 +27,7 @@ text = text.replace(
             status = 403
             reason = "Forbidden"
 
-        mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))  # type: ignore
+        mock_guild.fetch_channels = AsyncMock(side_effect=discord.Forbidden(FakeResponse(), "Forbidden"))
 
         await setup_cog.execute_setup(mock_interaction, mock_interaction.user, mock_interaction.guild)""",
 )

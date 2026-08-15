@@ -33,7 +33,7 @@ class TestToSentenceCase:
 
     def test_none_input(self) -> None:
         """Test handling of None input."""
-        assert to_sentence_case(None) is None  # type: ignore[arg-type]
+        assert to_sentence_case(None) is None
 
     def test_single_word(self) -> None:
         """Test single word conversion."""

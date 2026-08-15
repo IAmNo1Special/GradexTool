@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from typing import Any
 
 """Pytest configuration and common fixtures for testing mods."""
@@ -188,7 +189,7 @@ def mock_app_command() -> Any:
 
 
 @pytest.fixture
-def mock_requests_get() -> None:  # type: ignore[misc]
+def mock_requests_get() -> Iterator[Any]:
     """Mock requests.get for API calls."""
     with patch("requests.get") as mock_get:
         mock_response = MagicMock()
@@ -199,7 +200,7 @@ def mock_requests_get() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def mock_requests_post() -> None:  # type: ignore[misc]
+def mock_requests_post() -> Iterator[Any]:
     """Mock requests.post for API calls."""
     with patch("requests.post") as mock_post:
         mock_response = MagicMock()
@@ -210,7 +211,7 @@ def mock_requests_post() -> None:  # type: ignore[misc]
 
 
 @pytest.fixture
-def mock_aiohttp_session() -> None:  # type: ignore[misc]
+def mock_aiohttp_session() -> Iterator[Any]:
     """Mock aiohttp client session."""
     with patch("aiohttp.ClientSession") as mock_session:
         session = AsyncMock()

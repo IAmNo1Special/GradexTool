@@ -239,7 +239,7 @@ async def test_moves_table(
     # MovesTable.rebuild depends on RevomonTable
     rev_table = RevomonTable()
     await rev_table.create()
-    rev_table.rebuild = MagicMock()  # type: ignore[method-assign]
+    setattr(rev_table, "rebuild", MagicMock())
     # Add a dummy revomon so get_mon_ids returns something
     with closing(sqlite3.connect(mock_db)) as conn, conn:
         conn.execute(
@@ -322,7 +322,7 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
 
         table = OwnedLandsTable()
         # Mock update_lands_sale_data
-        table.update_lands_sale_data = AsyncMock()  # type: ignore[method-assign]
+        setattr(table, "update_lands_sale_data", AsyncMock())
         await table.build()
 
         assert await table.count_entries() == 2
@@ -334,6 +334,7 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
         assert "base" in land_types
 
         info = await table.get_info(token_id=1, sort_by="biome", asc=False)
+        assert info is not None
         assert len(info) == 1
         info2 = await table.get_info(
             id=1,
@@ -346,6 +347,7 @@ async def test_ownedlands_table(mock_db: Any, mock_json_files: Any) -> None:
             sale_status=0,
             sort_by="id",
         )
+        assert info2 is not None
         assert len(info2) == 1
 
         # Test remaining sorting logic branches
@@ -393,6 +395,7 @@ async def test_ownedlands_update_sale_data(mock_db: Any) -> None:
         }
         await table.update_lands_sale_data()
         info = await table.get_info(token_id=1)
+        assert info is not None
         assert info[0][9] == 1  # for_sale
 
 

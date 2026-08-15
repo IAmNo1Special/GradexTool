@@ -394,7 +394,7 @@ def _build_state_dict(
     return d
 
 
-def _found_name(data: dict[str, Any] | None) -> str:
+def _found_name(data: Any) -> str:
     if not isinstance(data, dict):
         return "Unknown"
 

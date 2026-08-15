@@ -335,7 +335,7 @@ async def get_perferred_natures(revomon_name: str) -> list[str]:
     natures = await get_natures()
     meta_build = mon_attr["meta_build"]
     for nature in natures:
-        if meta_build and nature in meta_build:  # type: ignore
+        if meta_build and nature in meta_build:  # type: ignore[operator]
             perferred_natures.append(nature)
     return perferred_natures
 

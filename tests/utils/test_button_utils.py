@@ -64,7 +64,7 @@ async def test_mon_button(mock_revo_table: Any, buttons_cog: Any) -> None:
     button = await buttons_cog.mon_button("mon1", 1)
 
     assert button.label == "1. Mon1"
-    assert button.custom_id == "mon1"
+    assert button.custom_id == "mon:mon1"
     assert button.row == 1
     assert button.style == ButtonStyle.gray
     assert button.callback == buttons_cog.on_button_click
@@ -99,7 +99,7 @@ async def test_land_button(mock_owned_lands_table: Any, buttons_cog: Any) -> Non
     button = await buttons_cog.land_button(2, 2)
 
     assert button.label == "2. Plot · Forest ($100)"
-    assert button.custom_id == "land 2"
+    assert button.custom_id == "land:2"
     assert button.row == 2
     assert button.style == ButtonStyle.gray
     assert button.callback == buttons_cog.on_button_click
@@ -113,7 +113,7 @@ async def test_land_button(mock_owned_lands_table: Any, buttons_cog: Any) -> Non
         ("stats_button", "Stats", "stats"),
         ("compare_stats_button", "Compare Stats", "compare_stats"),
         ("spawns_button", "Spawns", "spawns"),
-        ("compare_spawns_button", "Compare Spawns", "compare_Spawns"),
+        ("compare_spawns_button", "Compare Spawns", "compare_spawns"),
         ("moves_button", "Moves", "moves"),
         ("compare_moves_button", "Compare Moves", "compare_move_list"),
         ("types_button", "Types", "types"),
@@ -164,8 +164,8 @@ def test_sync_navigation_buttons(
     [
         ("exit_button", "exit", ButtonStyle.red, "❌"),
         ("search_button_land", "search_land", ButtonStyle.green, "🔎"),
-        ("filter_button_land", "filter_land", ButtonStyle.green, "filter"),
-        ("sort_by_button_land", "sort_by_land", ButtonStyle.green, "sortby"),
+        ("filter_button_land", "filter_land", ButtonStyle.green, "\U0001f50d"),
+        ("sort_by_button_land", "sort_by_land", ButtonStyle.green, "\U0001f504"),
         ("search_settings_button_land", "search_settings_land", ButtonStyle.green, "⚙️"),
     ],
 )
@@ -302,7 +302,7 @@ async def test_on_button_click_mon(
 
     interaction = MagicMock()
     interaction.user.bot = False
-    interaction.data = {"custom_id": "mon1"}
+    interaction.data = {"custom_id": "mon:mon1"}
     interaction.response.defer = AsyncMock()
     interaction.followup.send = AsyncMock()
 
@@ -523,7 +523,7 @@ async def test_on_button_click_bot_user(buttons_cog: Any) -> None:
 async def test_on_button_click_exception(buttons_cog: Any) -> None:
     interaction = MagicMock()
     interaction.user.bot = False
-    interaction.data = {"custom_id": "mon1"}
+    interaction.data = {"custom_id": "mon:mon1"}
 
     # Make RevomonTable raise an exception to hit the outer except block
     with patch("utils.button_utils.RevomonTable") as mock_revo_table:

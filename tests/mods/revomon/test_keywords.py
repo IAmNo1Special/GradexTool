@@ -296,7 +296,7 @@ class TestPvpKeyword:
         mock_draw_instance = MagicMock()
         mock_draw.return_value = mock_draw_instance
 
-        data = [
+        data: list[dict[str, str | int]] = [
             {
                 "Rank": 1,
                 "Name": "u1",
@@ -334,7 +334,7 @@ class TestPvpKeyword:
                 "Reward": "0 REVO",
             },
         ]
-        cog.update_pvp_image(data)  # type: ignore[arg-type]
+        cog.update_pvp_image(data)
         assert "image_bytes" in cog.pvp_img
         mock_image.save.assert_called_once()
 

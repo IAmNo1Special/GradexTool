@@ -1,4 +1,5 @@
 import unittest.mock
+from collections.abc import Iterator
 from io import BytesIO
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -18,7 +19,7 @@ def dummy_image_bytes() -> Any:
 
 
 @pytest.fixture
-def mock_session() -> None:  # type: ignore[misc]
+def mock_session() -> Iterator[Any]:
     with patch("aiohttp.ClientSession") as mock_session_cls:
         session_mock = MagicMock()
         mock_session_cls.return_value.__aenter__.return_value = session_mock

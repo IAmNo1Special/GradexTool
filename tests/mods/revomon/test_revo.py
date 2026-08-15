@@ -65,7 +65,7 @@ class TestPriceTracker:
     async def test_update_price_success(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=1.23)  # type: ignore[method-assign]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=1.23))
         mock_channel = AsyncMock()
         tracker.gradex.get_channel.return_value = mock_channel  # type: ignore[attr-defined]
         await tracker.update_price()
@@ -76,7 +76,7 @@ class TestPriceTracker:
     async def test_update_price_no_price(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=None)  # type: ignore[method-assign]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=None))
         await tracker.update_price()
         tracker.gradex.get_channel.assert_not_called()  # type: ignore[attr-defined]
 
@@ -84,7 +84,7 @@ class TestPriceTracker:
     async def test_update_price_no_channel(self, mock_bot: Any) -> None:
         with patch("discord.ext.tasks.Loop.start"):
             tracker = PriceTracker(mock_bot)
-        tracker.get_revo_price = MagicMock(return_value=1.23)  # type: ignore[method-assign]
+        setattr(tracker, "get_revo_price", MagicMock(return_value=1.23))
         tracker.gradex.get_channel.return_value = None  # type: ignore[attr-defined]
         await tracker.update_price()
         # Should not raise exception
