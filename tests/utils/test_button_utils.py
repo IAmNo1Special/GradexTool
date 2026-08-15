@@ -99,7 +99,7 @@ async def test_land_button(mock_owned_lands_table: Any, buttons_cog: Any) -> Non
     button = await buttons_cog.land_button(2, 2)
 
     assert button.label == "2. Plot · Forest ($100)"
-    assert button.custom_id == "land 2"
+    assert button.custom_id == "land:2"
     assert button.row == 2
     assert button.style == ButtonStyle.gray
     assert button.callback == buttons_cog.on_button_click
