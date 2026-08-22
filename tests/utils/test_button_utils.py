@@ -7,7 +7,9 @@ from discord import ButtonStyle
 
 from utils.button_utils import (
     Buttons,
+    CompareIntroView,
     FirstPageButton,
+    IntroView,
     LastPageButton,
     MonPaginationView,
     NextPageButton,
@@ -400,7 +402,127 @@ async def test_router_exception_swallowed(
     interaction.followup.send.assert_not_called()
 
 
-# ------------------------------------------------------- view helpers
+# ------------------------------------------------- action-button router
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.stats")
+@patch("utils.button_utils.get_attributes", new_callable=AsyncMock)
+async def test_router_action_stats(
+    mock_get_attrs: Any, mock_stats: Any, buttons_cog: Any
+) -> None:
+    mock_get_attrs.return_value = {"name": "pikachu"}
+    mock_stats.return_value = "embed"
+
+    interaction = _interaction("action:stats:pikachu")
+    await buttons_cog.on_interaction(interaction)
+
+    interaction.response.defer.assert_called_once()
+    kwargs = interaction.followup.send.call_args[1]
+    assert kwargs["embed"] == "embed"
+    assert kwargs["ephemeral"] is True
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.get_attributes", new_callable=AsyncMock)
+async def test_router_action_unknown_mon(mock_get_attrs: Any, buttons_cog: Any) -> None:
+    mock_get_attrs.return_value = {}
+
+    interaction = _interaction("action:moves:nosuchmon")
+    await buttons_cog.on_interaction(interaction)
+
+    message = str(interaction.followup.send.call_args)
+    assert "No Revomon found" in message
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.compare_types")
+@patch("utils.button_utils.get_attributes", new_callable=AsyncMock)
+async def test_router_action_compare_types_two_embeds(
+    mock_get_attrs: Any, mock_compare: Any, buttons_cog: Any
+) -> None:
+    mock_get_attrs.side_effect = [{"name": "a"}, {"name": "b"}]
+    mock_compare.return_value = ("embed1", "embed2")
+
+    interaction = _interaction("action:compare_types:mona&monb")
+    await buttons_cog.on_interaction(interaction)
+
+    assert interaction.followup.send.call_count == 2
+    assert interaction.followup.send.call_args_list[0][1]["embed"] == "embed1"
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.get_attributes", new_callable=AsyncMock)
+async def test_router_action_compare_unknown_second_mon(
+    mock_get_attrs: Any, buttons_cog: Any
+) -> None:
+    mock_get_attrs.side_effect = [{"name": "a"}, {}]
+
+    interaction = _interaction("action:compare_stats:good&bad")
+    await buttons_cog.on_interaction(interaction)
+
+    message = str(interaction.followup.send.call_args)
+    assert "No Revomon found for 'bad'" in message
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "custom_id",
+    [
+        "action:stats",  # pre-router bare id: unrecoverable state
+        "action:moves",
+        "action:compare_spawns",
+        "action:stats:",  # empty payload == truncated legacy id
+    ],
+)
+async def test_router_bare_legacy_action_expires(
+    buttons_cog: Any, custom_id: str
+) -> None:
+    interaction = _interaction(custom_id)
+    await buttons_cog.on_interaction(interaction)
+
+    assert "expired" in str(interaction.response.send_message.call_args)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "custom_id",
+    [
+        "action:warp:pikachu",  # unknown verb
+        "action:stats:a&b",  # wrong arity for single-mon verb
+        "action:compare_moves:onlyone",  # wrong arity for compare verb
+    ],
+)
+async def test_router_malformed_action_ignored(
+    buttons_cog: Any, custom_id: str
+) -> None:
+    interaction = _interaction(custom_id)
+    await buttons_cog.on_interaction(interaction)
+
+    interaction.response.defer.assert_not_called()
+    interaction.response.send_message.assert_not_called()
+    interaction.followup.send.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_intro_view_encodes_names_in_custom_ids() -> None:
+    view = IntroView(attributes={"name": "Pikachu"})
+    ids = [getattr(child, "custom_id", None) for child in view.children]
+    assert ids == [
+        "action:stats:pikachu",
+        "action:spawns:pikachu",
+        "action:moves:pikachu",
+        "action:types:pikachu",
+        "action:counterdex:pikachu",
+    ]
+
+
+@pytest.mark.asyncio
+async def test_compare_intro_view_encodes_both_names() -> None:
+    view = CompareIntroView({"name": "MonA"}, {"name": "MonB"})
+    ids = [getattr(child, "custom_id", None) for child in view.children]
+    assert ids[0] == "action:compare_stats:mona&monb"
+    assert all(isinstance(i, str) and i.endswith(":mona&monb") for i in ids)
 
 
 @pytest.mark.asyncio

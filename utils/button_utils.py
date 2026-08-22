@@ -1,4 +1,5 @@
 import logging
+from collections.abc import Callable
 from typing import Any, cast
 
 import discord
@@ -176,194 +177,182 @@ class LandPaginationView(View):
 
 
 class IntroView(View):
-    """View for Revomon intro with action buttons."""
+    """View for Revomon intro with restart-safe action buttons.
+
+    Buttons encode the mon name in their custom_id; the Buttons cog's
+    on_interaction router rebuilds attributes from SQLite at click time,
+    so the buttons keep working after bot restarts.
+    """
 
     def __init__(self, attributes: dict[str, Any]) -> None:
         super().__init__(timeout=None)
         self.attributes = attributes
+        name_raw = attributes.get("name") if isinstance(attributes, dict) else None
+        self.mon_name = str(name_raw or "unknown").lower()
 
-        self.add_item(StatsButton())
-        self.add_item(SpawnsButton())
-        self.add_item(MovesButton())
-        self.add_item(TypesButton())
-        self.add_item(CounterdexButton())
+        self.add_item(StatsButton(self.mon_name))
+        self.add_item(SpawnsButton(self.mon_name))
+        self.add_item(MovesButton(self.mon_name))
+        self.add_item(TypesButton(self.mon_name))
+        self.add_item(CounterdexButton(self.mon_name))
 
 
 class CompareIntroView(View):
-    """View for comparing two Revomon."""
+    """Compare variant of IntroView; both mon names ride in the custom_id."""
 
     def __init__(self, attributes: dict[str, Any], attributes2: dict[str, Any]) -> None:
         super().__init__(timeout=None)
         self.attributes = attributes
         self.attributes2 = attributes2
 
-        self.add_item(CompareStatsButton())
-        self.add_item(CompareSpawnsButton())
-        self.add_item(CompareMovesButton())
-        self.add_item(CompareTypesButton())
-        self.add_item(CompareCounterdexsButton())
+        def _name(attrs: Any) -> str:
+            raw = attrs.get("name") if isinstance(attrs, dict) else None
+            return str(raw or "unknown").lower()
+
+        name1 = _name(attributes)
+        name2 = _name(attributes2)
+
+        self.add_item(CompareStatsButton(name1, name2))
+        self.add_item(CompareSpawnsButton(name1, name2))
+        self.add_item(CompareMovesButton(name1, name2))
+        self.add_item(CompareTypesButton(name1, name2))
+        self.add_item(CompareCounterdexsButton(name1, name2))
 
 
-# Action Buttons - these read attributes from their parent view
+# Action Buttons - stateless: payload rides in the custom_id and the
+# Buttons cog's on_interaction router serves every click, restart-proof.
+def _action_custom_id(verb: str, *names: str) -> str:
+    return f"action:{verb}:" + "&".join(names)
+
+
 class StatsButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str) -> None:
         super().__init__(
-            label="Stats", style=ButtonStyle.green, custom_id="action:stats"
+            label="Stats",
+            style=ButtonStyle.green,
+            custom_id=_action_custom_id("stats", mon_name.lower()),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "attributes"):
-            embed = stats(view.attributes)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CompareStatsButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str, other_mon_name: str) -> None:
         super().__init__(
             label="Compare Stats",
             style=ButtonStyle.green,
-            custom_id="action:compare_stats",
+            custom_id=_action_custom_id(
+                "compare_stats", mon_name.lower(), other_mon_name.lower()
+            ),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if (
-            view is not None
-            and hasattr(view, "attributes")
-            and hasattr(view, "attributes2")
-        ):
-            embed = compare_stats(view.attributes, view.attributes2)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class SpawnsButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str) -> None:
         super().__init__(
-            label="Spawns", style=ButtonStyle.green, custom_id="action:spawns"
+            label="Spawns",
+            style=ButtonStyle.green,
+            custom_id=_action_custom_id("spawns", mon_name.lower()),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "attributes"):
-            embed = spawns(view.attributes)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CompareSpawnsButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str, other_mon_name: str) -> None:
         super().__init__(
             label="Compare Spawns",
             style=ButtonStyle.green,
-            custom_id="action:compare_spawns",
+            custom_id=_action_custom_id(
+                "compare_spawns", mon_name.lower(), other_mon_name.lower()
+            ),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if (
-            view is not None
-            and hasattr(view, "attributes")
-            and hasattr(view, "attributes2")
-        ):
-            embed = compare_spawns(view.attributes, view.attributes2)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class MovesButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str) -> None:
         super().__init__(
-            label="Moves", style=ButtonStyle.green, custom_id="action:moves"
+            label="Moves",
+            style=ButtonStyle.green,
+            custom_id=_action_custom_id("moves", mon_name.lower()),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "attributes"):
-            embed = moves(view.attributes)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CompareMovesButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str, other_mon_name: str) -> None:
         super().__init__(
             label="Compare Moves",
             style=ButtonStyle.green,
-            custom_id="action:compare_moves",
+            custom_id=_action_custom_id(
+                "compare_moves", mon_name.lower(), other_mon_name.lower()
+            ),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if (
-            view is not None
-            and hasattr(view, "attributes")
-            and hasattr(view, "attributes2")
-        ):
-            embed = compare_moves(view.attributes, view.attributes2)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class TypesButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str) -> None:
         super().__init__(
-            label="Types", style=ButtonStyle.green, custom_id="action:types"
+            label="Types",
+            style=ButtonStyle.green,
+            custom_id=_action_custom_id("types", mon_name.lower()),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "attributes"):
-            embed = types(view.attributes)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CompareTypesButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str, other_mon_name: str) -> None:
         super().__init__(
             label="Compare Types",
             style=ButtonStyle.green,
-            custom_id="action:compare_types",
+            custom_id=_action_custom_id(
+                "compare_types", mon_name.lower(), other_mon_name.lower()
+            ),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if (
-            view is not None
-            and hasattr(view, "attributes")
-            and hasattr(view, "attributes2")
-        ):
-            embed, embed2 = compare_types(view.attributes, view.attributes2)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
-            await interaction.followup.send(embed=embed2, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CounterdexButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str) -> None:
         super().__init__(
-            label="Counterdex", style=ButtonStyle.green, custom_id="action:counterdex"
+            label="Counterdex",
+            style=ButtonStyle.green,
+            custom_id=_action_custom_id("counterdex", mon_name.lower()),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "attributes"):
-            embed = counterdex(view.attributes)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class CompareCounterdexsButton(Button[View]):
-    def __init__(self) -> None:
+    def __init__(self, mon_name: str, other_mon_name: str) -> None:
         super().__init__(
             label="Compare Counterdexs",
             style=ButtonStyle.green,
-            custom_id="action:compare_counterdexs",
+            custom_id=_action_custom_id(
+                "compare_counterdexs", mon_name.lower(), other_mon_name.lower()
+            ),
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if (
-            view is not None
-            and hasattr(view, "attributes")
-            and hasattr(view, "attributes2")
-        ):
-            embed = compare_counterdexs(view.attributes, view.attributes2)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 # Pagination Buttons for Mon — target page encoded in custom_id so the
@@ -791,6 +780,20 @@ class Buttons(commands.Cog):
         }
     )
     _MON_ALIASES = frozenset({"mon1", "mon2", "mon3"})
+    _ACTION_VERBS = frozenset(
+        {
+            "stats",
+            "spawns",
+            "moves",
+            "types",
+            "counterdex",
+            "compare_stats",
+            "compare_spawns",
+            "compare_moves",
+            "compare_types",
+            "compare_counterdexs",
+        }
+    )
 
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
@@ -868,6 +871,74 @@ class Buttons(commands.Cog):
     async def _send_expiry_notice(interaction: Interaction) -> None:
         await interaction.response.send_message(
             "This pager has expired - run /search again.", ephemeral=True
+        )
+
+    async def _handle_action(self, interaction: Interaction, custom_id: str) -> None:
+        """Serve IntroView action buttons by rebuilding attributes from SQLite.
+
+        custom_id format: ``action:<verb>:<mon>`` or
+        ``action:compare_<verb>:<mon_a>&<mon_b>``. Bare pre-router ids
+        (no payload) carried per-instance state and get the expiry notice.
+        """
+        rest = custom_id[len("action:") :]
+        verb, _, payload = rest.partition(":")
+        verb = verb.strip()
+
+        if not payload:
+            await self._send_expiry_notice(interaction)
+            return
+
+        names = [n for n in payload.split("&") if n]
+        is_compare = verb.startswith("compare_")
+        expected_names = 2 if is_compare else 1
+
+        if verb not in self._ACTION_VERBS or len(names) != expected_names:
+            logger.debug(f"[Buttons] bad action id {custom_id!r}")
+            return
+
+        await interaction.response.defer()
+
+        attributes = await get_attributes(revomon_name=names[0].lower())
+        if not attributes:
+            await interaction.followup.send(
+                f"No Revomon found for '{names[0]}'.", ephemeral=True
+            )
+            return
+
+        if is_compare:
+            attributes2 = await get_attributes(revomon_name=names[1].lower())
+            if not attributes2:
+                await interaction.followup.send(
+                    f"No Revomon found for '{names[1]}'.", ephemeral=True
+                )
+                return
+            if verb == "compare_types":
+                embed, embed2 = compare_types(attributes, attributes2)
+                await interaction.followup.send(embed=embed, ephemeral=True)
+                await interaction.followup.send(embed=embed2, ephemeral=True)
+            else:
+                cmp_builder: Callable[
+                    [dict[str, Any], dict[str, Any]], discord.Embed
+                ] = {
+                    "compare_stats": compare_stats,
+                    "compare_spawns": compare_spawns,
+                    "compare_moves": compare_moves,
+                    "compare_counterdexs": compare_counterdexs,
+                }[verb]
+                await interaction.followup.send(
+                    embed=cmp_builder(attributes, attributes2), ephemeral=True
+                )
+            return
+
+        single_builders: dict[str, Callable[[dict[str, Any]], discord.Embed]] = {
+            "stats": stats,
+            "spawns": spawns,
+            "moves": moves,
+            "types": types,
+            "counterdex": counterdex,
+        }
+        await interaction.followup.send(
+            embed=single_builders[verb](attributes), ephemeral=True
         )
 
     async def _handle_mon_lookup(self, interaction: Interaction, name: str) -> None:
@@ -949,6 +1020,10 @@ class Buttons(commands.Cog):
 
             if custom_id in self._LEGACY_PAGERS:
                 await self._send_expiry_notice(interaction)
+                return
+
+            if custom_id.startswith("action:"):
+                await self._handle_action(interaction, custom_id)
                 return
 
             if ":goto:" in custom_id and custom_id.startswith(
