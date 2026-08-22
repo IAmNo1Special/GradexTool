@@ -56,7 +56,7 @@ class TestHelpCommand:
         interaction.followup.send.assert_called_once_with(embed=embed, ephemeral=False)
 
     @pytest.mark.asyncio
-    async def test_public_button_exception(self, help_cog: Any, capsys: Any) -> None:
+    async def test_public_button_exception(self, help_cog: Any, caplog: Any) -> None:
         embed = help_cog.help_embed()
         button_view = help_cog.PublicButton(embed=embed)
 
@@ -66,10 +66,9 @@ class TestHelpCommand:
         # Call the button callback
         await button_view.children[0].callback(interaction)
 
-        captured = capsys.readouterr()
         assert (
             "An error occurred trying to click the 'Make Public[PublicButton]'"
-            in captured.out
+            in caplog.text
         )
 
     @pytest.mark.asyncio
@@ -99,11 +98,10 @@ async def test_setup_function() -> None:
 
 
 @pytest.mark.asyncio
-async def test_setup_function_exception(capsys: Any) -> None:
+async def test_setup_function_exception(caplog: Any) -> None:
     mock_bot = MagicMock(spec=commands.Bot)
     mock_bot.add_cog = AsyncMock(side_effect=Exception("Test Exception"))
 
     await setup(mock_bot)
 
-    captured = capsys.readouterr()
-    assert "ERROR in ModName 'setup' function" in captured.out
+    assert "ERROR in ModName 'setup' function" in caplog.text

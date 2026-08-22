@@ -1,7 +1,7 @@
 import unittest.mock
 from collections.abc import Iterator
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -15,79 +15,43 @@ from utils.land_utils import (
 )
 
 
-class MockResponse:
-    def __init__(
-        self, json_data: Any = None, status: Any = 200, text_data: Any = ""
-    ) -> None:
-        self.json_data = json_data
-        self.status = status
-        self.text_data = text_data
-
-    async def json(self) -> Any:
-        return self.json_data
-
-    async def text(self) -> Any:
-        return self.text_data
-
-
-class MockGetContext:
-    def __init__(self, response: Any) -> None:
-        self.response = response
-
-    async def __aenter__(self) -> Any:
-        return self.response
-
-    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        pass
-
-
-class MockSessionContext:
-    def __init__(self, session: Any) -> None:
-        self.session = session
-
-    async def __aenter__(self) -> Any:
-        return self.session
-
-    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
-        pass
+@pytest.fixture
+def mock_fetch() -> Iterator[Any]:
+    with patch("utils.land_utils._fetch_json_404_ok", new_callable=AsyncMock) as mock:
+        yield mock
 
 
 @pytest.fixture
-def mock_session() -> Iterator[Any]:
-    with patch("aiohttp.ClientSession") as mock_client_session:
-        session_instance = MagicMock()
-        mock_client_session.return_value = MockSessionContext(session_instance)
-        yield session_instance
+def mock_fetch_paged() -> Iterator[Any]:
+    with patch("utils.land_utils.fetch_json", new_callable=AsyncMock) as mock:
+        yield mock
 
 
 @pytest.mark.asyncio
-async def test_get_land_info_for_ids(mock_session: Any) -> None:
-    mock_response = MockResponse(
-        json_data={
-            "result": [
-                {
-                    "token_id": "1",
-                    "image": "http://image1.png",
-                    "attributes": [
-                        {"trait_type": "Biome", "value": "Forest"},
-                        {"trait_type": "DbId", "value": "1"},
-                        {"trait_type": "Entity", "value": "Land"},
-                        {"trait_type": "Id", "value": "ID1"},
-                        {"trait_type": "Scarcity", "value": "Common"},
-                        {"trait_type": "Size", "value": "Small"},
-                    ],
-                },
-                {
-                    "token_id": "2",
-                    "image": "http://image2.png",
-                    "attributes": [
-                        {"trait_type": "Biome", "value": "Desert"}
-                    ],  # test missing traits
-                },
-            ]
-        }
-    )
-    mock_session.get.return_value = MockGetContext(mock_response)
+async def test_get_land_info_for_ids(mock_fetch: Any) -> None:
+    mock_fetch.return_value = {
+        "result": [
+            {
+                "token_id": "1",
+                "image": "http://image1.png",
+                "attributes": [
+                    {"trait_type": "Biome", "value": "Forest"},
+                    {"trait_type": "DbId", "value": "1"},
+                    {"trait_type": "Entity", "value": "Land"},
+                    {"trait_type": "Id", "value": "ID1"},
+                    {"trait_type": "Scarcity", "value": "Common"},
+                    {"trait_type": "Size", "value": "Small"},
+                ],
+            },
+            {
+                "token_id": "2",
+                "image": "http://image2.png",
+                "attributes": [
+                    {"trait_type": "Biome", "value": "Desert"}
+                ],  # test missing traits
+            },
+        ]
+    }
 
     token_ids = [str(i) for i in range(35)]  # > 30 to test the split
     result = await get_land_info_for_ids(token_ids)
@@ -109,26 +73,23 @@ async def test_get_land_info_for_ids(mock_session: Any) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_land_info_for_ids_short(mock_session: Any) -> None:
-    mock_response = MockResponse(
-        json_data={
-            "result": [
-                {
-                    "token_id": "1",
-                    "image": "http://image1.png",
-                    "attributes": [
-                        {"trait_type": "Biome", "value": "Forest"},
-                        {"trait_type": "DbId", "value": "1"},
-                        {"trait_type": "Entity", "value": "Land"},
-                        {"trait_type": "Id", "value": "ID1"},
-                        {"trait_type": "Scarcity", "value": "Common"},
-                        {"trait_type": "Size", "value": "Small"},
-                    ],
-                }
-            ]
-        }
-    )
-    mock_session.get.return_value = MockGetContext(mock_response)
+async def test_get_land_info_for_ids_short(mock_fetch: Any) -> None:
+    mock_fetch.return_value = {
+        "result": [
+            {
+                "token_id": "1",
+                "image": "http://image1.png",
+                "attributes": [
+                    {"trait_type": "Biome", "value": "Forest"},
+                    {"trait_type": "DbId", "value": "1"},
+                    {"trait_type": "Entity", "value": "Land"},
+                    {"trait_type": "Id", "value": "ID1"},
+                    {"trait_type": "Scarcity", "value": "Common"},
+                    {"trait_type": "Size", "value": "Small"},
+                ],
+            }
+        ]
+    }
 
     token_ids = ["1"]
     result = await get_land_info_for_ids(token_ids)
@@ -136,38 +97,31 @@ async def test_get_land_info_for_ids_short(mock_session: Any) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_land_owners_and_ids(mock_session: Any) -> None:
-    mock_response_1 = MockResponse(
-        json_data={
-            "result": [
-                {"account_address": "0x1", "token_id": "100"},
-                {
-                    "account_address": "0xbc56eb15427dc7ec6e46cb42715c8b3f28c57c8d",
-                    "token_id": "ignore1",
-                },
-                {
-                    "account_address": "0x0000000000000000000000000000000000000000",
-                    "token_id": "ignore2",
-                },
-                {"account_address": "0x2", "token_id": "101"},
-                {
-                    "account_address": "0x1",
-                    "token_id": "100",
-                },  # duplicate token for owner
-            ],
-            "page": {"next_cursor": "cursor1"},
-        }
-    )
-    mock_response_2 = MockResponse(
-        json_data={
-            "result": [{"account_address": "0x2", "token_id": "102"}],
-            "page": {"next_cursor": ""},
-        }
-    )
-    mock_session.get.side_effect = [
-        MockGetContext(mock_response_1),
-        MockGetContext(mock_response_2),
-    ]
+async def test_get_land_owners_and_ids(mock_fetch_paged: Any) -> None:
+    response_1 = {
+        "result": [
+            {"account_address": "0x1", "token_id": "100"},
+            {
+                "account_address": "0xbc56eb15427dc7ec6e46cb42715c8b3f28c57c8d",
+                "token_id": "ignore1",
+            },
+            {
+                "account_address": "0x0000000000000000000000000000000000000000",
+                "token_id": "ignore2",
+            },
+            {"account_address": "0x2", "token_id": "101"},
+            {
+                "account_address": "0x1",
+                "token_id": "100",
+            },  # duplicate token for owner
+        ],
+        "page": {"next_cursor": "cursor1"},
+    }
+    response_2 = {
+        "result": [{"account_address": "0x2", "token_id": "102"}],
+        "page": {"next_cursor": ""},
+    }
+    mock_fetch_paged.side_effect = [response_1, response_2]
 
     result = await get_land_owners_and_ids()
     assert len(result) == 2
@@ -198,27 +152,24 @@ async def test_get_land_data(mock_get_info: Any, mock_get_owners: Any) -> None:
 
 
 @pytest.mark.asyncio
-async def test_get_lands_for_sale(mock_session: Any) -> None:
-    mock_response = MockResponse(json_data={"result": [{"id": "order1"}]})
-    mock_session.get.return_value = MockGetContext(mock_response)
+async def test_get_lands_for_sale(mock_fetch: Any) -> None:
+    mock_fetch.return_value = {"result": [{"id": "order1"}]}
 
     result = await get_lands_for_sale()
     assert result == [{"id": "order1"}]
 
 
 @pytest.mark.asyncio
-async def test_get_zkevm_token_data_success(mock_session: Any) -> None:
-    mock_response = MockResponse(status=200, json_data={"symbol": "TEST"})
-    mock_session.get.return_value = MockGetContext(mock_response)
+async def test_get_zkevm_token_data_success(mock_fetch: Any) -> None:
+    mock_fetch.return_value = {"symbol": "TEST"}
 
     result = await get_zkevm_token_data("0x123")
     assert result == {"symbol": "TEST"}
 
 
 @pytest.mark.asyncio
-async def test_get_zkevm_token_data_failure(mock_session: Any) -> None:
-    mock_response = MockResponse(status=404, text_data="Not Found")
-    mock_session.get.return_value = MockGetContext(mock_response)
+async def test_get_zkevm_token_data_failure(mock_fetch: Any) -> None:
+    mock_fetch.return_value = None
 
     result = await get_zkevm_token_data("0x123")
     assert result is None

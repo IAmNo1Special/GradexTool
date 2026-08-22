@@ -32,19 +32,6 @@ from scripts.gradexDB import (  # noqa: E402
     update_gradex_db,
 )  # noqa: E402
 
-
-class LandsTable:
-    """Placeholder for LandsTable - implement if needed."""
-
-    pass
-
-
-class CaughtRevomonTable:
-    """Placeholder for CaughtRevomonTable - implement if needed."""
-
-    pass
-
-
 __all__ = [
     "gradexDB",
     "CounterdexTable",
@@ -62,8 +49,6 @@ __all__ = [
     "CurrentPodiumTable",
     "WeeklyPodiumTable",
     "EventBoardLogsTable",
-    "LandsTable",
-    "CaughtRevomonTable",
     "AccountsTable",
     "update_gradex_db",
 ]

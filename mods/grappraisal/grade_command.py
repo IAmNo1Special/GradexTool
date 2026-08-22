@@ -1,3 +1,4 @@
+import logging
 from io import BytesIO
 from typing import Any
 
@@ -13,7 +14,10 @@ from discord import (
 )
 from discord.ext import commands
 
+from utils.bounded_ttl_store import BoundedTTLStore
 from utils.revomon_utils import appraise_revomon, create_graded_mon_img
+
+logger = logging.getLogger(__name__)
 
 # Define the URL for the Revomon API
 REVO_API_URL = "https://api.revomon.io/revomon"
@@ -23,14 +27,10 @@ class GradeCommand(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
 
-    class MonManager:
-        def __init__(self) -> None:
-            self.mon_info: dict[str | int, Any] = {}
-
-    mon_manager = MonManager()
+    mon_manager = BoundedTTLStore()
 
     def mon_info_embed1(self, user_id: Any) -> Any:
-        mon = GradeCommand.mon_manager.mon_info[user_id]
+        mon = GradeCommand.mon_manager.require(user_id)
         embed = Embed(
             title=f"Revomon: {mon['mon_name'].title()}",
             description=f"**Nature:** {mon['mon_nature'].title()}\n**Ability:** {mon['mon_ability'].title()}",
@@ -43,13 +43,13 @@ class GradeCommand(commands.Cog):
 
     @staticmethod
     def graded_mon_embed(user_id: Any) -> Any:
-        mon = GradeCommand.mon_manager.mon_info[user_id]
+        mon = GradeCommand.mon_manager.require(user_id)
         grade_image = create_graded_mon_img(mon, mon["grade_percent"])
         # Convert the PIL Image object to a BytesIO object
         image_bytes = BytesIO()
         grade_image.save(image_bytes, format="PNG")
         image_bytes.seek(0)
-        GradeCommand.mon_manager.mon_info[user_id]["image_bytes"] = image_bytes
+        GradeCommand.mon_manager.require(user_id)["image_bytes"] = image_bytes
 
         embed = Embed(
             title=f"Grade: {mon['grade_letter']} ({mon['grade_percent']}%)",
@@ -76,7 +76,7 @@ class GradeCommand(commands.Cog):
 
     @staticmethod
     def grade_breakdown_embed(user_id: Any) -> Any:
-        mon = GradeCommand.mon_manager.mon_info[user_id]
+        mon = GradeCommand.mon_manager.require(user_id)
 
         embed = Embed(
             title=f"Breakdown: {mon['mon_name'].title()}",
@@ -162,11 +162,9 @@ class GradeCommand(commands.Cog):
                     attachments=[],
                     view=None,
                 )
-                appr = await appraise_revomon(
-                    GradeCommand.mon_manager.mon_info[user_id]
-                )
+                appr = await appraise_revomon(GradeCommand.mon_manager.require(user_id))
                 if appr:
-                    GradeCommand.mon_manager.mon_info[user_id].update(appr)
+                    GradeCommand.mon_manager.update(user_id, **appr)
 
                 embed = GradeCommand.graded_mon_embed(user_id=user_id)
                 await interaction.followup.edit_message(
@@ -174,7 +172,7 @@ class GradeCommand(commands.Cog):
                     content=None,
                     attachments=[
                         File(
-                            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"],
+                            GradeCommand.mon_manager.require(user_id)["image_bytes"],
                             filename="image.png",
                         )
                     ],
@@ -182,7 +180,7 @@ class GradeCommand(commands.Cog):
                     view=GradeCommand.MonInfoButtons6(),
                 )
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons1[Grade]' Button from the grade_command script: {e}"
                 )
 
@@ -217,7 +215,7 @@ class GradeCommand(commands.Cog):
                     await interaction.user.send(
                         files=[
                             File(
-                                GradeCommand.mon_manager.mon_info[user_id][
+                                GradeCommand.mon_manager.require(user_id)[
                                     "image_bytes"
                                 ],
                                 filename="image.png",
@@ -230,7 +228,7 @@ class GradeCommand(commands.Cog):
                     await interaction.followup.send(
                         files=[
                             File(
-                                GradeCommand.mon_manager.mon_info[user_id][
+                                GradeCommand.mon_manager.require(user_id)[
                                     "image_bytes"
                                 ],
                                 filename="image.png",
@@ -240,7 +238,7 @@ class GradeCommand(commands.Cog):
                         view=GradeCommand.ExitMessageButton(),
                     )
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Save]' Button from the grade_command script: {e}"
                 )
 
@@ -253,7 +251,7 @@ class GradeCommand(commands.Cog):
                 await interaction.followup.send(
                     files=[
                         File(
-                            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"],
+                            GradeCommand.mon_manager.require(user_id)["image_bytes"],
                             filename="image.png",
                         )
                     ],
@@ -265,7 +263,7 @@ class GradeCommand(commands.Cog):
                 )
 
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Flex This  Revomon]' Button from the grade_command script: {e}"
                 )
 
@@ -283,7 +281,7 @@ class GradeCommand(commands.Cog):
                 # Respond with a new ephemeral message instead of editing
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Why this grade?]' Button: {e}"
                 )
 
@@ -319,41 +317,56 @@ class GradeCommand(commands.Cog):
                         return
 
                     user_id = interaction.user.id
-                    GradeCommand.mon_manager.mon_info[user_id] = {
-                        "catch_id": int(catch_id),
-                        "mon_name": str(
-                            response["data"]["catchedRevomon"]["name"]
-                        ).lower(),
-                        "mon_nature": str(
-                            response["data"]["catchedRevomon"]["nature"]
-                        ).lower(),
-                        "mon_ability": str(
-                            response["data"]["catchedRevomon"]["ability"]
-                        ).lower(),
-                        "shiny": response["data"]["catchedRevomon"]["shiny"],
-                        "hp_iv": int(str(response["data"]["catchedRevomon"]["ivhp"])),
-                        "atk_iv": int(str(response["data"]["catchedRevomon"]["ivatk"])),
-                        "def_iv": int(str(response["data"]["catchedRevomon"]["ivdef"])),
-                        "spa_iv": int(str(response["data"]["catchedRevomon"]["ivspa"])),
-                        "spd_iv": int(str(response["data"]["catchedRevomon"]["ivspd"])),
-                        "spe_iv": int(str(response["data"]["catchedRevomon"]["ivspe"])),
-                        "hp_ev": 0,
-                        "atk_ev": 0,
-                        "def_ev": 0,
-                        "spa_ev": 0,
-                        "spd_ev": 0,
-                        "spe_ev": 0,
-                    }
+                    GradeCommand.mon_manager.set(
+                        user_id,
+                        {
+                            "catch_id": int(catch_id),
+                            "mon_name": str(
+                                response["data"]["catchedRevomon"]["name"]
+                            ).lower(),
+                            "mon_nature": str(
+                                response["data"]["catchedRevomon"]["nature"]
+                            ).lower(),
+                            "mon_ability": str(
+                                response["data"]["catchedRevomon"]["ability"]
+                            ).lower(),
+                            "shiny": response["data"]["catchedRevomon"]["shiny"],
+                            "hp_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivhp"])
+                            ),
+                            "atk_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivatk"])
+                            ),
+                            "def_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivdef"])
+                            ),
+                            "spa_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivspa"])
+                            ),
+                            "spd_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivspd"])
+                            ),
+                            "spe_iv": int(
+                                str(response["data"]["catchedRevomon"]["ivspe"])
+                            ),
+                            "hp_ev": 0,
+                            "atk_ev": 0,
+                            "def_ev": 0,
+                            "spa_ev": 0,
+                            "spd_ev": 0,
+                            "spe_ev": 0,
+                        },
+                    )
 
             grade_image = create_graded_mon_img(
-                GradeCommand.mon_manager.mon_info[user_id],
+                GradeCommand.mon_manager.require(user_id),
                 score_percentage=None,
             )
             # Convert the PIL Image object to a BytesIO object
             image_bytes = BytesIO()
             grade_image.save(image_bytes, format="PNG")
             image_bytes.seek(0)
-            GradeCommand.mon_manager.mon_info[user_id]["image_bytes"] = image_bytes
+            GradeCommand.mon_manager.require(user_id)["image_bytes"] = image_bytes
 
             await interaction.followup.send(
                 files=[File(image_bytes, filename="image.png")],
@@ -362,7 +375,7 @@ class GradeCommand(commands.Cog):
                 ephemeral=True,
             )
         except Exception as e:
-            print(
+            logger.error(
                 f"An error occurred trying to submit the 'grade' command from the grade_command script: {e}"
             )
 

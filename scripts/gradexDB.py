@@ -1,4 +1,5 @@
 import json  # noqa: N999
+import shutil
 import sqlite3
 import time
 from pathlib import Path
@@ -7,6 +8,10 @@ from typing import Any, cast
 import aiosqlite
 import httpx
 from aiosqlite.core import Connection
+
+from utils.http import fetch_json as _http_fetch_json  # noqa: E402
+from utils.http import safe_get as _http_safe_get  # noqa: E402
+from utils.http import safe_post as _http_safe_post  # noqa: E402
 
 
 def get_db_connection() -> aiosqlite.Connection:
@@ -21,38 +26,17 @@ async def safe_get(
     retries: int = 5,
     backoff_factor: float = 1.0,
 ) -> httpx.Response | None:
-    """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff."""
-    should_close = client is None
-    if client is None:
-        client = httpx.AsyncClient(timeout=timeout)
+    """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff.
 
-    try:
-        for i in range(retries):
-            try:
-                response = await client.get(url)
-                if response.status_code == 200:
-                    return response
-
-                # Handle rate limiting (429) specifically
-                if response.status_code == 429:
-                    retry_after = int(response.headers.get("Retry-After", 5))
-                    print(
-                        f"Rate limited (429) on {url}. Sleeping for {retry_after} seconds..."
-                    )
-                    await asyncio.sleep(retry_after)
-                    continue
-
-                print(
-                    f"Failed to fetch {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-                )
-            except httpx.RequestError as e:
-                print(f"Failed to fetch {url}: {e}. Retrying ({i + 1}/{retries})...")
-            if i < retries - 1:
-                await asyncio.sleep(backoff_factor * (2**i))
-        return None
-    finally:
-        if should_close:
-            await client.aclose()
+    Delegates to the canonical implementation in utils.http.
+    """
+    return await _http_safe_get(
+        url,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
 
 
 async def safe_post(
@@ -63,28 +47,35 @@ async def safe_post(
     retries: int = 3,
     backoff_factor: float = 1.0,
 ) -> httpx.Response | None:
-    """Post to a URL with timeout, retries, and exponential backoff."""
-    should_close = client is None
-    if client is None:
-        client = httpx.AsyncClient(timeout=timeout)
+    """Post to a URL with timeout, retries, and exponential backoff.
 
-    try:
-        for i in range(retries):
-            try:
-                response = await client.post(url, json=json_payload)
-                if response.status_code == 200:
-                    return response
-                print(
-                    f"Failed to post to {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-                )
-            except httpx.RequestError as e:
-                print(f"Failed to post to {url}: {e}. Retrying ({i + 1}/{retries})...")
-            if i < retries - 1:
-                await asyncio.sleep(backoff_factor * (2**i))
-        return None
-    finally:
-        if should_close:
-            await client.aclose()
+    Delegates to the canonical implementation in utils.http.
+    """
+    return await _http_safe_post(
+        url,
+        json_payload=json_payload,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
+
+
+async def fetch_json(
+    url: str,
+    client: httpx.AsyncClient | None = None,
+    timeout: int = 10,
+    retries: int = 5,
+    backoff_factor: float = 1.0,
+) -> Any | None:
+    """GET and parse JSON; returns None on failure. Delegates to utils.http."""
+    return await _http_fetch_json(
+        url,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
 
 
 import asyncio  # noqa: E402
@@ -175,6 +166,7 @@ class CounterdexTable:
                     cdex_data = json.load(f)
 
                 # Insert data into the database
+                rows_to_insert = []
                 for revomon in sorted(
                     data["data"]["revomons"], key=lambda x: x["idRevodex"]
                 ):
@@ -223,13 +215,7 @@ class CounterdexTable:
                                 else None
                             )
 
-                    # Execute the insert query
-                    await cursor.execute(
-                        """
-                        INSERT OR REPLACE INTO counterdex
-                            (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                        """,
+                    rows_to_insert.append(
                         (
                             dex_id,
                             mon_id,
@@ -241,8 +227,17 @@ class CounterdexTable:
                             tips,
                             counters,
                             weakness,
-                        ),
+                        )
                     )
+
+                await cursor.executemany(
+                    """
+                    INSERT OR REPLACE INTO counterdex
+                        (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    """,
+                    rows_to_insert,
+                )
 
                 # Commit the transaction
                 await conn.commit()
@@ -412,13 +407,13 @@ class AbilitiesTable:
             with open("./data/abilities.json") as file:
                 abilities_data = json.load(file)
 
-            # Insert data into the database
             # abilities_data can be a dict (from PokeAPI) or a list (from DB export)
             if isinstance(abilities_data, dict):
                 ability_list = list(abilities_data.values())
             else:
                 ability_list = abilities_data
 
+            rows_to_insert = []
             for ability in sorted(ability_list, key=lambda x: x["id"]):
                 # Prepare data for insertion
                 ability_id = ability["id"]
@@ -444,8 +439,9 @@ class AbilitiesTable:
                             .lower()
                         )
 
-                # Execute the insert query
-                await cursor.execute(insert_query, (ability_id, name, description))
+                rows_to_insert.append((ability_id, name, description))
+
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -576,6 +572,7 @@ class CapsulesTable:
                 capsules_data = json.load(file)
 
             # Insert data into the database
+            rows_to_insert = []
             for capsule in sorted(capsules_data, key=lambda x: x.get("name", "")):
                 # Prepare data for insertion
                 name = capsule.get("name", "").lower() if capsule.get("name") else None
@@ -584,9 +581,9 @@ class CapsulesTable:
                     if capsule.get("description")
                     else None
                 )
+                rows_to_insert.append((name, description))
 
-                # Execute the insert query
-                await cursor.execute(insert_query, (name, description))
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -706,6 +703,7 @@ class FruitysTable:
             else:
                 fruity_list = fruitys_data
 
+            rows_to_insert = []
             for fruity in sorted(
                 fruity_list, key=lambda x: x.get("idFruity") or x.get("id")
             ):
@@ -720,11 +718,9 @@ class FruitysTable:
                 fruity_type = (
                     fruity.get("type", "").lower() if fruity.get("type") else None
                 )
+                rows_to_insert.append((fruity_id, name, description, fruity_type))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (fruity_id, name, description, fruity_type)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -827,7 +823,7 @@ class ItemsTable:
 
                 CREATE TABLE IF NOT EXISTS "items" (
                     "name" TEXT NOT NULL UNIQUE,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     "obtained_from" TEXT NOT NULL,
                     "cost" INTEGER,
                     PRIMARY KEY("name")
@@ -882,17 +878,16 @@ class ItemsTable:
             else:
                 item_list = items
 
+            rows_to_insert = []
             for item in sorted(item_list, key=lambda x: x["name"]):
                 # Prepare data for insertion
                 name = item["name"].lower()
                 description = item["description"].lower()
                 obtained_from = item["obtained_from"].lower()
                 cost = item["cost"] if item["cost"] else None
+                rows_to_insert.append((name, description, obtained_from, cost))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (name, description, obtained_from, cost)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -1008,7 +1003,7 @@ class MovesTable:
                     "name" TEXT NOT NULL UNIQUE,
                     "category" TEXT NOT NULL,
                     "type" TEXT NOT NULL,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     "accuracy" REAL NOT NULL,
                     "power" INTEGER NOT NULL,
                     "pp" INTEGER NOT NULL,
@@ -1057,6 +1052,7 @@ class MovesTable:
 
             if has_local_data:
                 # Insert data from local moves.json
+                rows_to_insert = []
                 for move in sorted(
                     moves_data, key=lambda x: x.get("id") or x.get("idMove", 0)
                 ):
@@ -1071,8 +1067,7 @@ class MovesTable:
                     pp = move.get("pp")
                     priority = move.get("priority")
 
-                    await cursor.execute(
-                        insert_query,
+                    rows_to_insert.append(
                         (
                             move_id,
                             cap_num,
@@ -1084,8 +1079,9 @@ class MovesTable:
                             power,
                             pp,
                             priority,
-                        ),
+                        )
                     )
+                await cursor.executemany(insert_query, rows_to_insert)
                 await conn.commit()
             else:
                 # Fetch data from the Revomon Moves API
@@ -1097,6 +1093,7 @@ class MovesTable:
 
                     if response and response.status_code == 200:
                         data = response.json()
+                        rows_to_insert = []
                         for move in sorted(
                             data["data"]["moves"], key=lambda x: x["idMove"]
                         ):
@@ -1111,8 +1108,7 @@ class MovesTable:
                             pp = move["pp"]
                             priority = move["priority"]
 
-                            await cursor.execute(
-                                insert_query,
+                            rows_to_insert.append(
                                 (
                                     move_id,
                                     cap_num,
@@ -1124,8 +1120,9 @@ class MovesTable:
                                     power,
                                     pp,
                                     priority,
-                                ),
+                                )
                             )
+                        await cursor.executemany(insert_query, rows_to_insert)
                         await conn.commit()
         print("moves table updated successfully!")
 
@@ -1322,6 +1319,7 @@ class NaturesTable:
             else:
                 nature_list = natures
 
+            rows_to_insert = []
             for nature in sorted(nature_list, key=lambda x: x["name"]):
                 # Prepare data for insertion
                 name = nature["name"].lower()
@@ -1334,11 +1332,9 @@ class NaturesTable:
                 debuffs = debuffs_val.lower() if debuffs_val else None
                 likes = nature.get("likes")
                 dislikes = nature.get("dislikes")
+                rows_to_insert.append((name, buffs, debuffs, likes, dislikes))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (name, buffs, debuffs, likes, dislikes)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -1492,6 +1488,10 @@ class OwnedLandsTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             # Prepare data for insertion
+            emoji_by_name: dict[str, str] = {
+                emoji["name"]: emoji["id"] for emoji in emoji_list
+            }
+            rows_to_insert = []
             for land_obj in land_data:
                 for land in land_obj["land_info"]:
                     token_id = land["token_id"]
@@ -1503,29 +1503,18 @@ class OwnedLandsTable:
                     size = land["size"]
                     img_url = land["img_url"]
                     emoji_name = f"{biome}_{land_type}".replace(" ", "_")
-                    if emoji_name in [emoji["name"] for emoji in emoji_list]:
-                        for emoji_obj in emoji_list:
-                            if emoji_name == emoji_obj["name"]:
-                                emoji = emoji_obj["id"]
-                                break
-                    else:
+                    if emoji_name not in emoji_by_name:
                         emoji_obj = await emoji_utils.create_emoji_from_url(
                             img_url=img_url, emoji_name=emoji_name
                         )
-                        emoji = emoji_obj["id"]
-                        emoji_list.append(emoji_obj)
+                        emoji_by_name[emoji_name] = emoji_obj["id"]
+                    emoji = emoji_by_name[emoji_name]
                     for_sale = 0
                     token_symbol = None
                     for_sale_usd = None
                     for_sale_token = None
 
-                    # Execute the insert query
-                    await cursor.execute(
-                        """
-                        INSERT OR REPLACE INTO ownedLands
-                            (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                        """,
+                    rows_to_insert.append(
                         (
                             token_id,
                             id,
@@ -1540,11 +1529,20 @@ class OwnedLandsTable:
                             token_symbol,
                             for_sale_usd,
                             for_sale_token,
-                        ),
+                        )
                     )
 
-                # Commit the transaction
-                await conn.commit()
+            await cursor.executemany(
+                """
+                INSERT OR REPLACE INTO ownedLands
+                    (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """,
+                rows_to_insert,
+            )
+
+            # Commit the transaction
+            await conn.commit()
         await self.update_lands_sale_data()
 
         print("OwnedLands Table updated successfully!")
@@ -1689,51 +1687,57 @@ class OwnedLandsTable:
 
     async def update_lands_sale_data(self) -> None:
         """Update the sale data for owned lands."""
-        from data import OwnedLandsTable
-
-        all_land_ids = await OwnedLandsTable().get_ids()
         print("Updating sale data for lands...")
+        all_land_ids = await self.get_ids()
         sale_data = await get_lands_for_sale_amount()
+
+        sale_rows: list[tuple[Any, ...]] = []
+        unsale_ids: list[int] = []
         for land_token_id in all_land_ids:
-            if land_token_id in [int(id) for id in sale_data.keys()]:
-                amount_data = sale_data[str(land_token_id)]
-                async with self._connect() as conn:
-                    cursor = await conn.cursor()
-                    await cursor.execute(
-                        """
-                                UPDATE ownedLands
-                                SET owners_address = ?,
-                                for_sale = ?,
-                                for_sale_token = ?,
-                                token_symbol = ?,
-                                for_sale_usd = ?
-                                WHERE token_id = ?;
-                                """,
-                        (
-                            amount_data["owners_address"],
-                            1,
-                            amount_data["for_sale_token"],
-                            amount_data["token_symbol"],
-                            amount_data["for_sale_usd"],
-                            land_token_id,
-                        ),
+            amount_data = sale_data.get(str(land_token_id))
+            if amount_data is not None:
+                sale_rows.append(
+                    (
+                        amount_data["owners_address"],
+                        1,
+                        amount_data["for_sale_token"],
+                        amount_data["token_symbol"],
+                        amount_data["for_sale_usd"],
+                        land_token_id,
                     )
-                    await conn.commit()
+                )
             else:
-                async with self._connect() as conn:
-                    cursor = await conn.cursor()
-                    await cursor.execute(
-                        """
-                                   UPDATE ownedLands
-                                   SET for_sale = 0,
-                                   for_sale_token = NULL,
-                                   token_symbol = NULL,
-                                   for_sale_usd = NULL
-                                   WHERE token_id = ?;
-                                   """,
-                        (land_token_id,),
-                    )
-                    await conn.commit()
+                unsale_ids.append(land_token_id)
+
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("BEGIN TRANSACTION;")
+            if sale_rows:
+                await cursor.executemany(
+                    """
+                    UPDATE ownedLands
+                    SET owners_address = ?,
+                    for_sale = ?,
+                    for_sale_token = ?,
+                    token_symbol = ?,
+                    for_sale_usd = ?
+                    WHERE token_id = ?;
+                    """,
+                    sale_rows,
+                )
+            if unsale_ids:
+                await cursor.executemany(
+                    """
+                    UPDATE ownedLands
+                    SET for_sale = 0,
+                    for_sale_token = NULL,
+                    token_symbol = NULL,
+                    for_sale_usd = NULL
+                    WHERE token_id = ?;
+                    """,
+                    [(tid,) for tid in unsale_ids],
+                )
+            await conn.execute("COMMIT;")
         print("Lands sale data has been updated")
 
 
@@ -1830,6 +1834,7 @@ class RevomonTable:
                 revomon_data = json.load(file)
 
             # Insert data into the database
+            rows_to_insert = []
             for revomon in sorted(
                 revomon_data, key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
             ):
@@ -1895,13 +1900,7 @@ class RevomonTable:
                 ev_spd = revomon.get("evspd", revomon.get("ev_spd", 0))
                 ev_spe = revomon.get("evspe", revomon.get("ev_spe", 0))
 
-                # Execute the insert query
-                await cursor.execute(
-                    """
-                    INSERT OR REPLACE INTO revomon
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                    """,
+                rows_to_insert.append(
                     (
                         dex_id,
                         mon_id,
@@ -1927,8 +1926,17 @@ class RevomonTable:
                         ev_spa,
                         ev_spd,
                         ev_spe,
-                    ),
+                    )
                 )
+
+            await cursor.executemany(
+                """
+                INSERT OR REPLACE INTO revomon
+                (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """,
+                rows_to_insert,
+            )
 
             # Commit the transaction
             await conn.commit()
@@ -2571,6 +2579,12 @@ class TypesTable:
                 type_charts = json.load(file)
 
             # Insert data into the database
+            types_insert_query = """
+                INSERT OR REPLACE INTO types
+                    (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """
+            rows_to_insert = []
             for type_name in sorted(base_types):
                 # Get type effectiveness data from type_charts
                 type_data = type_charts.get(type_name, {})
@@ -2601,16 +2615,9 @@ class TypesTable:
                     type_data.get("metal", 1.0),
                     type_data.get("spirit", 1.0),
                 )
+                rows_to_insert.append(values)
 
-                # Execute the insert query
-                await cursor.execute(
-                    """
-                    INSERT OR REPLACE INTO types
-                        (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                    """,
-                    values,
-                )
+            await cursor.executemany(types_insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -2986,6 +2993,7 @@ class AccountsTable:
 
     async def get_or_create_account(self, user_id: int) -> dict[str, Any]:
         """Get an account by user ID, or create a new one with defaults."""
+        now = time.time()
         async with self._connect() as conn:
             conn.row_factory = aiosqlite.Row
             cursor = await conn.cursor()
@@ -2997,7 +3005,6 @@ class AccountsTable:
             if row:
                 account = dict(row)
                 # Process energy regeneration
-                now = time.time()
                 if account["energy"] < account["max_energy"]:
                     time_passed = now - account["last_energy_update"]
                     regen = int(time_passed / 60)
@@ -3046,11 +3053,25 @@ class AccountsTable:
 
             columns = ", ".join(defaults.keys())
             placeholders = ", ".join(["?"] * len(defaults))
+            # INSERT OR IGNORE: concurrent first-access races are safe; the
+            # winner inserts, losers re-select the row the winner created.
             await cursor.execute(
-                f"INSERT INTO accounts (user_id, {columns}) VALUES (?, {placeholders})",
+                f"INSERT OR IGNORE INTO accounts (user_id, {columns}) VALUES (?, {placeholders})",
                 (user_id, *defaults.values()),
             )
             await conn.commit()
+
+            if cursor.rowcount == 0:
+                # Lost the race: return the account the concurrent caller created
+                await cursor.execute(
+                    "SELECT * FROM accounts WHERE user_id = ?", (user_id,)
+                )
+                row = await cursor.fetchone()
+                if row is not None:
+                    account = dict(row)
+                    account["inventory"] = json.loads(account["inventory"])
+                    account["caught_revomon"] = json.loads(account["caught_revomon"])
+                    return account
 
             # Return the new account with parsed JSON
             defaults["inventory"] = json.loads(defaults["inventory"])
@@ -3063,6 +3084,30 @@ class AccountsTable:
         """Update specific fields of an account."""
         if not kwargs:
             return
+
+        # Validate column names against allowlist before SQL interpolation
+        valid_columns = {
+            "current_city",
+            "current_location",
+            "is_logged_in",
+            "energy",
+            "max_energy",
+            "last_energy_update",
+            "arrival_time",
+            "destination_city",
+            "destination_location",
+            "trainer_level",
+            "trainer_xp",
+            "coins",
+            "rank",
+            "battles_won",
+            "battles_lost",
+            "inventory",
+            "caught_revomon",
+        }
+        for key in kwargs:
+            if key not in valid_columns:
+                raise ValueError(f"Invalid column name: {key}")
 
         # Handle JSON serialization for specific fields
         for key, value in kwargs.items():
@@ -3080,7 +3125,13 @@ class AccountsTable:
         await conn.commit()
 
     async def update_account(self, user_id: int, **kwargs: Any) -> dict[str, Any]:
-        """Update specific fields of an account."""
+        """Update specific fields of an account.
+
+        Energy-regen parity with the legacy JSON store: regen is computed
+        first, then explicit caller kwargs are applied ON TOP, so a
+        caller-provided ``energy`` value always wins and resets
+        ``last_energy_update``.
+        """
         async with self._connect() as conn:
             conn.row_factory = aiosqlite.Row
             cursor = await conn.cursor()
@@ -3093,7 +3144,7 @@ class AccountsTable:
                 # Create account first
                 await self.get_or_create_account(user_id)
 
-            # Process energy regeneration before update
+            # Process energy regeneration before applying caller kwargs
             await cursor.execute(
                 "SELECT energy, max_energy, last_energy_update FROM accounts WHERE user_id = ?",
                 (user_id,),
@@ -3104,11 +3155,14 @@ class AccountsTable:
                 if row["energy"] < row["max_energy"]:
                     time_passed = now - row["last_energy_update"]
                     regen = int(time_passed / 60)
-                    if regen > 0:
+                    if regen > 0 and "energy" not in kwargs:
                         kwargs["energy"] = min(row["max_energy"], row["energy"] + regen)
                         kwargs["last_energy_update"] = now - (time_passed % 60)
+                    elif "energy" in kwargs:
+                        # Explicit energy set wins; regen clock resets
+                        kwargs["last_energy_update"] = now
                 else:
-                    kwargs["last_energy_update"] = now
+                    kwargs.setdefault("last_energy_update", now)
 
             await self._update_account_fields(conn, user_id, **kwargs)
 
@@ -3121,6 +3175,120 @@ class AccountsTable:
             account["inventory"] = json.loads(account["inventory"])
             account["caught_revomon"] = json.loads(account["caught_revomon"])
             return account
+
+    async def count_accounts(self) -> int:
+        """Return the number of accounts in the accounts table."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("SELECT COUNT(*) FROM accounts;")
+            return await _fetch_count(cursor)
+
+    async def spend_coins(self, user_id: int, cost: int) -> bool:
+        """Atomically deduct coins; returns False when balance is insufficient."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
+                """
+                UPDATE accounts SET coins = coins - ?
+                WHERE user_id = ? AND coins >= ?
+                """,
+                (cost, user_id, cost),
+            )
+            committed = cursor.rowcount > 0
+            await conn.commit()
+            return committed
+
+    async def add_inventory_item(
+        self, user_id: int, item_id: str, delta: int = 1
+    ) -> None:
+        """Atomically adjust an inventory count for an item id (string key)."""
+        account = await self.get_or_create_account(user_id)
+        inventory: dict[str, int] = dict(account.get("inventory") or {})
+        inventory[str(item_id)] = inventory.get(str(item_id), 0) + delta
+        if inventory[str(item_id)] <= 0:
+            del inventory[str(item_id)]
+        async with self._connect() as conn:
+            await self._update_account_fields(conn, user_id, inventory=inventory)
+
+    async def seed_from_legacy_json(self, legacy_path: str | Path) -> int:
+        """One-time import of the legacy data/accounts.json store.
+
+        Creates a timestamped backup next to the source file, imports rows
+        transactionally with INSERT OR IGNORE keyed by user_id (idempotent),
+        skips corrupt entries, and returns the number imported.
+        """
+        path = Path(legacy_path)
+        if not path.exists():
+            return 0
+
+        backup_path = path.with_suffix(f".backup.{int(time.time())}.json")
+        shutil.copyfile(path, backup_path)
+        print(f"Backed up legacy accounts to {backup_path}")
+
+        try:
+            with open(path, encoding="utf-8") as f:
+                raw = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
+            print(f"Could not read legacy accounts file {path}: {e}")
+            return 0
+        if not isinstance(raw, dict):
+            print(f"Legacy accounts file {path} has unexpected shape; skipping seed.")
+            return 0
+
+        defaults = {
+            "current_city": "drassius city",
+            "current_location": "revocenter",
+            "is_logged_in": 0,
+            "energy": 100,
+            "max_energy": 100,
+            "arrival_time": 0.0,
+            "destination_city": "",
+            "destination_location": "",
+            "trainer_level": 1,
+            "trainer_xp": 25,
+            "coins": 500,
+            "rank": "Rookie",
+            "battles_won": 0,
+            "battles_lost": 0,
+            "inventory": "{}",
+            "caught_revomon": "[]",
+        }
+        imported = 0
+        skipped = 0
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await conn.execute("BEGIN TRANSACTION;")
+            for user_id_str, entry in raw.items():
+                try:
+                    uid = int(user_id_str)
+                    if not isinstance(entry, dict):
+                        raise ValueError("entry is not a mapping")
+                except (ValueError, TypeError):
+                    skipped += 1
+                    continue
+
+                values: dict[str, Any] = {}
+                for col, default in defaults.items():
+                    val = entry.get(col, default)
+                    if col == "inventory" and isinstance(val, dict):
+                        val = json.dumps(val)
+                    elif col == "caught_revomon" and isinstance(val, list):
+                        val = json.dumps(val)
+                    values[col] = val
+                values.pop("last_energy_update", None)  # recomputed on first load
+
+                columns = ["user_id", *values.keys()]
+                placeholders = ", ".join(["?"] * len(columns))
+                await cursor.execute(
+                    f"INSERT OR IGNORE INTO accounts ({', '.join(columns)}) "
+                    f"VALUES ({placeholders})",
+                    (uid, *values.values()),
+                )
+                imported += 1
+            await conn.commit()
+        if skipped:
+            print(f"Skipped {skipped} corrupt legacy account entries.")
+        return imported
 
 
 class EventBoardLogsTable:
@@ -3284,6 +3452,47 @@ async def set_guild_biome(guild_id: int, biome: str) -> None:
         await conn.commit()
 
 
+async def get_guild_spawn_state(guild_id: int) -> dict[str, Any]:
+    """Fetch spawn config and live spawn count in a single round-trip."""
+    defaults: dict[str, Any] = {
+        "max_spawn_limit": 100,
+        "temp_spawn_limit": 0,
+        "temp_limit_expires": 0,
+        "next_spawn_time": 0,
+        "spawn_multiplier": 1.0,
+        "spawn_multiplier_expires": 0,
+        "current_spawns": 0,
+    }
+    async with aiosqlite.connect(db_path) as conn:
+        conn.row_factory = aiosqlite.Row
+        cursor = await conn.cursor()
+        await cursor.execute(
+            """
+            SELECT g.max_spawn_limit, g.temp_spawn_limit, g.temp_limit_expires,
+                   g.next_spawn_time, g.spawn_multiplier, g.spawn_multiplier_expires,
+                   (SELECT COUNT(*) FROM active_spawns a WHERE a.guild_id = g.guild_id)
+                       AS current_spawns
+            FROM guilds g WHERE g.guild_id = ?
+            """,
+            (guild_id,),
+        )
+        row = await cursor.fetchone()
+        if not row:
+            return defaults
+        d = dict(row)
+        # Handle NULL values from schema updates
+        for key in (
+            "max_spawn_limit",
+            "temp_spawn_limit",
+            "temp_limit_expires",
+            "next_spawn_time",
+            "spawn_multiplier_expires",
+        ):
+            d[key] = d.get(key) or 0
+        d["spawn_multiplier"] = d.get("spawn_multiplier") or 1.0
+        return d
+
+
 async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:
     async with aiosqlite.connect(db_path) as conn:
         conn.row_factory = aiosqlite.Row
@@ -3374,13 +3583,39 @@ class ActiveSpawnsTable:
                 CREATE TABLE IF NOT EXISTS "active_spawns" (
                     "message_id" INTEGER PRIMARY KEY,
                     "guild_id" INTEGER NOT NULL,
-                    "spawn_data" TEXT NOT NULL
+                    "spawn_data" TEXT NOT NULL,
+                    "created_at" REAL NOT NULL DEFAULT 0
                 ) STRICT;
                 """
             )
+            # Migration for tables created before created_at existed
+            try:
+                await cursor.execute(
+                    "ALTER TABLE active_spawns ADD COLUMN created_at REAL NOT NULL DEFAULT 0"
+                )
+            except Exception:
+                pass  # Column already exists
+
+            # Backfill from spawn_data JSON timestamps, then purge unparseable rows
+            try:
+                await cursor.execute(
+                    """
+                    UPDATE active_spawns
+                    SET created_at = CAST(json_extract(spawn_data, '$.timestamp') AS REAL)
+                    WHERE created_at = 0 AND json_valid(spawn_data)
+                    """
+                )
+            except Exception:
+                pass  # json_extract unavailable on very old SQLite builds
+            await cursor.execute("DELETE FROM active_spawns WHERE created_at = 0")
+
             # Add index for guild_id lookups
             await cursor.execute(
                 'CREATE INDEX IF NOT EXISTS "idx_active_spawns_guild_id" ON "active_spawns" ("guild_id");'
+            )
+            # Add index for expiry cleanup
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_active_spawns_created_at" ON "active_spawns" ("created_at");'
             )
             print("active_spawns table created successfully")
             await conn.commit()
@@ -3389,8 +3624,8 @@ class ActiveSpawnsTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute(
-                "INSERT INTO active_spawns (message_id, guild_id, spawn_data) VALUES (?, ?, ?)",
-                (message_id, guild_id, spawn_data),
+                "INSERT INTO active_spawns (message_id, guild_id, spawn_data, created_at) VALUES (?, ?, ?, ?)",
+                (message_id, guild_id, spawn_data, time.time()),
             )
             await conn.commit()
 
@@ -3535,7 +3770,7 @@ async def cleanup_expired_spawns(max_age_seconds: int = 300) -> int:
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
         await cursor.execute(
-            "DELETE FROM active_spawns WHERE timestamp < ?",
+            "DELETE FROM active_spawns WHERE created_at < ?",
             (cutoff,),
         )
         await conn.commit()

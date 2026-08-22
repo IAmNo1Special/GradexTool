@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class allabilities(commands.Cog):  # noqa: N801
@@ -55,7 +58,7 @@ class allabilities(commands.Cog):  # noqa: N801
                 buttons = self.allabilities_buttons()
                 await respond(self.gradex, message, embed=embed, buttons=buttons)
         except Exception as e:
-            print(f"An error occurred during on_message: {e}")
+            logger.error(f"An error occurred during on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

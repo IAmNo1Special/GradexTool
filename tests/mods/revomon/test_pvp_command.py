@@ -28,19 +28,24 @@ async def test_setup(mock_bot: Any) -> None:
 
 
 class TestPvpLeaderboard2:
-    def test_get_current_pvp_data_empty(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.pvp_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_current_pvp_data_empty(
+        self, mock_fetch: Any, mock_bot: Any
+    ) -> None:
         cog = PvpLeaderboard2(mock_bot)
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"data": {"pvpTopFifteen": []}}
-        with patch("requests.get", return_value=mock_response):
-            cog.get_current_pvp_data()
-            assert cog.rankings is None
+        mock_fetch.return_value = {"data": {"pvpTopFifteen": []}}
+        await cog.get_current_pvp_data()
+        assert cog.rankings is None
 
-    def test_get_current_pvp_data_success(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.pvp_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_current_pvp_data_success(
+        self, mock_fetch: Any, mock_bot: Any
+    ) -> None:
         cog = PvpLeaderboard2(mock_bot)
-        mock_response = MagicMock()
         # Mock 1 valid entry, then 1 empty dict to trigger break
-        mock_response.json.return_value = {
+        mock_fetch.return_value = {
             "data": {
                 "pvpTopFifteen": [
                     {
@@ -56,12 +61,11 @@ class TestPvpLeaderboard2:
                 ]
             }
         }
-        with patch("requests.get", return_value=mock_response):
-            cog.get_current_pvp_data()
-            assert cog.rankings is not None
-            assert len(cog.rankings) == 1
-            assert cog.rankings[0]["Name"] == "u1"
-            assert cog.rankings[0]["Winning"] == "66.67%"
+        await cog.get_current_pvp_data()
+        assert cog.rankings is not None
+        assert len(cog.rankings) == 1
+        assert cog.rankings[0]["Name"] == "u1"
+        assert cog.rankings[0]["Winning"] == "66.67%"
 
     @patch("mods.revomon.pvp_command.ImageFont.truetype")
     @patch("mods.revomon.pvp_command.Image.new")
@@ -190,11 +194,13 @@ class TestPvpLeaderboard2:
     ) -> None:
         cog = PvpLeaderboard2(mock_bot)
         mock_bytes = MagicMock()
-        cog.pvp_img = {"image_bytes": mock_bytes}
+
+        def populate_image(*args: Any, **kwargs: Any) -> None:
+            cog.pvp_img["image_bytes"] = mock_bytes
 
         with (
             patch.object(cog, "get_current_pvp_data"),
-            patch.object(cog, "update_pvp_image"),
+            patch.object(cog, "update_pvp_image", side_effect=populate_image),
             patch.object(cog, "current_pvp_embed", return_value=MagicMock()),
             patch("mods.revomon.pvp_command.File"),
         ):
@@ -210,8 +216,6 @@ class TestPvpLeaderboard2:
         self, mock_bot: Any, mock_interaction: Any
     ) -> None:
         cog = PvpLeaderboard2(mock_bot)
-        mock_bytes = MagicMock()
-        cog.pvp_img = {"image_bytes": mock_bytes}
 
         with (
             patch.object(
@@ -223,7 +227,8 @@ class TestPvpLeaderboard2:
             patch.object(
                 cog, "current_pvp_embed", side_effect=Exception("Embed Error")
             ),
-            patch("mods.revomon.pvp_command.File"),
         ):
-            with pytest.raises(UnboundLocalError):
-                await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
+            await cog.pvp.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]
+            mock_interaction.followup.send.assert_called_once()
+            message = mock_interaction.followup.send.call_args
+            assert "unavailable" in str(message)

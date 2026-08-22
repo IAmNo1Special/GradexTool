@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 import random
 from io import BytesIO
 from typing import Any
@@ -11,6 +12,8 @@ from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class Podium(commands.Cog):
@@ -250,7 +253,7 @@ class Podium(commands.Cog):
                 )
                 await asyncio.sleep(random.randint(600, 900))
         except Exception as e:
-            print(f"Podium Tracker Error: {e}")
+            logger.error(f"Podium Tracker Error: {e}")
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
@@ -275,7 +278,7 @@ class Podium(commands.Cog):
                 embed = self.weekly_podium_embed()
                 await respond(self.gradex, message=message, embed=embed, buttons=None)
         except Exception as e:
-            print(f"An error occurred during Podium Keyword on_message: {e}")
+            logger.error(f"An error occurred during Podium Keyword on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

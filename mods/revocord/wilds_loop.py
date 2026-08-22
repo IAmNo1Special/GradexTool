@@ -12,7 +12,7 @@ from mods.revocord.hunting import BIOME_TYPES
 from scripts.gradexDB import (
     active_spawns_table,
     get_guild_biome,
-    get_guild_spawn_config,
+    get_guild_spawn_state,
 )
 
 logger = logging.getLogger("discord_bot")
@@ -136,33 +136,32 @@ class WildsLoopCog(commands.Cog):
         current_time = int(time.time())
         for guild in self.bot.guilds:
             try:
-                config = await get_guild_spawn_config(guild.id)
-                if not config:
-                    continue
-                eff_limit = config["max_spawn_limit"]
-                if config["temp_limit_expires"] > current_time:
-                    eff_limit += config["temp_spawn_limit"]
+                state = await get_guild_spawn_state(guild.id)
+                eff_limit = state["max_spawn_limit"]
+                if state["temp_limit_expires"] > current_time:
+                    eff_limit += state["temp_spawn_limit"]
 
-                current_spawns = await active_spawns_table.count_guild_spawns(guild.id)
-                if current_spawns >= eff_limit:
+                if state["current_spawns"] >= eff_limit:
                     continue
 
-                if current_time >= config["next_spawn_time"]:
-                    await self._do_spawn(guild)
+                if current_time < state["next_spawn_time"]:
+                    continue
 
-                    mult = (
-                        config["spawn_multiplier"]
-                        if config["spawn_multiplier_expires"] > current_time
-                        else 1.0
-                    )
-                    delay = random.randint(60, 300)
-                    delay = max(10, int(delay / mult))
+                await self._do_spawn(guild)
 
-                    from scripts.gradexDB import update_guild_spawn_config
+                mult = (
+                    state["spawn_multiplier"]
+                    if state["spawn_multiplier_expires"] > current_time
+                    else 1.0
+                )
+                delay = random.randint(60, 300)
+                delay = max(10, int(delay / mult))
 
-                    await update_guild_spawn_config(
-                        guild.id, next_spawn_time=current_time + delay
-                    )
+                from scripts.gradexDB import update_guild_spawn_config
+
+                await update_guild_spawn_config(
+                    guild.id, next_spawn_time=current_time + delay
+                )
             except Exception as e:
                 logger.error(f"Error in wilds_spawn_loop for guild {guild.id}: {e}")
 

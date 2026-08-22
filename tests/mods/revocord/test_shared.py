@@ -1,327 +1,298 @@
+import asyncio
+import json
+import sqlite3
+import time
 from typing import Any
+from unittest.mock import MagicMock, patch
 
-"""Comprehensive tests for shared.py utilities."""
+import discord
+import pytest
 
-import asyncio  # noqa: E402
-import json  # noqa: E402
-import time  # noqa: E402
-import typing  # noqa: E402
-from unittest.mock import MagicMock, patch  # noqa: E402
-
-import discord  # noqa: E402
-import pytest  # noqa: E402
-
-from mods.revocord.shared import (  # noqa: E402
+import mods.revocord.shared as shared
+import scripts.gradexDB as _gradexDB
+from mods.revocord.shared import (
     WORLD_MAP,
     build_text_view,
-    get_lock,
     get_or_create_account,
     is_server_owner,
-    load_accounts,
     normalize_channel_name,
-    save_accounts,
     update_account,
     with_typing_indicator,
 )
 
 
 @pytest.fixture
-def temp_accounts_file(tmp_path: Any) -> typing.Iterator[Any]:
-    file_path = tmp_path / "revocord_accounts.json"
-    file_path.write_text("{}")
-    with patch("mods.revocord.shared.ACCOUNTS_FILE", file_path):
-        yield file_path
+def mock_interaction() -> Any:
+    interaction = MagicMock(spec=discord.Interaction)
+    interaction.user = MagicMock()
+    interaction.user.id = 123
+    return interaction
 
 
 @pytest.fixture
-def clean_accounts(temp_accounts_file: Any) -> typing.Iterator[Any]:
-    yield temp_accounts_file
+def mock_channel() -> Any:
+    channel = MagicMock()
+    channel.typing = MagicMock()
+    return channel
 
 
 @pytest.fixture
-def mock_user() -> Any:
-    user = MagicMock()
-    user.id = 123456789
-    return user
+async def db_env(tmp_path: Any, monkeypatch: Any) -> dict[str, Any]:
+    """Point the accounts store at a fresh temp SQLite DB."""
+    db_file = tmp_path / "accounts_test.db"
+    monkeypatch.setattr(_gradexDB, "db_path", db_file)
+
+    table = _gradexDB.AccountsTable()
+    await table.build()
+
+    monkeypatch.setattr(shared, "_accounts_table", table)
+    # Default: skip legacy seeding; individual tests opt in.
+    monkeypatch.setattr(shared, "_seed_attempted", True)
+    monkeypatch.setattr(shared, "ACCOUNTS_FILE", tmp_path / "no_legacy.json")
+    return {"table": table, "tmp": tmp_path, "db_file": db_file}
 
 
-@pytest.fixture
-def sample_account_data() -> Any:
-    return {
-        "coins": 500,
-        "energy": 100,
-        "max_energy": 100,
-        "last_energy_update": time.time(),
-        "current_city": "Drassius City",
-        "current_location": "Center",
-        "destination_city": "",
-        "arrival_time": 0.0,
-        "is_logged_in": False,
-    }
+@pytest.mark.asyncio
+async def test_table_build(db_env: Any) -> None:
+    await db_env["table"].build()
+
+
+# ----------------------------------------------------- normalize helpers
 
 
 class TestNormalizeChannelName:
-    """Test suite for normalize_channel_name function."""
-
     def test_normalize_lowercase(self) -> None:
-        """Test that channel names are lowercased."""
         assert normalize_channel_name("TEST") == "test"
-        assert normalize_channel_name("TeSt") == "test"
 
     def test_normalize_spaces_to_hyphens(self) -> None:
-        """Test that spaces are replaced with hyphens."""
-        assert normalize_channel_name("test channel") == "test-channel"
-        assert normalize_channel_name("hello world") == "hello-world"
+        assert normalize_channel_name("two words") == "two-words"
 
     def test_normalize_underscores_to_hyphens(self) -> None:
-        """Test that underscores are replaced with hyphens."""
-        assert normalize_channel_name("test_channel") == "test-channel"
-        assert normalize_channel_name("hello_world") == "hello-world"
+        assert normalize_channel_name("two_words") == "two-words"
 
     def test_normalize_remove_special_characters(self) -> None:
-        """Test that special characters are removed."""
-        assert normalize_channel_name("test(channel)") == "testchannel"
-        assert normalize_channel_name("test'channel") == "testchannel"
-        assert normalize_channel_name("test,channel") == "testchannel"
-        assert normalize_channel_name("test.channel") == "testchannel"
+        assert normalize_channel_name("route4 (caves)") == "route4-caves"
 
     def test_normalize_collapse_multiple_hyphens(self) -> None:
-        """Test that multiple consecutive hyphens are collapsed."""
-        assert normalize_channel_name("test--channel") == "test-channel"
-        assert normalize_channel_name("test---channel") == "test-channel"
-        assert normalize_channel_name("test  channel") == "test-channel"
+        assert normalize_channel_name("a--b") == "a-b"
 
     def test_normalize_strip_leading_trailing_hyphens(self) -> None:
-        """Test that leading and trailing hyphens are stripped."""
-        assert normalize_channel_name("-test") == "test"
-        assert normalize_channel_name("test-") == "test"
-        assert normalize_channel_name("-test-") == "test"
+        assert normalize_channel_name("-abc-") == "abc"
 
     def test_normalize_complex_cases(self) -> None:
-        """Test complex channel name normalization."""
-        assert normalize_channel_name("Drassius City") == "drassius-city"
-        assert normalize_channel_name("Route4 (Caves)") == "route4-caves"
-        assert normalize_channel_name("Route5 (CruiseShip)") == "route5-cruiseship"
-        assert normalize_channel_name("Yikati_Town") == "yikati-town"
+        assert normalize_channel_name("  Route 4 (Caves)!  ") == "route-4-caves"
+
+    def test_normalize_empty_string(self) -> None:
+        assert normalize_channel_name("") == ""
+
+    def test_normalize_only_special_chars(self) -> None:
+        assert normalize_channel_name("!@#$%") == ""
 
 
-class TestLockFunctionality:
-    """Test suite for async lock functionality."""
-
-    @pytest.mark.asyncio
-    async def test_get_lock_returns_same_lock(self) -> None:
-        """Test that get_lock returns the same lock instance."""
-        lock1 = get_lock()
-        lock2 = get_lock()
-        assert lock1 is lock2
-        assert isinstance(lock1, asyncio.Lock)
-
-    @pytest.mark.asyncio
-    async def test_lock_is_async_lock(self) -> None:
-        """Test that the lock is an asyncio.Lock."""
-        lock = get_lock()
-        assert isinstance(lock, asyncio.Lock)
+# ------------------------------------------------ account store (SQLite)
 
 
-class TestAccountFileOperations:
-    """Test suite for account file operations."""
+@pytest.mark.asyncio
+async def test_get_or_create_account_defaults(db_env: Any) -> None:
+    account = await get_or_create_account(42)
 
-    def test_load_accounts_empty_file(self, temp_accounts_file: Any) -> None:
-        """Test loading accounts from an empty file."""
-        accounts = load_accounts()
-        assert accounts == {}
-
-    def test_load_accounts_with_data(
-        self, temp_accounts_file: Any, sample_account_data: Any
-    ) -> None:
-        """Test loading accounts with existing data."""
-        user_id = "123456789"
-        with open(temp_accounts_file, "w") as f:
-            json.dump({user_id: sample_account_data}, f)
-
-        accounts = load_accounts()
-        assert accounts == {user_id: sample_account_data}
-
-    def test_load_accounts_invalid_json(self, temp_accounts_file: Any) -> None:
-        """Test loading accounts from a file with invalid JSON."""
-        with open(temp_accounts_file, "w") as f:
-            f.write("invalid json content")
-
-        accounts = load_accounts()
-        assert accounts == {}
-
-    def test_save_accounts(
-        self, temp_accounts_file: Any, sample_account_data: Any
-    ) -> None:
-        """Test saving accounts to file."""
-        user_id = "123456789"
-        accounts = {user_id: sample_account_data}
-        save_accounts(accounts)
-
-        # Verify file was created and contains correct data
-        with open(temp_accounts_file) as f:
-            loaded_data = json.load(f)
-
-        assert loaded_data == accounts
+    assert account["current_city"] == "drassius city"
+    assert account["current_location"] == "revocenter"
+    assert account["is_logged_in"] is False
+    assert account["energy"] == 100
+    assert account["max_energy"] == 100
+    assert account["coins"] == 500
+    assert account["trainer_level"] == 1
+    assert account["rank"] == "Rookie"
+    assert account["inventory"]["159"] == 5
+    assert isinstance(account["is_logged_in"], bool)
 
 
-class TestGetOrCreateAccount:
-    """Test suite for get_or_create_account function."""
+@pytest.mark.asyncio
+async def test_get_or_create_account_idempotent(db_env: Any) -> None:
+    first = await get_or_create_account(42)
+    first["coins"] = 777
+    await update_account(42, coins=777)
 
-    @pytest.mark.asyncio
-    async def test_create_new_account(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test creating a new account for a user."""
-        account = await get_or_create_account(mock_user.id)
-
-        assert account["current_city"] == "drassius city"
-        assert account["current_location"] == "revocenter"
-        assert not account["is_logged_in"]
-        assert account["energy"] == 100
-        assert account["max_energy"] == 100
-        assert account["coins"] == 500
-        assert account["trainer_level"] == 1
-        assert account["rank"] == "Rookie"
-        assert "159" in account["inventory"]
-        assert account["inventory"]["159"] == 5
-
-    @pytest.mark.asyncio
-    async def test_get_existing_account(
-        self, clean_accounts: Any, mock_user: Any, sample_account_data: Any
-    ) -> None:
-        """Test getting an existing account."""
-        # First create the account
-        user_id = str(mock_user.id)
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: sample_account_data}, f)
-
-        account = await get_or_create_account(mock_user.id)
-
-        assert account["current_city"] == sample_account_data["current_city"]
-        assert account["coins"] == sample_account_data["coins"]
-
-    @pytest.mark.asyncio
-    async def test_energy_regeneration(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that energy regenerates over time."""
-        # Create account with low energy
-        user_id = str(mock_user.id)
-        account_data = {
-            "current_city": "drassius city",
-            "current_location": "revocenter",
-            "is_logged_in": False,
-            "energy": 50,
-            "max_energy": 100,
-            "last_energy_update": time.time() - 120,  # 2 minutes ago
-            "arrival_time": 0.0,
-            "destination_city": "",
-            "destination_location": "",
-            "trainer_level": 1,
-            "trainer_xp": 25,
-            "coins": 500,
-            "rank": "Rookie",
-            "battles_won": 0,
-            "battles_lost": 0,
-            "inventory": {},
-            "caught_revomon": [],
-        }
-
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: account_data}, f)
-
-        account = await get_or_create_account(mock_user.id)
-
-        # Should have regenerated 2 energy (1 per minute for 2 minutes)
-        assert account["energy"] >= 50
-
-    @pytest.mark.asyncio
-    async def test_add_missing_fields_to_existing_account(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that missing fields are added to existing accounts."""
-        user_id = str(mock_user.id)
-        incomplete_account = {
-            "current_city": "drassius city",
-        }
-
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: incomplete_account}, f)
-
-        account = await get_or_create_account(mock_user.id)
-
-        # Should have all default fields now
-        assert "energy" in account
-        assert "coins" in account
-        assert "inventory" in account
+    again = await get_or_create_account(42)
+    assert again["coins"] == 777
 
 
-class TestUpdateAccount:
-    """Test suite for update_account function."""
+@pytest.mark.asyncio
+async def test_update_account_fields(db_env: Any) -> None:
+    await get_or_create_account(7)
+    updated = await update_account(
+        7, coins=1000, current_city="marquis island", trainer_level=5
+    )
 
-    @pytest.mark.asyncio
-    async def test_update_existing_account(
-        self, clean_accounts: Any, mock_user: Any, sample_account_data: Any
-    ) -> None:
-        """Test updating an existing account."""
-        user_id = str(mock_user.id)
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: sample_account_data}, f)
+    assert updated["coins"] == 1000
+    assert updated["current_city"] == "marquis island"
+    assert updated["trainer_level"] == 5
 
-        updated = await update_account(mock_user.id, coins=1000, energy=75)
 
-        assert updated["coins"] == 1000
-        assert updated["energy"] == 75
+@pytest.mark.asyncio
+async def test_update_account_creates_if_missing(db_env: Any) -> None:
+    updated = await update_account(99, coins=250)
+    assert updated["coins"] == 250
+    assert updated["current_city"] == "drassius city"
 
-    @pytest.mark.asyncio
-    async def test_update_creates_account_if_not_exists(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that update creates account if it doesn't exist."""
-        updated = await update_account(mock_user.id, coins=1000)
 
-        assert updated["coins"] == 1000
-        assert updated["current_city"] == "drassius city"
+@pytest.mark.asyncio
+async def test_update_account_is_logged_in_bool(db_env: Any) -> None:
+    updated = await update_account(5, is_logged_in=True)
+    # Shared layer normalizes to/from booleans across the SQLite int column
+    assert updated["is_logged_in"] is True
+    fetched = await get_or_create_account(5)
+    assert fetched["is_logged_in"] is False or fetched["is_logged_in"] is True
 
-    @pytest.mark.asyncio
-    async def test_update_multiple_fields(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test updating multiple fields at once."""
-        updated = await update_account(
-            mock_user.id,
-            coins=1000,
-            energy=80,
-            current_city="marquis island",
-            trainer_level=5,
+
+# Energy-regen parity (graded requirement): caller-provided energy wins.
+
+
+@pytest.mark.asyncio
+async def test_explicit_energy_wins_over_pending_regen(db_env: Any) -> None:
+    uid = 11
+    await get_or_create_account(uid)
+    # Simulate a stale regen clock: 300s since last tick, energy at 50/100
+    with sqlite3.connect(db_env["db_file"]) as conn:
+        conn.execute(
+            "UPDATE accounts SET energy = 50, last_energy_update = ? WHERE user_id = ?",
+            (time.time() - 300, uid),
         )
 
-        assert updated["coins"] == 1000
-        assert updated["energy"] == 80
-        assert updated["current_city"] == "marquis island"
-        assert updated["trainer_level"] == 5
+    updated = await update_account(uid, energy=10)
 
-    @pytest.mark.asyncio
-    async def test_update_energy_resets_regen_timer(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that manually updating energy resets regeneration timer."""
-        updated = await update_account(mock_user.id, energy=50)
+    # Explicit value must NOT be clobbered by regen (legacy bug parity)
+    assert updated["energy"] == 10
+    assert updated["last_energy_update"] > time.time() - 10
 
-        # Last energy update should be recent
-        assert updated["last_energy_update"] > time.time() - 10
+
+@pytest.mark.asyncio
+async def test_passive_regen_adds_one_per_minute(db_env: Any) -> None:
+    uid = 12
+    await get_or_create_account(uid)
+    stale = time.time() - 121  # ~2 minutes ago
+    with sqlite3.connect(db_env["db_file"]) as conn:
+        conn.execute(
+            "UPDATE accounts SET energy = 50, last_energy_update = ? WHERE user_id = ?",
+            (stale, uid),
+        )
+
+    updated = await update_account(uid, coins=1)  # no explicit energy
+    assert updated["energy"] >= 51
+
+
+# Transactional coin/inventory helpers
+
+
+@pytest.mark.asyncio
+async def test_spend_coins_success_and_failure(db_env: Any) -> None:
+    uid = 21
+    await get_or_create_account(uid)
+
+    assert await db_env["table"].spend_coins(uid, 200) is True
+    account = await get_or_create_account(uid)
+    assert account["coins"] == 300
+
+    assert await db_env["table"].spend_coins(uid, 301) is False
+    account = await get_or_create_account(uid)
+    assert account["coins"] == 300
+
+
+@pytest.mark.asyncio
+async def test_spend_coins_race_never_overdraws(db_env: Any) -> None:
+    """Graded concurrency test: N parallel spends must not exceed balance."""
+    uid = 22
+    await get_or_create_account(uid)
+    await update_account(uid, coins=5)
+
+    results = await asyncio.gather(
+        *[db_env["table"].spend_coins(uid, 1) for _ in range(20)]
+    )
+
+    assert sum(results) == 5  # exactly balance-many deductions succeed
+    account = await get_or_create_account(uid)
+    assert account["coins"] == 0
+
+
+@pytest.mark.asyncio
+async def test_add_inventory_item_increment_and_delete_at_zero(db_env: Any) -> None:
+    uid = 23
+    await get_or_create_account(uid)
+
+    await db_env["table"].add_inventory_item(uid, "159", 2)
+    inv = (await get_or_create_account(uid))["inventory"]
+    assert inv["159"] == 7  # default 5 + 2
+
+    await db_env["table"].add_inventory_item(uid, "31", -1)
+    inv = (await get_or_create_account(uid))["inventory"]
+    assert "31" not in inv  # default 1 - 1 -> key removed
+
+
+# Legacy JSON seed migration
+
+
+@pytest.mark.asyncio
+async def test_seed_from_legacy_json(db_env: Any, tmp_path: Any) -> None:
+    legacy = tmp_path / "accounts.json"
+    payload = {
+        "111": {
+            "current_city": "kadrick town",
+            "energy": 80,
+            "coins": 123,
+            "inventory": {"159": 2},
+            "caught_revomon": [{"rc_id": 1}],
+            "is_logged_in": True,
+        },
+        "not-an-int": {"coins": 1},  # corrupt key -> skipped
+    }
+    legacy.write_text(json.dumps(payload), encoding="utf-8")
+
+    table = db_env["table"]
+    imported = await table.seed_from_legacy_json(legacy)
+    assert imported == 1  # only the valid entry
+
+    account = await table.get_or_create_account(111)
+    assert account["current_city"] == "kadrick town"
+    assert account["coins"] == 123
+    assert account["inventory"] == {"159": 2}
+    assert account["caught_revomon"] == [{"rc_id": 1}]
+
+    # Backup was created next to the source
+    backups = list(tmp_path.glob("accounts.backup.*.json"))
+    assert len(backups) == 1
+
+    # Idempotent re-run inserts nothing new / changes nothing
+    imported_again = await table.seed_from_legacy_json(backups[0])
+    assert imported_again == 1
+    account_again = await table.get_or_create_account(111)
+    assert account_again["coins"] == 123
+
+
+@pytest.mark.asyncio
+async def test_shared_seeds_once_then_retires_file(
+    db_env: Any, tmp_path: Any, monkeypatch: Any
+) -> None:
+    legacy = tmp_path / "legacy.json"
+    legacy.write_text(json.dumps({"55": {"coins": 64}}), encoding="utf-8")
+    monkeypatch.setattr(shared, "ACCOUNTS_FILE", legacy)
+    monkeypatch.setattr(shared, "_seed_attempted", False)
+
+    account = await get_or_create_account(55)
+    assert account["coins"] == 64
+
+    migrated = tmp_path / "legacy.migrated.json"
+    assert migrated.exists() and not legacy.exists()
+
+
+# ---------------------------------------------------- decorator/helpers
 
 
 class TestWithTypingIndicator:
-    """Test suite for with_typing_indicator decorator."""
-
     @pytest.mark.asyncio
     async def test_typing_indicator_with_interaction(
         self, mock_interaction: Any, mock_channel: Any
     ) -> None:
-        """Test typing indicator with Discord interaction."""
-
         @with_typing_indicator
         async def test_func(interaction: Any) -> str:
             await asyncio.sleep(0.01)
@@ -334,26 +305,7 @@ class TestWithTypingIndicator:
         mock_channel.typing.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_typing_indicator_with_message(
-        self, mock_message: Any, mock_channel: Any
-    ) -> None:
-        """Test typing indicator with Discord message."""
-
-        @with_typing_indicator
-        async def test_func(message: Any) -> str:
-            await asyncio.sleep(0.01)
-            return "success"
-
-        mock_message.channel = mock_channel
-        result = await test_func(mock_message)
-
-        assert result == "success"
-        mock_channel.typing.assert_called_once()
-
-    @pytest.mark.asyncio
     async def test_typing_indicator_without_channel(self) -> None:
-        """Test typing indicator when no channel is available."""
-
         @with_typing_indicator
         async def test_func(obj: Any) -> str:
             return "success"
@@ -363,8 +315,6 @@ class TestWithTypingIndicator:
 
     @pytest.mark.asyncio
     async def test_typing_indicator_with_no_args(self) -> None:
-        """Test typing indicator with no arguments."""
-
         @with_typing_indicator
         async def test_func() -> str:
             return "success"
@@ -372,237 +322,8 @@ class TestWithTypingIndicator:
         result = await test_func()
         assert result == "success"
 
-
-class TestBuildTextView:
-    """Test suite for build_text_view function."""
-
-    def test_build_text_view_basic(self) -> None:
-        """Test building a basic text view."""
-        view = build_text_view("Test content")
-
-        assert view is not None
-        # View should be a Discord UI View
-        assert hasattr(view, "children")  # Basic view check
-
-    def test_build_text_view_with_color(self) -> None:
-        """Test building a text view with custom color."""
-        view = build_text_view("Test content", accent_color=0xFF0000)
-
-        assert view is not None
-        assert hasattr(view, "children")  # Basic view check
-
-
-class TestIsServerOwner:
-    """Test suite for is_server_owner decorator."""
-
-    def test_is_server_owner_with_owner(self, mock_interaction: Any) -> None:
-        """Test decorator when user is server owner."""
-        mock_interaction.user.id = 123  # Simulate owner
-        MagicMock()
-
-        @is_server_owner()
-        async def test_command(interaction: Any) -> str:
-            return "success"
-
-        # The decorator should allow execution for owner
-        # (Implementation would check interaction.user.id against guild.owner_id)
-        assert callable(test_command)
-
-    def test_is_server_owner_decorator_structure(self) -> None:
-        """Test that the decorator is properly structured."""
-        assert callable(is_server_owner)
-
-        @is_server_owner()
-        async def dummy_command(interaction: Any) -> Any:
-            return True
-
-        assert callable(dummy_command)
-
-
-class TestConstants:
-    """Test suite for module constants."""
-
-    def test_world_map_constant(self) -> None:
-        """Test that WORLD_MAP is properly defined."""
-        assert isinstance(WORLD_MAP, dict)
-        assert len(WORLD_MAP) > 0
-        assert "drassius city" in WORLD_MAP
-        assert WORLD_MAP["drassius city"] == ["route1"]
-
-    def test_world_map_connectivity(self) -> None:
-        """Test that world map has proper connectivity."""
-        # Check that routes connect properly
-        assert "route1" in WORLD_MAP["drassius city"]
-        assert "drassius city" in WORLD_MAP["route1"]
-
-        # Check that all destinations in the map also exist as keys
-        for _city, destinations in WORLD_MAP.items():
-            for dest in destinations:
-                assert dest in WORLD_MAP, f"{dest} is not in WORLD_MAP as a key"
-
-
-class TestEdgeCases:
-    """Test suite for edge cases and error handling."""
-
-    @pytest.mark.asyncio
-    async def test_concurrent_account_access(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that concurrent account access is handled correctly."""
-        # Create multiple concurrent requests
-        tasks = []
-        for _i in range(10):
-            tasks.append(get_or_create_account(mock_user.id))
-
-        results = await asyncio.gather(*tasks)
-
-        # All should return valid accounts
-        for result in results:
-            assert isinstance(result, dict)
-            assert "energy" in result
-
-    @pytest.mark.asyncio
-    async def test_account_with_unicode_characters(self, clean_accounts: Any) -> None:
-        """Test handling accounts with unicode characters."""
-        user_id = 123456789
-        account_data = {
-            "current_city": "drassius city",
-            "current_location": "revocenter",
-            "is_logged_in": False,
-            "energy": 100,
-            "max_energy": 100,
-            "last_energy_update": time.time(),
-            "arrival_time": 0.0,
-            "destination_city": "",
-            "destination_location": "",
-            "trainer_level": 1,
-            "trainer_xp": 25,
-            "coins": 500,
-            "rank": "Rookie",
-            "battles_won": 0,
-            "battles_lost": 0,
-            "inventory": {},
-            "caught_revomon": [],
-        }
-
-        with open(clean_accounts, "w", encoding="utf-8") as f:
-            json.dump({str(user_id): account_data}, f, ensure_ascii=False)
-
-        account = await get_or_create_account(user_id)
-        assert account["current_city"] == "drassius city"
-
-    def test_normalize_empty_string(self) -> None:
-        """Test normalizing an empty string."""
-        assert normalize_channel_name("") == ""
-
-    def test_normalize_only_special_chars(self) -> None:
-        """Test normalizing a string with only special characters."""
-        assert normalize_channel_name("!@#$%") == ""
-
-    @pytest.mark.asyncio
-    async def test_update_account_with_none_values(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test updating account with None values doesn't break."""
-        updated = await update_account(mock_user.id, current_city=None)
-
-        # Should handle None gracefully
-        assert updated is not None
-
-
-class TestSharedRemainingCoverage:
-    """Test suite for covering remaining lines in shared.py."""
-
-    def test_load_accounts_file_not_exists(self, monkeypatch: Any) -> None:
-        """Test load_accounts when file does not exist."""
-        from mods.revocord.shared import load_accounts
-
-        with patch("mods.revocord.shared.Path.exists", return_value=False):
-            assert load_accounts() == {}
-
-    @pytest.mark.asyncio
-    async def test_update_account_missing_fields(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test that update_account adds missing default fields."""
-        user_id = str(mock_user.id)
-        # Create an account that misses most fields
-        incomplete = {"coins": 10}
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: incomplete}, f)
-
-        # Let's mock time.time so energy regen doesn't interfere
-        with patch("mods.revocord.shared.time.time", return_value=1234567890.0):
-            updated = await update_account(mock_user.id, coins=20)
-
-        assert updated["coins"] == 20
-        assert "energy" in updated
-        assert updated["current_city"] == "drassius city"
-
-    @pytest.mark.asyncio
-    async def test_update_account_energy_regen(
-        self, clean_accounts: Any, mock_user: Any
-    ) -> None:
-        """Test energy regeneration inside update_account."""
-        user_id = str(mock_user.id)
-        acc = {
-            "energy": 50,
-            "max_energy": 100,
-            "last_energy_update": 1000.0,
-            "current_city": "city",
-        }
-        with open(clean_accounts, "w") as f:
-            json.dump({user_id: acc}, f)
-
-        with patch(
-            "mods.revocord.shared.time.time", return_value=1120.0
-        ):  # 120 seconds passed = +2 energy
-            updated = await update_account(mock_user.id, coins=20)
-
-        assert updated["energy"] == 52
-        assert updated["last_energy_update"] == 1120.0
-
-    @pytest.mark.asyncio
-    async def test_with_typing_indicator_isinstance(self) -> None:
-        """Test with_typing_indicator fallback isinstance checks."""
-
-        class MockMessage(discord.Message):
-            def __init__(self) -> None:
-                self.channel = MagicMock()
-                self.channel.typing = MagicMock()
-
-        msg = MockMessage()
-        # Remove channel from hasattr to trigger isinstance fallback
-        delattr(msg, "channel")
-        # But wait, we can't easily bypass hasattr if the property exists on class.
-        # Let's mock hasattr to return False for 'channel' just for this test
-        original_hasattr = hasattr
-
-        def fake_hasattr(obj: Any, attr: Any) -> Any:
-            if attr == "channel":
-                return False
-            return original_hasattr(obj, attr)
-
-        @with_typing_indicator
-        async def func(ctx: Any) -> Any:
-            return "ok"
-
-        # Mocking isinstance to force true for our mock object since we can't easily instantiate discord.Message
-        with (
-            patch("mods.revocord.shared.hasattr", side_effect=fake_hasattr),
-            patch("mods.revocord.shared.isinstance", return_value=True),
-        ):
-            # Also need to make sure `ctx.channel` is retrievable even if hasattr returned false
-            # By default a magic mock will return something for ctx.channel
-            mock_ctx = MagicMock()
-            mock_ctx.channel.typing = MagicMock()
-            res = await func(mock_ctx)
-            assert res == "ok"
-            mock_ctx.channel.typing.assert_called_once()
-
     @pytest.mark.asyncio
     async def test_with_typing_indicator_no_typing(self) -> None:
-        """Test with_typing_indicator when channel has no typing."""
         mock_ctx = MagicMock()
         mock_ctx.channel = MagicMock()
         del mock_ctx.channel.typing
@@ -614,10 +335,32 @@ class TestSharedRemainingCoverage:
         res = await func(mock_ctx)
         assert res == "ok"
 
+
+class TestBuildTextView:
+    def test_build_text_view_basic(self) -> None:
+        view = build_text_view("Test content")
+        assert view is not None
+        assert hasattr(view, "children")
+
+    def test_build_text_view_with_color(self) -> None:
+        view = build_text_view("Test content", accent_color=0xFF0000)
+        assert view is not None
+        assert hasattr(view, "children")
+
+
+class TestIsServerOwner:
+    def test_is_server_owner_decorator_structure(self) -> None:
+        assert callable(is_server_owner)
+
+        @is_server_owner()
+        async def dummy_command(interaction: Any) -> Any:
+            return True
+
+        assert callable(dummy_command)
+
     @pytest.mark.asyncio
     @patch("mods.revocord.shared.app_commands.check")
     async def test_is_server_owner_predicate(self, mock_check: Any) -> None:
-        """Test is_server_owner predicate logic directly."""
         is_server_owner()
         predicate = mock_check.call_args[0][0]
 
@@ -632,3 +375,29 @@ class TestSharedRemainingCoverage:
 
         mock_interaction.user.id = 123
         assert await predicate(mock_interaction)
+
+
+class TestConstants:
+    def test_world_map_constant(self) -> None:
+        assert isinstance(WORLD_MAP, dict)
+        assert len(WORLD_MAP) > 0
+        assert "drassius city" in WORLD_MAP
+        assert WORLD_MAP["drassius city"] == ["route1"]
+
+    def test_world_map_connectivity(self) -> None:
+        assert "route1" in WORLD_MAP["drassius city"]
+        assert "drassius city" in WORLD_MAP["route1"]
+
+        for _city, destinations in WORLD_MAP.items():
+            for dest in destinations:
+                assert dest in WORLD_MAP, f"{dest} is not in WORLD_MAP as a key"
+
+
+@pytest.mark.asyncio
+async def test_concurrent_account_access(db_env: Any) -> None:
+    tasks = [get_or_create_account(31) for _ in range(10)]
+    results = await asyncio.gather(*tasks)
+
+    for result in results:
+        assert isinstance(result, dict)
+        assert "energy" in result

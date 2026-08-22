@@ -124,11 +124,11 @@ async def test_get_attributes_multiple_evs(mock_tables: Any) -> None:
     assert attr["ev_gains2"] == "+ 1 Defense "
 
 
-@patch("utils.revomon_utils.requests.get")
+@patch("utils.revomon_utils.safe_get", new_callable=AsyncMock)
 @patch("utils.revomon_utils.get_attributes", new_callable=AsyncMock)
 @pytest.mark.asyncio
 async def test_save_mon_imgs(
-    mock_get_attributes: Any, mock_requests_get: Any, mock_tables: Any
+    mock_get_attributes: Any, mock_safe_get: Any, mock_tables: Any
 ) -> None:
     rt = mock_tables[0]
     rt.return_value.get_names = AsyncMock(return_value=["pikachu"])
@@ -142,20 +142,25 @@ async def test_save_mon_imgs(
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.content = b"image_data"
-    mock_requests_get.return_value = mock_response
+    mock_safe_get.return_value = mock_response
 
-    m_open = mock_open()
-    m_open.side_effect = [FileNotFoundError, m_open.return_value] * 4
+    real_open = mock_open()
 
-    with patch("builtins.open", m_open):
+    def fake_open(file: Any, mode: str = "r", *args: Any, **kwargs: Any) -> Any:
+        if "b" in mode and "r" in mode:
+            raise FileNotFoundError
+        return real_open.return_value
+
+    with patch("builtins.open", side_effect=fake_open):
         await save_mon_imgs()
+        mock_safe_get.assert_awaited()
 
 
-@patch("utils.revomon_utils.requests.get")
+@patch("utils.revomon_utils.safe_get", new_callable=AsyncMock)
 @patch("utils.revomon_utils.get_attributes", new_callable=AsyncMock)
 @pytest.mark.asyncio
 async def test_save_mon_imgs_exists(
-    mock_get_attributes: Any, mock_requests_get: Any, mock_tables: Any
+    mock_get_attributes: Any, mock_safe_get: Any, mock_tables: Any
 ) -> None:
     rt = mock_tables[0]
     rt.return_value.get_names = AsyncMock(return_value=["pikachu"])
@@ -170,15 +175,15 @@ async def test_save_mon_imgs_exists(
         await save_mon_imgs()
 
 
-@patch("utils.revomon_utils.requests.get")
+@patch("utils.revomon_utils.safe_get", new_callable=AsyncMock)
 @pytest.mark.asyncio
-async def test_save_type_imgs(mock_requests_get: Any, mock_tables: Any) -> None:
+async def test_save_type_imgs(mock_safe_get: Any, mock_tables: Any) -> None:
     tt = mock_tables[1]
     tt.return_value.get_mono_types = AsyncMock(return_value=["Electric"])
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.content = b"image_data"
-    mock_requests_get.return_value = mock_response
+    mock_safe_get.return_value = mock_response
 
     m_open = mock_open()
     m_open.side_effect = [FileNotFoundError, m_open.return_value]
@@ -186,9 +191,9 @@ async def test_save_type_imgs(mock_requests_get: Any, mock_tables: Any) -> None:
         await save_type_imgs()
 
 
-@patch("utils.revomon_utils.requests.get")
+@patch("utils.revomon_utils.safe_get", new_callable=AsyncMock)
 @pytest.mark.asyncio
-async def test_save_type_imgs_exists(mock_requests_get: Any, mock_tables: Any) -> None:
+async def test_save_type_imgs_exists(mock_safe_get: Any, mock_tables: Any) -> None:
     tt = mock_tables[1]
     tt.return_value.get_mono_types = AsyncMock(return_value=["Electric"])
     m_open = mock_open()
@@ -268,8 +273,9 @@ async def test_get_perferred_natures(
     assert await get_perferred_natures("pikachu") == ["Adamant", "Jolly"]
 
 
-@patch("utils.revomon_utils.requests.post")
-def test_get_evo_trees(mock_post: Any) -> None:
+@patch("utils.revomon_utils.safe_post", new_callable=AsyncMock)
+@pytest.mark.asyncio
+async def test_get_evo_trees(mock_post: Any) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -309,14 +315,15 @@ def test_get_evo_trees(mock_post: Any) -> None:
         }
     }
     mock_post.return_value = mock_response
-    trees = get_evo_trees()
+    trees = await get_evo_trees()
     assert len(trees) == 2
     assert any("Vyphern" in t and "Wyverdant" in t for t in trees)
     assert any("Pichu" in t and "Pikachu" in t and "Raichu" in t for t in trees)
 
 
-@patch("utils.revomon_utils.requests.post")
-def test_get_evo_trees_wyverdant(mock_post: Any) -> None:
+@patch("utils.revomon_utils.safe_post", new_callable=AsyncMock)
+@pytest.mark.asyncio
+async def test_get_evo_trees_wyverdant(mock_post: Any) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -332,12 +339,13 @@ def test_get_evo_trees_wyverdant(mock_post: Any) -> None:
         }
     }
     mock_post.return_value = mock_response
-    trees = get_evo_trees()
+    trees = await get_evo_trees()
     assert len(trees) == 0
 
 
-@patch("utils.revomon_utils.requests.post")
-def test_get_evo_trees_standalone(mock_post: Any) -> None:
+@patch("utils.revomon_utils.safe_post", new_callable=AsyncMock)
+@pytest.mark.asyncio
+async def test_get_evo_trees_standalone(mock_post: Any) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -353,17 +361,18 @@ def test_get_evo_trees_standalone(mock_post: Any) -> None:
         }
     }
     mock_post.return_value = mock_response
-    trees = get_evo_trees()
+    trees = await get_evo_trees()
     assert len(trees) == 1
     assert "| Tauros |\n" in trees
 
 
-@patch("utils.revomon_utils.requests.post")
-def test_get_evo_trees_non_200(mock_post: Any) -> None:
+@patch("utils.revomon_utils.safe_post", new_callable=AsyncMock)
+@pytest.mark.asyncio
+async def test_get_evo_trees_non_200(mock_post: Any) -> None:
     mock_response = MagicMock()
     mock_response.status_code = 404
     mock_post.return_value = mock_response
-    assert get_evo_trees() == []
+    assert await get_evo_trees() == []
 
 
 @pytest.mark.asyncio

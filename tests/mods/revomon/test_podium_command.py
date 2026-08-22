@@ -32,10 +32,11 @@ class TestPodium2:
         cog = Podium2(mock_bot)
         assert cog.convert_time(3661) == "01:01:01"
 
-    def test_get_weekly_podium_data(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.podium_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_weekly_podium_data(self, mock_fetch: Any, mock_bot: Any) -> None:
         cog = Podium2(mock_bot)
-        mock_response = MagicMock()
-        mock_response.json.return_value = {
+        mock_fetch.return_value = {
             "data": {
                 "weeklyPodium": [
                     {"username": "u1", "profilePicture": "p1", "times": 3600},
@@ -44,17 +45,19 @@ class TestPodium2:
                 ]
             }
         }
-        with patch("requests.get", return_value=mock_response):
-            res = cog.get_weekly_podium_data()
-            assert res["first"]["user"] == "u1"
-            assert res["second"]["user"] == "u2"
-            assert res["third"]["user"] == "u3"
-            assert res["first"]["time"] == "01:00:00"
+        res = await cog.get_weekly_podium_data()
+        assert res["first"]["user"] == "u1"
+        assert res["second"]["user"] == "u2"
+        assert res["third"]["user"] == "u3"
+        assert res["first"]["time"] == "01:00:00"
 
-    def test_get_current_podium_data(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.podium_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_current_podium_data(
+        self, mock_fetch: Any, mock_bot: Any
+    ) -> None:
         cog = Podium2(mock_bot)
-        mock_response = MagicMock()
-        mock_response.json.return_value = {
+        mock_fetch.return_value = {
             "data": {
                 "currentPodium": [
                     {"username": "u1", "profilePicture": "p1"},
@@ -63,16 +66,16 @@ class TestPodium2:
                 ]
             }
         }
-        with patch("requests.get", return_value=mock_response):
-            res = cog.get_current_podium_data()
-            assert res["first"]["user"] == "u1"
-            assert res["second"]["user"] == "u2"
-            assert res["third"]["user"] == "u3"
+        res = await cog.get_current_podium_data()
+        assert res["first"]["user"] == "u1"
+        assert res["second"]["user"] == "u2"
+        assert res["third"]["user"] == "u3"
 
+    @pytest.mark.asyncio
     @patch("mods.revomon.podium_command.ImageFont.truetype")
     @patch("mods.revomon.podium_command.Image.new")
     @patch("mods.revomon.podium_command.ImageDraw.Draw")
-    def test_podium_img_weekly(
+    async def test_podium_img_weekly(
         self, mock_draw: Any, mock_new: Any, mock_truetype: Any, mock_bot: Any
     ) -> None:
         cog = Podium2(mock_bot)
@@ -85,20 +88,22 @@ class TestPodium2:
         with patch.object(
             cog,
             "get_weekly_podium_data",
+            new_callable=AsyncMock,
             return_value={
                 "first": {"user": "u1", "time": "01:00:00"},
                 "second": {"user": "u2", "time": "01:00:01"},
                 "third": {"user": "u3", "time": "01:00:02"},
             },
         ):
-            cog.podium_img("weekly")
+            await cog.podium_img("weekly")
             assert "image_bytes" in cog.weekly_podium_img
             mock_image.save.assert_called_once()
 
+    @pytest.mark.asyncio
     @patch("mods.revomon.podium_command.ImageFont.truetype")
     @patch("mods.revomon.podium_command.Image.new")
     @patch("mods.revomon.podium_command.ImageDraw.Draw")
-    def test_podium_img_current(
+    async def test_podium_img_current(
         self, mock_draw: Any, mock_new: Any, mock_truetype: Any, mock_bot: Any
     ) -> None:
         cog = Podium2(mock_bot)
@@ -111,26 +116,29 @@ class TestPodium2:
         with patch.object(
             cog,
             "get_current_podium_data",
+            new_callable=AsyncMock,
             return_value={
                 "first": {"user": "u1"},
                 "second": {"user": "u2"},
                 "third": {"user": "u3"},
             },
         ):
-            cog.podium_img("current")
+            await cog.podium_img("current")
             assert "image_bytes" in cog.current_podium_img
             mock_image.save.assert_called_once()
 
-    def test_current_podium_embed(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    async def test_current_podium_embed(self, mock_bot: Any) -> None:
         cog = Podium2(mock_bot)
-        with patch.object(cog, "podium_img"):
-            embed = cog.current_podium_embed()
+        with patch.object(cog, "podium_img", new_callable=AsyncMock):
+            embed = await cog.current_podium_embed()
             assert embed.footer.text == "Global Revomon Association"
 
-    def test_weekly_podium_embed(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    async def test_weekly_podium_embed(self, mock_bot: Any) -> None:
         cog = Podium2(mock_bot)
-        with patch.object(cog, "podium_img"):
-            embed = cog.weekly_podium_embed()
+        with patch.object(cog, "podium_img", new_callable=AsyncMock):
+            embed = await cog.weekly_podium_embed()
             assert embed.footer.text == "Global Revomon Association"
 
     @pytest.mark.asyncio
@@ -143,12 +151,28 @@ class TestPodium2:
         cog = Podium2(mock_bot)
         mock_current_bytes = MagicMock()
         mock_weekly_bytes = MagicMock()
-        cog.current_podium_img = {"image_bytes": mock_current_bytes}
-        cog.weekly_podium_img = {"image_bytes": mock_weekly_bytes}
+
+        async def current_embed() -> Any:
+            cog.current_podium_img["image_bytes"] = mock_current_bytes
+            return MagicMock()
+
+        async def weekly_embed() -> Any:
+            cog.weekly_podium_img["image_bytes"] = mock_weekly_bytes
+            return MagicMock()
 
         with (
-            patch.object(cog, "current_podium_embed", return_value=MagicMock()),
-            patch.object(cog, "weekly_podium_embed", return_value=MagicMock()),
+            patch.object(
+                cog,
+                "current_podium_embed",
+                new_callable=AsyncMock,
+                side_effect=current_embed,
+            ),
+            patch.object(
+                cog,
+                "weekly_podium_embed",
+                new_callable=AsyncMock,
+                side_effect=weekly_embed,
+            ),
             patch("mods.revomon.podium_command.File"),
         ):
             await cog.podium.callback(cog, mock_interaction)  # type: ignore[call-arg,arg-type]

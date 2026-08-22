@@ -1,8 +1,8 @@
 import io
 from typing import Any
 
+import httpx
 import plotly.graph_objects as go
-import requests
 from PIL import Image, ImageDraw, ImageFont
 
 from data import (
@@ -13,6 +13,7 @@ from data import (
     RevomonTable,
     TypesTable,
 )
+from utils.http import safe_get, safe_post
 
 max_iv_total = 186
 max_ev_total = 510
@@ -25,6 +26,23 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
     mon_info = await revomon_table.get_info_dict(revomon_name=revomon_name)
     if not mon_info:
         return {}
+    # Single counterdex lookup; LIKE-search may match several rows, first is canonical.
+    cdex_rows = await CounterdexTable().get_info(
+        revomon_name=mon_info.get("name", "").lower()
+    )
+    cdex_row = tuple(cdex_rows[0]) if cdex_rows else ()
+    (
+        _dex_id,
+        _mon_id,
+        _name,
+        cdex_description,
+        cdex_tier,
+        meta_moves,
+        meta_build,
+        tips,
+        counters,
+        weakness,
+    ) = (cdex_row + (None,) * 10)[:10]
     # Use column names instead of indices for robustness
     ev_rewards = dict(
         zip(
@@ -107,41 +125,13 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 mon_dex_id=mon_info.get("dex_id") or 0
             )
         ],
-        "cdex_tier": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][4],
-        "cdex_description": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][3],
-        "weakness": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][9],
-        "meta_build": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][6],
-        "meta_moves": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][5],
-        "tips": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][7],
-        "counters": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][8],
+        "cdex_tier": cdex_tier,
+        "cdex_description": cdex_description,
+        "weakness": weakness,
+        "meta_build": meta_build,
+        "meta_moves": meta_moves,
+        "tips": tips,
+        "counters": counters,
     }
     return attributes
 
@@ -150,86 +140,40 @@ async def save_mon_imgs() -> None:
     print("Getting names of all Revomon...")
     all_mons_names = await RevomonTable().get_names()
     print("Got names of all Revomon")
-    for mon_name in all_mons_names:
-        print(f"Getting attribs for {mon_name}...")
-        mon_attr = await get_attributes(mon_name)
-        print(f"Got attribs for {mon_name}")
+    async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+        for mon_name in all_mons_names:
+            print(f"Getting attribs for {mon_name}...")
+            mon_attr = await get_attributes(mon_name)
+            print(f"Got attribs for {mon_name}")
 
-        try:
-            # Check if the Profile image is already saved to data.Images
-            with open(f"./data/Images/Revomon/{mon_name.title()}.png", "rb") as file:
-                print(f"{mon_name} Profile image already exists")
-        except FileNotFoundError:
-            print(f"Getting profile image for {mon_name}...")
-            mon_img_url = str(mon_attr["profile_img"])
-            mon_img = requests.get(mon_img_url)
-            # Check if the request was successful
-            if mon_img.status_code == 200:
-                # Open a local file in binary write mode
-                with open(
-                    f"./data/Images/Revomon/{mon_name.title()}.png", "wb"
-                ) as file:
-                    file.write(mon_img.content)
-                print(f"Saved profile image for {mon_name}")
-
-        try:
-            # Check if the Shiny Profile image is already saved to data.Images
-            with open(
-                f"./data/Images/Revomon/shiny-{mon_name.title()}.png", "rb"
-            ) as file:
-                print(f"{mon_name} Shiny Profile image already exists")
-        except FileNotFoundError:
-            print(f"Getting shiny profile image for {mon_name}...")
-            mon_shiny_img_url = str(mon_attr["shiny_profile_img"])
-            mon_shiny_img = requests.get(mon_shiny_img_url)
-            # Check if the request was successful
-            if mon_shiny_img.status_code == 200:
-                # Open a local file in binary write mode
-                with open(
-                    f"./data/Images/Revomon/shiny-{mon_name.title()}.png", "wb"
-                ) as file:
-                    file.write(mon_shiny_img.content)
-                print(f"Saved shiny profile image for {mon_name}")
-
-        try:
-            # Check if the NFT Profile image is already saved to data.Images
-            with open(
-                f"./data/Images/Revomon/{mon_name.title()}-nft.png", "rb"
-            ) as file:
-                print(f"{mon_name} NFT image already exists")
-        except FileNotFoundError:
-            print(f"Getting nft image for {mon_name}...")
-            mon_nft_img_url = str(mon_attr["nft_img"])
-            mon_nft_img = requests.get(mon_nft_img_url)
-            # Check if the request was successful
-            if mon_nft_img.status_code == 200:
-                # Open a local file in binary write mode
-                with open(
-                    f"./data/Images/Revomon/{mon_name.title()}-nft.png", "wb"
-                ) as file:
-                    file.write(mon_nft_img.content)
-                print(f"Saved nft image for {mon_name}")
-
-        try:
-            # Check if the Shiny NFT Profile image is already saved to data.Images
-            with open(
-                f"./data/Images/Revomon/shiny-{mon_name.title()}-nft.png", "rb"
-            ) as file:
-                print(f"{mon_name} Shiny Profile image already exists")
-        except FileNotFoundError:
-            print(f"Getting shiny nft image for {mon_name}...")
-            mon_shiny_nft_img_url = str(mon_attr["shiny_nft_img"])
-            mon_shiny_nft_img = requests.get(mon_shiny_nft_img_url)
-            # Check if the request was successful
-            if mon_shiny_nft_img.status_code == 200:
-                # Open a local file in binary write mode
-                with open(
+            image_targets = [
+                ("profile_img", f"./data/Images/Revomon/{mon_name.title()}.png"),
+                (
+                    "shiny_profile_img",
+                    f"./data/Images/Revomon/shiny-{mon_name.title()}.png",
+                ),
+                ("nft_img", f"./data/Images/Revomon/{mon_name.title()}-nft.png"),
+                (
+                    "shiny_nft_img",
                     f"./data/Images/Revomon/shiny-{mon_name.title()}-nft.png",
-                    "wb",
-                ) as file:
-                    file.write(mon_shiny_nft_img.content)
-                print(f"Saved shiny nft image for {mon_name}")
-        print(f"Saved all images for {mon_name}")
+                ),
+            ]
+            for attr_key, file_path in image_targets:
+                try:
+                    with open(file_path, "rb"):
+                        pass  # already exists
+                    print(f"{file_path} already exists")
+                    continue
+                except FileNotFoundError:
+                    pass
+                img_url = str(mon_attr.get(attr_key))
+                if not img_url or img_url == "None":
+                    continue
+                response = await safe_get(img_url, client=client)
+                if response is not None and response.status_code == 200:
+                    with open(file_path, "wb") as file:
+                        file.write(response.content)
+                    print(f"Saved {file_path}")
     print("All Revomon images saved")
 
 
@@ -237,23 +181,24 @@ async def save_type_imgs() -> None:
     print("Getting names of all Types...")
     elements: list[str] = await TypesTable().get_mono_types()
     print("Got names of all Types")
-    for element in elements:
-        element = element.lower()
-        try:
-            # Check if the Profile image is already saved to data.Images
-            with open(f"./data/Images/Types/{element}.png", "rb") as file:
+    async with httpx.AsyncClient(timeout=30, follow_redirects=True) as client:
+        for element in elements:
+            element = element.lower()
+            file_path = f"./data/Images/Types/{element}.png"
+            try:
+                with open(file_path, "rb"):
+                    pass  # already exists
                 print(f"{element} Type image already exists")
-        except FileNotFoundError:
-            print(f"Getting Type image for {element}...")
+                continue
+            except FileNotFoundError:
+                pass
             element_img_url = (
                 f"https://app-v2.revomon.io/static/images/types/{element}.png"
             )
-            element_img = requests.get(element_img_url)
-            # Check if the request was successful
-            if element_img.status_code == 200:
-                # Open a local file in binary write mode
-                with open(f"./data/Images/Types/{element}.png", "wb") as file:
-                    file.write(element_img.content)
+            response = await safe_get(element_img_url, client=client)
+            if response is not None and response.status_code == 200:
+                with open(file_path, "wb") as file:
+                    file.write(response.content)
                 print(f"Saved Type image for {element}")
     print("All Type images saved")
 
@@ -340,13 +285,15 @@ async def get_perferred_natures(revomon_name: str) -> list[str]:
     return perferred_natures
 
 
-def get_evo_trees() -> list[Any | str]:
-    evo_trees = []
+async def get_evo_trees() -> list[Any | str]:
+    evo_trees: list[Any | str] = []
     evo_tree = ""
     # Fetch data from the Revomon API
     url = "https://api.revomon.io/revomon/revodex"
     payload: dict[str, Any] = {"idsCatchedRevomon": []}
-    response = requests.post(url, json=payload)
+    response = await safe_post(url, payload)
+    if response is None:
+        return evo_trees
 
     if response.status_code == 200:
         data = response.json()

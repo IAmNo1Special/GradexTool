@@ -1,12 +1,16 @@
 import datetime
+import logging
 from io import BytesIO
 from typing import Any
 
 import discord.embeds
-import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
+
+from utils.http import fetch_json
+
+logger = logging.getLogger(__name__)
 
 
 class PvpLeaderboard2(commands.Cog):
@@ -15,7 +19,7 @@ class PvpLeaderboard2(commands.Cog):
         self.rankings: list[dict[str, str | int]] | None = None
         self.pvp_img: dict[str, Any] = {}
 
-    def get_current_pvp_data(self) -> None:
+    async def get_current_pvp_data(self) -> None:
         ranks = [
             "first",
             "second",
@@ -34,8 +38,10 @@ class PvpLeaderboard2(commands.Cog):
             "fifteenth",
         ]
         current_pvp_url = "https://api.revomon.io/leaderboard/pvp_top_fifteen"
-        response = requests.get(current_pvp_url)
-        response = response.json()
+        response = await fetch_json(current_pvp_url)
+        if not response:
+            self.rankings = None
+            return
         pvp_top_fifteen = response["data"]["pvpTopFifteen"]
         if not pvp_top_fifteen:
             self.rankings = None
@@ -43,7 +49,7 @@ class PvpLeaderboard2(commands.Cog):
 
         rankings_data = []
         for count, _rank in enumerate(ranks):
-            if pvp_top_fifteen[count] == {}:
+            if count >= len(pvp_top_fifteen) or pvp_top_fifteen[count] == {}:
                 break
             user = pvp_top_fifteen[count]["username"]
             pvp_top_fifteen[count]["profilePicture"]
@@ -52,7 +58,10 @@ class PvpLeaderboard2(commands.Cog):
             current_rank = pvp_top_fifteen[count]["rank"]
             lose_count = pvp_top_fifteen[count]["loseCount"]
             win_count = pvp_top_fifteen[count]["winCount"]
-            winning_percentage = (win_count / (win_count + lose_count)) * 100
+            total_games = win_count + lose_count
+            winning_percentage = (
+                (win_count / total_games) * 100 if total_games > 0 else 0.0
+            )
             rankings_data.append(
                 {
                     "Rank": current_rank,
@@ -78,7 +87,7 @@ class PvpLeaderboard2(commands.Cog):
         try:
             font: Any = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
         except Exception as e:
-            print(f"Error loading font during update_pvp_image: {e}")
+            logger.error(f"Error loading font during update_pvp_image: {e}")
             font = ImageFont.load_default()
 
         headers = ["Rank", "Name", "Elo", "Wins", "Losses", "Winning", "Reward"]
@@ -135,7 +144,7 @@ class PvpLeaderboard2(commands.Cog):
             self.pvp_img["image_bytes"].seek(0)
             self.pvp_img["image_bytes"].name = "current_pvp_image.png"
         except Exception as e:
-            print(f"Error converting PIL image during update_pvp_image: {e}")
+            logger.error(f"Error converting PIL image during update_pvp_image: {e}")
 
     def current_pvp_embed(self) -> discord.embeds.Embed:
         embed = Embed(
@@ -160,18 +169,27 @@ class PvpLeaderboard2(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     async def pvp(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True, thinking=True)
+        self.pvp_img = {}
+        curr_pvp_embed: discord.embeds.Embed | None = None
         try:
-            self.get_current_pvp_data()
+            await self.get_current_pvp_data()
         except Exception as e:
-            print(f"Error during pvp_command(get_current_pvp_data): {e}")
+            logger.error(f"Error during pvp_command(get_current_pvp_data): {e}")
         try:
             self.update_pvp_image(self.rankings)
         except Exception as e:
-            print(f"Error during pvp_command(update_pvp_image): {e}")
+            logger.error(f"Error during pvp_command(update_pvp_image): {e}")
         try:
             curr_pvp_embed = self.current_pvp_embed()
         except Exception as e:
-            print(f"Error during pvp_command(current_pvp_embed): {e}")
+            logger.error(f"Error during pvp_command(current_pvp_embed): {e}")
+
+        if curr_pvp_embed is None or "image_bytes" not in self.pvp_img:
+            await interaction.followup.send(
+                "PvP leaderboard data is unavailable right now. Please try again later.",
+                ephemeral=True,
+            )
+            return
 
         file = File(self.pvp_img["image_bytes"], filename="current_pvp_image.png")
         await interaction.followup.send(embed=curr_pvp_embed, file=file, ephemeral=True)
