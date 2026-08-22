@@ -1,3 +1,4 @@
+import logging
 from typing import cast
 
 import discord.embeds
@@ -25,6 +26,8 @@ from utils.button_utils import (
 from utils.embed_utils import compare_intros, intro
 from utils.revomon_utils import get_attributes
 
+logger = logging.getLogger(__name__)
+
 
 class SearchCommand(commands.Cog):
     def __init__(self, gradex: commands.Bot) -> None:
@@ -43,12 +46,10 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         learned_by = ""
-        revomon_names = await RevomonTable().get_names()
-        for revomon in revomon_names:
-            if await RevomonTable().has_ability(
-                mon_name=revomon, ability_name=ability_info[0]
-            ):
-                learned_by += f"- *{revomon.title()}*\n"
+        # Single indexed OR-query via RevomonTable.has_ability's name-less branch
+        learner_names = await RevomonTable().has_ability(ability_name=ability_info[0])
+        for revomon in sorted(learner_names):
+            learned_by += f"- *{revomon.title()}*\n"
         if embed.description:
             embed.description += f"\n\n__**Learned By**__\n{learned_by}"
         else:
@@ -263,7 +264,7 @@ class SearchCommand(commands.Cog):
             embed = await self.ability_search_embed(ability_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
-            print(f"Error during search_command(abilities subcommand): {e}")
+            logger.error(f"Error during search_command(abilities subcommand): {e}")
 
     @search_group.command(
         name="fruitys", description="Search for info about any Revomon fruity."
@@ -280,7 +281,7 @@ class SearchCommand(commands.Cog):
             embed = await self.fruity_search_embed(fruity_name=name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
-            print(f"Error during search_command(fruitys subcommand): {e}")
+            logger.error(f"Error during search_command(fruitys subcommand): {e}")
 
     @search_group.command(
         name="items", description="Search for info about any in-game item."
@@ -305,7 +306,7 @@ class SearchCommand(commands.Cog):
             embed = await self.move_search_embed(name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:
-            print(f"Error during search_command(moves subcommand): {e}")
+            logger.error(f"Error during search_command(moves subcommand): {e}")
 
     @search_group.command(
         name="natures", description="Search for info about any Revomon nature."
@@ -366,7 +367,9 @@ class SearchCommand(commands.Cog):
                     embed=embed, view=intro_view, ephemeral=True
                 )
         except Exception as e:
-            print(f"An error occurred during search_command(revomon subcommand): {e}")
+            logger.error(
+                f"An error occurred during search_command(revomon subcommand): {e}"
+            )
 
     @search_group.command(
         name="land-nfts",
@@ -488,11 +491,13 @@ class SearchCommand(commands.Cog):
                         "No lands found that match your criteria.", ephemeral=True
                     )
             except Exception as e:
-                print(f"An error occurred during search_command(lands subcommand): {e}")
+                logger.error(
+                    f"An error occurred during search_command(lands subcommand): {e}"
+                )
 
 
 async def setup(gradex: commands.Bot) -> None:
     try:
         await gradex.add_cog(SearchCommand(gradex))
     except Exception:
-        print("ERROR in ModName 'setup' function")
+        logger.error("ERROR in ModName 'setup' function")

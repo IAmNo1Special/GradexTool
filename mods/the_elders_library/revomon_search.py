@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import discord
@@ -11,6 +12,8 @@ from utils.button_utils import (
 from utils.embed_utils import compare_intros, intro
 from utils.helpers import respond
 from utils.revomon_utils import get_attributes
+
+logger = logging.getLogger(__name__)
 
 
 class revomon_search(commands.Cog):  # noqa: N801
@@ -53,7 +56,7 @@ class revomon_search(commands.Cog):  # noqa: N801
                 intro_view = IntroView(attributes=attributes)
                 await respond(self.gradex, message, embed, intro_view)
         except Exception as e:
-            print(f"An error occurred during revomon_search on_message: {e}")
+            logger.error(f"An error occurred during revomon_search on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

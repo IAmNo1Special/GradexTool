@@ -49,7 +49,7 @@ def test_grade_embed(grade_cog: Any) -> None:
 
 def test_mon_info_embed1(grade_cog: Any, mock_mon_info: Any) -> None:
     user_id = 123
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
     embed = grade_cog.mon_info_embed1(user_id)
     assert isinstance(embed, discord.Embed)
     assert embed.title is not None
@@ -61,7 +61,7 @@ def test_graded_mon_embed(
     mock_create_img: Any, grade_cog: Any, mock_mon_info: Any
 ) -> None:
     user_id = 123
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
 
     mock_img = MagicMock()
     mock_create_img.return_value = mock_img
@@ -75,7 +75,7 @@ def test_graded_mon_embed(
 
 def test_grade_breakdown_embed(grade_cog: Any, mock_mon_info: Any) -> None:
     user_id = 123
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
 
     embed = grade_cog.grade_breakdown_embed(user_id)
     assert isinstance(embed, discord.Embed)
@@ -133,7 +133,7 @@ async def test_mon_info_buttons1_grade(
     mock_embed: Any, mock_appraise: Any, mock_interaction: Any, mock_mon_info: Any
 ) -> None:
     user_id = mock_interaction.user.id
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
     mock_appraise.return_value = {"grade_percent": 99}
 
     view = Grade.MonInfoButtons1()
@@ -141,7 +141,7 @@ async def test_mon_info_buttons1_grade(
 
     await button.callback(mock_interaction)
     mock_interaction.response.edit_message.assert_called_once()
-    assert Grade.mon_manager.mon_info[user_id]["grade_percent"] == 99
+    assert Grade.mon_manager.require(user_id)["grade_percent"] == 99
 
 
 @pytest.mark.asyncio
@@ -158,7 +158,7 @@ async def test_mon_info_buttons6_save(
     mock_embed: Any, mock_interaction: Any, mock_mon_info: Any
 ) -> None:
     user_id = mock_interaction.user.id
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
 
     view = Grade.MonInfoButtons6()
     save_btn = view.children[0]
@@ -191,7 +191,7 @@ async def test_mon_info_buttons6_flex(
     mock_embed: Any, mock_interaction: Any, mock_mon_info: Any
 ) -> None:
     user_id = mock_interaction.user.id
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
     view = Grade.MonInfoButtons6()
     flex_btn = view.children[1]
 
@@ -213,7 +213,7 @@ async def test_mon_info_buttons6_why(
     mock_embed: Any, mock_interaction: Any, mock_mon_info: Any
 ) -> None:
     user_id = mock_interaction.user.id
-    Grade.mon_manager.mon_info[user_id] = mock_mon_info
+    Grade.mon_manager.set(user_id, mock_mon_info)
     view = Grade.MonInfoButtons6()
     why_btn = view.children[2]
 
@@ -283,7 +283,7 @@ async def test_mon_info_modal_success(
 
     mock_interaction.response.defer.assert_called_once()
     mock_interaction.response.send_message.assert_called_once()
-    assert Grade.mon_manager.mon_info[mock_interaction.user.id]["catch_id"] == 1234
+    assert Grade.mon_manager.require(mock_interaction.user.id)["catch_id"] == 1234
 
 
 @pytest.mark.asyncio

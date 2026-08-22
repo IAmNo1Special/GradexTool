@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 
 import discord
 from discord.ext import commands
 
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class pokemon_keyword(commands.Cog):  # noqa: N801
@@ -122,7 +125,7 @@ Twinkletree <---> Shiinotic""",
                     self.gradex, message=message, embed=embed, buttons=buttons
                 )
         except Exception as e:
-            print(f"An error occurred during on_message: {e}")
+            logger.error(f"An error occurred during on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

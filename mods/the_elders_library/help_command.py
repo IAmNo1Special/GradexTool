@@ -1,7 +1,10 @@
+import logging
 from typing import Any
 
 from discord import ButtonStyle, Color, Embed, Interaction, app_commands, ui
 from discord.ext import commands
+
+logger = logging.getLogger(__name__)
 
 
 class HelpCommand(commands.Cog):
@@ -78,7 +81,7 @@ class HelpCommand(commands.Cog):
                 embed = self.embed
                 await interaction.followup.send(embed=embed, ephemeral=False)
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'Make Public[PublicButton]' Button from the grade_command script: {e}"
                 )
 
@@ -98,4 +101,4 @@ async def setup(gradex: commands.Bot) -> None:
     try:
         await gradex.add_cog(HelpCommand(gradex))
     except Exception:
-        print("ERROR in ModName 'setup' function")
+        logger.error("ERROR in ModName 'setup' function")

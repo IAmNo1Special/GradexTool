@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from datetime import datetime, timedelta
 from io import BytesIO
 from typing import Any
@@ -10,6 +11,8 @@ from discord.ext import commands, tasks
 from data import RevomonTable
 from utils.revomon_utils import get_attributes
 from utils.tl_img_gen import create_tier_list_with_images
+
+logger = logging.getLogger(__name__)
 
 
 class BcTierPoll(commands.Cog):
@@ -156,7 +159,7 @@ class BcTierPoll(commands.Cog):
                 self.update_bc_tierlist.start()
 
         except Exception as e:
-            print(f"Error during Eleven's Arena(Tier list): {e}")
+            logger.error(f"Error during Eleven's Arena(Tier list): {e}")
 
     async def open_polls(self) -> None:
         """Open the polls for the tier list."""
@@ -277,4 +280,4 @@ async def setup(gradex: commands.Bot) -> None:
     try:
         await gradex.add_cog(BcTierPoll(gradex))
     except Exception:
-        print("ERROR in TierPoll 'setup' function")
+        logger.error("ERROR in TierPoll 'setup' function")

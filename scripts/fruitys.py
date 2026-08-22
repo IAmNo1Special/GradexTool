@@ -358,7 +358,7 @@ class FruitysTable:
                 """
                 CREATE TABLE IF NOT EXISTS "fruitys" (
                     "name" TEXT NOT NULL UNIQUE,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     "type" TEXT NOT NULL,
                     PRIMARY KEY("name")
                 ) STRICT;

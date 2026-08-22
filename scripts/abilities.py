@@ -295,7 +295,7 @@ class AbilitiesTable:
                 """
                 CREATE TABLE IF NOT EXISTS "abilities" (
                     "name" TEXT NOT NULL UNIQUE,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     PRIMARY KEY("name")
                 ) STRICT;
                 """

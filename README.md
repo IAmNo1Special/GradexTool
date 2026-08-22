@@ -458,6 +458,9 @@ ______________________________________________________________________
 - **Database connection exhaustion** in user checks
 - **Fragile data indexing** with hardcoded indices
 - **Command syncing rate limiting** on bot ready
+- **Battle system not yet implemented**: the wild-encounter "Fight" button,
+  the console "Bag"/"Heal" buttons and route AI-trainer battles are disabled
+  placeholders labelled "(Coming Soon)"
 
 ______________________________________________________________________
 

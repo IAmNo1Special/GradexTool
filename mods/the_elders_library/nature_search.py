@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import discord
@@ -5,6 +6,8 @@ from discord.ext import commands
 
 from data import NaturesTable
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class nature_search(commands.Cog):  # noqa: N801
@@ -87,7 +90,7 @@ class nature_search(commands.Cog):  # noqa: N801
                     buttons=buttons,
                 )
         except Exception as e:
-            print(f"An error occurred during 'nature_search' on_message: {e}")
+            logger.error(f"An error occurred during 'nature_search' on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

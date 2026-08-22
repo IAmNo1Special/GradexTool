@@ -1,21 +1,21 @@
 """Shared utilities for Discord bot mods.revocord.
 
-This module provides decorators and helpers.
+Account state lives in the SQLite ``accounts`` table (scripts.gradexDB).
+The legacy ``data/accounts.json`` store is seeded into SQLite once, on the
+first account access after deploy, then retired.
 """
 
-import asyncio
 import functools
-import json
 import logging
-import time
 import typing
 from collections.abc import Callable, Coroutine
 from pathlib import Path
-from typing import Any, TypeVar, cast
-from unittest.mock import MagicMock
+from typing import Any, TypeVar
 
 import discord
 from discord import app_commands, ui
+
+from scripts.gradexDB import AccountsTable
 
 logger = logging.getLogger("discord_bot")
 
@@ -24,14 +24,44 @@ T = TypeVar("T")
 BASE_DIR = Path(__file__).parent.parent.parent
 ACCOUNTS_FILE = BASE_DIR / "data" / "accounts.json"
 
-_accounts_lock = None
+_accounts_table: AccountsTable | None = None
+_seed_attempted = False
 
 
-def get_lock() -> asyncio.Lock:
-    global _accounts_lock
-    if _accounts_lock is None:
-        _accounts_lock = asyncio.Lock()
-    return _accounts_lock
+def get_accounts_table() -> AccountsTable:
+    """Process-wide AccountsTable singleton."""
+    global _accounts_table
+    if _accounts_table is None:
+        _accounts_table = AccountsTable()
+    return _accounts_table
+
+
+async def _ensure_legacy_seeded(table: AccountsTable) -> None:
+    """Seed the legacy JSON store into SQLite exactly once per process."""
+    global _seed_attempted
+    if _seed_attempted:
+        return
+    _seed_attempted = True
+    try:
+        if await table.count_accounts() > 0:
+            return  # already migrated or has live data
+        imported = await table.seed_from_legacy_json(ACCOUNTS_FILE)
+        if imported:
+            logger.info(
+                "Seeded %d accounts from legacy %s", imported, ACCOUNTS_FILE.name
+            )
+            migrated_path = ACCOUNTS_FILE.with_suffix(".migrated.json")
+            try:
+                ACCOUNTS_FILE.rename(migrated_path)
+                logger.info("Legacy account file retired to %s", migrated_path.name)
+            except OSError as e:
+                logger.warning(
+                    "Could not retire legacy account file: %s "
+                    "(INSERT OR IGNORE keeps re-seeding safe)",
+                    e,
+                )
+    except Exception as e:
+        logger.error("Legacy account seed failed: %s", e, exc_info=True)
 
 
 WORLD_MAP = {
@@ -72,134 +102,25 @@ def normalize_channel_name(name: str) -> str:
     return normalized.strip("-")
 
 
-def load_accounts() -> dict[str, Any]:
-    """Load the accounts JSON file."""
-    if not ACCOUNTS_FILE.exists():
-        return {}
-    with open(ACCOUNTS_FILE, encoding="utf-8") as f:
-        try:
-            return cast("dict[str, Any]", json.load(f))
-        except json.JSONDecodeError:
-            return {}
-
-
-def save_accounts(accounts: dict[str, Any]) -> None:
-    """Save the accounts JSON file."""
-    ACCOUNTS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(ACCOUNTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(accounts, f, indent=4)
-
-
 async def get_or_create_account(user_id: int) -> dict[str, Any]:
     """Get an account by user ID, or create a new one with defaults."""
-    async with get_lock():
-        accounts = load_accounts()
-        str_id = str(user_id)
-
-        defaults = {
-            "current_city": "drassius city",
-            "current_location": "revocenter",
-            "is_logged_in": False,
-            "energy": 100,
-            "max_energy": 100,
-            "last_energy_update": time.time(),
-            "arrival_time": 0.0,
-            "destination_city": "",
-            "destination_location": "",
-            "trainer_level": 1,
-            "trainer_xp": 25,
-            "coins": 500,
-            "rank": "Rookie",
-            "battles_won": 0,
-            "battles_lost": 0,
-            "inventory": {"159": 5, "4": 2, "31": 1},
-            "caught_revomon": [],
-        }
-
-        if str_id not in accounts:
-            accounts[str_id] = defaults
-            save_accounts(accounts)
-        else:
-            # Ensure existing accounts have all new fields
-            modified = False
-            for k, v in defaults.items():
-                if k not in accounts[str_id]:
-                    accounts[str_id][k] = v
-                    modified = True
-
-            # Process energy regeneration (1 energy per 60 seconds)
-            acc = accounts[str_id]
-            now = time.time()
-            if acc["energy"] < acc["max_energy"]:
-                time_passed = now - acc["last_energy_update"]
-                regen = int(time_passed / 60)
-                if regen > 0:
-                    acc["energy"] = min(acc["max_energy"], acc["energy"] + regen)
-                    acc["last_energy_update"] = now - (time_passed % 60)
-                    modified = True
-            else:
-                acc["last_energy_update"] = now
-
-            if modified:
-                save_accounts(accounts)
-
-        return cast("dict[str, Any]", accounts[str_id])
+    table = get_accounts_table()
+    await _ensure_legacy_seeded(table)
+    account = await table.get_or_create_account(user_id)
+    # Legacy JSON store exposed booleans for is_logged_in; keep parity.
+    account["is_logged_in"] = bool(account.get("is_logged_in"))
+    return account
 
 
 async def update_account(user_id: int, **kwargs: Any) -> dict[str, Any]:
     """Update specific fields of an account."""
-    async with get_lock():
-        accounts = load_accounts()
-        str_id = str(user_id)
-
-        defaults = {
-            "current_city": "drassius city",
-            "current_location": "revocenter",
-            "is_logged_in": False,
-            "energy": 100,
-            "max_energy": 100,
-            "last_energy_update": time.time(),
-            "arrival_time": 0.0,
-            "destination_city": "",
-            "destination_location": "",
-            "trainer_level": 1,
-            "trainer_xp": 25,
-            "coins": 500,
-            "rank": "Rookie",
-            "battles_won": 0,
-            "battles_lost": 0,
-            "inventory": {"159": 5, "4": 2, "31": 1},
-            "caught_revomon": [],
-        }
-
-        if str_id not in accounts:
-            accounts[str_id] = defaults
-        else:
-            for k, v in defaults.items():
-                if k not in accounts[str_id]:
-                    accounts[str_id][k] = v
-
-        # Before updating, regen energy
-        acc = accounts[str_id]
-        now = time.time()
-        if acc["energy"] < acc["max_energy"]:
-            time_passed = now - acc["last_energy_update"]
-            regen = int(time_passed / 60)
-            if regen > 0:
-                acc["energy"] = min(acc["max_energy"], acc["energy"] + regen)
-                acc["last_energy_update"] = now - (time_passed % 60)
-        else:
-            acc["last_energy_update"] = now
-
-        for k, v in kwargs.items():
-            acc[k] = v
-
-        # If energy was manually updated (e.g. traveling or resting)
-        if "energy" in kwargs:
-            acc["last_energy_update"] = now
-
-        save_accounts(accounts)
-        return cast("dict[str, Any]", accounts[str_id])
+    table = get_accounts_table()
+    await _ensure_legacy_seeded(table)
+    if "is_logged_in" in kwargs and isinstance(kwargs["is_logged_in"], bool):
+        kwargs["is_logged_in"] = int(kwargs["is_logged_in"])
+    account = await table.update_account(user_id, **kwargs)
+    account["is_logged_in"] = bool(account.get("is_logged_in"))
+    return account
 
 
 def with_typing_indicator[T](
@@ -261,7 +182,7 @@ def build_text_view(content: str, *, accent_color: int | None = None) -> ui.Layo
     return view
 
 
-def is_server_owner() -> MagicMock | typing.Callable[..., Any]:
+def is_server_owner() -> typing.Callable[..., Any]:
     """Check if the command invoker is the absolute server owner."""
 
     async def predicate(interaction: discord.Interaction) -> bool:
