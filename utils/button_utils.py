@@ -1,3 +1,4 @@
+import logging
 from typing import Any, cast
 
 import discord
@@ -20,11 +21,14 @@ from utils.embed_utils import (
     stats,
     types,
 )
+from utils.emoji_utils import list_application_emojis
 from utils.revomon_utils import (
     get_attributes,
     get_book_of_land_ids,
     get_book_of_mon_names,
 )
+
+logger = logging.getLogger(__name__)
 
 __all__ = [
     "get_book_of_land_ids",
@@ -55,12 +59,15 @@ class MonPaginationView(View):
         self.user_id = user_id
         self.book_of_names = book_of_names
         self.current_page = current_page
+        self.total_pages = max(1, len(book_of_names))
         self.group_by_evo = group_by_evo
         self.app_emojis = app_emojis or {}
 
         self._build_buttons()
 
     def _build_buttons(self) -> None:
+        if not self.book_of_names:
+            return  # Empty book: no mon buttons, pagers render disabled
         curr_page_content = self.book_of_names[self.current_page - 1]
         row = 0
         items_in_row = 0
@@ -78,11 +85,19 @@ class MonPaginationView(View):
 
         # Add pagination buttons in their own row, capped to avoid exceeding Discord's 5-row limit
         pagination_row = min(row + 1, 3)
-        self.add_item(FirstPageButton(row=pagination_row))
-        self.add_item(PreviousPageButton(row=pagination_row))
+        self.add_item(FirstPageButton(row=pagination_row, total_pages=self.total_pages))
+        self.add_item(
+            PreviousPageButton(row=pagination_row, current_page=self.current_page)
+        )
         self.add_item(SearchSortButton(row=pagination_row))
-        self.add_item(NextPageButton(row=pagination_row))
-        self.add_item(LastPageButton(row=pagination_row))
+        self.add_item(
+            NextPageButton(
+                row=pagination_row,
+                current_page=self.current_page,
+                total_pages=self.total_pages,
+            )
+        )
+        self.add_item(LastPageButton(row=pagination_row, total_pages=self.total_pages))
         self.add_item(ShareButton(row=min(pagination_row + 1, 4)))
 
     def _create_mon_button_sync(self, name: str, row: int) -> Button[View]:
@@ -115,10 +130,13 @@ class LandPaginationView(View):
         self.user_id = user_id
         self.book_of_land_ids = book_of_land_ids
         self.current_page = current_page
+        self.total_pages = max(1, len(book_of_land_ids))
 
         self._build_buttons()
 
     def _build_buttons(self) -> None:
+        if not self.book_of_land_ids:
+            return  # Empty book: no land buttons, pagers render disabled
         curr_page_content = self.book_of_land_ids[self.current_page - 1]
         row = 0
 
@@ -131,11 +149,20 @@ class LandPaginationView(View):
 
         # Add pagination buttons in their own row (capped to avoid exceeding Discord's 5-row limit)
         pagination_row = min(row + 1, 4)
-        self.add_item(FirstPageLandButton(row=pagination_row))
-        self.add_item(PreviousPageLandButton(row=pagination_row))
+        total_pages = max(1, len(self.book_of_land_ids))
+        self.add_item(FirstPageLandButton(row=pagination_row, total_pages=total_pages))
+        self.add_item(
+            PreviousPageLandButton(row=pagination_row, current_page=self.current_page)
+        )
         self.add_item(SearchSortLandButton(row=pagination_row))
-        self.add_item(NextPageLandButton(row=pagination_row))
-        self.add_item(LastPageLandButton(row=pagination_row))
+        self.add_item(
+            NextPageLandButton(
+                row=pagination_row,
+                current_page=self.current_page,
+                total_pages=total_pages,
+            )
+        )
+        self.add_item(LastPageLandButton(row=pagination_row, total_pages=total_pages))
 
     def _create_land_button_sync(self, token_id: int, row: int) -> Button[View]:
         """Create land button using cached info if possible."""
@@ -339,51 +366,62 @@ class CompareCounterdexsButton(Button[View]):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
-# Pagination Buttons for Mon
+# Pagination Buttons for Mon — target page encoded in custom_id so the
+# Buttons-cog router can serve clicks statelessly, even after restarts.
 class FirstPageButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, total_pages: int = 1) -> None:
         super().__init__(
             emoji="\u23ee\ufe0f",
             style=ButtonStyle.green,
             row=row,
-            custom_id="page:first",
+            custom_id="mon_page:goto:1",
+            disabled=total_pages <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class PreviousPageButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, current_page: int = 1) -> None:
         super().__init__(
-            emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="page:prev"
+            emoji="\u23ea",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id=f"mon_page:goto:{max(1, current_page - 1)}",
+            disabled=current_page <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class NextPageButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, current_page: int = 1, total_pages: int = 1) -> None:
         super().__init__(
-            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="page:next"
+            emoji="\u23e9",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id=f"mon_page:goto:{min(total_pages, current_page + 1)}",
+            disabled=current_page >= total_pages,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class LastPageButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, total_pages: int = 1) -> None:
         super().__init__(
             emoji="\u23ef\ufe0f",
             style=ButtonStyle.green,
             row=row,
-            custom_id="page:last",
+            custom_id=f"mon_page:goto:{max(1, total_pages)}",
+            disabled=total_pages <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class ShareButton(Button[View]):
@@ -414,51 +452,61 @@ class ShareButton(Button[View]):
                 print(f"ShareButton callback error: {e}")
 
 
-# Pagination Buttons for Land
+# Pagination Buttons for Land — target page encoded in custom_id.
 class FirstPageLandButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, total_pages: int = 1) -> None:
         super().__init__(
             emoji="\u23ee\ufe0f",
             style=ButtonStyle.green,
             row=row,
-            custom_id="land_page:first",
+            custom_id="land_page:goto:1",
+            disabled=total_pages <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class PreviousPageLandButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, current_page: int = 1) -> None:
         super().__init__(
-            emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="land_page:prev"
+            emoji="\u23ea",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id=f"land_page:goto:{max(1, current_page - 1)}",
+            disabled=current_page <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class NextPageLandButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, current_page: int = 1, total_pages: int = 1) -> None:
         super().__init__(
-            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="land_page:next"
+            emoji="\u23e9",
+            style=ButtonStyle.green,
+            row=row,
+            custom_id=f"land_page:goto:{min(total_pages, current_page + 1)}",
+            disabled=current_page >= total_pages,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class LastPageLandButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, total_pages: int = 1) -> None:
         super().__init__(
             emoji="\u23ef\ufe0f",
             style=ButtonStyle.green,
             row=row,
-            custom_id="land_page:last",
+            custom_id=f"land_page:goto:{max(1, total_pages)}",
+            disabled=total_pages <= 1,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        await interaction.response.defer()
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class SearchSortButton(Button[View]):
@@ -714,521 +762,243 @@ class SearchSortLandButton(Button[View]):
 
 
 class Buttons(commands.Cog):
+    """Router for stateless mon/land browse buttons.
+
+    All pagination state is encoded in custom_ids (``mon_page:goto:<n>`` /
+    ``land_page:goto:<n>``), so clicks keep working after bot restarts.
+    """
+
+    # Legacy page-less pager ids emitted by pre-router views; their page state
+    # is unrecoverable, so clicks get an expiry notice instead of silence.
+    _LEGACY_PAGERS = frozenset(
+        {
+            "first_page",
+            "previous_page",
+            "next_page",
+            "last_page",
+            "first_page_land",
+            "previous_page_land",
+            "next_page_land",
+            "last_page_land",
+            "page:first",
+            "page:prev",
+            "page:next",
+            "page:last",
+            "land_page:first",
+            "land_page:prev",
+            "land_page:next",
+            "land_page:last",
+        }
+    )
+    _MON_ALIASES = frozenset({"mon1", "mon2", "mon3"})
+
     def __init__(self, gradex: commands.Bot) -> None:
         self.gradex = gradex
         self.app_emojis: dict[str, Any] | None = None
         self.book_of_names: list[list[str]] | None = None
-        self.current_page: dict[int, int] = {}
-        self.attributes: dict[str, Any] = {}
-        self.attributes2: dict[str, Any] = {}
         self.book_of_land_ids: list[list[int]] | None = None
-        self.book_of_land_current_page: dict[int, int] = {}
-        self.land_attributes: dict[str, Any] = {}
 
-    async def mon_button(self, name: str, row: int) -> Button[View]:
-        """Create a mon button with info from database."""
-        revomon_table = RevomonTable()
-        info = await revomon_table.get_info(name)
-        dex_num = info[0][0] if info else 0
+    async def _load_app_emojis(self) -> dict[str, Any]:
+        if self.app_emojis is None:
+            try:
+                emojis = await list_application_emojis()
+                self.app_emojis = {e["name"]: e["id"] for e in emojis}
+            except Exception as e:
+                logger.debug(f"Failed to fetch application emojis: {e}")
+                self.app_emojis = {}
+        return self.app_emojis
 
-        button: Button[View] = Button(
-            label=f"{dex_num}. {name.title()}",
-            style=ButtonStyle.gray,
-            row=row,
-            custom_id=f"mon:{name.lower()}",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def land_button(self, token_id: int, row: int) -> Button[View]:
-        """Create a land button with info from database."""
-        owned_lands_table = OwnedLandsTable()
-        land_info_list = await owned_lands_table.get_info(token_id=token_id)
-        if land_info_list is None:
-            raise ValueError(f"Land with token_id {token_id} not found")
-        land_info = land_info_list[0]
-
-        button: Button[View] = Button(
-            label=f"{token_id}. {land_info[4].title()} · {land_info[3].title()} (${land_info[11]})",
-            style=ButtonStyle.gray,
-            row=row,
-            custom_id=f"land:{token_id}",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def stats_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Stats", style=ButtonStyle.green, custom_id="stats"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def compare_stats_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Compare Stats", style=ButtonStyle.green, custom_id="compare_stats"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def spawns_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Spawns", style=ButtonStyle.green, custom_id="spawns"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def compare_spawns_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Compare Spawns", style=ButtonStyle.green, custom_id="compare_spawns"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def moves_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Moves", style=ButtonStyle.green, custom_id="moves"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def compare_moves_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Compare Moves",
-            style=ButtonStyle.green,
-            custom_id="compare_move_list",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def types_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Types", style=ButtonStyle.green, custom_id="types"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def compare_types_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Compare Types", style=ButtonStyle.green, custom_id="compare_types"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def counterdex_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Counterdex", style=ButtonStyle.green, custom_id="counterdex"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def compare_counterdexs_button(self) -> Button[View]:
-        button: Button[View] = Button(
-            label="Compare Counterdexs",
-            style=ButtonStyle.green,
-            custom_id="compare_counterdexs",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def first_page_button(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ee\ufe0f",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="first_page",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def previous_button(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ea", style=ButtonStyle.green, row=row, custom_id="previous_page"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def next_button(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="next_page"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def last_page_button(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ed\ufe0f",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="last_page",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def first_page_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ee\ufe0f",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="first_page_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def previous_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ea",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="previous_page_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def next_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23e9", style=ButtonStyle.green, row=row, custom_id="next_page_land"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    def last_page_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u23ed\ufe0f",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="last_page_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def exit_button(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u274c", style=ButtonStyle.red, row=row, custom_id="exit"
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def search_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\U0001f50e",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="search_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def filter_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\U0001f50d",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="filter_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def sort_by_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\U0001f504",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="sort_by_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def search_settings_button_land(self, row: int) -> Button[View]:
-        button: Button[View] = Button(
-            emoji="\u2699\ufe0f",
-            style=ButtonStyle.green,
-            row=row,
-            custom_id="search_settings_land",
-        )
-        button.callback = self.on_button_click  # type: ignore[method-assign]
-        return button
-
-    async def mon_view(self, user_id: int) -> View:
+    async def mon_view(self, user_id: int, page: int = 1) -> View:
         if self.book_of_names is None:
             self.book_of_names = await get_book_of_mon_names()
-
-        self.current_page[user_id] = self.current_page.get(user_id, 1)
-        page = self.current_page[user_id]
-
-        view = MonPaginationView(
+        book = self.book_of_names or []
+        total_pages = max(1, len(book))
+        page = max(1, min(page, total_pages))
+        return MonPaginationView(
             bot=self.gradex,
             user_id=user_id,
-            book_of_names=self.book_of_names,
+            book_of_names=book,
             current_page=page,
             group_by_evo=True,
-            app_emojis=self.app_emojis or {},
+            app_emojis=await self._load_app_emojis(),
         )
-        return view
 
-    async def land_view(self, user_id: int, token_ids: list[int] | None = None) -> View:
+    async def land_view(
+        self, user_id: int, token_ids: list[int] | None = None, page: int = 1
+    ) -> View:
         if token_ids is not None:
             self.book_of_land_ids = await get_book_of_land_ids(token_ids=token_ids)
         elif self.book_of_land_ids is None:
             self.book_of_land_ids = await get_book_of_land_ids()
-
-        self.book_of_land_current_page[user_id] = self.book_of_land_current_page.get(
-            user_id, 1
-        )
-        page = self.book_of_land_current_page[user_id]
-
-        view = LandPaginationView(
+        book = self.book_of_land_ids or []
+        total_pages = max(1, len(book))
+        page = max(1, min(page, total_pages))
+        return LandPaginationView(
             user_id=user_id,
-            book_of_land_ids=self.book_of_land_ids,
+            book_of_land_ids=book,
             current_page=page,
         )
-        return view
 
     async def intro_view(self, attributes: dict[str, Any]) -> View:
-        self.attributes = attributes
-        view = IntroView(attributes)
-        return view
+        return IntroView(attributes)
 
     async def compare_intros_view(
         self, attributes: dict[str, Any], attributes2: dict[str, Any]
     ) -> View:
-        self.attributes = attributes
-        self.attributes2 = attributes2
-        view = CompareIntroView(attributes, attributes2)
-        return view
+        return CompareIntroView(attributes, attributes2)
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
         print("utils(Button Utils) is ready!")
         print("---------------------------")
 
+    # -- component-interaction router ----------------------------------
+
+    @staticmethod
+    def _extract_custom_id(interaction: Interaction) -> str | None:
+        if interaction.type is not discord.InteractionType.component:
+            return None
+        data = interaction.data
+        if not isinstance(data, dict):
+            return None
+        custom_id = data.get("custom_id")
+        return custom_id if isinstance(custom_id, str) else None
+
+    @staticmethod
+    async def _send_expiry_notice(interaction: Interaction) -> None:
+        await interaction.response.send_message(
+            "This pager has expired - run /search again.", ephemeral=True
+        )
+
+    async def _handle_mon_lookup(self, interaction: Interaction, name: str) -> None:
+        await interaction.response.defer()
+        attributes = await get_attributes(revomon_name=name.lower())
+        if not attributes:
+            await interaction.followup.send(
+                f"No Revomon found for '{name}'.", ephemeral=True
+            )
+            return
+        embed = intro(attributes)
+        intro_view = IntroView(attributes)
+        await interaction.followup.send(embed=embed, view=intro_view, ephemeral=True)
+
+    async def _handle_mon_goto(self, interaction: Interaction, page: int) -> None:
+        await interaction.response.defer()
+        view = await self.mon_view(user_id=interaction.user.id, page=page)
+        if interaction.message is not None:
+            await interaction.followup.edit_message(interaction.message.id, view=view)
+
+    async def _handle_land_goto(self, interaction: Interaction, page: int) -> None:
+        await interaction.response.defer()
+        view = await self.land_view(user_id=interaction.user.id, page=page)
+        if interaction.message is not None:
+            await interaction.followup.edit_message(interaction.message.id, view=view)
+
+    async def _handle_land_lookup(
+        self, interaction: Interaction, token_id: int
+    ) -> None:
+        await interaction.response.defer()
+        land_obj = OwnedLandsTable()
+        land_info_list = await land_obj.get_info(token_id=token_id)
+        if not land_info_list:
+            await interaction.followup.send(
+                f"Land {token_id} not found", ephemeral=True
+            )
+            return
+        land_info = land_info_list[0]
+        land_dict = {
+            "token_id": land_info[0],
+            "id": land_info[1],
+            "owners_address": land_info[2],
+            "biome": land_info[3],
+            "land_type": land_info[4],
+            "rarity": land_info[5],
+            "size": land_info[6],
+            "img_url": land_info[7],
+            "emoji": land_info[8],
+            "for_sale": bool(land_info[9]),
+            "token_symbol": land_info[10],
+            "for_sale_usd": land_info[11],
+            "for_sale_token": land_info[12],
+        }
+        embed = land_intro(attributes=land_dict)
+        await interaction.followup.send(embed=embed, ephemeral=True)
+
     @commands.Cog.listener()
-    async def on_button_click(self, interaction: Interaction) -> None:
+    async def on_interaction(self, interaction: Interaction) -> None:
+        """Route stateless browse-button clicks by custom_id prefix.
+
+        Malformed or unrecognized ids are logged at debug level and ignored;
+        only recognizable-but-stale pager ids produce a user-facing notice.
+        """
         try:
-            if interaction.user.bot or not interaction.message:
+            user = getattr(interaction, "user", None)
+            if getattr(user, "bot", False):
                 return
 
-            raw_data = interaction.data
-            custom_id: str = (
-                str(cast(dict[str, Any], raw_data).get("custom_id", ""))
-                if raw_data
-                else ""
-            )
-            print(f"Button Clicked!\nCustom ID: {custom_id}")
+            custom_id = self._extract_custom_id(interaction)
+            if custom_id is None:
+                return
+            logger.debug(f"[Buttons] component custom_id={custom_id}")
 
-            # Handle mon buttons (format: mon:name or just name)
-            if custom_id.startswith("mon:") or custom_id in ("mon1", "mon2", "mon3"):
-                name = custom_id[4:] if custom_id.startswith("mon:") else custom_id
-                await interaction.response.defer()
-                print(f"{interaction.user} clicked {name.title()}")
+            # Live-view features own these while their views are alive.
+            if custom_id.startswith(
+                ("mon:share", "mon:search_sort", "land:search_sort")
+            ):
+                return
 
-                attributes = await get_attributes(revomon_name=name.lower())
+            if custom_id in self._LEGACY_PAGERS:
+                await self._send_expiry_notice(interaction)
+                return
 
-                # Load and cache application emojis
-                if self.app_emojis is None:
-                    from utils.emoji_utils import list_application_emojis
-
-                    try:
-                        emojis = await list_application_emojis()
-                        self.app_emojis = {e["name"]: e["id"] for e in emojis}
-                    except Exception as e:
-                        print(f"Failed to fetch application emojis: {e}")
-                        self.app_emojis = {}
-
-                # Show intro first
-                intro_view = IntroView(attributes)
-                embed = intro(attributes)
-                await interaction.followup.send(
-                    embed=embed, view=intro_view, ephemeral=True
-                )
-                print("Intro embed sent!")
-
-            # Handle land buttons (format: land:token_id or "land N")
-            elif custom_id.startswith("land:") or custom_id.startswith("land "):
-                if custom_id.startswith("land:"):
-                    raw_token_id = int(custom_id[5:])
-                else:
-                    raw_token_id = int(custom_id.split()[1])
-                await interaction.response.defer()
-                print(f"{interaction.user} clicked land {raw_token_id}")
-
-                land_obj = OwnedLandsTable()
-                land_info_list = await land_obj.get_info(token_id=raw_token_id)
-                if land_info_list is None:
-                    await interaction.followup.send(
-                        f"Land {raw_token_id} not found", ephemeral=True
-                    )
+            if ":goto:" in custom_id and custom_id.startswith(
+                ("mon_page:", "land_page:")
+            ):
+                prefix, _, rest = custom_id.partition(":goto:")
+                try:
+                    page = int(rest)
+                except ValueError:
+                    logger.debug(f"[Buttons] bad goto page in {custom_id!r}")
                     return
-                land_info = land_info_list[0]
-                land_dict = {
-                    "token_id": land_info[0],
-                    "id": land_info[1],
-                    "owners_address": land_info[2],
-                    "biome": land_info[3],
-                    "land_type": land_info[4],
-                    "rarity": land_info[5],
-                    "size": land_info[6],
-                    "img_url": land_info[7],
-                    "emoji": land_info[8],
-                    "for_sale": bool(land_info[9]),
-                    "token_symbol": land_info[10],
-                    "for_sale_usd": land_info[11],
-                    "for_sale_token": land_info[12],
-                }
+                if prefix == "mon_page":
+                    await self._handle_mon_goto(interaction, page)
+                else:
+                    await self._handle_land_goto(interaction, page)
+                return
 
-                embed = land_intro(attributes=land_dict)
-                await interaction.followup.send(embed=embed, ephemeral=True)
-                print("Land Intro embed sent!")
+            if custom_id.startswith("land:"):
+                suffix = custom_id[len("land:") :]
+                try:
+                    token_id = int(suffix)
+                except ValueError:
+                    logger.debug(f"[Buttons] bad land id in {custom_id!r}")
+                    return
+                await self._handle_land_lookup(interaction, token_id)
+                return
 
-            # Handle pagination buttons (mon)
-            elif custom_id in ("first_page", "previous_page", "next_page", "last_page"):
-                await interaction.response.defer()
+            if custom_id.startswith("land ") and len(custom_id.split()) == 2:
+                raw = custom_id.split()[1]
+                try:
+                    token_id = int(raw)
+                except ValueError:
+                    logger.debug(f"[Buttons] bad legacy land id in {custom_id!r}")
+                    return
+                await self._handle_land_lookup(interaction, token_id)
+                return
 
-                # Update current page
-                user_id = interaction.user.id
-                if custom_id == "first_page":
-                    self.current_page[user_id] = 1
-                elif custom_id == "previous_page":
-                    self.current_page[user_id] = max(
-                        1, self.current_page.get(user_id, 1) - 1
-                    )
-                elif custom_id == "next_page":
-                    self.current_page[user_id] = self.current_page.get(user_id, 1) + 1
-                elif custom_id == "last_page":
-                    self.current_page[user_id] = (
-                        len(self.book_of_names) if self.book_of_names else 1
-                    )
+            if custom_id.startswith("mon:"):
+                name = custom_id[len("mon:") :]
+                if name:
+                    await self._handle_mon_lookup(interaction, name)
+                return
 
-                # Create new view using the mon_view method (can be mocked in tests)
-                if self.book_of_names is not None:
-                    new_view = await self.mon_view(user_id)
-                    await interaction.followup.edit_message(
-                        message_id=interaction.message.id, view=new_view
-                    )
+            if custom_id in self._MON_ALIASES:
+                await self._handle_mon_lookup(interaction, custom_id)
+                return
 
-            # Handle pagination buttons (land)
-            elif custom_id in (
-                "first_page_land",
-                "previous_page_land",
-                "next_page_land",
-                "last_page_land",
-            ):
-                await interaction.response.defer()
-
-                user_id = interaction.user.id
-                if custom_id == "first_page_land":
-                    self.book_of_land_current_page[user_id] = 1
-                elif custom_id == "previous_page_land":
-                    self.book_of_land_current_page[user_id] = max(
-                        1, self.book_of_land_current_page.get(user_id, 1) - 1
-                    )
-                elif custom_id == "next_page_land":
-                    self.book_of_land_current_page[user_id] = (
-                        self.book_of_land_current_page.get(user_id, 1) + 1
-                    )
-                elif custom_id == "last_page_land":
-                    self.book_of_land_current_page[user_id] = (
-                        len(self.book_of_land_ids) if self.book_of_land_ids else 1
-                    )
-
-                if self.book_of_land_ids is not None:
-                    new_view = await self.land_view(user_id)
-                    await interaction.followup.edit_message(
-                        message_id=interaction.message.id, view=new_view
-                    )
-
-            # Handle land action buttons
-            elif custom_id in (
-                "exit",
-                "search_land",
-                "filter_land",
-                "sort_by_land",
-                "search_settings_land",
-            ):
-                await interaction.response.defer()
-
-                if custom_id == "search_settings_land":
-                    revomon_table = RevomonTable()
-                    await revomon_table.get_names()
-                    await interaction.followup.send(
-                        "Search settings opened", ephemeral=True
-                    )
-
-            # Handle info action buttons
-            elif custom_id in (
-                "stats",
-                "compare_stats",
-                "spawns",
-                "compare_spawns",
-                "moves",
-                "compare_moves",
-                "types",
-                "counterdex",
-                "compare_counterdexs",
-                "compare_types",
-            ):
-                await interaction.response.defer()
-
-                # Get attributes from the view
-                view = getattr(interaction.message, "view", None)
-                if view and hasattr(view, "attributes"):
-                    attributes = view.attributes
-                    embed = None
-                    attributes2 = getattr(view, "attributes2", {})
-                    if custom_id == "stats":
-                        embed = stats(attributes)
-                    elif custom_id == "compare_stats":
-                        attributes2 = getattr(view, "attributes2", {})
-                        embed = compare_stats(attributes, attributes2)
-                    elif custom_id == "spawns":
-                        embed = spawns(attributes)
-                    elif custom_id == "compare_spawns":
-                        attributes2 = getattr(view, "attributes2", {})
-                        embed = compare_spawns(attributes, attributes2)
-                    elif custom_id == "moves":
-                        embed = moves(attributes)
-                    elif custom_id == "compare_moves":
-                        attributes2 = getattr(view, "attributes2", {})
-                        embed = compare_moves(attributes, attributes2)
-                    elif custom_id == "types":
-                        embed = types(attributes)
-                    elif custom_id == "counterdex":
-                        embed = counterdex(attributes)
-                    elif custom_id == "compare_counterdexs":
-                        attributes2 = getattr(view, "attributes2", {})
-                        embed = compare_counterdexs(attributes, attributes2)
-                    elif custom_id == "compare_types":
-                        attributes2 = getattr(view, "attributes2", {})
-                        embed1, embed2 = compare_types(attributes, attributes2)
-                        await interaction.followup.send(embed=embed1, ephemeral=True)
-                        await interaction.followup.send(embed=embed2, ephemeral=True)
-                        return
-
-                    if embed is not None:
-                        await interaction.followup.send(embed=embed, ephemeral=True)
-
-            # Handle search/sort for mons
-            elif custom_id == "mon:search_sort":
-                pass  # Handled in SearchSortButton.callback
-
-            elif custom_id == "apply_mon_sort":
-                pass  # Handled in apply_sort_callback
-
-            elif custom_id == "cancel_mon_sort":
-                pass  # Handled in cancel_sort_callback
-
-            # Handle search/sort for lands
-            elif custom_id == "land:search_sort":
-                pass  # Handled in SearchSortLandButton.callback
-
-            elif custom_id == "apply_land_sort":
-                pass  # Handled in apply_sort_callback
-
-            elif custom_id == "cancel_land_sort":
-                pass  # Handled in cancel_sort_callback
-
+            logger.debug(f"[Buttons] ignoring unrecognized custom_id={custom_id!r}")
         except Exception as e:
-            print(f"Error: {e}")
+            logger.error(f"[Buttons] router error: {e}", exc_info=True)
 
 
 async def setup(gradex: commands.Bot) -> None:
