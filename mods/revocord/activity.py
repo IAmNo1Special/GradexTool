@@ -196,10 +196,11 @@ class RouteAITrainerView(ui.View):
         super().__init__(timeout=None)
 
     @ui.button(
-        label="Battle",
+        label="Battle (Coming Soon)",
         style=discord.ButtonStyle.danger,
         emoji="⚔️",
         custom_id="persistent_battle_button",
+        disabled=True,
     )
     async def battle(
         self, interaction: discord.Interaction, button: ui.Button[Any]

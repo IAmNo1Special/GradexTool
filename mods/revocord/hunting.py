@@ -94,10 +94,11 @@ class WildSpawnView(ui.View):
         shiny_int = 1 if is_shiny else 0
 
         fight_btn: ui.Button[Any] = ui.Button(
-            label="Fight",
+            label="Fight (Coming Soon)",
             style=discord.ButtonStyle.danger,
             emoji="⚔️",
             custom_id=f"spawn_fight:{spawner_id}:{id_revomon}:{shiny_int}:{timestamp}:{event_msg_id}",
+            disabled=True,
         )
         catch_btn: ui.Button[Any] = ui.Button(
             label="Throw Orb",

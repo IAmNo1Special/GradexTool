@@ -76,10 +76,11 @@ class GameConsoleView(ui.View):
         self.user_id = user_id
 
     @ui.button(
-        label="Bag",
+        label="Bag (Coming Soon)",
         style=discord.ButtonStyle.secondary,
         emoji="🎒",
         custom_id="console_bag",
+        disabled=True,
     )
     async def bag(
         self, interaction: discord.Interaction, button: ui.Button[Any]
@@ -87,10 +88,11 @@ class GameConsoleView(ui.View):
         await interaction.response.defer()
 
     @ui.button(
-        label="Heal",
+        label="Heal (Coming Soon)",
         style=discord.ButtonStyle.danger,
         emoji="🏥",
         custom_id="console_heal",
+        disabled=True,
     )
     async def heal(
         self, interaction: discord.Interaction, button: ui.Button[Any]
