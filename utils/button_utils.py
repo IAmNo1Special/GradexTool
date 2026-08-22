@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Callable
-from typing import Any, cast
+from typing import Any
 
 import discord
 from discord import ButtonStyle, Interaction, SelectOption
@@ -30,6 +30,35 @@ from utils.revomon_utils import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Sortable fields for the stateless sort panels (value, label).
+MON_SORT_FIELDS: tuple[tuple[str, str], ...] = (
+    ("dex_id", "Dex #"),
+    ("name", "Name"),
+    ("type1", "Type"),
+    ("hp", "HP"),
+    ("atk", "ATK"),
+    ("def", "DEF"),
+    ("spa", "SPA"),
+    ("spd", "SPD"),
+    ("spe", "SPE"),
+    ("rarity", "Rarity"),
+)
+LAND_SORT_FIELDS: tuple[tuple[str, str], ...] = (
+    ("token_id", "Token ID"),
+    ("biome", "Biome"),
+    ("land_type", "Land Type"),
+    ("rarity", "Rarity"),
+    ("for_sale_usd", "Price"),
+    ("size", "Size"),
+    ("owners_address", "Owner's Address"),
+)
+SORT_ORDERS: tuple[tuple[str, str], ...] = (
+    ("asc", "Ascending"),
+    ("desc", "Descending"),
+)
+_VALID_MON_SORT_FIELDS = frozenset(v for v, _ in MON_SORT_FIELDS)
+_VALID_LAND_SORT_FIELDS = frozenset(v for v, _ in LAND_SORT_FIELDS)
 
 __all__ = [
     "get_book_of_land_ids",
@@ -90,7 +119,7 @@ class MonPaginationView(View):
         self.add_item(
             PreviousPageButton(row=pagination_row, current_page=self.current_page)
         )
-        self.add_item(SearchSortButton(row=pagination_row))
+        self.add_item(SearchSortButton(row=pagination_row, page=self.current_page))
         self.add_item(
             NextPageButton(
                 row=pagination_row,
@@ -99,7 +128,13 @@ class MonPaginationView(View):
             )
         )
         self.add_item(LastPageButton(row=pagination_row, total_pages=self.total_pages))
-        self.add_item(ShareButton(row=min(pagination_row + 1, 4)))
+        self.add_item(
+            ShareButton(
+                row=min(pagination_row + 1, 4),
+                user_id=self.user_id,
+                page=self.current_page,
+            )
+        )
 
     def _create_mon_button_sync(self, name: str, row: int) -> Button[View]:
         """Create button using only the name and cached emoji info."""
@@ -155,7 +190,7 @@ class LandPaginationView(View):
         self.add_item(
             PreviousPageLandButton(row=pagination_row, current_page=self.current_page)
         )
-        self.add_item(SearchSortLandButton(row=pagination_row))
+        self.add_item(SearchSortLandButton(row=pagination_row, page=self.current_page))
         self.add_item(
             NextPageLandButton(
                 row=pagination_row,
@@ -414,31 +449,18 @@ class LastPageButton(Button[View]):
 
 
 class ShareButton(Button[View]):
-    def __init__(self, row: int) -> None:
+    """Re-post the current browse view publicly; payload rides in custom_id."""
+
+    def __init__(self, row: int, user_id: int, page: int) -> None:
         super().__init__(
             emoji="\U0001f4e4",
             style=ButtonStyle.green,
             row=row,
-            custom_id="mon:share",
+            custom_id=f"mon:share:{user_id}:{page}",
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        view = self.view
-        if view is not None and hasattr(view, "book_of_names"):
-            mon_view = cast(MonPaginationView, view)
-            new_view = MonPaginationView(
-                bot=mon_view.bot,
-                user_id=mon_view.user_id,
-                book_of_names=mon_view.book_of_names,
-                current_page=mon_view.current_page,
-                group_by_evo=mon_view.group_by_evo,
-                app_emojis=mon_view.app_emojis,
-            )
-            try:
-                await interaction.response.defer()
-                await interaction.followup.send(view=new_view, ephemeral=False)
-            except (discord.HTTPException, discord.Forbidden) as e:
-                print(f"ShareButton callback error: {e}")
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 # Pagination Buttons for Land — target page encoded in custom_id.
@@ -498,256 +520,34 @@ class LastPageLandButton(Button[View]):
         return None  # Handled by the Buttons cog's on_interaction router
 
 
+# Sort-entry buttons — page encoded; the router renders a restart-safe
+# sort panel (selects + cancel are themselves router-owned components).
 class SearchSortButton(Button[View]):
-    """Button to open sort options for mon list."""
-
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, page: int = 1) -> None:
         super().__init__(
             label="",
             emoji="\U0001f50d",
             style=ButtonStyle.secondary,
-            custom_id="mon:search_sort",
+            custom_id=f"mon:search_sort:{page}",
             row=row,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        sort_by_menu: Select[View] = Select(
-            placeholder="Sort by...",
-            custom_id="mon_sort_by_select",
-            row=0,
-            options=[
-                SelectOption(
-                    label="Dex #",
-                    value="dex_id",
-                    description="Sort by Pok\u00e9dex number",
-                ),
-                SelectOption(
-                    label="Name", value="name", description="Sort alphabetically"
-                ),
-                SelectOption(
-                    label="Type", value="type1", description="Sort by primary type"
-                ),
-                SelectOption(label="HP", value="hp", description="Sort by HP stat"),
-                SelectOption(
-                    label="ATK", value="atk", description="Sort by Attack stat"
-                ),
-                SelectOption(
-                    label="DEF", value="def", description="Sort by Defense stat"
-                ),
-                SelectOption(
-                    label="SPA", value="spa", description="Sort by Sp. Attack stat"
-                ),
-                SelectOption(
-                    label="SPD", value="spd", description="Sort by Sp. Defense stat"
-                ),
-                SelectOption(
-                    label="SPE", value="spe", description="Sort by Speed stat"
-                ),
-                SelectOption(
-                    label="Rarity", value="rarity", description="Sort by rarity"
-                ),
-            ],
-        )
-
-        sort_order_menu: Select[View] = Select(
-            placeholder="Sort order...",
-            custom_id="mon_sort_order_select",
-            row=1,
-            options=[
-                SelectOption(
-                    label="Ascending",
-                    value="asc",
-                    emoji="\u2b06\ufe0f",
-                    description="A \u2192 Z, lowest \u2192 highest",
-                ),
-                SelectOption(
-                    label="Descending",
-                    value="desc",
-                    emoji="\u2b07\ufe0f",
-                    description="Z \u2192 A, highest \u2192 lowest",
-                ),
-            ],
-        )
-
-        apply_button: Button[View] = Button(
-            label="Apply Sort",
-            emoji="\u2705",
-            style=ButtonStyle.success,
-            custom_id="apply_mon_sort",
-            row=2,
-        )
-
-        cancel_button: Button[View] = Button(
-            label="Cancel",
-            style=ButtonStyle.secondary,
-            custom_id="cancel_mon_sort",
-            row=2,
-        )
-
-        sort_view = View(timeout=None)
-        sort_view.add_item(sort_by_menu)
-        sort_view.add_item(sort_order_menu)
-        sort_view.add_item(apply_button)
-        sort_view.add_item(cancel_button)
-
-        async def sort_by_callback(select_interaction: Interaction) -> None:
-            await select_interaction.response.defer()
-
-        async def sort_order_callback(select_interaction: Interaction) -> None:
-            await select_interaction.response.defer()
-
-        async def apply_sort_callback(apply_interaction: Interaction) -> None:
-            sort_by_value = sort_by_menu.values[0] if sort_by_menu.values else "dex_id"
-            asc = True
-            if sort_order_menu.values:
-                asc = sort_order_menu.values[0] == "asc"
-            sorted_names = await RevomonTable().get_sorted_names(
-                sort_by=sort_by_value, asc=asc
-            )
-            group_by_evo = sort_by_value == "dex_id"
-            book_of_names = await get_book_of_mon_names(
-                names=sorted_names, group_by_evo=group_by_evo
-            )
-
-            new_view = MonPaginationView(
-                bot=cast(commands.Bot, apply_interaction.client),
-                user_id=apply_interaction.user.id,
-                book_of_names=book_of_names,
-                current_page=1,
-                group_by_evo=group_by_evo,
-                app_emojis={},
-            )
-            await apply_interaction.response.edit_message(view=new_view)
-
-        async def cancel_sort_callback(cancel_interaction: Interaction) -> None:
-            await cancel_interaction.response.defer()
-
-        cast(Any, sort_by_menu).callback = sort_by_callback
-        cast(Any, sort_order_menu).callback = sort_order_callback
-        cast(Any, apply_button).callback = apply_sort_callback
-        cast(Any, cancel_button).callback = cancel_sort_callback
-
-        await interaction.response.edit_message(view=sort_view)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class SearchSortLandButton(Button[View]):
-    """Button to open sort options for land list."""
-
-    def __init__(self, row: int) -> None:
+    def __init__(self, row: int, page: int = 1) -> None:
         super().__init__(
             label="",
             emoji="\U0001f50d",
             style=ButtonStyle.secondary,
-            custom_id="land:search_sort",
+            custom_id=f"land:search_sort:{page}",
             row=row,
         )
 
     async def callback(self, interaction: Interaction) -> None:
-        sort_by_menu: Select[View] = Select(
-            placeholder="Sort by...",
-            custom_id="land_sort_by_select",
-            row=0,
-            options=[
-                SelectOption(label="Biome", value="biome", description="Sort by biome"),
-                SelectOption(
-                    label="Land Type",
-                    value="land_type",
-                    description="Sort by land type",
-                ),
-                SelectOption(
-                    label="Rarity", value="rarity", description="Sort by rarity"
-                ),
-                SelectOption(
-                    label="Price", value="for_sale_usd", description="Sort by price"
-                ),
-                SelectOption(label="Size", value="size", description="Sort by size"),
-                SelectOption(
-                    label="Owner's Address",
-                    value="owners_address",
-                    description="Sort by owner",
-                ),
-            ],
-        )
-
-        sort_order_menu: Select[View] = Select(
-            placeholder="Sort order...",
-            custom_id="land_sort_order_select",
-            row=1,
-            options=[
-                SelectOption(
-                    label="Ascending",
-                    value="asc",
-                    emoji="\u2b06\ufe0f",
-                    description="A \u2192 Z, lowest \u2192 highest",
-                ),
-                SelectOption(
-                    label="Descending",
-                    value="desc",
-                    emoji="\u2b07\ufe0f",
-                    description="Z \u2192 A, highest \u2192 lowest",
-                ),
-            ],
-        )
-
-        apply_button: Button[View] = Button(
-            label="Apply Sort",
-            emoji="\u2705",
-            style=ButtonStyle.success,
-            custom_id="apply_land_sort",
-            row=2,
-        )
-
-        cancel_button: Button[View] = Button(
-            label="Cancel",
-            style=ButtonStyle.secondary,
-            custom_id="cancel_land_sort",
-            row=2,
-        )
-
-        sort_view = View(timeout=None)
-        sort_view.add_item(sort_by_menu)
-        sort_view.add_item(sort_order_menu)
-        sort_view.add_item(apply_button)
-        sort_view.add_item(cancel_button)
-
-        async def sort_by_callback(select_interaction: Interaction) -> None:
-            await select_interaction.response.defer()
-
-        async def sort_order_callback(select_interaction: Interaction) -> None:
-            await select_interaction.response.defer()
-
-        async def apply_sort_callback(apply_interaction: Interaction) -> None:
-            sort_by_value = (
-                sort_by_menu.values[0] if sort_by_menu.values else "token_id"
-            )
-            asc = True
-            if sort_order_menu.values:
-                asc = sort_order_menu.values[0] == "asc"
-            sorted_lands = await OwnedLandsTable().get_info(
-                sort_by=sort_by_value, asc=asc
-            )
-            if sorted_lands:
-                sorted_token_ids = [land[0] for land in sorted_lands]
-                book_of_land_ids = await get_book_of_land_ids(
-                    token_ids=sorted_token_ids
-                )
-
-                new_view = LandPaginationView(
-                    user_id=apply_interaction.user.id,
-                    book_of_land_ids=book_of_land_ids,
-                    current_page=1,
-                )
-                await apply_interaction.response.edit_message(view=new_view)
-
-        async def cancel_sort_callback(cancel_interaction: Interaction) -> None:
-            await cancel_interaction.response.defer()
-
-        cast(Any, sort_by_menu).callback = sort_by_callback
-        cast(Any, sort_order_menu).callback = sort_order_callback
-        cast(Any, apply_button).callback = apply_sort_callback
-        cast(Any, cancel_button).callback = cancel_sort_callback
-
-        await interaction.response.edit_message(view=sort_view)
+        return None  # Handled by the Buttons cog's on_interaction router
 
 
 class Buttons(commands.Cog):
@@ -777,6 +577,18 @@ class Buttons(commands.Cog):
             "land_page:prev",
             "land_page:next",
             "land_page:last",
+            # Pre-router sort/share ids whose live closures are gone.
+            "mon:share",
+            "mon:search_sort",
+            "land:search_sort",
+            "mon_sort_by_select",
+            "mon_sort_order_select",
+            "apply_mon_sort",
+            "cancel_mon_sort",
+            "land_sort_by_select",
+            "land_sort_order_select",
+            "apply_land_sort",
+            "cancel_land_sort",
         }
     )
     _MON_ALIASES = frozenset({"mon1", "mon2", "mon3"})
@@ -872,6 +684,131 @@ class Buttons(commands.Cog):
         await interaction.response.send_message(
             "This pager has expired - run /search again.", ephemeral=True
         )
+
+    @staticmethod
+    def _parse_page(raw: str) -> int | None:
+        try:
+            return max(1, int(raw))
+        except ValueError:
+            logger.debug(f"[Buttons] bad page value {raw!r}")
+            return None
+
+    @staticmethod
+    def _extract_values(interaction: Interaction) -> list[str]:
+        data = interaction.data
+        if not isinstance(data, dict):
+            return []
+        values = data.get("values")
+        if isinstance(values, list):
+            return [v for v in values if isinstance(v, str)]
+        return []
+
+    def _build_sort_panel(self, kind: str, field: str, page: int) -> View:
+        """Restart-safe sort panel: every component is router-owned."""
+        fields = MON_SORT_FIELDS if kind == "mon" else LAND_SORT_FIELDS
+        default_label = "Dex #" if kind == "mon" else "Token ID"
+        by_select: Select[View] = Select(
+            placeholder="Sort by...",
+            custom_id=f"{kind}_sort_by:{page}",
+            row=0,
+            options=[SelectOption(label=lbl, value=val) for val, lbl in fields],
+        )
+        order_select: Select[View] = Select(
+            placeholder=(
+                f"Sort order... (picking applies; default {default_label})"
+                if field == "_"
+                else f"Sort by '{field}' - pick order to apply"
+            ),
+            custom_id=f"{kind}_sort_order:{field}:{page}",
+            row=1,
+            options=[SelectOption(label=lbl, value=val) for val, lbl in SORT_ORDERS],
+        )
+        cancel_button: Button[View] = Button(
+            label="Cancel",
+            style=ButtonStyle.secondary,
+            custom_id=f"{kind}_sort_cancel:{page}",
+            row=2,
+        )
+        view = View(timeout=None)
+        view.add_item(by_select)
+        view.add_item(order_select)
+        view.add_item(cancel_button)
+        return view
+
+    async def _handle_share(
+        self, interaction: Interaction, user_id: int, page: int
+    ) -> None:
+        await interaction.response.defer()
+        view = await self.mon_view(user_id=user_id, page=page)
+        if interaction.message is not None:
+            # Public re-post of a browsable, restart-proof copy.
+            await interaction.followup.send(view=view, ephemeral=False)
+
+    async def _handle_sort_panel(
+        self, interaction: Interaction, kind: str, field: str, page: int
+    ) -> None:
+        await interaction.response.defer()
+        panel = self._build_sort_panel(kind, field, page)
+        if interaction.message is not None:
+            await interaction.followup.edit_message(interaction.message.id, view=panel)
+
+    async def _handle_sort_cancel(
+        self, interaction: Interaction, kind: str, page: int
+    ) -> None:
+        await interaction.response.defer()
+        view: View
+        if kind == "mon":
+            view = await self.mon_view(user_id=interaction.user.id, page=page)
+        else:
+            view = await self.land_view(user_id=interaction.user.id, page=page)
+        if interaction.message is not None:
+            await interaction.followup.edit_message(interaction.message.id, view=view)
+
+    async def _handle_sort_apply(
+        self,
+        interaction: Interaction,
+        kind: str,
+        effective_field: str,
+        asc: bool,
+        page: int,
+    ) -> None:
+        await interaction.response.defer()
+        clicker_id = interaction.user.id
+
+        if kind == "mon":
+            group_by_evo = effective_field == "dex_id"
+            sorted_names = await RevomonTable().get_sorted_names(
+                sort_by=effective_field, asc=asc
+            )
+            book_of_names = await get_book_of_mon_names(
+                names=sorted_names, group_by_evo=group_by_evo
+            )
+            new_view: View = MonPaginationView(
+                bot=self.gradex,
+                user_id=clicker_id,
+                book_of_names=book_of_names,
+                current_page=1,
+                group_by_evo=group_by_evo,
+                app_emojis=await self._load_app_emojis(),
+            )
+        else:
+            sorted_lands = await OwnedLandsTable().get_info(
+                sort_by=effective_field, asc=asc
+            )
+            sorted_token_ids = (
+                [land[0] for land in sorted_lands] if sorted_lands else []
+            )
+            book_of_land_ids = await get_book_of_land_ids(token_ids=sorted_token_ids)
+            new_view = LandPaginationView(
+                user_id=clicker_id,
+                book_of_land_ids=book_of_land_ids or [],
+                current_page=1,
+            )
+
+        if interaction.message is not None:
+            await interaction.followup.edit_message(
+                interaction.message.id, view=new_view
+            )
 
     async def _handle_action(self, interaction: Interaction, custom_id: str) -> None:
         """Serve IntroView action buttons by rebuilding attributes from SQLite.
@@ -1012,14 +949,81 @@ class Buttons(commands.Cog):
                 return
             logger.debug(f"[Buttons] component custom_id={custom_id}")
 
-            # Live-view features own these while their views are alive.
-            if custom_id.startswith(
-                ("mon:share", "mon:search_sort", "land:search_sort")
-            ):
-                return
-
             if custom_id in self._LEGACY_PAGERS:
                 await self._send_expiry_notice(interaction)
+                return
+
+            if custom_id.startswith("mon:share:"):
+                rest = custom_id[len("mon:share:") :]
+                uid_s, sep, page_s = rest.partition(":")
+                try:
+                    share_uid = int(uid_s)
+                    share_page = max(1, int(page_s))
+                except ValueError:
+                    logger.debug(f"[Buttons] bad share id {custom_id!r}")
+                    return
+                await self._handle_share(interaction, share_uid, share_page)
+                return
+
+            if custom_id.startswith("mon:search_sort:"):
+                page = self._parse_page(custom_id.rpartition(":")[2])
+                if page is not None:
+                    await self._handle_sort_panel(interaction, "mon", "_", page)
+                return
+
+            if custom_id.startswith("land:search_sort:"):
+                page = self._parse_page(custom_id.rpartition(":")[2])
+                if page is not None:
+                    await self._handle_sort_panel(interaction, "land", "_", page)
+                return
+
+            if custom_id.startswith(("mon_sort_by:", "land_sort_by:")):
+                kind = "mon" if custom_id.startswith("mon_") else "land"
+                page = self._parse_page(custom_id.rpartition(":")[2])
+                values = self._extract_values(interaction)
+                field = values[0] if values else "_"
+                valid_fields = (
+                    _VALID_MON_SORT_FIELDS if kind == "mon" else _VALID_LAND_SORT_FIELDS
+                )
+                if page is None or field not in valid_fields:
+                    logger.debug(f"[Buttons] bad sort-by id {custom_id!r}")
+                    return
+                await self._handle_sort_panel(interaction, kind, field, page)
+                return
+
+            if custom_id.startswith(("mon_sort_order:", "land_sort_order:")):
+                kind = "mon" if custom_id.startswith("mon_") else "land"
+                field, _, rest = custom_id.partition(":")[2].rpartition(":")
+                page = self._parse_page(rest)
+                values = self._extract_values(interaction)
+                order = values[0] if values else ""
+                valid_fields = (
+                    _VALID_MON_SORT_FIELDS if kind == "mon" else _VALID_LAND_SORT_FIELDS
+                )
+                effective_field: str | None
+                if field == "_":
+                    effective_field = "dex_id" if kind == "mon" else "token_id"
+                elif field in valid_fields:
+                    effective_field = field
+                else:
+                    effective_field = None
+                if (
+                    page is None
+                    or order not in {"asc", "desc"}
+                    or effective_field is None
+                ):
+                    logger.debug(f"[Buttons] bad sort-order id {custom_id!r}")
+                    return
+                await self._handle_sort_apply(
+                    interaction, kind, effective_field, order == "asc", page
+                )
+                return
+
+            if custom_id.startswith(("mon_sort_cancel:", "land_sort_cancel:")):
+                kind = "mon" if custom_id.startswith("mon_") else "land"
+                page = self._parse_page(custom_id.rpartition(":")[2])
+                if page is not None:
+                    await self._handle_sort_cancel(interaction, kind, page)
                 return
 
             if custom_id.startswith("action:"):

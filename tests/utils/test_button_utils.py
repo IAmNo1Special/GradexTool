@@ -105,43 +105,13 @@ async def test_share_button_in_view() -> None:
     )
     share_buttons = [child for child in view.children if isinstance(child, ShareButton)]
     assert len(share_buttons) == 1
-    assert share_buttons[0].custom_id == "mon:share"
+    assert share_buttons[0].custom_id == "mon:share:123:1"
     assert share_buttons[0].style == ButtonStyle.green
 
 
 @pytest.mark.asyncio
-async def test_share_button_callback() -> None:
-    original_view = MonPaginationView(
-        bot=MagicMock(),
-        user_id=123,
-        book_of_names=[["mon1", "mon2"]],
-        current_page=1,
-        group_by_evo=True,
-        app_emojis={},
-    )
-    share_button = next(
-        child for child in original_view.children if isinstance(child, ShareButton)
-    )
-
-    interaction = MagicMock()
-    interaction.response.defer = AsyncMock()
-    interaction.followup.send = AsyncMock()
-
-    await share_button.callback(interaction)
-
-    interaction.response.defer.assert_awaited_once()
-    interaction.followup.send.assert_awaited_once()
-    assert interaction.followup.send.call_args[1]["ephemeral"] is False
-    new_view = interaction.followup.send.call_args[1]["view"]
-    assert isinstance(new_view, MonPaginationView)
-    assert new_view.current_page == original_view.current_page
-    assert new_view is not original_view
-
-
-@pytest.mark.asyncio
-async def test_share_button_callback_no_view() -> None:
-    button = ShareButton(row=0)
-
+async def test_share_button_is_noop() -> None:
+    button = ShareButton(row=0, user_id=123, page=2)
     interaction = MagicMock()
     interaction.response.defer = AsyncMock()
     interaction.followup.send = AsyncMock()
@@ -150,6 +120,176 @@ async def test_share_button_callback_no_view() -> None:
 
     interaction.response.defer.assert_not_awaited()
     interaction.followup.send.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.Buttons.mon_view")
+async def test_router_share_posts_public_view(
+    mock_mon_view: Any, buttons_cog: Any
+) -> None:
+    mock_mon_view.return_value = "view"
+
+    interaction = _interaction("mon:share:555:2")
+    await buttons_cog.on_interaction(interaction)
+
+    mock_mon_view.assert_awaited_once_with(user_id=555, page=2)
+    interaction.response.defer.assert_called_once()
+    kwargs = interaction.followup.send.call_args[1]
+    assert kwargs["view"] == "view"
+    assert kwargs["ephemeral"] is False
+
+
+@pytest.mark.asyncio
+async def test_router_bare_share_expires(buttons_cog: Any) -> None:
+    interaction = _interaction("mon:share")
+    await buttons_cog.on_interaction(interaction)
+
+    assert "expired" in str(interaction.response.send_message.call_args)
+
+
+@pytest.mark.asyncio
+async def test_router_sort_panel_opens(buttons_cog: Any) -> None:
+    interaction = _interaction("mon:search_sort:1")
+    await buttons_cog.on_interaction(interaction)
+
+    interaction.response.defer.assert_called_once()
+    view = interaction.followup.edit_message.call_args[1]["view"]
+    children_types = [type(c).__name__ for c in view.children]
+    assert children_types.count("Select") == 2
+    by_select = view.children[0]
+    assert by_select.custom_id == "mon_sort_by:1"
+
+
+@pytest.mark.asyncio
+async def test_router_sort_by_rerenders_panel_with_field(
+    buttons_cog: Any,
+) -> None:
+    interaction = _interaction("mon_sort_by:1")
+    interaction.data = {"custom_id": "mon_sort_by:1", "values": ["name"]}
+
+    await buttons_cog.on_interaction(interaction)
+
+    view = interaction.followup.edit_message.call_args[1]["view"]
+    order_select = view.children[1]
+    assert order_select.custom_id == "mon_sort_order:name:1"
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.get_book_of_mon_names", new_callable=AsyncMock)
+@patch("utils.button_utils.RevomonTable")
+@patch("utils.button_utils.list_application_emojis", new_callable=AsyncMock)
+async def test_router_mon_sort_order_applies(
+    mock_list_emojis: Any,
+    mock_revo_table: Any,
+    mock_get_book: Any,
+    buttons_cog: Any,
+) -> None:
+    mock_revo_table.return_value.get_sorted_names = AsyncMock(return_value=["b", "a"])
+    mock_get_book.return_value = [["b"], ["a"]]
+    mock_list_emojis.return_value = []
+
+    interaction = _interaction("mon_sort_order:name:1")
+    interaction.data = {
+        "custom_id": "mon_sort_order:name:1",
+        "values": ["desc"],
+    }
+    await buttons_cog.on_interaction(interaction)
+
+    mock_revo_table.return_value.get_sorted_names.assert_awaited_once_with(
+        sort_by="name", asc=False
+    )
+    mock_get_book.assert_awaited_once_with(names=["b", "a"], group_by_evo=False)
+    sent_view = interaction.followup.edit_message.call_args[1]["view"]
+    assert isinstance(sent_view, MonPaginationView)
+    assert sent_view.book_of_names == [["b"], ["a"]]
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.get_book_of_land_ids", new_callable=AsyncMock)
+@patch("utils.button_utils.OwnedLandsTable")
+async def test_router_land_sort_order_applies(
+    mock_owned: Any, mock_get_book: Any, buttons_cog: Any
+) -> None:
+    mock_owned.return_value.get_info = AsyncMock(return_value=[[9], [4], [7]])
+    mock_get_book.return_value = [[9, 4, 7]]
+
+    interaction = _interaction("land_sort_order:_:1")
+    interaction.data = {
+        "custom_id": "land_sort_order:_:1",
+        "values": ["asc"],
+    }
+    await buttons_cog.on_interaction(interaction)
+
+    mock_owned.return_value.get_info.assert_awaited_once_with(
+        sort_by="token_id", asc=True
+    )
+    mock_get_book.assert_awaited_once_with(token_ids=[9, 4, 7])
+    sent_view = interaction.followup.edit_message.call_args[1]["view"]
+    assert type(sent_view).__name__ == "LandPaginationView"
+
+
+@pytest.mark.asyncio
+@patch("utils.button_utils.Buttons.mon_view")
+async def test_router_sort_cancel_restores_pager(
+    mock_mon_view: Any, buttons_cog: Any
+) -> None:
+    mock_mon_view.return_value = "pager"
+
+    interaction = _interaction("mon_sort_cancel:3")
+    await buttons_cog.on_interaction(interaction)
+
+    mock_mon_view.assert_awaited_once_with(user_id=123, page=3)
+    assert interaction.followup.edit_message.call_args[1]["view"] == "pager"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "custom_id",
+    [
+        "mon_sort_by_select",
+        "mon_sort_order_select",
+        "apply_mon_sort",
+        "cancel_mon_sort",
+        "land_sort_by_select",
+        "land_sort_order_select",
+        "apply_land_sort",
+        "cancel_land_sort",
+        "mon:search_sort",
+        "land:search_sort",
+    ],
+)
+async def test_router_legacy_sort_ids_expire(buttons_cog: Any, custom_id: str) -> None:
+    interaction = _interaction(custom_id)
+    await buttons_cog.on_interaction(interaction)
+
+    assert "expired" in str(interaction.response.send_message.call_args)
+    interaction.followup.edit_message.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "custom_id,values",
+    [
+        ("mon_sort_order:bogus:1", ["desc"]),  # invalid field
+        ("land_sort_order:nope:1", ["asc"]),
+        ("mon:search_sort:notapage", None),  # bad page
+        ("mon_sort_cancel:xyz", None),
+    ],
+)
+async def test_router_malformed_sort_ids_ignored(
+    buttons_cog: Any, custom_id: str, values: list[str] | None
+) -> None:
+    interaction = _interaction(custom_id)
+    if values is not None:
+        interaction.data = {"custom_id": custom_id, "values": values}
+    await buttons_cog.on_interaction(interaction)
+
+    interaction.response.defer.assert_not_called()
+    interaction.followup.edit_message.assert_not_called()
+    interaction.followup.send.assert_not_called()
+
+
+# ------------------------------------------------------- view helpers
 
 
 # ------------------------------------------------------------------ router
@@ -344,8 +484,8 @@ async def test_router_malformed_goto_page_ignored(buttons_cog: Any) -> None:
 
 
 @pytest.mark.asyncio
-async def test_router_live_view_feature_ids_ignored(buttons_cog: Any) -> None:
-    for custom_id in ("mon:share", "mon:search_sort", "land:search_sort"):
+async def test_router_unknown_feature_ids_ignored(buttons_cog: Any) -> None:
+    for custom_id in ("tv_nav_next", "some_foreign_button:id"):
         interaction = _interaction(custom_id)
         await buttons_cog.on_interaction(interaction)
 
