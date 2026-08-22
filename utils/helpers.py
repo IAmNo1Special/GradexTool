@@ -3,7 +3,7 @@
 import discord
 from discord.ext import commands
 
-from configs import GRA_GUILD_ID, GRA_PRO_TAMER_ROLE_IDS
+from configs import GRA_GUILD_ID, GRA_KEYWORD_DELETE_MESSAGES, GRA_PRO_TAMER_ROLE_IDS
 from data import UsersTable
 
 # Singleton instance to prevent database connection exhaustion
@@ -89,5 +89,6 @@ async def respond(
             reply_message = await message.author.send(content=reply_text)
             await reply_message.delete(delay=10)
     elif message.guild:
-        await message.delete()
+        if GRA_KEYWORD_DELETE_MESSAGES:
+            await message.delete()
         await message.author.send(embed=embed, view=buttons, file=file)  # type: ignore[arg-type]

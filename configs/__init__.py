@@ -33,6 +33,18 @@ GRA_GUILD_ID = _get_optional_int_env("GRA_GUILD_ID")
 GRA_PRO_TAMER_ROLE_IDS = _get_int_list_env("GRA_PRO_TAMER_ROLE_IDS")
 GRADEX_DB_PATH = _configs.get("GRADEX_DB_PATH", "data/gradex.db")
 
+
+def _get_bool_env(name: str, default: bool) -> bool:
+    value = getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() not in {"0", "false", "no", "off"}
+
+
+# Keyword triggers delete the triggering chat message to avoid channel spam.
+# Set GRA_KEYWORD_DELETE_MESSAGES=0 to keep trigger messages in place.
+GRA_KEYWORD_DELETE_MESSAGES = _get_bool_env("GRA_KEYWORD_DELETE_MESSAGES", True)
+
 # API endpoints
 REVOMON_REVODEX_ENDPOINT = _configs.get(
     "REVOMON_REVODEX_ENDPOINT", "https://api.revomon.io/revomon/revodex"
@@ -111,6 +123,7 @@ __all__ = [
     "PROJECT_ROOT",
     "GRA_GUILD_ID",
     "GRA_PRO_TAMER_ROLE_IDS",
+    "GRA_KEYWORD_DELETE_MESSAGES",
     "GRADEX_DB_PATH",
     "REVOMON_REVODEX_ENDPOINT",
     "REVOMON_RAW_IMAGE_ENDPOINT",
