@@ -38,13 +38,13 @@ class TestSearchCommand:
         )
 
         mock_revomon_instance = mock_revomon_table.return_value
-        mock_revomon_instance.get_names = AsyncMock(return_value=["Charmander"])
-        mock_revomon_instance.has_ability = AsyncMock(return_value=True)
+        mock_revomon_instance.has_ability = AsyncMock(return_value=["Charmander"])
 
         embed = await search_cog.ability_search_embed("Blaze")
         assert embed.title == "Blaze"
         assert "Powers up fire-type moves." in embed.description
         assert "Charmander" in embed.description
+        mock_revomon_instance.has_ability.assert_awaited_once_with(ability_name="Blaze")
 
     @patch("mods.the_elders_library.search_command.AbilitiesTable")
     @pytest.mark.asyncio

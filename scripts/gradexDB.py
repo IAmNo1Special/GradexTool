@@ -165,6 +165,7 @@ class CounterdexTable:
                     cdex_data = json.load(f)
 
                 # Insert data into the database
+                rows_to_insert = []
                 for revomon in sorted(
                     data["data"]["revomons"], key=lambda x: x["idRevodex"]
                 ):
@@ -213,13 +214,7 @@ class CounterdexTable:
                                 else None
                             )
 
-                    # Execute the insert query
-                    await cursor.execute(
-                        """
-                        INSERT OR REPLACE INTO counterdex
-                            (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                        """,
+                    rows_to_insert.append(
                         (
                             dex_id,
                             mon_id,
@@ -231,8 +226,17 @@ class CounterdexTable:
                             tips,
                             counters,
                             weakness,
-                        ),
+                        )
                     )
+
+                await cursor.executemany(
+                    """
+                    INSERT OR REPLACE INTO counterdex
+                        (dex_id, mon_id,name, description, tier, metamoves, metabuilds, tips, counters, weakness)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    """,
+                    rows_to_insert,
+                )
 
                 # Commit the transaction
                 await conn.commit()
@@ -402,13 +406,13 @@ class AbilitiesTable:
             with open("./data/abilities.json") as file:
                 abilities_data = json.load(file)
 
-            # Insert data into the database
             # abilities_data can be a dict (from PokeAPI) or a list (from DB export)
             if isinstance(abilities_data, dict):
                 ability_list = list(abilities_data.values())
             else:
                 ability_list = abilities_data
 
+            rows_to_insert = []
             for ability in sorted(ability_list, key=lambda x: x["id"]):
                 # Prepare data for insertion
                 ability_id = ability["id"]
@@ -434,8 +438,9 @@ class AbilitiesTable:
                             .lower()
                         )
 
-                # Execute the insert query
-                await cursor.execute(insert_query, (ability_id, name, description))
+                rows_to_insert.append((ability_id, name, description))
+
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -566,6 +571,7 @@ class CapsulesTable:
                 capsules_data = json.load(file)
 
             # Insert data into the database
+            rows_to_insert = []
             for capsule in sorted(capsules_data, key=lambda x: x.get("name", "")):
                 # Prepare data for insertion
                 name = capsule.get("name", "").lower() if capsule.get("name") else None
@@ -574,9 +580,9 @@ class CapsulesTable:
                     if capsule.get("description")
                     else None
                 )
+                rows_to_insert.append((name, description))
 
-                # Execute the insert query
-                await cursor.execute(insert_query, (name, description))
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -696,6 +702,7 @@ class FruitysTable:
             else:
                 fruity_list = fruitys_data
 
+            rows_to_insert = []
             for fruity in sorted(
                 fruity_list, key=lambda x: x.get("idFruity") or x.get("id")
             ):
@@ -710,11 +717,9 @@ class FruitysTable:
                 fruity_type = (
                     fruity.get("type", "").lower() if fruity.get("type") else None
                 )
+                rows_to_insert.append((fruity_id, name, description, fruity_type))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (fruity_id, name, description, fruity_type)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -872,17 +877,16 @@ class ItemsTable:
             else:
                 item_list = items
 
+            rows_to_insert = []
             for item in sorted(item_list, key=lambda x: x["name"]):
                 # Prepare data for insertion
                 name = item["name"].lower()
                 description = item["description"].lower()
                 obtained_from = item["obtained_from"].lower()
                 cost = item["cost"] if item["cost"] else None
+                rows_to_insert.append((name, description, obtained_from, cost))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (name, description, obtained_from, cost)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -1047,6 +1051,7 @@ class MovesTable:
 
             if has_local_data:
                 # Insert data from local moves.json
+                rows_to_insert = []
                 for move in sorted(
                     moves_data, key=lambda x: x.get("id") or x.get("idMove", 0)
                 ):
@@ -1061,8 +1066,7 @@ class MovesTable:
                     pp = move.get("pp")
                     priority = move.get("priority")
 
-                    await cursor.execute(
-                        insert_query,
+                    rows_to_insert.append(
                         (
                             move_id,
                             cap_num,
@@ -1074,8 +1078,9 @@ class MovesTable:
                             power,
                             pp,
                             priority,
-                        ),
+                        )
                     )
+                await cursor.executemany(insert_query, rows_to_insert)
                 await conn.commit()
             else:
                 # Fetch data from the Revomon Moves API
@@ -1087,6 +1092,7 @@ class MovesTable:
 
                     if response and response.status_code == 200:
                         data = response.json()
+                        rows_to_insert = []
                         for move in sorted(
                             data["data"]["moves"], key=lambda x: x["idMove"]
                         ):
@@ -1101,8 +1107,7 @@ class MovesTable:
                             pp = move["pp"]
                             priority = move["priority"]
 
-                            await cursor.execute(
-                                insert_query,
+                            rows_to_insert.append(
                                 (
                                     move_id,
                                     cap_num,
@@ -1114,8 +1119,9 @@ class MovesTable:
                                     power,
                                     pp,
                                     priority,
-                                ),
+                                )
                             )
+                        await cursor.executemany(insert_query, rows_to_insert)
                         await conn.commit()
         print("moves table updated successfully!")
 
@@ -1312,6 +1318,7 @@ class NaturesTable:
             else:
                 nature_list = natures
 
+            rows_to_insert = []
             for nature in sorted(nature_list, key=lambda x: x["name"]):
                 # Prepare data for insertion
                 name = nature["name"].lower()
@@ -1324,11 +1331,9 @@ class NaturesTable:
                 debuffs = debuffs_val.lower() if debuffs_val else None
                 likes = nature.get("likes")
                 dislikes = nature.get("dislikes")
+                rows_to_insert.append((name, buffs, debuffs, likes, dislikes))
 
-                # Execute the insert query
-                await cursor.execute(
-                    insert_query, (name, buffs, debuffs, likes, dislikes)
-                )
+            await cursor.executemany(insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -1482,6 +1487,10 @@ class OwnedLandsTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             # Prepare data for insertion
+            emoji_by_name: dict[str, str] = {
+                emoji["name"]: emoji["id"] for emoji in emoji_list
+            }
+            rows_to_insert = []
             for land_obj in land_data:
                 for land in land_obj["land_info"]:
                     token_id = land["token_id"]
@@ -1493,29 +1502,18 @@ class OwnedLandsTable:
                     size = land["size"]
                     img_url = land["img_url"]
                     emoji_name = f"{biome}_{land_type}".replace(" ", "_")
-                    if emoji_name in [emoji["name"] for emoji in emoji_list]:
-                        for emoji_obj in emoji_list:
-                            if emoji_name == emoji_obj["name"]:
-                                emoji = emoji_obj["id"]
-                                break
-                    else:
+                    if emoji_name not in emoji_by_name:
                         emoji_obj = await emoji_utils.create_emoji_from_url(
                             img_url=img_url, emoji_name=emoji_name
                         )
-                        emoji = emoji_obj["id"]
-                        emoji_list.append(emoji_obj)
+                        emoji_by_name[emoji_name] = emoji_obj["id"]
+                    emoji = emoji_by_name[emoji_name]
                     for_sale = 0
                     token_symbol = None
                     for_sale_usd = None
                     for_sale_token = None
 
-                    # Execute the insert query
-                    await cursor.execute(
-                        """
-                        INSERT OR REPLACE INTO ownedLands
-                            (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token)
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                        """,
+                    rows_to_insert.append(
                         (
                             token_id,
                             id,
@@ -1530,11 +1528,20 @@ class OwnedLandsTable:
                             token_symbol,
                             for_sale_usd,
                             for_sale_token,
-                        ),
+                        )
                     )
 
-                # Commit the transaction
-                await conn.commit()
+            await cursor.executemany(
+                """
+                INSERT OR REPLACE INTO ownedLands
+                    (token_id, id, owners_address, biome, land_type, rarity, size, img_url, emoji, for_sale, token_symbol, for_sale_usd, for_sale_token)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """,
+                rows_to_insert,
+            )
+
+            # Commit the transaction
+            await conn.commit()
         await self.update_lands_sale_data()
 
         print("OwnedLands Table updated successfully!")
@@ -1679,49 +1686,57 @@ class OwnedLandsTable:
 
     async def update_lands_sale_data(self) -> None:
         """Update the sale data for owned lands."""
-        all_land_ids = await self.get_ids()
         print("Updating sale data for lands...")
+        all_land_ids = await self.get_ids()
         sale_data = await get_lands_for_sale_amount()
+
+        sale_rows: list[tuple[Any, ...]] = []
+        unsale_ids: list[int] = []
         for land_token_id in all_land_ids:
-            if land_token_id in [int(id) for id in sale_data.keys()]:
-                amount_data = sale_data[str(land_token_id)]
-                async with self._connect() as conn:
-                    cursor = await conn.cursor()
-                    await cursor.execute(
-                        """
-                                UPDATE ownedLands
-                                SET owners_address = ?,
-                                for_sale = ?,
-                                for_sale_token = ?,
-                                token_symbol = ?,
-                                for_sale_usd = ?
-                                WHERE token_id = ?;
-                                """,
-                        (
-                            amount_data["owners_address"],
-                            1,
-                            amount_data["for_sale_token"],
-                            amount_data["token_symbol"],
-                            amount_data["for_sale_usd"],
-                            land_token_id,
-                        ),
+            amount_data = sale_data.get(str(land_token_id))
+            if amount_data is not None:
+                sale_rows.append(
+                    (
+                        amount_data["owners_address"],
+                        1,
+                        amount_data["for_sale_token"],
+                        amount_data["token_symbol"],
+                        amount_data["for_sale_usd"],
+                        land_token_id,
                     )
-                    await conn.commit()
+                )
             else:
-                async with self._connect() as conn:
-                    cursor = await conn.cursor()
-                    await cursor.execute(
-                        """
-                                   UPDATE ownedLands
-                                   SET for_sale = 0,
-                                   for_sale_token = NULL,
-                                   token_symbol = NULL,
-                                   for_sale_usd = NULL
-                                   WHERE token_id = ?;
-                                   """,
-                        (land_token_id,),
-                    )
-                    await conn.commit()
+                unsale_ids.append(land_token_id)
+
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("BEGIN TRANSACTION;")
+            if sale_rows:
+                await cursor.executemany(
+                    """
+                    UPDATE ownedLands
+                    SET owners_address = ?,
+                    for_sale = ?,
+                    for_sale_token = ?,
+                    token_symbol = ?,
+                    for_sale_usd = ?
+                    WHERE token_id = ?;
+                    """,
+                    sale_rows,
+                )
+            if unsale_ids:
+                await cursor.executemany(
+                    """
+                    UPDATE ownedLands
+                    SET for_sale = 0,
+                    for_sale_token = NULL,
+                    token_symbol = NULL,
+                    for_sale_usd = NULL
+                    WHERE token_id = ?;
+                    """,
+                    [(tid,) for tid in unsale_ids],
+                )
+            await conn.execute("COMMIT;")
         print("Lands sale data has been updated")
 
 
@@ -1818,6 +1833,7 @@ class RevomonTable:
                 revomon_data = json.load(file)
 
             # Insert data into the database
+            rows_to_insert = []
             for revomon in sorted(
                 revomon_data, key=lambda x: x.get("dex_id", x.get("idRevodex", 0))
             ):
@@ -1883,13 +1899,7 @@ class RevomonTable:
                 ev_spd = revomon.get("evspd", revomon.get("ev_spd", 0))
                 ev_spe = revomon.get("evspe", revomon.get("ev_spe", 0))
 
-                # Execute the insert query
-                await cursor.execute(
-                    """
-                    INSERT OR REPLACE INTO revomon
-                    (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                    """,
+                rows_to_insert.append(
                     (
                         dex_id,
                         mon_id,
@@ -1915,8 +1925,17 @@ class RevomonTable:
                         ev_spa,
                         ev_spd,
                         ev_spe,
-                    ),
+                    )
                 )
+
+            await cursor.executemany(
+                """
+                INSERT OR REPLACE INTO revomon
+                (dex_id, mon_id, name, description, type1, type2, ability1, ability2, ability_hidden, hp, atk, def, spa, spd, spe, evolution, level_evolution, rarity, ev_hp, ev_atk, ev_def, ev_spa, ev_spd, ev_spe)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """,
+                rows_to_insert,
+            )
 
             # Commit the transaction
             await conn.commit()
@@ -2559,6 +2578,12 @@ class TypesTable:
                 type_charts = json.load(file)
 
             # Insert data into the database
+            types_insert_query = """
+                INSERT OR REPLACE INTO types
+                    (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                """
+            rows_to_insert = []
             for type_name in sorted(base_types):
                 # Get type effectiveness data from type_charts
                 type_data = type_charts.get(type_name, {})
@@ -2589,16 +2614,9 @@ class TypesTable:
                     type_data.get("metal", 1.0),
                     type_data.get("spirit", 1.0),
                 )
+                rows_to_insert.append(values)
 
-                # Execute the insert query
-                await cursor.execute(
-                    """
-                    INSERT OR REPLACE INTO types
-                        (types_str, img_url, type1, type2, neutral, fire, water, electric, forest, ice, battle, toxic, earth, sky, time, bug, stone, phantom, draconic, twilight, metal, spirit)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                    """,
-                    values,
-                )
+            await cursor.executemany(types_insert_query, rows_to_insert)
 
             # Commit the transaction
             await conn.commit()
@@ -3294,6 +3312,47 @@ async def set_guild_biome(guild_id: int, biome: str) -> None:
             (guild_id, biome),
         )
         await conn.commit()
+
+
+async def get_guild_spawn_state(guild_id: int) -> dict[str, Any]:
+    """Fetch spawn config and live spawn count in a single round-trip."""
+    defaults: dict[str, Any] = {
+        "max_spawn_limit": 100,
+        "temp_spawn_limit": 0,
+        "temp_limit_expires": 0,
+        "next_spawn_time": 0,
+        "spawn_multiplier": 1.0,
+        "spawn_multiplier_expires": 0,
+        "current_spawns": 0,
+    }
+    async with aiosqlite.connect(db_path) as conn:
+        conn.row_factory = aiosqlite.Row
+        cursor = await conn.cursor()
+        await cursor.execute(
+            """
+            SELECT g.max_spawn_limit, g.temp_spawn_limit, g.temp_limit_expires,
+                   g.next_spawn_time, g.spawn_multiplier, g.spawn_multiplier_expires,
+                   (SELECT COUNT(*) FROM active_spawns a WHERE a.guild_id = g.guild_id)
+                       AS current_spawns
+            FROM guilds g WHERE g.guild_id = ?
+            """,
+            (guild_id,),
+        )
+        row = await cursor.fetchone()
+        if not row:
+            return defaults
+        d = dict(row)
+        # Handle NULL values from schema updates
+        for key in (
+            "max_spawn_limit",
+            "temp_spawn_limit",
+            "temp_limit_expires",
+            "next_spawn_time",
+            "spawn_multiplier_expires",
+        ):
+            d[key] = d.get(key) or 0
+        d["spawn_multiplier"] = d.get("spawn_multiplier") or 1.0
+        return d
 
 
 async def get_guild_spawn_config(guild_id: int) -> dict[str, Any]:

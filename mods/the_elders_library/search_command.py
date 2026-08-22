@@ -43,12 +43,10 @@ class SearchCommand(commands.Cog):
             color=Color.red(),
         )
         learned_by = ""
-        revomon_names = await RevomonTable().get_names()
-        for revomon in revomon_names:
-            if await RevomonTable().has_ability(
-                mon_name=revomon, ability_name=ability_info[0]
-            ):
-                learned_by += f"- *{revomon.title()}*\n"
+        # Single indexed OR-query via RevomonTable.has_ability's name-less branch
+        learner_names = await RevomonTable().has_ability(ability_name=ability_info[0])
+        for revomon in sorted(learner_names):
+            learned_by += f"- *{revomon.title()}*\n"
         if embed.description:
             embed.description += f"\n\n__**Learned By**__\n{learned_by}"
         else:

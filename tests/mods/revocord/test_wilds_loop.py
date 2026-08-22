@@ -134,7 +134,7 @@ class TestWildsLoopTasks:
 
     @pytest.mark.asyncio
     @patch("scripts.gradexDB.update_guild_spawn_config")
-    @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
+    @patch("mods.revocord.wilds_loop.get_guild_spawn_state")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     async def test_loop_temp_limit(
         self, mock_table: Any, mock_config: Any, mock_update: Any, cog: Any
@@ -146,10 +146,8 @@ class TestWildsLoopTasks:
             "next_spawn_time": 0,
             "spawn_multiplier": 1.0,
             "spawn_multiplier_expires": 0,
+            "current_spawns": 6,  # Over base limit, but under temp limit!
         }
-        mock_table.count_guild_spawns = AsyncMock(
-            return_value=6
-        )  # Over base limit, but under temp limit!
         cog._do_spawn = AsyncMock()
 
         guild = MagicMock()
@@ -168,7 +166,7 @@ class TestWildsLoopTasks:
         return cog
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
+    @patch("mods.revocord.wilds_loop.get_guild_spawn_state")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     @patch("scripts.gradexDB.update_guild_spawn_config")
     async def test_loop_spawn(
@@ -181,8 +179,8 @@ class TestWildsLoopTasks:
             "next_spawn_time": 0,
             "spawn_multiplier": 2.0,
             "spawn_multiplier_expires": 9999999999,
+            "current_spawns": 0,
         }
-        mock_table.count_guild_spawns = AsyncMock(return_value=0)
         cog._do_spawn = AsyncMock()
 
         guild = MagicMock()
@@ -195,7 +193,7 @@ class TestWildsLoopTasks:
         mock_update.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
+    @patch("mods.revocord.wilds_loop.get_guild_spawn_state")
     @patch("mods.revocord.wilds_loop.active_spawns_table")
     async def test_loop_limit_reached(
         self, mock_table: Any, mock_config: Any, cog: Any
@@ -217,7 +215,7 @@ class TestWildsLoopTasks:
         cog._do_spawn.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.wilds_loop.get_guild_spawn_config")
+    @patch("mods.revocord.wilds_loop.get_guild_spawn_state")
     async def test_loop_exception(self, mock_config: Any, cog: Any) -> None:
         mock_config.side_effect = Exception("DB error")
         guild = MagicMock()
