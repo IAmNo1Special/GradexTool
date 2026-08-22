@@ -12,7 +12,6 @@ import typing
 from collections.abc import Callable, Coroutine
 from pathlib import Path
 from typing import Any, TypeVar, cast
-from unittest.mock import MagicMock
 
 import discord
 from discord import app_commands, ui
@@ -261,7 +260,7 @@ def build_text_view(content: str, *, accent_color: int | None = None) -> ui.Layo
     return view
 
 
-def is_server_owner() -> MagicMock | typing.Callable[..., Any]:
+def is_server_owner() -> typing.Callable[..., Any]:
     """Check if the command invoker is the absolute server owner."""
 
     async def predicate(interaction: discord.Interaction) -> bool:

@@ -3,7 +3,6 @@ import datetime
 import random
 from io import BytesIO
 from typing import Any, cast
-from unittest.mock import MagicMock
 
 import discord
 import requests
@@ -204,7 +203,7 @@ class PvpLeaderboard(commands.Cog):
         await self.update_rankings()
 
     @commands.Cog.listener()
-    async def on_message(self, message: MagicMock) -> None:
+    async def on_message(self, message: discord.Message) -> None:
         if message.author.bot:
             return
 

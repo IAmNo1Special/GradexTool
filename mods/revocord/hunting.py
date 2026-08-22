@@ -43,8 +43,6 @@ BIOME_TYPES = {
     "Underwater": {"water", "ice"},
 }
 
-GLOBAL_SPAWNS: set[int] = set()
-
 ORB_CONFIG: dict[str, dict[str, Any]] = {
     "RED": {"id": "159", "mult": 1.0, "emoji": "🔴", "label": "Red Orb"},
     "BLUE": {"id": "4", "mult": 1.5, "emoji": "🔵", "label": "Blue Orb"},
@@ -146,24 +144,39 @@ async def build_wilds_embed(
     return embed
 
 
-def resolve_mon_emoji(
-    bot: commands.Bot, name: str, is_shiny: bool
-) -> discord.Emoji | str:
-    from unittest.mock import Mock
+def _find_emoji_by_name(emojis: Any, emoji_name: str) -> Any:
+    """Plain-iteration emoji lookup.
 
-    if isinstance(bot, Mock):
-        return "✨" if is_shiny else "🌿"
+    Avoids discord.utils.get, which may return a coroutine for objects
+    implementing async iteration.
+    """
+    try:
+        for element in emojis or ():
+            if getattr(element, "name", None) == emoji_name:
+                return element
+    except TypeError:
+        return None
+    return None
+
+
+def resolve_mon_emoji(
+    bot: commands.Bot,
+    name: str,
+    is_shiny: bool,
+    app_emojis: list[Any] | None = None,
+) -> discord.Emoji | str:
+    if app_emojis is None:
+        app_emojis = getattr(bot, "_app_emojis_cache", None) or []
 
     cleaned_name = name.lower().replace(" ", "_").replace("-", "_")
     emoji_name = f"{cleaned_name}_shiny" if is_shiny else cleaned_name
-    app_emojis = getattr(bot, "_app_emojis_cache", [])
 
-    emoji_obj = discord.utils.get(app_emojis, name=emoji_name) or discord.utils.get(
-        bot.emojis, name=emoji_name
+    emoji_obj = _find_emoji_by_name(app_emojis, emoji_name) or _find_emoji_by_name(
+        getattr(bot, "emojis", None), emoji_name
     )
 
-    if emoji_obj and not isinstance(emoji_obj, Mock):
-        return emoji_obj
+    if emoji_obj:
+        return cast(discord.Emoji, emoji_obj)
     return "✨" if is_shiny else "🌿"
 
 
@@ -695,7 +708,6 @@ class HuntingCog(commands.Cog):
         elif action == "spawn_catch_menu":
             account = await get_or_create_account(spawner_id)
             inventory = account.get("inventory", {})
-            logger.error(f"DEBUG: account={account}, inventory={inventory}")
 
             red_count = inventory.get(ORB_CONFIG["RED"]["id"], 0)
             blue_count = inventory.get(ORB_CONFIG["BLUE"]["id"], 0)
@@ -1208,21 +1220,13 @@ class HuntingCog(commands.Cog):
 
     @tasks.loop(minutes=1)
     async def cleanup_encounters(self) -> None:
-        """Periodically scan for and delete expired wild encounters from the database."""
-        current_time = time.time()
-        from scripts.gradexDB import active_spawns_table
+        """Periodically delete expired wild encounters and spawns from the database."""
+        from scripts.gradexDB import cleanup_all_expired
 
-        for guild in self.bot.guilds:
-            try:
-                spawns = await active_spawns_table.get_guild_spawns(guild.id)
-                for spawn in spawns:
-                    spawn_id = spawn["message_id"]
-                    data = spawn["data"]
-                    timestamp = data.get("timestamp", 0)
-                    if current_time - timestamp > 300:
-                        await active_spawns_table.remove_spawn(spawn_id)
-            except Exception as e:
-                logger.error(f"Error during encounter cleanup in guild {guild.id}: {e}")
+        try:
+            await cleanup_all_expired()
+        except Exception as e:
+            logger.error(f"Error during encounter cleanup: {e}")
 
 
 async def initial_wilds_spawn(bot: commands.Bot, guild: discord.Guild) -> None:

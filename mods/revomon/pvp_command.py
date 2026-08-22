@@ -52,7 +52,10 @@ class PvpLeaderboard2(commands.Cog):
             current_rank = pvp_top_fifteen[count]["rank"]
             lose_count = pvp_top_fifteen[count]["loseCount"]
             win_count = pvp_top_fifteen[count]["winCount"]
-            winning_percentage = (win_count / (win_count + lose_count)) * 100
+            total_games = win_count + lose_count
+            winning_percentage = (
+                (win_count / total_games) * 100 if total_games > 0 else 0.0
+            )
             rankings_data.append(
                 {
                     "Rank": current_rank,
@@ -160,6 +163,8 @@ class PvpLeaderboard2(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     async def pvp(self, interaction: Interaction) -> None:
         await interaction.response.defer(ephemeral=True, thinking=True)
+        self.pvp_img = {}
+        curr_pvp_embed: discord.embeds.Embed | None = None
         try:
             self.get_current_pvp_data()
         except Exception as e:
@@ -172,6 +177,13 @@ class PvpLeaderboard2(commands.Cog):
             curr_pvp_embed = self.current_pvp_embed()
         except Exception as e:
             print(f"Error during pvp_command(current_pvp_embed): {e}")
+
+        if curr_pvp_embed is None or "image_bytes" not in self.pvp_img:
+            await interaction.followup.send(
+                "PvP leaderboard data is unavailable right now. Please try again later.",
+                ephemeral=True,
+            )
+            return
 
         file = File(self.pvp_img["image_bytes"], filename="current_pvp_image.png")
         await interaction.followup.send(embed=curr_pvp_embed, file=file, ephemeral=True)

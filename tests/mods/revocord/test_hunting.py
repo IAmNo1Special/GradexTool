@@ -429,20 +429,11 @@ class TestSpawnWildRevomon:
 
 class TestCleanupTask:
     @pytest.mark.asyncio
-    @patch(
-        "scripts.gradexDB.active_spawns_table.get_guild_spawns", new_callable=AsyncMock
-    )
-    @patch("scripts.gradexDB.active_spawns_table.remove_spawn", new_callable=AsyncMock)
+    @patch("scripts.gradexDB.cleanup_all_expired", new_callable=AsyncMock)
     async def test_cleanup_encounters(
-        self, mock_remove: Any, mock_get_spawns: Any, mock_bot: Any
+        self, mock_cleanup_all: Any, mock_bot: Any
     ) -> None:
         cog = HuntingCog(mock_bot)
-        mock_get_spawns.return_value = [
-            {"message_id": 999, "data": {"timestamp": time.time() - 400}}
-        ]
-        mock_guild = MagicMock()
-        mock_guild.id = 123
-        mock_bot.guilds = [mock_guild]
 
         await cog.cleanup_encounters()
-        mock_remove.assert_called_once_with(999)
+        mock_cleanup_all.assert_called_once_with()

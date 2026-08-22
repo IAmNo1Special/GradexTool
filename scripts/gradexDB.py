@@ -827,7 +827,7 @@ class ItemsTable:
 
                 CREATE TABLE IF NOT EXISTS "items" (
                     "name" TEXT NOT NULL UNIQUE,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     "obtained_from" TEXT NOT NULL,
                     "cost" INTEGER,
                     PRIMARY KEY("name")
@@ -1008,7 +1008,7 @@ class MovesTable:
                     "name" TEXT NOT NULL UNIQUE,
                     "category" TEXT NOT NULL,
                     "type" TEXT NOT NULL,
-                    "description" TEXT NOT NULL UNIQUE,
+                    "description" TEXT NOT NULL,
                     "accuracy" REAL NOT NULL,
                     "power" INTEGER NOT NULL,
                     "pp" INTEGER NOT NULL,
@@ -1689,9 +1689,7 @@ class OwnedLandsTable:
 
     async def update_lands_sale_data(self) -> None:
         """Update the sale data for owned lands."""
-        from data import OwnedLandsTable
-
-        all_land_ids = await OwnedLandsTable().get_ids()
+        all_land_ids = await self.get_ids()
         print("Updating sale data for lands...")
         sale_data = await get_lands_for_sale_amount()
         for land_token_id in all_land_ids:
@@ -3064,6 +3062,30 @@ class AccountsTable:
         if not kwargs:
             return
 
+        # Validate column names against allowlist before SQL interpolation
+        valid_columns = {
+            "current_city",
+            "current_location",
+            "is_logged_in",
+            "energy",
+            "max_energy",
+            "last_energy_update",
+            "arrival_time",
+            "destination_city",
+            "destination_location",
+            "trainer_level",
+            "trainer_xp",
+            "coins",
+            "rank",
+            "battles_won",
+            "battles_lost",
+            "inventory",
+            "caught_revomon",
+        }
+        for key in kwargs:
+            if key not in valid_columns:
+                raise ValueError(f"Invalid column name: {key}")
+
         # Handle JSON serialization for specific fields
         for key, value in kwargs.items():
             if key in ("inventory", "caught_revomon"):
@@ -3374,13 +3396,39 @@ class ActiveSpawnsTable:
                 CREATE TABLE IF NOT EXISTS "active_spawns" (
                     "message_id" INTEGER PRIMARY KEY,
                     "guild_id" INTEGER NOT NULL,
-                    "spawn_data" TEXT NOT NULL
+                    "spawn_data" TEXT NOT NULL,
+                    "created_at" REAL NOT NULL DEFAULT 0
                 ) STRICT;
                 """
             )
+            # Migration for tables created before created_at existed
+            try:
+                await cursor.execute(
+                    "ALTER TABLE active_spawns ADD COLUMN created_at REAL NOT NULL DEFAULT 0"
+                )
+            except Exception:
+                pass  # Column already exists
+
+            # Backfill from spawn_data JSON timestamps, then purge unparseable rows
+            try:
+                await cursor.execute(
+                    """
+                    UPDATE active_spawns
+                    SET created_at = CAST(json_extract(spawn_data, '$.timestamp') AS REAL)
+                    WHERE created_at = 0 AND json_valid(spawn_data)
+                    """
+                )
+            except Exception:
+                pass  # json_extract unavailable on very old SQLite builds
+            await cursor.execute("DELETE FROM active_spawns WHERE created_at = 0")
+
             # Add index for guild_id lookups
             await cursor.execute(
                 'CREATE INDEX IF NOT EXISTS "idx_active_spawns_guild_id" ON "active_spawns" ("guild_id");'
+            )
+            # Add index for expiry cleanup
+            await cursor.execute(
+                'CREATE INDEX IF NOT EXISTS "idx_active_spawns_created_at" ON "active_spawns" ("created_at");'
             )
             print("active_spawns table created successfully")
             await conn.commit()
@@ -3389,8 +3437,8 @@ class ActiveSpawnsTable:
         async with self._connect() as conn:
             cursor = await conn.cursor()
             await cursor.execute(
-                "INSERT INTO active_spawns (message_id, guild_id, spawn_data) VALUES (?, ?, ?)",
-                (message_id, guild_id, spawn_data),
+                "INSERT INTO active_spawns (message_id, guild_id, spawn_data, created_at) VALUES (?, ?, ?, ?)",
+                (message_id, guild_id, spawn_data, time.time()),
             )
             await conn.commit()
 
@@ -3535,7 +3583,7 @@ async def cleanup_expired_spawns(max_age_seconds: int = 300) -> int:
     async with aiosqlite.connect(db_path, isolation_level=None) as conn:
         cursor = await conn.cursor()
         await cursor.execute(
-            "DELETE FROM active_spawns WHERE timestamp < ?",
+            "DELETE FROM active_spawns WHERE created_at < ?",
             (cutoff,),
         )
         await conn.commit()

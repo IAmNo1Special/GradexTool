@@ -25,6 +25,23 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
     mon_info = await revomon_table.get_info_dict(revomon_name=revomon_name)
     if not mon_info:
         return {}
+    # Single counterdex lookup; LIKE-search may match several rows, first is canonical.
+    cdex_rows = await CounterdexTable().get_info(
+        revomon_name=mon_info.get("name", "").lower()
+    )
+    cdex_row = tuple(cdex_rows[0]) if cdex_rows else ()
+    (
+        _dex_id,
+        _mon_id,
+        _name,
+        cdex_description,
+        cdex_tier,
+        meta_moves,
+        meta_build,
+        tips,
+        counters,
+        weakness,
+    ) = (cdex_row + (None,) * 10)[:10]
     # Use column names instead of indices for robustness
     ev_rewards = dict(
         zip(
@@ -107,41 +124,13 @@ async def get_attributes(revomon_name: str) -> dict[str, str | int | list[str] |
                 mon_dex_id=mon_info.get("dex_id") or 0
             )
         ],
-        "cdex_tier": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][4],
-        "cdex_description": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][3],
-        "weakness": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][9],
-        "meta_build": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][6],
-        "meta_moves": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][5],
-        "tips": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][7],
-        "counters": (
-            await CounterdexTable().get_info(
-                revomon_name=mon_info.get("name", "").lower()
-            )
-        )[0][8],
+        "cdex_tier": cdex_tier,
+        "cdex_description": cdex_description,
+        "weakness": weakness,
+        "meta_build": meta_build,
+        "meta_moves": meta_moves,
+        "tips": tips,
+        "counters": counters,
     }
     return attributes
 
