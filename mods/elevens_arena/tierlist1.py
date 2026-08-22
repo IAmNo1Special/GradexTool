@@ -1,4 +1,7 @@
+import logging
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 """Global Standard Tier List cog for managing tier voting and results."""
 
@@ -156,7 +159,7 @@ class GsTierPoll(commands.Cog):
                 self.update_gs_tierlist.start()
 
         except Exception as e:
-            print(f"Error during Eleven's Arena(Tier list): {e}")
+            logger.error(f"Error during Eleven's Arena(Tier list): {e}")
 
     async def open_polls(self) -> None:
         """Open tier list polls."""
@@ -279,4 +282,4 @@ async def setup(gradex_tool: commands.Bot) -> None:
     try:
         await gradex_tool.add_cog(GsTierPoll(gradex_tool))
     except Exception:
-        print("ERROR in GS TierPoll 'setup' function")
+        logger.error("ERROR in GS TierPoll 'setup' function")

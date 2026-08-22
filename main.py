@@ -76,6 +76,25 @@ async def sync_commands(ctx: commands.Context[commands.Bot]) -> None:
         await ctx.send(f"Command sync failed: {e}")
 
 
+@gradex_tool.tree.error
+async def on_app_command_error(
+    interaction: discord.Interaction, error: Exception
+) -> None:
+    """Global safety net: log and ephemerally notify on slash-command errors."""
+    command_name = getattr(interaction.command, "qualified_name", "<unknown>")
+    logger.error("Unhandled error in /%s: %s", command_name, error, exc_info=error)
+    user_message = "An unexpected error occurred. Please try again later."
+    try:
+        if interaction.response.is_done():
+            await interaction.followup.send(user_message, ephemeral=True)
+        else:
+            await interaction.response.send_message(user_message, ephemeral=True)
+    except discord.HTTPException as send_error:
+        logger.warning(
+            "Could not deliver error notice for /%s: %s", command_name, send_error
+        )
+
+
 if __name__ == "__main__":
     import asyncio
 

@@ -1,4 +1,5 @@
 import datetime
+import logging
 from io import BytesIO
 from typing import Any
 
@@ -8,6 +9,8 @@ from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from utils.http import fetch_json
+
+logger = logging.getLogger(__name__)
 
 
 class Podium2(commands.Cog):
@@ -253,7 +256,7 @@ class Podium2(commands.Cog):
             del self.weekly_podium_img["image_bytes"]
 
         except Exception as e:
-            print(f"AN ERROR OCCURRED -> podium_command(Podium2.podium): {e}")
+            logger.error(f"AN ERROR OCCURRED -> podium_command(Podium2.podium): {e}")
             try:
                 await interaction.followup.send(
                     "Podium leaderboard data is unavailable right now. Please try again later.",

@@ -225,14 +225,13 @@ class TestSearchCommand:
 
     @pytest.mark.asyncio
     async def test_abilities_command_exception(
-        self, search_cog: Any, capsys: Any
+        self, search_cog: Any, caplog: Any
     ) -> None:
         interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.abilities.callback(search_cog, interaction, name=None)
-        captured = capsys.readouterr()
-        assert "Error during search_command(abilities subcommand):" in captured.out
+        assert "Error during search_command(abilities subcommand):" in caplog.text
 
     @patch.object(SearchCommand, "allfruitys_embed")
     @patch.object(SearchCommand, "fruity_search_embed")
@@ -258,14 +257,13 @@ class TestSearchCommand:
 
     @pytest.mark.asyncio
     async def test_fruitys_command_exception(
-        self, search_cog: Any, capsys: Any
+        self, search_cog: Any, caplog: Any
     ) -> None:
         interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.fruitys.callback(search_cog, interaction, name=None)
-        captured = capsys.readouterr()
-        assert "Error during search_command(fruitys subcommand):" in captured.out
+        assert "Error during search_command(fruitys subcommand):" in caplog.text
 
     @patch.object(SearchCommand, "allitems_embed")
     @patch.object(SearchCommand, "item_search_embed")
@@ -305,13 +303,12 @@ class TestSearchCommand:
         )
 
     @pytest.mark.asyncio
-    async def test_moves_command_exception(self, search_cog: Any, capsys: Any) -> None:
+    async def test_moves_command_exception(self, search_cog: Any, caplog: Any) -> None:
         interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.moves.callback(search_cog, interaction, name="Flamethrower")
-        captured = capsys.readouterr()
-        assert "Error during search_command(moves subcommand):" in captured.out
+        assert "Error during search_command(moves subcommand):" in caplog.text
 
     @patch.object(SearchCommand, "allnatures_embed")
     @patch.object(SearchCommand, "nature_search_embed")
@@ -408,16 +405,15 @@ class TestSearchCommand:
 
     @pytest.mark.asyncio
     async def test_revomon_command_exception(
-        self, search_cog: Any, capsys: Any
+        self, search_cog: Any, caplog: Any
     ) -> None:
         interaction = AsyncMock(spec=Interaction)
         interaction.response.send_message.side_effect = Exception("Test Exception")
 
         await search_cog.revomon.callback(search_cog, interaction, name=None)
-        captured = capsys.readouterr()
         assert (
             "An error occurred during search_command(revomon subcommand):"
-            in captured.out
+            in caplog.text
         )
 
     @patch("mods.the_elders_library.search_command.OwnedLandsTable")
@@ -514,11 +510,10 @@ async def test_setup_function() -> None:
 
 
 @pytest.mark.asyncio
-async def test_setup_function_exception(capsys: Any) -> None:
+async def test_setup_function_exception(caplog: Any) -> None:
     mock_bot = MagicMock(spec=commands.Bot)
     mock_bot.add_cog = AsyncMock(side_effect=Exception("Test Exception"))
 
     await setup(mock_bot)
 
-    captured = capsys.readouterr()
-    assert "ERROR in ModName 'setup' function" in captured.out
+    assert "ERROR in ModName 'setup' function" in caplog.text

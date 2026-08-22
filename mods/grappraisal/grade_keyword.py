@@ -1,3 +1,4 @@
+import logging
 from io import BytesIO
 from typing import Any
 
@@ -9,6 +10,8 @@ from discord.ext import commands
 from utils.bounded_ttl_store import BoundedTTLStore
 from utils.helpers import respond
 from utils.revomon_utils import appraise_revomon, create_graded_mon_img
+
+logger = logging.getLogger(__name__)
 
 # Define the URL for the Revomon API
 REVO_API_URL = "https://api.revomon.io/revomon"
@@ -167,7 +170,7 @@ class Grade(commands.Cog):
             try:
                 await interaction.response.send_modal(Grade.MonInfoModal())
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to submit the 'GradeButton[Grade My Revomon]' Button from the Grade Keyword script: {e}"
                 )
 
@@ -208,7 +211,7 @@ class Grade(commands.Cog):
                     view=Grade.MonInfoButtons6(),
                 )
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons1[Grade]' Button from the Grade Keyword script: {e}"
                 )
 
@@ -254,7 +257,7 @@ class Grade(commands.Cog):
                         view=Grade.MonInfoButtons7(),
                     )
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Save]' Button from the Grade Keyword script: {e}"
                 )
 
@@ -285,7 +288,7 @@ class Grade(commands.Cog):
                 )
 
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Flex This  Revomon]' Button from the grade_command script: {e}"
                 )
 
@@ -304,7 +307,7 @@ class Grade(commands.Cog):
                 embed = Grade.grade_breakdown_embed(user_id=user_id)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to click the 'MonInfoButtons6[Why this grade?]' Button: {e}"
                 )
 
@@ -393,7 +396,7 @@ class Grade(commands.Cog):
                     ephemeral=True,
                 )
             except Exception as e:
-                print(
+                logger.error(
                     f"An error occurred trying to submit the 'MonInfoModal' from the Grade Keyword script: {e}"
                 )
 
@@ -431,7 +434,7 @@ class Grade(commands.Cog):
                 )
 
         except Exception as e:
-            print(f"An error occurred during Grade Keyword on_message: {e}")
+            logger.error(f"An error occurred during Grade Keyword on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

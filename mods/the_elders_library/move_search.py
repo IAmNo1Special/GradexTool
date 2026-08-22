@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import discord
@@ -5,6 +6,8 @@ from discord.ext import commands
 
 from data import MovesTable, RevomonMovesTable
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class move_search(commands.Cog):  # noqa: N801
@@ -76,7 +79,7 @@ class move_search(commands.Cog):  # noqa: N801
                     buttons=buttons,
                 )
         except Exception as e:
-            print(f"An error occurred during 'move_search' on_message: {e}")
+            logger.error(f"An error occurred during 'move_search' on_message: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

@@ -123,15 +123,14 @@ class TestRevomonSearch:
 
     @pytest.mark.asyncio
     async def test_on_message_exception(
-        self, revomon_search_cog: Any, capsys: Any
+        self, revomon_search_cog: Any, caplog: Any
     ) -> None:
         message = MagicMock(spec=Message)
         # Mocking an exception in author.bot check to trigger the try-except
         type(message.author).bot = property(lambda self: int("error"))
 
         await revomon_search_cog.on_message(message)
-        captured = capsys.readouterr()
-        assert "An error occurred during revomon_search on_message" in captured.out
+        assert "An error occurred during revomon_search on_message" in caplog.text
 
 
 @pytest.mark.asyncio

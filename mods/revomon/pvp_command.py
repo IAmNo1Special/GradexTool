@@ -1,4 +1,5 @@
 import datetime
+import logging
 from io import BytesIO
 from typing import Any
 
@@ -8,6 +9,8 @@ from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from utils.http import fetch_json
+
+logger = logging.getLogger(__name__)
 
 
 class PvpLeaderboard2(commands.Cog):
@@ -84,7 +87,7 @@ class PvpLeaderboard2(commands.Cog):
         try:
             font: Any = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
         except Exception as e:
-            print(f"Error loading font during update_pvp_image: {e}")
+            logger.error(f"Error loading font during update_pvp_image: {e}")
             font = ImageFont.load_default()
 
         headers = ["Rank", "Name", "Elo", "Wins", "Losses", "Winning", "Reward"]
@@ -141,7 +144,7 @@ class PvpLeaderboard2(commands.Cog):
             self.pvp_img["image_bytes"].seek(0)
             self.pvp_img["image_bytes"].name = "current_pvp_image.png"
         except Exception as e:
-            print(f"Error converting PIL image during update_pvp_image: {e}")
+            logger.error(f"Error converting PIL image during update_pvp_image: {e}")
 
     def current_pvp_embed(self) -> discord.embeds.Embed:
         embed = Embed(
@@ -171,15 +174,15 @@ class PvpLeaderboard2(commands.Cog):
         try:
             await self.get_current_pvp_data()
         except Exception as e:
-            print(f"Error during pvp_command(get_current_pvp_data): {e}")
+            logger.error(f"Error during pvp_command(get_current_pvp_data): {e}")
         try:
             self.update_pvp_image(self.rankings)
         except Exception as e:
-            print(f"Error during pvp_command(update_pvp_image): {e}")
+            logger.error(f"Error during pvp_command(update_pvp_image): {e}")
         try:
             curr_pvp_embed = self.current_pvp_embed()
         except Exception as e:
-            print(f"Error during pvp_command(current_pvp_embed): {e}")
+            logger.error(f"Error during pvp_command(current_pvp_embed): {e}")
 
         if curr_pvp_embed is None or "image_bytes" not in self.pvp_img:
             await interaction.followup.send(

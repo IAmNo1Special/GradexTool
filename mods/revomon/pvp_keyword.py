@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 import random
 from io import BytesIO
 from typing import Any, cast
@@ -11,6 +12,8 @@ from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
 from utils.helpers import respond
+
+logger = logging.getLogger(__name__)
 
 
 class PvpLeaderboard(commands.Cog):
@@ -82,7 +85,7 @@ class PvpLeaderboard(commands.Cog):
         try:
             font: Any = ImageFont.truetype("data/fonts/Cabal.ttf", 16)
         except Exception as e:
-            print(f"Error loading font during update_pvp_image: {e}")
+            logger.error(f"Error loading font during update_pvp_image: {e}")
             font = ImageFont.load_default()
 
         headers = ["Rank", "Name", "Elo", "Wins", "Losses", "Winning", "Reward"]
@@ -138,7 +141,7 @@ class PvpLeaderboard(commands.Cog):
             img.save(self.pvp_img["image_bytes"], format="PNG")
             self.pvp_img["image_bytes"].seek(0)
         except Exception as e:
-            print(f"Error converting PIL image during update_pvp_image: {e}")
+            logger.error(f"Error converting PIL image during update_pvp_image: {e}")
 
     def current_pvp_embed(self) -> Embed:
         embed = discord.Embed(
@@ -169,11 +172,13 @@ class PvpLeaderboard(commands.Cog):
                         None, self.get_current_pvp_data
                     )
                 except Exception as e:
-                    print(f"Error during update_rankings(get_current_pvp_data): {e}")
+                    logger.error(
+                        f"Error during update_rankings(get_current_pvp_data): {e}"
+                    )
                 try:
                     self.update_pvp_image(self.rankings)
                 except Exception as e:
-                    print(f"Error during update_rankings(update_pvp_image): {e}")
+                    logger.error(f"Error during update_rankings(update_pvp_image): {e}")
                 try:
                     await current_leaderboard.edit(
                         content=None,
@@ -186,12 +191,12 @@ class PvpLeaderboard(commands.Cog):
                         embed=self.current_pvp_embed(),
                     )
                 except Exception as e:
-                    print(
+                    logger.error(
                         f"Error during update_rankings(edit leaderboard message): {e}"
                     )
                 await asyncio.sleep(random.randint(600, 900))
         except Exception as e:
-            print(f"PvP Tracker Error: {e}")
+            logger.error(f"PvP Tracker Error: {e}")
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
@@ -215,7 +220,9 @@ class PvpLeaderboard(commands.Cog):
                 embed = self.current_pvp_embed()
                 await respond(self.gradex, message=message, embed=embed)
         except Exception as e:
-            print(f"An error occurred during PvP Rankings Keyword on_message: {e}")
+            logger.error(
+                f"An error occurred during PvP Rankings Keyword on_message: {e}"
+            )
 
 
 async def setup(gradex: commands.Bot) -> None:
