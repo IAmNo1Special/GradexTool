@@ -273,12 +273,15 @@ class TestShopSelectCallbackLogic:
             )
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.activity.get_or_create_account")
+    @patch("scripts.gradexDB.AccountsTable")
     async def test_shop_select_insufficient_funds(
-        self, mock_get_account: Any, mock_interaction: Any
+        self, mock_accounts_cls: Any, mock_interaction: Any
     ) -> None:
         select = ShopSelect()
-        mock_get_account.return_value = {"coins": 50}
+        mock_accounts_cls.return_value.spend_coins = AsyncMock(return_value=False)
+        mock_accounts_cls.return_value.get_or_create_account = AsyncMock(
+            return_value={"coins": 50}
+        )
 
         with patch.object(
             ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]
@@ -290,21 +293,26 @@ class TestShopSelectCallbackLogic:
             assert "not have enough RevoCoins" in args[0]
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.activity.get_or_create_account")
-    @patch("mods.revocord.activity.update_account")
+    @patch("scripts.gradexDB.AccountsTable")
     async def test_shop_select_success(
-        self, mock_update: Any, mock_get_account: Any, mock_interaction: Any
+        self, mock_accounts_cls: Any, mock_interaction: Any
     ) -> None:
         select = ShopSelect()
-        mock_get_account.return_value = {"coins": 500, "inventory": {"159": 1}}
+        accounts = mock_accounts_cls.return_value
+        accounts.spend_coins = AsyncMock(return_value=True)
+        accounts.get_or_create_account = AsyncMock(
+            side_effect=[{"coins": 500}, {"coins": 300}]
+        )
+        accounts.add_inventory_item = AsyncMock()
 
         with patch.object(
             ShopSelect, "values", new_callable=PropertyMock, return_value=["159"]
         ):
             await select.callback(mock_interaction)
 
-            mock_update.assert_called_once_with(
-                mock_interaction.user.id, coins=300, inventory={"159": 2}
+            accounts.spend_coins.assert_awaited_once_with(mock_interaction.user.id, 200)
+            accounts.add_inventory_item.assert_awaited_once_with(
+                mock_interaction.user.id, "159"
             )
             mock_interaction.followup.send.assert_called_once()
             args, kwargs = mock_interaction.followup.send.call_args

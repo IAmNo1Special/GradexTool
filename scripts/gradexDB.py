@@ -1,4 +1,5 @@
 import json  # noqa: N999
+import shutil
 import sqlite3
 import time
 from pathlib import Path
@@ -2992,6 +2993,7 @@ class AccountsTable:
 
     async def get_or_create_account(self, user_id: int) -> dict[str, Any]:
         """Get an account by user ID, or create a new one with defaults."""
+        now = time.time()
         async with self._connect() as conn:
             conn.row_factory = aiosqlite.Row
             cursor = await conn.cursor()
@@ -3003,7 +3005,6 @@ class AccountsTable:
             if row:
                 account = dict(row)
                 # Process energy regeneration
-                now = time.time()
                 if account["energy"] < account["max_energy"]:
                     time_passed = now - account["last_energy_update"]
                     regen = int(time_passed / 60)
@@ -3052,11 +3053,25 @@ class AccountsTable:
 
             columns = ", ".join(defaults.keys())
             placeholders = ", ".join(["?"] * len(defaults))
+            # INSERT OR IGNORE: concurrent first-access races are safe; the
+            # winner inserts, losers re-select the row the winner created.
             await cursor.execute(
-                f"INSERT INTO accounts (user_id, {columns}) VALUES (?, {placeholders})",
+                f"INSERT OR IGNORE INTO accounts (user_id, {columns}) VALUES (?, {placeholders})",
                 (user_id, *defaults.values()),
             )
             await conn.commit()
+
+            if cursor.rowcount == 0:
+                # Lost the race: return the account the concurrent caller created
+                await cursor.execute(
+                    "SELECT * FROM accounts WHERE user_id = ?", (user_id,)
+                )
+                row = await cursor.fetchone()
+                if row is not None:
+                    account = dict(row)
+                    account["inventory"] = json.loads(account["inventory"])
+                    account["caught_revomon"] = json.loads(account["caught_revomon"])
+                    return account
 
             # Return the new account with parsed JSON
             defaults["inventory"] = json.loads(defaults["inventory"])
@@ -3110,7 +3125,13 @@ class AccountsTable:
         await conn.commit()
 
     async def update_account(self, user_id: int, **kwargs: Any) -> dict[str, Any]:
-        """Update specific fields of an account."""
+        """Update specific fields of an account.
+
+        Energy-regen parity with the legacy JSON store: regen is computed
+        first, then explicit caller kwargs are applied ON TOP, so a
+        caller-provided ``energy`` value always wins and resets
+        ``last_energy_update``.
+        """
         async with self._connect() as conn:
             conn.row_factory = aiosqlite.Row
             cursor = await conn.cursor()
@@ -3123,7 +3144,7 @@ class AccountsTable:
                 # Create account first
                 await self.get_or_create_account(user_id)
 
-            # Process energy regeneration before update
+            # Process energy regeneration before applying caller kwargs
             await cursor.execute(
                 "SELECT energy, max_energy, last_energy_update FROM accounts WHERE user_id = ?",
                 (user_id,),
@@ -3134,11 +3155,14 @@ class AccountsTable:
                 if row["energy"] < row["max_energy"]:
                     time_passed = now - row["last_energy_update"]
                     regen = int(time_passed / 60)
-                    if regen > 0:
+                    if regen > 0 and "energy" not in kwargs:
                         kwargs["energy"] = min(row["max_energy"], row["energy"] + regen)
                         kwargs["last_energy_update"] = now - (time_passed % 60)
+                    elif "energy" in kwargs:
+                        # Explicit energy set wins; regen clock resets
+                        kwargs["last_energy_update"] = now
                 else:
-                    kwargs["last_energy_update"] = now
+                    kwargs.setdefault("last_energy_update", now)
 
             await self._update_account_fields(conn, user_id, **kwargs)
 
@@ -3151,6 +3175,120 @@ class AccountsTable:
             account["inventory"] = json.loads(account["inventory"])
             account["caught_revomon"] = json.loads(account["caught_revomon"])
             return account
+
+    async def count_accounts(self) -> int:
+        """Return the number of accounts in the accounts table."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute("SELECT COUNT(*) FROM accounts;")
+            return await _fetch_count(cursor)
+
+    async def spend_coins(self, user_id: int, cost: int) -> bool:
+        """Atomically deduct coins; returns False when balance is insufficient."""
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await cursor.execute(
+                """
+                UPDATE accounts SET coins = coins - ?
+                WHERE user_id = ? AND coins >= ?
+                """,
+                (cost, user_id, cost),
+            )
+            committed = cursor.rowcount > 0
+            await conn.commit()
+            return committed
+
+    async def add_inventory_item(
+        self, user_id: int, item_id: str, delta: int = 1
+    ) -> None:
+        """Atomically adjust an inventory count for an item id (string key)."""
+        account = await self.get_or_create_account(user_id)
+        inventory: dict[str, int] = dict(account.get("inventory") or {})
+        inventory[str(item_id)] = inventory.get(str(item_id), 0) + delta
+        if inventory[str(item_id)] <= 0:
+            del inventory[str(item_id)]
+        async with self._connect() as conn:
+            await self._update_account_fields(conn, user_id, inventory=inventory)
+
+    async def seed_from_legacy_json(self, legacy_path: str | Path) -> int:
+        """One-time import of the legacy data/accounts.json store.
+
+        Creates a timestamped backup next to the source file, imports rows
+        transactionally with INSERT OR IGNORE keyed by user_id (idempotent),
+        skips corrupt entries, and returns the number imported.
+        """
+        path = Path(legacy_path)
+        if not path.exists():
+            return 0
+
+        backup_path = path.with_suffix(f".backup.{int(time.time())}.json")
+        shutil.copyfile(path, backup_path)
+        print(f"Backed up legacy accounts to {backup_path}")
+
+        try:
+            with open(path, encoding="utf-8") as f:
+                raw = json.load(f)
+        except (OSError, json.JSONDecodeError) as e:
+            print(f"Could not read legacy accounts file {path}: {e}")
+            return 0
+        if not isinstance(raw, dict):
+            print(f"Legacy accounts file {path} has unexpected shape; skipping seed.")
+            return 0
+
+        defaults = {
+            "current_city": "drassius city",
+            "current_location": "revocenter",
+            "is_logged_in": 0,
+            "energy": 100,
+            "max_energy": 100,
+            "arrival_time": 0.0,
+            "destination_city": "",
+            "destination_location": "",
+            "trainer_level": 1,
+            "trainer_xp": 25,
+            "coins": 500,
+            "rank": "Rookie",
+            "battles_won": 0,
+            "battles_lost": 0,
+            "inventory": "{}",
+            "caught_revomon": "[]",
+        }
+        imported = 0
+        skipped = 0
+        async with self._connect() as conn:
+            cursor = await conn.cursor()
+            await conn.execute("BEGIN TRANSACTION;")
+            for user_id_str, entry in raw.items():
+                try:
+                    uid = int(user_id_str)
+                    if not isinstance(entry, dict):
+                        raise ValueError("entry is not a mapping")
+                except (ValueError, TypeError):
+                    skipped += 1
+                    continue
+
+                values: dict[str, Any] = {}
+                for col, default in defaults.items():
+                    val = entry.get(col, default)
+                    if col == "inventory" and isinstance(val, dict):
+                        val = json.dumps(val)
+                    elif col == "caught_revomon" and isinstance(val, list):
+                        val = json.dumps(val)
+                    values[col] = val
+                values.pop("last_energy_update", None)  # recomputed on first load
+
+                columns = ["user_id", *values.keys()]
+                placeholders = ", ".join(["?"] * len(columns))
+                await cursor.execute(
+                    f"INSERT OR IGNORE INTO accounts ({', '.join(columns)}) "
+                    f"VALUES ({placeholders})",
+                    (uid, *values.values()),
+                )
+                imported += 1
+            await conn.commit()
+        if skipped:
+            print(f"Skipped {skipped} corrupt legacy account entries.")
+        return imported
 
 
 class EventBoardLogsTable:

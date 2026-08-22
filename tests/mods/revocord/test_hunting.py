@@ -216,6 +216,7 @@ class TestOnInteraction:
         new_callable=AsyncMock,
         return_value=1,
     )
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch(
         "mods.revocord.hunting.get_active_encounter",
         new_callable=AsyncMock,
@@ -226,6 +227,7 @@ class TestOnInteraction:
         self,
         mock_get_account: Any,
         mock_get_encounter: Any,
+        mock_add_inv: Any,
         mock_get_rc_id: Any,
         mock_update: Any,
         cog: HuntingCog,
@@ -258,12 +260,12 @@ class TestOnInteraction:
         )
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     async def test_spawn_throw_orb_fail_flee(
         self,
         mock_get_account: Any,
-        mock_update: Any,
+        mock_add_inv: Any,
         cog: HuntingCog,
         mock_interaction: Any,
         sample_revomon: Any,
@@ -286,18 +288,18 @@ class TestOnInteraction:
         ):  # Fail, then flee
             await cog.on_interaction(mock_interaction)
 
-        mock_update.assert_called_once()
+        mock_add_inv.assert_awaited_once()
         mock_interaction.response.edit_message.assert_called_once()
         mock_interaction.followup.send.assert_called_once()
         assert "fled" in mock_interaction.followup.send.call_args[0][0]
 
     @pytest.mark.asyncio
-    @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     async def test_spawn_throw_orb_fail_no_flee(
         self,
         mock_get_account: Any,
-        mock_update: Any,
+        mock_add_inv: Any,
         cog: HuntingCog,
         mock_interaction: Any,
         sample_revomon: Any,
@@ -320,7 +322,7 @@ class TestOnInteraction:
         ):  # Fail, then no flee
             await cog.on_interaction(mock_interaction)
 
-        mock_update.assert_called_once()
+        mock_add_inv.assert_awaited_once()
         mock_interaction.response.send_message.assert_called_once()
         assert (
             "broke free from your"

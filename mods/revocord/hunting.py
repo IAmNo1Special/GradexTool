@@ -820,10 +820,11 @@ class HuntingCog(commands.Cog):
             # Reconstruct image path for embeds using DRY helper
             img_path = self._get_revomon_image_path(revomon_data, is_shiny)
 
-            # Deduct the orb
-            inventory[orb_id] -= 1
-            if inventory[orb_id] <= 0:
-                del inventory[orb_id]
+            # Deduct the orb atomically (deletes the key when it hits zero)
+            from scripts.gradexDB import AccountsTable
+
+            accounts = AccountsTable()
+            await accounts.add_inventory_item(spawner_id, orb_id, -1)
 
             # Calculate capture success
             base_rates = {
@@ -887,7 +888,6 @@ class HuntingCog(commands.Cog):
 
                 await update_account(
                     spawner_id,
-                    inventory=inventory,
                     caught_revomon=caught_list,
                 )
 
@@ -925,10 +925,7 @@ class HuntingCog(commands.Cog):
 
                 await delete_active_encounter(spawner_id)
             else:
-                # Deduct orb
-                await update_account(spawner_id, inventory=inventory)
-
-                # 30% chance to flee on fail
+                # Orb already deducted atomically above; 30% chance to flee on fail
                 will_flee = random.random() < 0.30
                 if will_flee:
                     await delete_active_encounter(spawner_id)

@@ -79,6 +79,7 @@ class ShopSelect(ui.Select[Any]):
         await interaction.response.defer(ephemeral=True)
         orb_id = self.values[0]
         member = interaction.user
+        member_id: int = member.id
 
         # Get orb details
         orb_details = {
@@ -91,27 +92,24 @@ class ShopSelect(ui.Select[Any]):
             await interaction.followup.send("❌ Invalid selection.", ephemeral=True)
             return
 
-        cost = details["cost"]
-        name = details["name"]
+        cost = int(details["cost"])  # type: ignore[call-overload]
+        name = str(details["name"])
 
-        account = await get_or_create_account(member.id)
-        coins = account.get("coins", 0)
+        from scripts.gradexDB import AccountsTable
 
-        if coins < cost:
+        accounts = AccountsTable()
+        if not await accounts.spend_coins(member_id, cost):
+            balance = (await accounts.get_or_create_account(member_id)).get("coins", 0)
             await interaction.followup.send(
                 f"❌ You do not have enough RevoCoins to buy a **{name}**!\n"
-                f"Required: `{cost}` | Current: `{coins}`",
+                f"Required: `{cost}` | Current: `{balance}`",
                 ephemeral=True,
             )
             return
 
-        # Deduct coins and update inventory
-        new_coins = coins - cost
-        inventory = account.get("inventory", {})
-        inventory[orb_id] = inventory.get(orb_id, 0) + 1
+        await accounts.add_inventory_item(member_id, orb_id)
 
-        await update_account(member.id, coins=new_coins, inventory=inventory)
-
+        new_coins = (await accounts.get_or_create_account(member_id)).get("coins", 0)
         await interaction.followup.send(
             f"🛒 Success! Purchased 1x **{name}** for `{cost}` RevoCoins!\n"
             f"Remaining balance: `{new_coins}` RevoCoins.",

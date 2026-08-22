@@ -290,6 +290,7 @@ class TestOnInteractionPart2:
         assert "not found" in mock_interaction.response.send_message.call_args[0][0]
 
     @pytest.mark.asyncio
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_active_encounter", new_callable=AsyncMock)
@@ -333,6 +334,7 @@ class TestOnInteractionPart2:
         mock_interaction.response.edit_message.assert_called_once()
 
     @pytest.mark.asyncio
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_active_encounter", new_callable=AsyncMock)
@@ -375,6 +377,7 @@ class TestOnInteractionPart2:
         mock_update.assert_called_once()
 
     @pytest.mark.asyncio
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.delete_active_encounter", new_callable=AsyncMock)
@@ -412,6 +415,7 @@ class TestOnInteractionPart2:
         mock_interaction.response.edit_message.assert_called_once()
 
     @pytest.mark.asyncio
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.delete_active_encounter", new_callable=AsyncMock)
@@ -449,6 +453,7 @@ class TestOnInteractionPart2:
         mock_interaction.response.edit_message.assert_called_once()
 
     @pytest.mark.asyncio
+    @patch("scripts.gradexDB.AccountsTable.add_inventory_item", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_or_create_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.update_account", new_callable=AsyncMock)
     @patch("mods.revocord.hunting.get_active_encounter", new_callable=AsyncMock)
