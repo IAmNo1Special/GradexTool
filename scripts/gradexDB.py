@@ -8,6 +8,10 @@ import aiosqlite
 import httpx
 from aiosqlite.core import Connection
 
+from utils.http import fetch_json as _http_fetch_json  # noqa: E402
+from utils.http import safe_get as _http_safe_get  # noqa: E402
+from utils.http import safe_post as _http_safe_post  # noqa: E402
+
 
 def get_db_connection() -> aiosqlite.Connection:
     """Get a database connection."""
@@ -21,38 +25,17 @@ async def safe_get(
     retries: int = 5,
     backoff_factor: float = 1.0,
 ) -> httpx.Response | None:
-    """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff."""
-    should_close = client is None
-    if client is None:
-        client = httpx.AsyncClient(timeout=timeout)
+    """Fetch a URL with timeout, retries, rate-limit awareness, and exponential backoff.
 
-    try:
-        for i in range(retries):
-            try:
-                response = await client.get(url)
-                if response.status_code == 200:
-                    return response
-
-                # Handle rate limiting (429) specifically
-                if response.status_code == 429:
-                    retry_after = int(response.headers.get("Retry-After", 5))
-                    print(
-                        f"Rate limited (429) on {url}. Sleeping for {retry_after} seconds..."
-                    )
-                    await asyncio.sleep(retry_after)
-                    continue
-
-                print(
-                    f"Failed to fetch {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-                )
-            except httpx.RequestError as e:
-                print(f"Failed to fetch {url}: {e}. Retrying ({i + 1}/{retries})...")
-            if i < retries - 1:
-                await asyncio.sleep(backoff_factor * (2**i))
-        return None
-    finally:
-        if should_close:
-            await client.aclose()
+    Delegates to the canonical implementation in utils.http.
+    """
+    return await _http_safe_get(
+        url,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
 
 
 async def safe_post(
@@ -63,28 +46,35 @@ async def safe_post(
     retries: int = 3,
     backoff_factor: float = 1.0,
 ) -> httpx.Response | None:
-    """Post to a URL with timeout, retries, and exponential backoff."""
-    should_close = client is None
-    if client is None:
-        client = httpx.AsyncClient(timeout=timeout)
+    """Post to a URL with timeout, retries, and exponential backoff.
 
-    try:
-        for i in range(retries):
-            try:
-                response = await client.post(url, json=json_payload)
-                if response.status_code == 200:
-                    return response
-                print(
-                    f"Failed to post to {url}: HTTP status {response.status_code}. Retrying ({i + 1}/{retries})..."
-                )
-            except httpx.RequestError as e:
-                print(f"Failed to post to {url}: {e}. Retrying ({i + 1}/{retries})...")
-            if i < retries - 1:
-                await asyncio.sleep(backoff_factor * (2**i))
-        return None
-    finally:
-        if should_close:
-            await client.aclose()
+    Delegates to the canonical implementation in utils.http.
+    """
+    return await _http_safe_post(
+        url,
+        json_payload=json_payload,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
+
+
+async def fetch_json(
+    url: str,
+    client: httpx.AsyncClient | None = None,
+    timeout: int = 10,
+    retries: int = 5,
+    backoff_factor: float = 1.0,
+) -> Any | None:
+    """GET and parse JSON; returns None on failure. Delegates to utils.http."""
+    return await _http_fetch_json(
+        url,
+        client=client,
+        timeout=timeout,
+        retries=retries,
+        backoff_factor=backoff_factor,
+    )
 
 
 import asyncio  # noqa: E402

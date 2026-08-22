@@ -3,10 +3,11 @@ from io import BytesIO
 from typing import Any
 
 import discord.embeds
-import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
+
+from utils.http import fetch_json
 
 
 class Podium2(commands.Cog):
@@ -22,52 +23,53 @@ class Podium2(commands.Cog):
         formatted_time = f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
         return formatted_time
 
-    def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
+    async def get_weekly_podium_data(self) -> dict[str, dict[str, str]]:
         weekly_podium_url = "https://api.revomon.io/leaderboard/weekly_podium"
-        response = requests.get(weekly_podium_url)
-        response = response.json()
-        first_user = response["data"]["weeklyPodium"][0]["username"]
-        first_img = response["data"]["weeklyPodium"][0]["profilePicture"]
-        first_time_seconds = response["data"]["weeklyPodium"][0]["times"]
-        first_time = self.convert_time(first_time_seconds)
-        self.rankings["first"] = {
-            "user": first_user,
-            "img": first_img,
-            "time": first_time,
-        }
-        second_user = response["data"]["weeklyPodium"][1]["username"]
-        second_img = response["data"]["weeklyPodium"][1]["profilePicture"]
-        second_time_seconds = response["data"]["weeklyPodium"][1]["times"]
-        second_time = self.convert_time(second_time_seconds)
-        self.rankings["second"] = {
-            "user": second_user,
-            "img": second_img,
-            "time": second_time,
-        }
-        third_user = response["data"]["weeklyPodium"][2]["username"]
-        third_img = response["data"]["weeklyPodium"][2]["profilePicture"]
-        third_time_seconds = response["data"]["weeklyPodium"][2]["times"]
-        third_time = self.convert_time(third_time_seconds)
-        self.rankings["third"] = {
-            "user": third_user,
-            "img": third_img,
-            "time": third_time,
+        response = await fetch_json(weekly_podium_url)
+        if not response:
+            raise ValueError("Weekly podium leaderboard unavailable")
+        weekly_podium = response["data"]["weeklyPodium"]
+        if len(weekly_podium) < 3:
+            self.rankings = {}
+            return self.rankings
+
+        def entry(idx: int) -> dict[str, str]:
+            slot = weekly_podium[idx]
+            return {
+                "user": slot["username"],
+                "img": slot["profilePicture"],
+                "time": self.convert_time(slot["times"]),
+            }
+
+        self.rankings = {
+            "first": entry(0),
+            "second": entry(1),
+            "third": entry(2),
         }
         return self.rankings
 
-    def get_current_podium_data(self) -> dict[str, dict[str, str]]:
+    async def get_current_podium_data(self) -> dict[str, dict[str, str]]:
         current_podium_url = "https://api.revomon.io/leaderboard/current_podium"
-        response = requests.get(current_podium_url)
-        response = response.json()
-        first_user = response["data"]["currentPodium"][0]["username"]
-        first_img = response["data"]["currentPodium"][0]["profilePicture"]
-        self.rankings["first"] = {"user": first_user, "img": first_img}
-        second_user = response["data"]["currentPodium"][1]["username"]
-        second_img = response["data"]["currentPodium"][1]["profilePicture"]
-        self.rankings["second"] = {"user": second_user, "img": second_img}
-        third_user = response["data"]["currentPodium"][2]["username"]
-        third_img = response["data"]["currentPodium"][2]["profilePicture"]
-        self.rankings["third"] = {"user": third_user, "img": third_img}
+        response = await fetch_json(current_podium_url)
+        if not response:
+            raise ValueError("Current podium leaderboard unavailable")
+        current_podium = response["data"]["currentPodium"]
+        if len(current_podium) < 3:
+            self.rankings = {}
+            return self.rankings
+
+        def entry(idx: int) -> dict[str, str]:
+            slot = current_podium[idx]
+            return {
+                "user": slot["username"],
+                "img": slot["profilePicture"],
+            }
+
+        self.rankings = {
+            "first": entry(0),
+            "second": entry(1),
+            "third": entry(2),
+        }
         return self.rankings
 
     def get_text_size(self, draw: Any, text: str, font: Any) -> tuple[int, int]:
@@ -76,7 +78,7 @@ class Podium2(commands.Cog):
         height = bbox[3] - bbox[1]
         return width, height
 
-    def podium_img(self, podium_type: str) -> None:
+    async def podium_img(self, podium_type: str) -> None:
         # Define the image size and background color
         image_width, image_height = 800, 450
         background_color = (36, 36, 36)  # Dark background
@@ -92,14 +94,14 @@ class Podium2(commands.Cog):
         circle_colors = ["grey", "grey", "grey"]  # Colors for 1st, 2nd, 3rd
         text_colors = ["#ffffff", "#ffffff", "#ffffff"]  # Text colors for names
         if podium_type == "weekly":
-            rankings = self.get_weekly_podium_data()
+            rankings = await self.get_weekly_podium_data()
             times = [
                 rankings["second"]["time"],
                 rankings["first"]["time"],
                 rankings["third"]["time"],
             ]  # Text to display under usernames
         else:
-            rankings = self.get_current_podium_data()
+            rankings = await self.get_current_podium_data()
         podium_ranks = ["2", "1", "3"]
         usernames = [
             rankings["second"]["user"],
@@ -185,8 +187,8 @@ class Podium2(commands.Cog):
             new_image.save(self.current_podium_img["image_bytes"], format="PNG")
             self.current_podium_img["image_bytes"].seek(0)
 
-    def current_podium_embed(self) -> discord.embeds.Embed:
-        self.podium_img(podium_type="current")
+    async def current_podium_embed(self) -> discord.embeds.Embed:
+        await self.podium_img(podium_type="current")
         embed = Embed(
             title=None,
             description=None,
@@ -197,8 +199,8 @@ class Podium2(commands.Cog):
         embed.set_footer(text="Global Revomon Association")
         return embed
 
-    def weekly_podium_embed(self) -> discord.embeds.Embed:
-        self.podium_img(podium_type="weekly")
+    async def weekly_podium_embed(self) -> discord.embeds.Embed:
+        await self.podium_img(podium_type="weekly")
         embed = Embed(
             title=None,
             description=None,
@@ -221,8 +223,10 @@ class Podium2(commands.Cog):
     @app_commands.allowed_installs(guilds=True, users=True)
     async def podium(self, interaction: Interaction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
+        self.weekly_podium_img = {}
+        self.current_podium_img = {}
         try:
-            curr_podium_embed = self.current_podium_embed()
+            curr_podium_embed = await self.current_podium_embed()
             file = File(
                 self.current_podium_img["image_bytes"],
                 filename="current_podium_image.png",
@@ -235,7 +239,7 @@ class Podium2(commands.Cog):
             self.current_podium_img["image_bytes"].close()
             del self.current_podium_img["image_bytes"]
 
-            week_podium_embed = self.weekly_podium_embed()
+            week_podium_embed = await self.weekly_podium_embed()
             file = File(
                 self.weekly_podium_img["image_bytes"],
                 filename="weekly_podium_image.png",
@@ -250,6 +254,13 @@ class Podium2(commands.Cog):
 
         except Exception as e:
             print(f"AN ERROR OCCURRED -> podium_command(Podium2.podium): {e}")
+            try:
+                await interaction.followup.send(
+                    "Podium leaderboard data is unavailable right now. Please try again later.",
+                    ephemeral=True,
+                )
+            except Exception:
+                pass
 
 
 async def setup(gradex: commands.Bot) -> None:

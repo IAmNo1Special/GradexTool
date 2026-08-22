@@ -28,19 +28,24 @@ async def test_setup(mock_bot: Any) -> None:
 
 
 class TestPvpLeaderboard2:
-    def test_get_current_pvp_data_empty(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.pvp_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_current_pvp_data_empty(
+        self, mock_fetch: Any, mock_bot: Any
+    ) -> None:
         cog = PvpLeaderboard2(mock_bot)
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"data": {"pvpTopFifteen": []}}
-        with patch("requests.get", return_value=mock_response):
-            cog.get_current_pvp_data()
-            assert cog.rankings is None
+        mock_fetch.return_value = {"data": {"pvpTopFifteen": []}}
+        await cog.get_current_pvp_data()
+        assert cog.rankings is None
 
-    def test_get_current_pvp_data_success(self, mock_bot: Any) -> None:
+    @pytest.mark.asyncio
+    @patch("mods.revomon.pvp_command.fetch_json", new_callable=AsyncMock)
+    async def test_get_current_pvp_data_success(
+        self, mock_fetch: Any, mock_bot: Any
+    ) -> None:
         cog = PvpLeaderboard2(mock_bot)
-        mock_response = MagicMock()
         # Mock 1 valid entry, then 1 empty dict to trigger break
-        mock_response.json.return_value = {
+        mock_fetch.return_value = {
             "data": {
                 "pvpTopFifteen": [
                     {
@@ -56,12 +61,11 @@ class TestPvpLeaderboard2:
                 ]
             }
         }
-        with patch("requests.get", return_value=mock_response):
-            cog.get_current_pvp_data()
-            assert cog.rankings is not None
-            assert len(cog.rankings) == 1
-            assert cog.rankings[0]["Name"] == "u1"
-            assert cog.rankings[0]["Winning"] == "66.67%"
+        await cog.get_current_pvp_data()
+        assert cog.rankings is not None
+        assert len(cog.rankings) == 1
+        assert cog.rankings[0]["Name"] == "u1"
+        assert cog.rankings[0]["Winning"] == "66.67%"
 
     @patch("mods.revomon.pvp_command.ImageFont.truetype")
     @patch("mods.revomon.pvp_command.Image.new")

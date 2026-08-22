@@ -10,8 +10,8 @@ class Evolutions2(commands.Cog):
     def __init__(self, gradex: Any) -> None:
         self.gradex = gradex
 
-    def evolutions_embed(self) -> Any:
-        evo_trees = get_evo_trees()
+    async def evolutions_embed(self) -> Any:
+        evo_trees = await get_evo_trees()
         evo_trees_str = " ".join(branch for branch in evo_trees)
         embed = Embed(
             title="Full Evolutions List Pt.3",
@@ -34,7 +34,7 @@ class Evolutions2(commands.Cog):
     )
     @app_commands.allowed_installs(guilds=True, users=True)
     async def evolutions(self, interaction: Interaction) -> None:
-        embed = self.evolutions_embed()
+        embed = await self.evolutions_embed()
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 

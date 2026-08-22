@@ -3,10 +3,11 @@ from io import BytesIO
 from typing import Any
 
 import discord.embeds
-import requests
 from discord import Color, Embed, File, Interaction, app_commands
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
+
+from utils.http import fetch_json
 
 
 class PvpLeaderboard2(commands.Cog):
@@ -15,7 +16,7 @@ class PvpLeaderboard2(commands.Cog):
         self.rankings: list[dict[str, str | int]] | None = None
         self.pvp_img: dict[str, Any] = {}
 
-    def get_current_pvp_data(self) -> None:
+    async def get_current_pvp_data(self) -> None:
         ranks = [
             "first",
             "second",
@@ -34,8 +35,10 @@ class PvpLeaderboard2(commands.Cog):
             "fifteenth",
         ]
         current_pvp_url = "https://api.revomon.io/leaderboard/pvp_top_fifteen"
-        response = requests.get(current_pvp_url)
-        response = response.json()
+        response = await fetch_json(current_pvp_url)
+        if not response:
+            self.rankings = None
+            return
         pvp_top_fifteen = response["data"]["pvpTopFifteen"]
         if not pvp_top_fifteen:
             self.rankings = None
@@ -43,7 +46,7 @@ class PvpLeaderboard2(commands.Cog):
 
         rankings_data = []
         for count, _rank in enumerate(ranks):
-            if pvp_top_fifteen[count] == {}:
+            if count >= len(pvp_top_fifteen) or pvp_top_fifteen[count] == {}:
                 break
             user = pvp_top_fifteen[count]["username"]
             pvp_top_fifteen[count]["profilePicture"]
@@ -166,7 +169,7 @@ class PvpLeaderboard2(commands.Cog):
         self.pvp_img = {}
         curr_pvp_embed: discord.embeds.Embed | None = None
         try:
-            self.get_current_pvp_data()
+            await self.get_current_pvp_data()
         except Exception as e:
             print(f"Error during pvp_command(get_current_pvp_data): {e}")
         try:
