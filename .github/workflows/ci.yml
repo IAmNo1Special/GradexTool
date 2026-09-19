@@ -15,8 +15,8 @@ jobs:
       python-version: "3.12"
       install-command: "uv sync --all-extras --dev"
       lint-commands: |
-        uvx ruff check .
-        uvx ruff format --check .
+        uv run ruff check .
+        uv run ruff format --check .
         uv run --dev mypy .
         uv run --python 3.13 --dev mdformat --check --exclude '.venv/**' --exclude '.venv2/**' --exclude '.kilo/**' --exclude 'node_modules/**' --exclude '__pycache__/**' --exclude '.pytest_cache/**' .
       test-commands: "uv run pytest --cov=. --cov-report=xml"
