@@ -16,9 +16,11 @@ load_dotenv()
 logger = setup_logging("gradex_tool")
 
 intents = discord.Intents.default()
-intents.members = True
-intents.presences = True
-intents.message_content = True
+# NOTE (2026-10-11): Discord removed the bot's privileged intents
+# (members, presences, message_content) on 2026-10-09 for a missed review
+# window. The bot runs on default intents only; keyword triggers were
+# migrated to slash commands. Do not re-enable these flags without a
+# re-approved privileged-intent grant in the Developer Portal.
 
 gradex_tool: commands.Bot = commands.Bot(command_prefix="/", intents=intents)
 
@@ -58,22 +60,29 @@ async def on_ready() -> None:
         logger.warning(f"Command sync failed (may be rate limited): {e}\n{'-' * 50}")
 
 
-@gradex_tool.command(
-    name="sync_commands", description="Manually sync application commands (owner only)"
+@gradex_tool.tree.command(
+    name="sync_commands",
+    description="Manually sync application commands (owner only)",
 )
-async def sync_commands(ctx: commands.Context[commands.Bot]) -> None:
+async def sync_commands(interaction: discord.Interaction) -> None:
     """Manually sync application commands. Owner only."""
-    if not await gradex_tool.is_owner(ctx.author):
-        await ctx.send("You do not have permission to use this command.")
+    if not await gradex_tool.is_owner(interaction.user):
+        await interaction.response.send_message(
+            "You do not have permission to use this command.", ephemeral=True
+        )
         return
 
     try:
         synced_commands = await gradex_tool.tree.sync()
         logger.info(f"Synced {len(synced_commands)} commands\n{'-' * 50}")
-        await ctx.send(f"Synced {len(synced_commands)} commands successfully.")
+        await interaction.response.send_message(
+            f"Synced {len(synced_commands)} commands successfully.", ephemeral=True
+        )
     except Exception as e:
         logger.error(f"Manual command sync failed: {e}\n{'-' * 50}")
-        await ctx.send(f"Command sync failed: {e}")
+        await interaction.response.send_message(
+            f"Command sync failed: {e}", ephemeral=True
+        )
 
 
 @gradex_tool.tree.error

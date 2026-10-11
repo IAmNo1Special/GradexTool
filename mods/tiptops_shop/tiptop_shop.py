@@ -2,9 +2,8 @@ import logging
 from typing import Any
 
 import discord
+from discord import Interaction, app_commands
 from discord.ext import commands
-
-from utils.helpers import respond
 
 logger = logging.getLogger(__name__)
 
@@ -414,24 +413,20 @@ class tiptop_shop(commands.Cog):  # noqa: N801
         print("The Elder's Library(Revomon Search) is ready!")
         print("---------------------------")
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-        # Ignore messages from bots (including self)
-        if message.author.bot:
-            return
-
+    @app_commands.command(
+        name="tiptop",
+        description="Browse Tiptop's Top-up Shop for NFTs and IGC.",
+    )
+    @app_commands.allowed_installs(guilds=True, users=True)
+    async def tiptop(self, interaction: Interaction) -> None:
         try:
-            # Save User's Cleaned Input As The Search Prompt
-            prompt = message.content.lower().strip()
-            # Check if User's Prompt is "Tiptop" or "Tip Top"
-            if prompt == "tiptop" or prompt == "tip top":
-                embed = self.tiptop_shop_intro_embed()
-                buttons = self.tiptop_shop_intro_buttons()
-                await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons
-                )
+            embed = self.tiptop_shop_intro_embed()
+            buttons = self.tiptop_shop_intro_buttons()
+            await interaction.response.send_message(
+                embed=embed, view=buttons, ephemeral=True
+            )
         except Exception as e:
-            logger.error(f"An error occurred during tiptop_shop on_message: {e}")
+            logger.error(f"An error occurred during the 'tiptop' command: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

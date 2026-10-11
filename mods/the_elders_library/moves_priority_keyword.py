@@ -2,9 +2,8 @@ import logging
 from typing import Any
 
 import discord
+from discord import Interaction, app_commands
 from discord.ext import commands
-
-from utils.helpers import respond
 
 logger = logging.getLogger(__name__)
 
@@ -39,25 +38,23 @@ class allprioritymoves(commands.Cog):  # noqa: N801
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        print("The Elder's Library(All Priority Moves Keyword) is ready!")
+        print("The Elder's Library(Priority Moves Command) is ready!")
         print("---------------------------")
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-        # Ignore messages from bots (including self)
-        if message.author.bot:
-            return
-
+    @app_commands.command(
+        name="priority-moves",
+        description="Displays the full priority move list.",
+    )
+    @app_commands.allowed_installs(guilds=True, users=True)
+    async def priority_moves(self, interaction: Interaction) -> None:
         try:
-            prompt = message.content.lower().strip()
-            if prompt == "all priority moves" or prompt == "priority moves":
-                embed = self.allprioritymoves_embed()
-                buttons = self.allprioritymoves_buttons()
-                await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons
-                )
+            embed = self.allprioritymoves_embed()
+            buttons = self.allprioritymoves_buttons()
+            await interaction.response.send_message(
+                embed=embed, view=buttons, ephemeral=True
+            )
         except Exception as e:
-            logger.error(f"An error occurred during on_message: {e}")
+            logger.error(f"An error occurred during the 'priority-moves' command: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

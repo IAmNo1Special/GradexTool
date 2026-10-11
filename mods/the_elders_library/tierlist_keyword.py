@@ -2,9 +2,8 @@ import logging
 from typing import Any
 
 import discord
+from discord import Interaction, app_commands
 from discord.ext import commands
-
-from utils.helpers import respond
 
 logger = logging.getLogger(__name__)
 
@@ -41,29 +40,23 @@ class tierlist(commands.Cog):  # noqa: N801
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        print("The Elder's Library(Tier List Keyword) is ready!")
+        print("The Elder's Library(Tier List Command) is ready!")
         print("---------------------------")
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-        # Ignore messages from bots (including self)
-        if message.author.bot:
-            return
-
+    @app_commands.command(
+        name="tierlist",
+        description="Displays the current meta tier list.",
+    )
+    @app_commands.allowed_installs(guilds=True, users=True)
+    async def tierlist(self, interaction: Interaction) -> None:
         try:
-            prompt = message.content.lower().strip()
-            if prompt == "tier list" or prompt == "tierlist":
-                embed = self.tierlist_embed()
-                buttons = self.tierlist_buttons()
-                await respond(
-                    self.gradex,
-                    message=message,
-                    embed=embed,
-                    buttons=buttons,
-                    file=self.file,
-                )
+            embed = self.tierlist_embed()
+            buttons = self.tierlist_buttons()
+            await interaction.response.send_message(
+                file=self.file, embed=embed, view=buttons, ephemeral=True
+            )
         except Exception as e:
-            logger.error(f"An error occurred during on_message: {e}")
+            logger.error(f"An error occurred during the 'tierlist' command: {e}")
 
 
 async def setup(gradex: Any) -> None:

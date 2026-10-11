@@ -8,27 +8,12 @@ import pytest  # noqa: E402
 
 # List of all previously untested components
 COMPONENTS = [
-    "abilities_keyword.py",
-    "ability_search.py",
     "evchart_command.py",
-    "evchart_keyword.py",
     "evolutions_command.py",
-    "evolutions_keyword.py",
-    "fruity_search.py",
-    "fruitys_keyword.py",
-    "help_keyword.py",
-    "item_search.py",
-    "items_keyword.py",
-    "move_search.py",
-    "moves_keyword.py",
     "moves_priority_keyword.py",
-    "nature_search.py",
-    "natures_keyword.py",
     "pokemon_keyword.py",
     "sapdaddy_command.py",
-    "sapdaddy_keyword.py",
     "spawn_command.py",
-    "spawn_keyword.py",
     "tierlist_keyword.py",
 ]
 

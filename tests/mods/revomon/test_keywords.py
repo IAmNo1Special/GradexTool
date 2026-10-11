@@ -190,38 +190,6 @@ class TestPodiumKeyword:
             await cog.on_ready()
             mock_update.assert_called_once()
 
-    @pytest.mark.asyncio
-    async def test_on_message_bot(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = Podium(mock_bot)
-        mock_message.author.bot = True
-        await cog.on_message(mock_message)
-        # Does nothing
-
-    @pytest.mark.asyncio
-    async def test_on_message_podium(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = Podium(mock_bot)
-        mock_message.content = " podium "
-
-        with (
-            patch.object(cog, "current_podium_embed", return_value=MagicMock()),
-            patch.object(cog, "weekly_podium_embed", return_value=MagicMock()),
-            patch(
-                "mods.revomon.podium_keyword.respond", new_callable=AsyncMock
-            ) as mock_respond,
-        ):
-            await cog.on_message(mock_message)
-            assert mock_respond.call_count == 2
-
-    @pytest.mark.asyncio
-    async def test_on_message_exception(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = Podium(mock_bot)
-        mock_message.content = "podium"
-
-        with patch.object(
-            cog, "current_podium_embed", side_effect=Exception("Embed Error")
-        ):
-            await cog.on_message(mock_message)
-
 
 # --- PvpLeaderboard Keyword Tests ---
 
@@ -467,35 +435,3 @@ class TestPvpKeyword:
         ) as mock_update:
             await cog.on_ready()
             mock_update.assert_called_once()
-
-    @pytest.mark.asyncio
-    async def test_on_message_bot(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = PvpLeaderboard(mock_bot)
-        mock_message.author.bot = True
-        await cog.on_message(mock_message)
-
-    @pytest.mark.asyncio
-    async def test_on_message_pvp(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = PvpLeaderboard(mock_bot)
-        mock_message.content = "pvp"
-
-        with (
-            patch.object(cog, "get_current_pvp_data"),
-            patch.object(cog, "update_pvp_image"),
-            patch.object(cog, "current_pvp_embed", return_value=MagicMock()),
-            patch(
-                "mods.revomon.pvp_keyword.respond", new_callable=AsyncMock
-            ) as mock_respond,
-        ):
-            await cog.on_message(mock_message)
-            mock_respond.assert_called_once()
-
-    @pytest.mark.asyncio
-    async def test_on_message_exception(self, mock_bot: Any, mock_message: Any) -> None:
-        cog = PvpLeaderboard(mock_bot)
-        mock_message.content = "Pvp"
-
-        with patch.object(
-            cog, "get_current_pvp_data", side_effect=Exception("Data Error")
-        ):
-            await cog.on_message(mock_message)

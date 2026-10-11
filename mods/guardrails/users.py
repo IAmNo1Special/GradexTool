@@ -3,7 +3,7 @@
 import logging
 from typing import Any, cast
 
-from discord import Interaction, Member, Message, app_commands, utils
+from discord import Interaction, Member, app_commands, utils
 from discord.ext import commands
 
 from configs import GRA_GUILD_ID
@@ -30,22 +30,9 @@ class UsersGuardrail(commands.Cog):
         logger.info(f"{self.cog_name} is ready!")
         logger.info("-" * 50)
 
-    @commands.Cog.listener()
-    async def on_message(self, message: Message) -> None:
-        """Called when a message is sent.
-
-        Args:
-            message: The message that was sent.
-        """
-        # Ignore messages from bots (including self)
-        if message.author.bot:
-            return
-        try:
-            logger.info(f"Running user check for {message.author}")
-            if isinstance(message.author, Member):
-                await user_check(gradex_tool=self.gradex_tool, user=message.author)
-        except Exception as e:
-            logger.error(f"An error occurred during main(on_message): {e}")
+    # NOTE (2026-10-11): the on_message user_check was removed with the
+    # message_content intent. Guardrail coverage is preserved: every slash
+    # command now triggers on_app_command_completion -> user_check below.
 
     @commands.Cog.listener()
     async def on_member_join(self, member: Member) -> None:
@@ -54,6 +41,12 @@ class UsersGuardrail(commands.Cog):
         Args:
             member: The member that joined.
         """
+        # TODO (2026-10-11): INERT — this listener requires the privileged
+        # `members` intent, which Discord removed on 2026-10-09 (missed review
+        # window). It will NOT fire until the intent is re-approved in the
+        # Developer Portal. When re-approved, the logic below works as-is.
+        # Alternative if the intent is never re-approved: assign the
+        # "Fresh Spawn" role from a periodic member-list sweep instead.
         logger.info(f"User {member.name} joined the {member.guild.name} server!")
         logger.info("-" * 50)
         if GRA_GUILD_ID is None:

@@ -64,6 +64,26 @@ class HelpCommand(commands.Cog):
             value=" - *Displays the Revomon Spawn chart image.*",
             inline=False,
         )
+        help_embed.add_field(
+            name="- **/tierlist**",
+            value=" - *Displays the current meta tier list.*",
+            inline=False,
+        )
+        help_embed.add_field(
+            name="- **/pokemon**",
+            value=" - *Shows the Revomon to Pokémon counterpart list.*",
+            inline=False,
+        )
+        help_embed.add_field(
+            name="- **/priority-moves**",
+            value=" - *Displays the full priority move list.*",
+            inline=False,
+        )
+        help_embed.add_field(
+            name="- **/tiptop**",
+            value=" - *Browse Tiptop's Top-up Shop for NFTs and IGC.*",
+            inline=False,
+        )
         return help_embed
 
     class PublicButton(ui.View):
