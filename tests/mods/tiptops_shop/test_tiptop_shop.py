@@ -59,47 +59,23 @@ async def test_on_ready(cog: Any, capsys: Any) -> None:
 
 
 @pytest.mark.asyncio
-@patch("mods.tiptops_shop.tiptop_shop.respond", new_callable=AsyncMock)
-async def test_on_message(mock_respond: Any, cog: Any) -> None:
-    # Test bot message ignored
-    bot_msg = MagicMock(spec=discord.Message)
-    bot_msg.author.bot = True
-    await cog.on_message(bot_msg)
-    mock_respond.assert_not_called()
+async def test_tiptop_command(cog: Any, mock_interaction: Any) -> None:
+    await cog.tiptop.callback(cog, mock_interaction)
+    mock_interaction.response.send_message.assert_called_once()
+    kwargs = mock_interaction.response.send_message.call_args[1]
+    assert kwargs["ephemeral"] is True
+    assert isinstance(kwargs["embed"], discord.Embed)
+    assert isinstance(kwargs["view"], tiptop_shop.tiptop_shop_intro_buttons)
 
-    # Test "tiptop" prompt
-    user_msg_tiptop = MagicMock(spec=discord.Message)
-    user_msg_tiptop.author.bot = False
-    user_msg_tiptop.content = " tiptop "
-    await cog.on_message(user_msg_tiptop)
-    mock_respond.assert_called_once()
-    mock_respond.reset_mock()
 
-    # Test "tip top" prompt
-    user_msg_tip_top = MagicMock(spec=discord.Message)
-    user_msg_tip_top.author.bot = False
-    user_msg_tip_top.content = "tip top"
-    await cog.on_message(user_msg_tip_top)
-    mock_respond.assert_called_once()
-    mock_respond.reset_mock()
-
-    # Test unrelated prompt
-    user_msg_other = MagicMock(spec=discord.Message)
-    user_msg_other.author.bot = False
-    user_msg_other.content = "hello"
-    await cog.on_message(user_msg_other)
-    mock_respond.assert_not_called()
-
-    # Test exception handling in on_message
-    with patch(
-        "mods.tiptops_shop.tiptop_shop.tiptop_shop.tiptop_shop_intro_embed",
-        side_effect=Exception("Test Exception"),
+@pytest.mark.asyncio
+async def test_tiptop_command_exception(cog: Any, mock_interaction: Any) -> None:
+    with patch.object(
+        cog, "tiptop_shop_intro_embed", side_effect=Exception("Test Exception")
     ):
-        user_msg_error = MagicMock(spec=discord.Message)
-        user_msg_error.author.bot = False
-        user_msg_error.content = "tiptop"
         # Should not raise exception
-        await cog.on_message(user_msg_error)
+        await cog.tiptop.callback(cog, mock_interaction)
+        mock_interaction.response.send_message.assert_not_called()
 
 
 # --- Test Button Classes ---

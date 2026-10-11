@@ -297,12 +297,33 @@ class SearchCommand(commands.Cog):
         embed = await self.item_search_embed(name.lower())
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
+    async def allmoves_embed(self) -> discord.embeds.Embed:
+        moves_str = ""
+        for move in sorted(await MovesTable().get_names()):
+            moves_str += f"- {move.title()}\n"
+        embed = Embed(
+            title="All Moves",
+            description=f"__**Name**__\n{moves_str}",
+            color=Color.red(),
+        )
+        embed.set_thumbnail(
+            url="https://media.discordapp.net/attachments/983557860803874826/1076036559893172354/THE_ELDER.png"
+        )
+        embed.set_footer(text="The Elder's Library · Global Revomon Association")
+        return embed
+
     @search_group.command(
         name="moves", description="Search for info about any Revomon move."
     )
-    @app_commands.describe(name="The name of the move you'd like more info on.")
-    async def moves(self, interaction: Interaction, name: str) -> None:
+    @app_commands.describe(
+        name="The name of the move you'd like more info on. Enter 'all' for a list of all the move names."
+    )
+    async def moves(self, interaction: Interaction, name: str | None = None) -> None:
         try:
+            if not name or name.lower() == "all":
+                embed = await self.allmoves_embed()
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+                return
             embed = await self.move_search_embed(name.lower())
             await interaction.response.send_message(embed=embed, ephemeral=True)
         except Exception as e:

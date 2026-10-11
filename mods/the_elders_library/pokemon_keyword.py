@@ -2,9 +2,8 @@ import logging
 from typing import Any
 
 import discord
+from discord import Interaction, app_commands
 from discord.ext import commands
-
-from utils.helpers import respond
 
 logger = logging.getLogger(__name__)
 
@@ -107,25 +106,23 @@ Twinkletree <---> Shiinotic""",
 
     @commands.Cog.listener()
     async def on_ready(self) -> None:
-        print("The Elder's Library(Pokemon Keyword) is ready!")
+        print("The Elder's Library(Pokemon Command) is ready!")
         print("---------------------------")
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-        # Ignore messages from bots (including self)
-        if message.author.bot:
-            return
-
+    @app_commands.command(
+        name="pokemon",
+        description="Shows the Revomon to Pokémon counterpart list.",
+    )
+    @app_commands.allowed_installs(guilds=True, users=True)
+    async def pokemon(self, interaction: Interaction) -> None:
         try:
-            prompt = message.content.lower().strip()
-            if prompt == "pokemon" or prompt == "pokémon":
-                embed = self.pokemon_embed()
-                buttons = self.pokemon_buttons()
-                await respond(
-                    self.gradex, message=message, embed=embed, buttons=buttons
-                )
+            embed = self.pokemon_embed()
+            buttons = self.pokemon_buttons()
+            await interaction.response.send_message(
+                embed=embed, view=buttons, ephemeral=True
+            )
         except Exception as e:
-            logger.error(f"An error occurred during on_message: {e}")
+            logger.error(f"An error occurred during the 'pokemon' command: {e}")
 
 
 async def setup(gradex: commands.Bot) -> None:

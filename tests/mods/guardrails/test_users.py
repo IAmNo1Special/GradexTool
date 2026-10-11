@@ -37,52 +37,6 @@ class TestUsersGuardrail:
             assert mock_info.call_count == 2
             mock_info.assert_any_call("UsersGuardrail is ready!")
 
-    @pytest.mark.asyncio
-    async def test_on_message_bot_message(self, mock_bot: Any) -> None:
-        """Test handling bot messages."""
-        cog = UsersGuardrail(mock_bot)
-        mock_message = MagicMock(spec=discord.Message)
-        mock_message.author = MagicMock(spec=discord.Member)
-        mock_message.author.bot = True
-
-        with patch("mods.guardrails.users.user_check") as mock_user_check:
-            await cog.on_message(mock_message)
-            mock_user_check.assert_not_called()
-
-    @pytest.mark.asyncio
-    async def test_on_message_user_message(self, mock_bot: Any) -> None:
-        """Test handling normal user messages."""
-        cog = UsersGuardrail(mock_bot)
-        mock_message = MagicMock(spec=discord.Message)
-        mock_message.author = MagicMock(spec=discord.Member)
-        mock_message.author.bot = False
-
-        with patch(
-            "mods.guardrails.users.user_check", new_callable=AsyncMock
-        ) as mock_user_check:
-            await cog.on_message(mock_message)
-            mock_user_check.assert_called_once_with(
-                gradex_tool=mock_bot, user=mock_message.author
-            )
-
-    @pytest.mark.asyncio
-    async def test_on_message_exception(self, mock_bot: Any) -> None:
-        """Test handling normal user messages with exception."""
-        cog = UsersGuardrail(mock_bot)
-        mock_message = MagicMock(spec=discord.Message)
-        mock_message.author = MagicMock(spec=discord.Member)
-        mock_message.author.bot = False
-
-        with patch(
-            "mods.guardrails.users.user_check", new_callable=AsyncMock
-        ) as mock_user_check:
-            mock_user_check.side_effect = Exception("Test exception")
-            with patch("mods.guardrails.users.logger.error") as mock_error:
-                await cog.on_message(mock_message)
-                mock_error.assert_called_once_with(
-                    "An error occurred during main(on_message): Test exception"
-                )
-
     @patch("mods.guardrails.users.GRA_GUILD_ID", new=None)
     @pytest.mark.asyncio
     async def test_on_member_join_no_guild_id(self, mock_bot: Any) -> None:

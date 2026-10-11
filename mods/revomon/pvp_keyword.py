@@ -11,8 +11,6 @@ from discord.embeds import Embed
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 
-from utils.helpers import respond
-
 logger = logging.getLogger(__name__)
 
 
@@ -207,22 +205,8 @@ class PvpLeaderboard(commands.Cog):
         print("---------------------------")
         await self.update_rankings()
 
-    @commands.Cog.listener()
-    async def on_message(self, message: discord.Message) -> None:
-        if message.author.bot:
-            return
-
-        try:
-            prompt = message.content.title()
-            if prompt == "Pvp":
-                self.get_current_pvp_data()
-                self.update_pvp_image(self.rankings)
-                embed = self.current_pvp_embed()
-                await respond(self.gradex, message=message, embed=embed)
-        except Exception as e:
-            logger.error(
-                f"An error occurred during PvP Rankings Keyword on_message: {e}"
-            )
+    # NOTE (2026-10-11): the "pvp" keyword trigger was removed with the
+    # message_content intent. Use the /pvp slash command instead.
 
 
 async def setup(gradex: commands.Bot) -> None:
