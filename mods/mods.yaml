@@ -1,0 +1,19 @@
+# Gradex Tool mod manifest.
+#
+# Only the mods listed under `enabled` load. To disable a mod, remove
+# its name from this list. To enable a mod that is off by default
+# (for example elevens_arena), add its name here.
+#
+# Helper cog modules (base_cog, shared, broadcaster, tv) are not mods
+# and are never listed here; they are always skipped as extensions.
+#
+# Deleting this file restores the previous behavior: every discovered
+# mod loads except example_mod and elevens_arena.
+enabled:
+  - core
+  - grappraisal
+  - guardrails
+  - revocord
+  - revomon
+  - the_elders_library
+  - tiptops_shop
