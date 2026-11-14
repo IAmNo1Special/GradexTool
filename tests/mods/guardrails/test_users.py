@@ -146,6 +146,112 @@ class TestUsersGuardrail:
                 )
 
 
+class TestFreshSpawnSweep:
+    """Test suite for the Fresh Spawn periodic sweep."""
+
+    def _member(
+        self, name: str, *, bot: bool = False, has_role: bool = False, role: Any = None
+    ) -> Any:
+        member = MagicMock(spec=discord.Member)
+        member.name = name
+        member.bot = bot
+        member.roles = [role] if has_role else []
+        member.add_roles = AsyncMock()
+        return member
+
+    async def _members(self, members: list) -> Any:
+        for member in members:
+            yield member
+
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
+    @pytest.mark.asyncio
+    async def test_sweep_assigns_missing_role_only(self, mock_bot: Any) -> None:
+        """Sweep assigns the role to members missing it, skips bots and holders."""
+        cog = UsersGuardrail(mock_bot)
+        mock_role = MagicMock(spec=discord.Role)
+        newcomer = self._member("Alice")
+        bot_member = self._member("Botty", bot=True)
+        already_has = self._member("Carol", has_role=True, role=mock_role)
+
+        mock_guild = MagicMock(spec=discord.Guild)
+        mock_guild.roles = [mock_role]
+        mock_guild.fetch_members = MagicMock(
+            return_value=self._members([newcomer, bot_member, already_has])
+        )
+        mock_bot.get_guild = MagicMock(return_value=mock_guild)
+
+        with patch(
+            "mods.guardrails.users.utils.get", return_value=mock_role
+        ) as mock_get:
+            with patch("mods.guardrails.users.logger.info") as mock_info:
+                await cog.fresh_spawn_sweep()
+                mock_get.assert_called_once_with(mock_guild.roles, name="Fresh Spawn")
+                newcomer.add_roles.assert_called_once_with(mock_role)
+                bot_member.add_roles.assert_not_called()
+                already_has.add_roles.assert_not_called()
+                mock_info.assert_any_call(
+                    "Fresh Spawn sweep assigned the role to 1 member(s)."
+                )
+
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=None)
+    @pytest.mark.asyncio
+    async def test_sweep_no_guild_id(self, mock_bot: Any) -> None:
+        """Sweep logs an error and does nothing when GRA_GUILD_ID is not set."""
+        cog = UsersGuardrail(mock_bot)
+        with patch("mods.guardrails.users.logger.error") as mock_error:
+            await cog.fresh_spawn_sweep()
+            mock_error.assert_called_once_with(
+                "GRA_GUILD_ID not found in environment variables!"
+            )
+        mock_bot.get_guild.assert_not_called()
+
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
+    @pytest.mark.asyncio
+    async def test_sweep_role_not_found(self, mock_bot: Any) -> None:
+        """Sweep logs a warning and assigns nothing when the role is missing."""
+        cog = UsersGuardrail(mock_bot)
+        mock_guild = MagicMock(spec=discord.Guild)
+        mock_guild.roles = []
+        mock_guild.fetch_members = MagicMock(return_value=self._members([]))
+        mock_bot.get_guild = MagicMock(return_value=mock_guild)
+
+        with patch("mods.guardrails.users.utils.get", return_value=None):
+            with patch("mods.guardrails.users.logger.warning") as mock_warn:
+                await cog.fresh_spawn_sweep()
+                mock_warn.assert_called_once_with("Role Fresh Spawn not found!")
+        mock_guild.fetch_members.assert_not_called()
+
+    @patch("mods.guardrails.users.GRA_GUILD_ID", new=12345)
+    @pytest.mark.asyncio
+    async def test_sweep_fetches_guild_when_not_cached(self, mock_bot: Any) -> None:
+        """Sweep falls back to fetch_guild when the guild is not cached."""
+        cog = UsersGuardrail(mock_bot)
+        mock_role = MagicMock(spec=discord.Role)
+        newcomer = self._member("Alice")
+
+        mock_guild = MagicMock(spec=discord.Guild)
+        mock_guild.roles = [mock_role]
+        mock_guild.fetch_members = MagicMock(return_value=self._members([newcomer]))
+        mock_bot.get_guild = MagicMock(return_value=None)
+        mock_bot.fetch_guild = AsyncMock(return_value=mock_guild)
+
+        with patch("mods.guardrails.users.utils.get", return_value=mock_role):
+            await cog.fresh_spawn_sweep()
+            mock_bot.fetch_guild.assert_called_once_with(12345)
+            newcomer.add_roles.assert_called_once_with(mock_role)
+
+    @pytest.mark.asyncio
+    async def test_assign_fresh_spawn_skips_holder(self, mock_bot: Any) -> None:
+        """_assign_fresh_spawn does nothing for a member who already has the role."""
+        cog = UsersGuardrail(mock_bot)
+        mock_role = MagicMock(spec=discord.Role)
+        member = self._member("Carol", has_role=True, role=mock_role)
+
+        with patch("mods.guardrails.users.utils.get", return_value=mock_role):
+            assert await cog._assign_fresh_spawn(member) is False
+            member.add_roles.assert_not_called()
+
+
 @pytest.mark.asyncio
 async def test_setup_success(mock_bot: Any) -> None:
     """Test setup function successfully adds cog."""
